@@ -269,18 +269,17 @@ public class ImportGermplasmListController extends SettingsController {
 	}
 
 	/**
-	 * List data project data is the germplasm list that is attached to a study This method is saving the germplasm for this
-	 * study
-	 *
-	 * @param studyId - the study id
+	 * Saves the stocks associated to the study.
+	 * @param studyId
 	 */
 	private void saveStocks(final int studyId) {
 
 		final ImportedGermplasmMainInfo germplasmMainInfo = this.getUserSelection().getImportedGermplasmMainInfo();
+		final ImportedGermplasmList importedGermplasmList = germplasmMainInfo != null ? germplasmMainInfo.getImportedGermplasmList() : null;
 
-		if (germplasmMainInfo.getImportedGermplasmList() != null && !Collections.isEmpty(germplasmMainInfo.getImportedGermplasmList().getImportedGermplasms())) {
-			final List<ImportedGermplasm> importedGermplasmList = germplasmMainInfo.getImportedGermplasmList().getImportedGermplasms();
-			final List<StockModel> stockModelList = new StockModelTransformer().transformToStockModels(studyId, importedGermplasmList);
+		if (importedGermplasmList != null && !Collections.isEmpty(importedGermplasmList.getImportedGermplasms())) {
+			final List<ImportedGermplasm> importedGermplasm = importedGermplasmList.getImportedGermplasms();
+			final List<StockModel> stockModelList = new StockModelTransformer().transformToStockModels(studyId, importedGermplasm);
 			// Delete the existing stocks so that we can replace it with the current list.
 			this.stockModelService.deleteStocksForStudy(studyId);
 			this.stockModelService.saveStocks(stockModelList);

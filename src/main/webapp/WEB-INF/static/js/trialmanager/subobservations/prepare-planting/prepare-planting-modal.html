@@ -63,16 +63,16 @@
 					<td>{{::entry.gid}}</td>
 					<td>{{::entry.designation}}</td>
 					<td>
-						<select ng-if="size(entry.stock) > 1" class="form-control" ng-model="entry.stockIdSelected" ng-change="stockIdChange(entry)">
-							<option ng-repeat="(stockId, stock) in entry.stock" value="{{::stockId}}">{{::stockId}}</option>
+						<select ng-if="size(entry.stockByStockId) > 1" class="form-control" ng-model="entry.stockIdSelected" ng-change="stockIdChange(entry)">
+							<option ng-repeat="(stockId, stock) in entry.stockByStockId" value="{{::stockId}}">{{::stockId}}</option>
 						</select>
-						<span ng-if="size(entry.stock) == 1">{{keys(entry.stock)[0]}}</span>
+						<span ng-if="size(entry.stockByStockId) == 1">{{keys(entry.stockByStockId)[0]}}</span>
 					</td>
 					<td>{{::entry.storageLocation}}</td>
-					<td>{{entry.stock[entry.stockIdSelected].available}}</td>
+					<td>{{entry.stockByStockId[entry.stockIdSelected].availableBalance}}</td>
 					<td>{{::entry.numberOfPackets}}</td>
-					<td>{{::entry.unit}}</td>
-					<td>{{(units[entry.unit].withdrawAll && entry.stock[entry.stockIdSelected].available) || units[entry.unit].amountPerPacket * entry.numberOfPackets}}</td>
+					<td><!-- TODO expression --></td>
+					<td>{{(units[entry.unit].withdrawAll && entry.stockByStockId[entry.stockIdSelected].availableBalance) || units[entry.unit].amountPerPacket * entry.numberOfPackets}}</td>
 					<td style="font-size: 2rem">
 						<span class="glyphicon glyphicon-ok-circle text-success" ng-if="entry.valid"></span>
 						<span class="glyphicon glyphicon-ban-circle text-danger" ng-if="!entry.valid"></span>

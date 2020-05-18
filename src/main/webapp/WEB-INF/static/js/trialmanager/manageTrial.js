@@ -1028,7 +1028,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			};
 
 			$scope.preparePlanting = function () {
-				$scope.navigateToSubObsTab(studyContext.measurementDatasetId, {isPendingView: false}).then(function () {
+				$scope.navigateToSubObsTab(studyContext.measurementDatasetId).then(function () {
 					$rootScope.$broadcast('startPreparePlanting');
 				});
 			}

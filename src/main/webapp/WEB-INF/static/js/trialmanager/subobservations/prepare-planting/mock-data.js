@@ -1,3 +1,4 @@
+// TODO move to unit test.
 mockUnits = {
 	SEED_AMOUNT_g: {
 		lotsNo: 0,
@@ -20,9 +21,9 @@ mockEntries = [{
 	numberOfPackets: 4,
 	stock: {
 		"PNMCLATE-21": {
-			available: 50
+			availableBalance: 50
 		}, "PNMCLATE-22": {
-			available: 100
+			availableBalance: 100
 		}
 	}
 }, {
@@ -34,7 +35,7 @@ mockEntries = [{
 	numberOfPackets: 2,
 	stock: {
 		"MKC-0124": {
-			available: 71
+			availableBalance: 71
 		}
 	}
 }, {
@@ -46,9 +47,9 @@ mockEntries = [{
 	numberOfPackets: 5,
 	stock: {
 		"CA2019-0341": {
-			available: 50
+			availableBalance: 50
 		}, "CA2019-0342": {
-			available: 150
+			availableBalance: 150
 		}
 	}
 }, {
@@ -60,11 +61,11 @@ mockEntries = [{
 	numberOfPackets: 4,
 	stock: {
 		"perf-stock-1": {
-			available: 50
+			availableBalance: 50
 		}, "perf-stock-2": {
-			available: 150
+			availableBalance: 150
 		}, "perf-stock-3": {
-			available: 150
+			availableBalance: 150
 		}
 	}
 }].concat([...Array(996).keys()].map((i) => {
@@ -77,11 +78,11 @@ mockEntries = [{
 		numberOfPackets: 6,
 		stock: {
 			"perf-stock-1": {
-				available: 50
+				availableBalance: 50
 			}, "perf-stock-2": {
-				available: 150
+				availableBalance: 150
 			}, "perf-stock-3": {
-				available: 150
+				availableBalance: 150
 			}
 		}
 	}

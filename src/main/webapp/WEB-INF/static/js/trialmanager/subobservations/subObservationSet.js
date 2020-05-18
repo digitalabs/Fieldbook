@@ -213,34 +213,24 @@
 			startPreparePlantingDeRegister();
 			startPreparePlantingDeRegister = $rootScope.$on('startPreparePlanting', function (event) {
 				$scope.tableRenderedPromise.then(function () {
-					if ($scope.isPendingView) {
-						$scope.togglePendingView(false);
-						return showErrorMessage('', $.fieldbookMessages.errorPlantingSelectionInvalid);
-					}
-
 					if (!$scope.validateSelection()) {
 						return;
 					}
 					$uibModal.open({
 						templateUrl: '/Fieldbook/static/js/trialmanager/subobservations/prepare-planting/prepare-planting-modal.html',
 						windowClass: 'modal-huge',
-						// size: 'lg',
 						controller: 'PreparePlantingModalCtrl',
 						resolve: {
-							observationUnitIdList: function () {
-								// TODO
-								return [];
+							searchComposite: function () {
+								return {itemIds: $scope.selectedItems, searchRequest: getFilter()};
+							},
+							datasetId: function () {
+								return $scope.subObservationSet.dataset.datasetId;
 							}
 						}
 					});
 				});
 			});
-
-			$scope.validateSelection = function () {
-				// TODO validate and alert
-				// return showErrorMessage('', $.fieldbookMessages.errorPlantingSelectionInvalid);
-				return true;
-			};
 
 			$scope.getVariables = function (variableType) {
 				var variables = {settings: []};
@@ -1199,6 +1189,13 @@
 						$scope.selectedItems.indexOf(item) === -1
 					).concat($scope.selectedItems);
 				}
+			};
+
+			$scope.validateSelection = function () {
+				if (!$scope.selectedItems.length) {
+					return showErrorMessage('', $.fieldbookMessages.errorPlantingSelectionInvalid);
+				}
+				return true;
 			};
 
 			function getCurrentItems() {

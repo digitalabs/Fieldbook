@@ -222,7 +222,14 @@
 						controller: 'PreparePlantingModalCtrl',
 						resolve: {
 							searchComposite: function () {
-								return {itemIds: $scope.selectedItems, searchRequest: getFilter()};
+								return {
+									itemIds: $scope.selectedItems,
+									searchRequest: {
+										instanceId: $scope.nested.selectedEnvironment.instanceDbId,
+										draftMode: $scope.isPendingView,
+										filter: getFilter()
+									}
+								};
 							},
 							datasetId: function () {
 								return $scope.subObservationSet.dataset.datasetId;
@@ -1193,7 +1200,7 @@
 			};
 
 			$scope.validateSelection = function () {
-				if (!$scope.selectedItems.length) {
+				if (!$scope.isAllPagesSelected && !$scope.selectedItems.length) {
 					return showErrorMessage('', $.fieldbookMessages.errorPlantingSelectionInvalid);
 				}
 				return true;

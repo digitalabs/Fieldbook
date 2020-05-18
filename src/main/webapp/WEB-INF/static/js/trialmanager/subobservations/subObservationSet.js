@@ -1174,15 +1174,11 @@
 			};
 
 			$scope.toggleSelect = function (observationUnitId) {
-				if ($scope.selectedItems.length === 0) {
-					$scope.selectedItems.push(observationUnitId);
+				var idx = $scope.selectedItems.indexOf(observationUnitId);
+				if (idx > -1) {
+					$scope.selectedItems.splice(idx, 1)
 				} else {
-					var idx = $scope.selectedItems.indexOf(observationUnitId);
-					if (idx > -1) {
-						$scope.selectedItems.splice(idx, 1)
-					} else {
-						$scope.selectedItems.push(observationUnitId);
-					}
+					$scope.selectedItems.push(observationUnitId);
 				}
 			};
 
@@ -1206,17 +1202,17 @@
 			};
 
 			function getCurrentItems() {
-				return table().context[0].json.data.map((data) => {
+				return table().data().toArray().map((data) => {
 					return data.observationUnitId
 				});
-			};
+			}
 
 			function resetChecksStatus() {
 				$scope.totalItems = 0;
 				$scope.selectedItems = [];
 				$scope.allItemsPerPages = false;
 				table().columns(0).visible(!$scope.allItemsPerPages);
-			};
+			}
 
 			function getCategoricalValueId(cellDataValue, columnData) {
 				if (columnData.possibleValues
@@ -1306,15 +1302,13 @@
 			}
 
 			function addCheckBoxColumn(columnsData) {
-				var columns = columnsData.slice();
-				columns.unshift({
+				columnsData.unshift({
 					alias: "",
 					factor: true,
 					name: "CHECK",
 					termId: -3,
 				});
-
-				return columns;
+				return columnsData;
 			}
 
 			function mapColumns(columnsData) {
@@ -1387,10 +1381,8 @@
 								$(td).append($compile('<span><input type="checkbox" ng-checked="isSelected(' + rowData.observationUnitId + ')" ng-click="toggleSelect(' + rowData.observationUnitId + ')"></span>')($scope));
 							}
 						});
-					} else
-
+					} else if (columnData.termId === 8240 || columnData.termId === 8250) {
 						// GID or DESIGNATION
-					if (columnData.termId === 8240 || columnData.termId === 8250) {
 						columnsDef.push({
 							targets: columns.length - 1,
 							orderable: false,

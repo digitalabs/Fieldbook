@@ -65,7 +65,7 @@
 
 			$scope.totalItems = 0;
 			$scope.selectedItems = [];
-			$scope.allItemsPerPages = false;
+			$scope.isAllPagesSelected = false;
 
 			$scope.columnFilter = {
 				selectAll: function () {
@@ -388,6 +388,7 @@
 				$scope.isPendingView = isPendingView;
 				$scope.selectedStatusFilter = "1";
 				doPendingViewActions();
+				resetChecksStatus();
 				loadTable();
 			};
 
@@ -896,7 +897,7 @@
 							' ng-click="openColumnFilter(' + this.index() + ')"' +
 							' uib-popover-template="\'columnFilterPopoverTemplate.html\'"></span>')($scope))
 						.prepend($compile('<span ng-if="isCheckBoxColumn(' + this.index() + ')">'
-							+ '<input type="checkbox" title="select current page" ng-checked="isAllPageSelected()"  ng-click="onSelectAllPage()">'
+							+ '<input type="checkbox" title="select current page" ng-checked="isPageSelected()"  ng-click="onSelectPage()">'
 							+ '</span>')($scope));
 				});
 				adjustColumns();
@@ -1151,10 +1152,10 @@
 			}
 
 			$scope.allTableItems = function () {
-				return table().context[0].json['recordsFiltered'];
+				return table().context[0].json && table().context[0].json['recordsFiltered'];
 			};
 
-			$scope.isAllPageSelected = function () {
+			$scope.isPageSelected = function () {
 				var currentItems = getCurrentItems();
 				return $scope.selectedItems.length > 0 && !currentItems.some((item) => $scope.selectedItems.indexOf(item) === -1);
 			};
@@ -1173,15 +1174,15 @@
 			};
 
 			$scope.onSelectAllPages = function () {
-				$scope.allItemsPerPages = !$scope.allItemsPerPages;
-				table().columns(0).visible(!$scope.allItemsPerPages);
+				$scope.isAllPagesSelected = !$scope.isAllPagesSelected;
+				table().columns(0).visible(!$scope.isAllPagesSelected);
 				$scope.selectedItems = [];
 				table().ajax.reload();
 			};
 
-			$scope.onSelectAllPage = function () {
+			$scope.onSelectPage = function () {
 				var currentItems = getCurrentItems();
-				if ($scope.isAllPageSelected()) {
+				if ($scope.isPageSelected()) {
 					$scope.selectedItems = $scope.selectedItems.filter((item) =>
 						currentItems.indexOf(item) === -1);
 				} else {
@@ -1207,8 +1208,8 @@
 			function resetChecksStatus() {
 				$scope.totalItems = 0;
 				$scope.selectedItems = [];
-				$scope.allItemsPerPages = false;
-				table().columns(0).visible(!$scope.allItemsPerPages);
+				$scope.isAllPagesSelected = false;
+				table().columns(0).visible(!$scope.isAllPagesSelected);
 			}
 
 			function getCategoricalValueId(cellDataValue, columnData) {

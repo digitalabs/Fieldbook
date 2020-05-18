@@ -21,7 +21,7 @@
 				</thead>
 				<tbody>
 				<tr ng-repeat="(unitId, unit) in units">
-					<td>{{::unitId}}</td>
+					<td>{{::unit.unitName}}</td>
 					<td>{{validLotsCount(unitId)}}</td>
 					<td><input type="checkbox" ng-change="onGroupTransactionsChecked(unitId, unit)" ng-model="unit.groupTransactions"/></td>
 					<td><input type="checkbox" ng-change="onWithdrawAllChecked(unitId, unit)" ng-model="unit.withdrawAll" ng-disabled="unit.groupTransactions" /></td>
@@ -63,16 +63,17 @@
 					<td>{{::entry.gid}}</td>
 					<td>{{::entry.designation}}</td>
 					<td>
-						<select ng-if="size(entry.stockByStockId) > 1" class="form-control" ng-model="entry.stockIdSelected" ng-change="stockIdChange(entry)">
-							<option ng-repeat="(stockId, stock) in entry.stockByStockId" value="{{::stockId}}">{{::stockId}}</option>
+						<select ng-if="size(entry.stockByStockId) > 1" class="form-control" ng-model="entry.stockSelected" ng-change="stockIdChange(entry)"
+							ng-options="stockId for (stockId, stock) in entry.stockByStockId">
 						</select>
 						<span ng-if="size(entry.stockByStockId) == 1">{{keys(entry.stockByStockId)[0]}}</span>
 					</td>
-					<td>{{::entry.storageLocation}}</td>
-					<td>{{entry.stockByStockId[entry.stockIdSelected].availableBalance}}</td>
+					<td><span>{{entry.stockSelected.storageLocation}}</span></td>
+					<td>{{entry.stockSelected.availableBalance}}</td>
 					<td>{{::entry.numberOfPackets}}</td>
-					<td><!-- TODO expression --></td>
-					<td>{{(units[entry.unit].withdrawAll && entry.stockByStockId[entry.stockIdSelected].availableBalance) || units[entry.unit].amountPerPacket * entry.numberOfPackets}}</td>
+					<td>{{units[entry.stockSelected.unitId].unitName}}</td>
+					<td>{{(units[entry.stockSelected.unitId].withdrawAll && entry.stockSelected.availableBalance)
+						|| units[entry.stockSelected.unitId].amountPerPacket * entry.numberOfPackets }}</td>
 					<td style="font-size: 2rem">
 						<span class="glyphicon glyphicon-ok-circle text-success" ng-if="entry.valid"></span>
 						<span class="glyphicon glyphicon-ban-circle text-danger" ng-if="!entry.valid"></span>

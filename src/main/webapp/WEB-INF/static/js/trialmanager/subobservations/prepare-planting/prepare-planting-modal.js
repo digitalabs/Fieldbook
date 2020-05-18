@@ -4,8 +4,8 @@
 	const module = angular.module('manageTrialApp');
 
 	module.controller('PreparePlantingModalCtrl', ['$scope', 'studyContext', '$uibModalInstance', 'DTOptionsBuilder', 'DTColumnBuilder',
-		'PreparePlantingService', 'InventoryService',
-		function ($scope, studyContext, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, service, InventoryService) {
+		'PreparePlantingService', 'InventoryService', '$timeout',
+		function ($scope, studyContext, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, service, InventoryService, $timeout) {
 
 			$scope.unitsDTOptions = DTOptionsBuilder.newOptions().withDOM('<"row"<"col-sm-12"tr>>');
 			$scope.entriesDTOptions = DTOptionsBuilder.newOptions().withDOM('<"row"<"col-sm-6"l><"col-sm-6"f>>' +
@@ -40,18 +40,6 @@
 			}).then(() => {
 				// Finish initialization setup
 				for (const entry of $scope.entries) {
-					if (!$scope.entryMap[entry.unit]) {
-						$scope.entryMap[entry.unit] = {};
-					}
-					$scope.entryMap[entry.unit][entry.entryNo] = entry;
-					if (entry.stockByStockId) {
-						if ($scope.size(entry.stockByStockId) === 1) {
-							entry.stockIdSelected = Object.keys(entry.stockByStockId)[0];
-						} else if ($scope.size(entry.stockByStockId) > 1) {
-							entry.stockIdSelected = Object.entries(entry.stockByStockId)
-								.sort((a, b) => a[1].availableBalance > b[1].availableBalance)[0][0];
-						}
-					}
 				}
 			});
 
@@ -63,22 +51,32 @@
 					}, {})
 
 					$scope.entries = data.entries;
+					// transform entries
 					$scope.entries.forEach((entry) => {
-						// FIXME
-						//  more than one unit
-						const stock = Object.values(entry.stockByStockId);
-						if (stock[0]) {
-							entry.unit = unitsById[stock[0].unitId];
-						}
 						entry.numberOfPackets = entry.observationUnits.length;
 
+						if ($scope.size(entry.stockByStockId)) {
+							if ($scope.size(entry.stockByStockId) === 1) {
+								entry.stockSelected = Object.entries(entry.stockByStockId)[0][1];
+							} else if ($scope.size(entry.stockByStockId) > 1) {
+								// not possible to compare units, order by availableBalance at least
+								entry.stockSelected = Object.entries(entry.stockByStockId)
+									.sort((a, b) => b[1].availableBalance - a[1].availableBalance)[0][1];
+							}
+							for (const stock of Object.values(entry.stockByStockId)) {
+								if (!$scope.entryMap[stock.unitId]) {
+									$scope.entryMap[stock.unitId] = {};
+								}
+								$scope.entryMap[stock.unitId][entry.entryNo] = entry;
+							}
+						}
 					})
 					$scope.units = data.entries
 						.reduce((unitIds, entry) => {
 							return unitIds.concat(Object.values(entry.stockByStockId).map((stock) => stock.unitId));
 						}, [])
 						.reduce((units, unitId) => {
-							units[unitsById[unitId]] = {}
+							units[unitId] = {unitName: unitsById[unitId]};
 							return units;
 						}, {});
 				});
@@ -107,22 +105,24 @@
 						entryMap[Number(entryNo)].valid = $scope.isValid(entry);
 					}
 				}
+				adjustColumns();
 			};
 
 			$scope.stockIdChange = function (entry) {
-				const entryMap = $scope.entryMap[entry.unit];
+				const entryMap = $scope.entryMap[entry.stockSelected.unitId];
 				if (!entryMap) {
 					return;
 				}
 				entryMap[entry.entryNo].valid = $scope.isValid(entry);
+				adjustColumns();
 			};
 
 			$scope.isValid = function (entry) {
 				if (!($scope.units && entry)) {
 					return false;
 				}
-				const unit = $scope.units[entry.unit];
-				const stock = entry.stockByStockId[entry.stockIdSelected];
+				const unit = $scope.units[entry.stockSelected.unitId];
+				const stock = entry.stockByStockId[entry.stockSelected.stockId];
 				if (!(unit && stock)) {
 					return false;
 				}
@@ -139,7 +139,7 @@
 					return;
 				}
 				return Object.values(Object.values(entryMap))
-					.filter((entry) => entry.valid).length
+					.filter((entry) => entry.valid && entry.stockSelected.unitId === Number(unitId)).length
 			};
 
 			$scope.size = function (obj) {

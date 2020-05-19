@@ -218,7 +218,7 @@
 					lotPerEntryNo: validEntries.map((entry) => {
 						return {
 							entryNo: entry.entryNo,
-							stockId: entry.stockSelected.stockId
+							lotId: entry.stockSelected.lotId
 						}
 					}),
 					notes: $scope.notes

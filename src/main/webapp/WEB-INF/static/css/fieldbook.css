@@ -1173,6 +1173,10 @@ div.sectionContainer {
 .control-label-italic{
     font-style: italic;
 }
+/* transition to bootstrap 4 left align style */
+.form-horizontal .control-label.control-label-left {
+    text-align: left;
+}
 .list-notes-display{
 	overflow:hidden;
 	text-overflow:ellipsis;	

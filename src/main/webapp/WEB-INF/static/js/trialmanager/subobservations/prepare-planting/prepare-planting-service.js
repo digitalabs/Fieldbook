@@ -13,11 +13,19 @@
 			var service = {};
 
 			service.getPreparePlantingData = function (searchComposite, datasetId) {
-				return $http({
-					method: 'POST',
-					url: `${BASE_URL}/datasets/${datasetId}/planting/preparation/search`,
-					data: searchComposite
-				}).then(successHandler, failureHandler);
+				return $http.post(`${BASE_URL}/datasets/${datasetId}/planting/preparation/search`, searchComposite)
+					.then(successHandler, failureHandler);
+			};
+
+			service.getMetadata = function (plantingRequest, datasetId) {
+				return $http.post(`${BASE_URL}/datasets/${datasetId}/planting/metadata`, plantingRequest)
+					.then(successHandler, failureHandler);
+			}
+
+			service.confirmPlanting = function (plantingRequest, datasetId, isCommitOnSaving) {
+				const url = BASE_URL + `/datasets/${datasetId}/planting/` + (isCommitOnSaving ? 'confirmed-generation' : 'pending-generation');
+				return $http.post(url, plantingRequest)
+					.then(successHandler, failureHandler);
 			};
 
 			return service;

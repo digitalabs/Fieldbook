@@ -4,8 +4,8 @@
 	const module = angular.module('manageTrialApp');
 
 	module.controller('PreparePlantingModalCtrl', ['$scope', 'studyContext', '$uibModalInstance', 'DTOptionsBuilder', 'DTColumnBuilder',
-		'PreparePlantingService', 'InventoryService', '$timeout',
-		function ($scope, studyContext, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, service, InventoryService, $timeout) {
+		'PreparePlantingService', 'InventoryService', '$timeout', '$q',
+		function ($scope, studyContext, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, service, InventoryService, $timeout, $q) {
 
 			$scope.unitsDTOptions = DTOptionsBuilder.newOptions().withDOM('<"row"<"col-sm-12"tr>>');
 			$scope.entriesDTOptions = DTOptionsBuilder.newOptions().withDOM('<"row"<"col-sm-6"l><"col-sm-6"f>>' +
@@ -32,15 +32,14 @@
 			$scope.nested = {}
 			$scope.nested.entriesDTInstance = null;
 
+			$scope.isCommitOnSaving = false;
+			$scope.notes = "";
+
 			/** { "unitId": { "entryNo1": entryObj } } */
 			$scope.entryMap = {};
 
 			service.getPreparePlantingData($scope.$resolve.searchComposite, $scope.$resolve.datasetId).then(function (data) {
 				return $scope.transformData(data);
-			}).then(() => {
-				// Finish initialization setup
-				for (const entry of $scope.entries) {
-				}
 			});
 
 			$scope.transformData = function (data) {
@@ -142,6 +141,23 @@
 					.filter((entry) => entry.valid && entry.stockSelected.unitId === Number(unitId)).length
 			};
 
+			$scope.confirm = function () {
+				validate().then((doProceed) => {
+					if (doProceed) {
+						service.confirmPlanting(getPlantingRequest(), $scope.$resolve.datasetId, $scope.isCommitOnSaving).then(() => {
+							$uibModalInstance.close();
+							showSuccessfulMessage('', $.fieldbookMessages.plantingSuccess);
+						}, (response) => {
+							if (response.errors && response.errors.length) {
+								showErrorMessage('', response.errors[0].message);
+							} else {
+								showErrorMessage('', ajaxGenericErrorMsg);
+							}
+						});
+					}
+				});
+			};
+
 			$scope.size = function (obj) {
 				return Object.keys(obj).length;
 			};
@@ -153,6 +169,61 @@
 			$scope.cancel = function () {
 				$uibModalInstance.dismiss();
 			};
+
+			$scope.valid = function () {
+				return $scope.entries && $scope.entries.some((entry) => entry.valid);
+			};
+
+			function validate() {
+				var deferred = $q.defer();
+
+				let confirmationMessages = $scope.entries.some((entry) => !entry.valid) ? [$.fieldbookMessages.plantingNokWarning] : [];
+
+				const metadataPromise = service.getMetadata(getPlantingRequest(), $scope.$resolve.datasetId);
+
+				metadataPromise.then((metadata) => {
+					if (metadata.pendingTransactionsCount) {
+						confirmationMessages.push($.fieldbookMessages.plantingPendingTransactionsWarning);
+					}
+					if (metadata.confirmedTransactionsCount) {
+						confirmationMessages.push($.fieldbookMessages.plantingConfirmedTransactionsWarning);
+					}
+
+					if (confirmationMessages.length) {
+						var confirmModal = $scope.openConfirmModal(confirmationMessages.map((m) => `<li>${m}</li>`));
+						confirmModal.result.then(deferred.resolve);
+					} else {
+						deferred.resolve(true);
+					}
+				});
+
+				return deferred.promise;
+			}
+
+			function getPlantingRequest() {
+				const validEntries = $scope.entries.filter((entry) => entry.valid);
+				const withdrawalsPerUnit = Object.entries($scope.entryMap)
+					.filter(([unitId, unit]) => Object.values(unit).some((entry) => entry.valid))
+					.reduce((withdrawalsPerUnit, [unitId, unit]) => {
+						withdrawalsPerUnit[unit.unitName] = {
+							groupTransactions: unit.groupTransactions,
+							withdrawAllAvailableBalance: unit.withdrawAll,
+							withdrawalAmount: unit.amountPerPacket
+						};
+						return withdrawalsPerUnit;
+					}, {});
+				return {
+					selectedObservationUnits: $scope.$resolve.searchComposite,
+					withdrawalsPerUnit: withdrawalsPerUnit,
+					lotPerEntryNo: validEntries.map((entry) => {
+						return {
+							entryNo: entry.entryNo,
+							stockId: entry.stockSelected.stockId
+						}
+					}),
+					notes: $scope.notes
+				};
+			}
 
 			function adjustColumns() {
 				$timeout(function () {

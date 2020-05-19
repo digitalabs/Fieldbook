@@ -926,7 +926,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					templateUrl: '/Fieldbook/static/angular-templates/confirmModal.html',
 					controller: function ($scope, $uibModalInstance) {
 						$scope.text = message;
-						$scope.confirmButtonLabel = confirmButtonLabel || environmentConfirmLabel;
+						$scope.confirmButtonLabel = confirmButtonLabel || okLabel;
 						$scope.cancelButtonLabel = cancelButtonLabel || cancelLabel;
 
 						$scope.confirm = function () {

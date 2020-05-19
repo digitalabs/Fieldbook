@@ -202,8 +202,10 @@
 
 			function getPlantingRequest() {
 				const validEntries = $scope.entries.filter((entry) => entry.valid);
-				const withdrawalsPerUnit = Object.entries($scope.entryMap)
-					.filter(([unitId, unit]) => Object.values(unit).some((entry) => entry.valid))
+				const withdrawalsPerUnit = Object.entries($scope.units)
+					.filter(([unitId, unit]) => Object.values($scope.entryMap[unitId]).some((entry) => {
+						return entry.valid && entry.stockSelected.unitId === Number(unitId)
+					}))
 					.reduce((withdrawalsPerUnit, [unitId, unit]) => {
 						withdrawalsPerUnit[unit.unitName] = {
 							groupTransactions: unit.groupTransactions,

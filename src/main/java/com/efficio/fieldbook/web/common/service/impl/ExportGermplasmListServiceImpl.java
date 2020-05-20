@@ -1,16 +1,11 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.controller.ExportGermplasmListController;
+import com.efficio.fieldbook.web.common.service.ExportGermplasmListService;
+import com.efficio.fieldbook.web.stock.StockModelTransformer;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -32,15 +27,20 @@ import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.ListDataProject;
+import org.generationcp.middleware.pojos.dms.StockModel;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
-import org.generationcp.middleware.util.FieldbookListUtil;
+import org.generationcp.middleware.service.api.StockModelService;
 import org.springframework.beans.factory.annotation.Configurable;
 
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.controller.ExportGermplasmListController;
-import com.efficio.fieldbook.web.common.service.ExportGermplasmListService;
+import javax.annotation.Resource;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Configurable
 public class ExportGermplasmListServiceImpl implements ExportGermplasmListService {
@@ -69,10 +69,15 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 	@Resource
 	private InventoryDataManager inventoryDataManager;
 
+	@Resource
+	private StockModelService stockModelService;
+
 	public ExportGermplasmListServiceImpl() {
 
 	}
 
+	// TODO: IBP-3697 If this class is only used for exporting germplasm list associated to study
+	// then we can delete this method
 	@Override
 	public void exportGermplasmListXLS(final String fileNamePath, final int listId, final Map<String, Boolean> visibleColumns) throws GermplasmListExporterException {
 
@@ -83,6 +88,50 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 
 		} catch (final MiddlewareQueryException e) {
 			throw new GermplasmListExporterException("Error with exporting germplasm list to XLS.", e);
+		}
+
+	}
+
+	@Override
+	public void exportStockListXLS(final String fileNamePath, final Map<String, Boolean> visibleColumns) throws GermplasmListExporterException {
+
+		try {
+			final int studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
+			final List<StockModel> stockModelList = this.stockModelService.getStocksForStudy(studyId);
+			final List<GermplasmExportSource> germplasmlistData = new StockModelTransformer().tranformToGermplasmExportSource(stockModelList,
+				this.stockModelService.getInventoryStockIdMap(stockModelList));
+
+
+			final GermplasmListExportInputValues input = new GermplasmListExportInputValues();
+			final GermplasmList germplasmList = new GermplasmList();
+
+			input.setFileName(fileNamePath);
+
+			input.setGermplasmList(germplasmList);
+
+			input.setListData(germplasmlistData);
+
+			input.setOwnerName(this.fieldbookMiddlewareService.getOwnerListName(germplasmList.getUserId()));
+
+			final Integer currentLocalIbdbUserId = this.contextUtil.getCurrentWorkbenchUserId();
+			input.setCurrentLocalIbdbUserId(currentLocalIbdbUserId);
+			input.setExporterName(this.fieldbookMiddlewareService.getOwnerListName(currentLocalIbdbUserId));
+			germplasmList.setUserId(currentLocalIbdbUserId);
+			input.setVisibleColumnMap(visibleColumns);
+
+			// Get the variables that will be put into the Inventory Section
+			input.setInventoryVariableMap(this.extractInventoryVariableMapFromVisibleColumns(visibleColumns));
+
+			// We do not need the inventory variables in visibleColumns anymore so we have to remove them, since variables in Inventory Section will come from
+			// GermplasmListExportInputValues.InventoryVariableMap.
+			this.removeInventoryVariableMapFromVisibleColumns(visibleColumns);
+
+			input.setColumnTermMap(this.generateColumnStandardVariableMap(visibleColumns));
+
+			this.germplasmExportService.generateGermplasmListExcelFile(input);
+
+		} catch (final MiddlewareQueryException e) {
+			throw new GermplasmListExporterException("Error with exporting stocklist to XLS.", e);
 		}
 
 	}

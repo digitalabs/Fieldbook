@@ -14,8 +14,10 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.StockModelService;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +35,7 @@ import java.util.Map;
 @Controller
 @RequestMapping(ExportGermplasmListController.URL)
 @Configurable
+@Transactional
 public class ExportGermplasmListController extends AbstractBaseFieldbookController {
 
 	protected static final String FILENAME = "filename";
@@ -50,6 +53,9 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 
 	@Resource
 	private ExportGermplasmListService exportGermplasmListService;
+
+	@Resource
+	private StockModelService stockModelService;
 
 	private final InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
@@ -104,11 +110,12 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 		if (this.userSelection.getImportedGermplasmMainInfo() != null) {
 			list = this.fieldbookMiddlewareService.getGermplasmListById(this.userSelection.getImportedGermplasmMainInfo().getListId());
 		}
+		final boolean hasStocks = this.stockModelService.countStocksForStudy(this.userSelection.getWorkbook().getStudyDetails().getId()) > 0l;
 
-		if (list != null) {
+		if (list != null || hasStocks) {
 
 			// sanitize the list name to remove illegal characters for Windows filename.
-			final String listName = FileUtils.sanitizeFileName(list.getName());
+			final String listName = hasStocks ? "ExportedGermplasmList" : FileUtils.sanitizeFileName(list.getName());
 
 			try {
 				// TODO Extract export type "1" and "2" to meaningful constants or export type enum
@@ -116,9 +123,15 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 					downloadFileName = listName + AppConstants.EXPORT_XLS_SUFFIX.getString();
 					outputFileNamePath = this.installationDirectoryUtil.getTempFileInOutputDirectoryForProjectAndTool(listName,
 							AppConstants.EXPORT_XLS_SUFFIX.getString(), this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
-					this.exportGermplasmListService.exportGermplasmListXLS(outputFileNamePath, this.userSelection
+
+					if (hasStocks) {
+						this.exportGermplasmListService.exportStockListXLS(outputFileNamePath, visibleColumnsMap);
+						response.setContentType(FileUtils.MIME_MS_EXCEL);
+					} else {
+						this.exportGermplasmListService.exportGermplasmListXLS(outputFileNamePath, this.userSelection
 							.getImportedGermplasmMainInfo().getListId(), visibleColumnsMap);
-					response.setContentType(FileUtils.MIME_MS_EXCEL);
+						response.setContentType(FileUtils.MIME_MS_EXCEL);
+					}
 
 				} else if (exportType == 2) {
 					downloadFileName = listName + AppConstants.EXPORT_CSV_SUFFIX.getString();

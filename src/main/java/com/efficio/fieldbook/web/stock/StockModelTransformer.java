@@ -2,6 +2,7 @@ package com.efficio.fieldbook.web.stock;
 
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.interfaces.GermplasmExportSource;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.dms.StockModel;
 import org.generationcp.middleware.pojos.dms.StockProperty;
@@ -17,7 +18,7 @@ public class StockModelTransformer {
 	public List<ImportedGermplasm> tranformToImportedGermplasm(final List<StockModel> stockModelList,
 		final Map<Integer, String> inventoryStockIdMap) {
 
-		List<ImportedGermplasm> importedGermplasmList = new ArrayList<>();
+		final List<ImportedGermplasm> importedGermplasmList = new ArrayList<>();
 		int index = 1;
 		if (stockModelList != null && !stockModelList.isEmpty()) {
 			for (final StockModel stockModel : stockModelList) {
@@ -43,6 +44,114 @@ public class StockModelTransformer {
 			}
 		}
 		return importedGermplasmList;
+	}
+
+	public List<GermplasmExportSource> tranformToGermplasmExportSource(final List<StockModel> stockModelList,
+		final Map<Integer, String> inventoryStockIdMap) {
+
+		final List<GermplasmExportSource> germplasmExportSourceList = new ArrayList<>();
+		if (stockModelList != null && !stockModelList.isEmpty()) {
+			for (final StockModel stockModel : stockModelList) {
+
+				final Germplasm germplasm = stockModel.getGermplasm();
+				final String entryTypeId = this.findStockPropValue(TermId.ENTRY_TYPE.getId(), stockModel.getProperties());
+
+				final GermplasmExportSource germplasmExportSource = new GermplasmExportSource() {
+
+					@Override
+					public Integer getGermplasmId() {
+						return germplasm.getGid();
+					}
+
+					@Override
+					public Integer getCheckType() {
+						return Integer.valueOf(entryTypeId);
+					}
+
+					@Override
+					public String getCheckTypeDescription() {
+						// TODO: IBP-3697 Check where to get the check type description
+						return null;
+					}
+
+					@Override
+					public Integer getEntryId() {
+						return Integer.valueOf(stockModel.getUniqueName());
+					}
+
+					@Override
+					public String getEntryCode() {
+						return stockModel.getValue();
+					}
+
+					@Override
+					public String getSeedSource() {
+						// TODO: IBP-3697 Check where to get the source name
+						return germplasm.getCrossName();
+					}
+
+					@Override
+					public String getDesignation() {
+						return stockModel.getName();
+					}
+
+					@Override
+					public String getGroupName() {
+						// TODO: IBP-3697 Check where to get the group name
+						return germplasm.getMgid().toString();
+					}
+
+					@Override
+					public String getFemaleParentDesignation() {
+						return null;
+					}
+
+					@Override
+					public Integer getFemaleGid() {
+						return null;
+					}
+
+					@Override
+					public String getMaleParentDesignation() {
+						return null;
+					}
+
+					@Override
+					public Integer getMaleGid() {
+						return null;
+					}
+
+					@Override
+					public String getStockIDs() {
+						return inventoryStockIdMap.getOrDefault(germplasm.getGid(), "");
+					}
+
+					@Override
+					public String getSeedAmount() {
+						return null;
+					}
+
+					@Override
+					public Integer getGroupId() {
+						return germplasm.getMgid();
+					}
+
+					@Override
+					public String getNotes() {
+						return null;
+					}
+
+					@Override
+					public Integer getListDataId() {
+						return null;
+					}
+				};
+
+				germplasmExportSourceList.add(germplasmExportSource);
+			}
+		}
+
+		return germplasmExportSourceList;
 	}
 
 	public List<StockModel> transformToStockModels(final int studyId, final List<ImportedGermplasm> importedGermplasmList) {

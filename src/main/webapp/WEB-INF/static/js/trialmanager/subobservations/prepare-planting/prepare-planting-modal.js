@@ -50,7 +50,7 @@
 					}, {})
 
 					$scope.entries = data.entries;
-					// transform entries
+
 					$scope.entries.forEach((entry) => {
 						entry.numberOfPackets = entry.observationUnits.length;
 
@@ -67,7 +67,7 @@
 							}
 						}
 					})
-					$scope.units = data.entries
+					$scope.units = $scope.entries
 						.reduce((unitIds, entry) => {
 							return unitIds.concat(Object.values(entry.stockByStockId).map((stock) => stock.unitId));
 						}, [])

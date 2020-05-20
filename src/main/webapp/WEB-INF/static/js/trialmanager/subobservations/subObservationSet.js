@@ -235,6 +235,8 @@
 								return $scope.subObservationSet.dataset.datasetId;
 							}
 						}
+					}).result.then(() => {
+						loadTable();
 					});
 				});
 			});
@@ -1216,7 +1218,9 @@
 				$scope.totalItems = 0;
 				$scope.selectedItems = [];
 				$scope.isAllPagesSelected = false;
-				table().columns(0).visible(!$scope.isAllPagesSelected);
+				try {
+					table().columns(0).visible(!$scope.isAllPagesSelected);
+				} catch (e) {}
 			}
 
 			function getCategoricalValueId(cellDataValue, columnData) {
@@ -1295,6 +1299,7 @@
 
 					tableLoadedResolve();
 					loadBatchActionCombo();
+					resetChecksStatus();
 				});
 			}
 

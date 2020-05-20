@@ -174,7 +174,7 @@
 	<bean id="exportFieldmapService" class="com.efficio.fieldbook.service.ExportFieldmapServiceImpl" />
 
 	<bean id="exportGermplasmListService"
-		class="com.efficio.fieldbook.web.common.service.impl.ExportGermplasmListServiceImpl" scope="request">
+		  class="com.efficio.fieldbook.web.common.service.impl.ExportStudyGermplasmListServiceImpl" scope="request">
 		<aop:scoped-proxy />
 	</bean>
 

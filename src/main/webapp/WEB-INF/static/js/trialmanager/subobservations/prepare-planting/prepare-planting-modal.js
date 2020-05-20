@@ -55,13 +55,10 @@
 						entry.numberOfPackets = entry.observationUnits.length;
 
 						if ($scope.size(entry.stockByStockId)) {
-							if ($scope.size(entry.stockByStockId) === 1) {
-								entry.stockSelected = Object.entries(entry.stockByStockId)[0][1];
-							} else if ($scope.size(entry.stockByStockId) > 1) {
-								// not possible to compare units, order by availableBalance at least
-								entry.stockSelected = Object.entries(entry.stockByStockId)
-									.sort((a, b) => b[1].availableBalance - a[1].availableBalance)[0][1];
-							}
+							// not possible to compare units, order by availableBalance at least
+							entry.stockSelected = Object.entries(entry.stockByStockId)
+								.sort((a, b) => b[1].availableBalance - a[1].availableBalance)[0][1];
+
 							for (const stock of Object.values(entry.stockByStockId)) {
 								if (!$scope.entryMap[stock.unitId]) {
 									$scope.entryMap[stock.unitId] = {};

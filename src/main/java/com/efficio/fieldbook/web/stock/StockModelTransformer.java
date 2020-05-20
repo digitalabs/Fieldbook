@@ -200,6 +200,15 @@ public class StockModelTransformer {
 			stockProperties.add(entryTypeProperty);
 			stockModel.setProperties(stockProperties);
 
+			final StockProperty seedSourceProperty = new StockProperty();
+			seedSourceProperty.setStock(stockModel);
+			seedSourceProperty.setRank(2);
+			seedSourceProperty.setTypeId(TermId.SEED_SOURCE.getId());
+			seedSourceProperty.setValue(importedGermplasm.getSource());
+			stockProperties.add(seedSourceProperty);
+
+			stockModel.setProperties(stockProperties);
+
 			stockModelList.add(stockModel);
 		}
 		return stockModelList;

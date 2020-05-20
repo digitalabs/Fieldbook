@@ -72,6 +72,9 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 	@Resource
 	private StockModelService stockModelService;
 
+	@Resource
+	private StockModelTransformer stockModelTransformer;
+
 	public ExportGermplasmListServiceImpl() {
 
 	}
@@ -98,7 +101,7 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 		try {
 			final int studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
 			final List<StockModel> stockModelList = this.stockModelService.getStocksForStudy(studyId);
-			final List<GermplasmExportSource> germplasmlistData = new StockModelTransformer().tranformToGermplasmExportSource(stockModelList,
+			final List<GermplasmExportSource> germplasmlistData = this.stockModelTransformer.tranformToGermplasmExportSource(stockModelList,
 				this.stockModelService.getInventoryStockIdMap(stockModelList));
 
 

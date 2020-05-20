@@ -593,6 +593,10 @@
 		<aop:scoped-proxy proxy-target-class="false" />
 	</bean>
 
+	<bean id="stockModelTransformer" class="com.efficio.fieldbook.web.stock.StockModelTransformer" scope="request">
+		<aop:scoped-proxy/>
+	</bean>
+
 	<bean id="derivedVariableProcessor"
 		  class="org.generationcp.commons.derivedvariable.DerivedVariableProcessor"
 		  scope="request">

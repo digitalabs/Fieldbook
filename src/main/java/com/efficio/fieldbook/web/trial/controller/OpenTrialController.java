@@ -110,6 +110,9 @@ public class OpenTrialController extends BaseTrialController {
 	private StockModelService stockModelService;
 
 	@Resource
+	private StockModelTransformer stockModelTransformer;
+
+	@Resource
 	private SampleListService sampleListService;
 
 	@Override
@@ -326,7 +329,7 @@ public class OpenTrialController extends BaseTrialController {
 			}
 
 			final Map<Integer, String> inventoryStockIdMap = this.stockModelService.getInventoryStockIdMap(stockModelList);
-			final List<ImportedGermplasm> list = new StockModelTransformer().tranformToImportedGermplasm(stockModelList, inventoryStockIdMap);
+			final List<ImportedGermplasm> list = this.stockModelTransformer.tranformToImportedGermplasm(stockModelList, inventoryStockIdMap);
 			final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
 			importedGermplasmList.setImportedGermplasms(list);
 			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();

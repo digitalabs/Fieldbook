@@ -152,6 +152,9 @@ public class ImportGermplasmListController extends SettingsController {
 	@Resource
 	private StockModelService stockModelService;
 
+	@Resource
+	private StockModelTransformer stockModelTransformer;
+
 	private static final String DEFAULT_TEST_VALUE = "T";
 
 	@Override
@@ -279,7 +282,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 		if (importedGermplasmList != null && !Collections.isEmpty(importedGermplasmList.getImportedGermplasms())) {
 			final List<ImportedGermplasm> importedGermplasm = importedGermplasmList.getImportedGermplasms();
-			final List<StockModel> stockModelList = new StockModelTransformer().transformToStockModels(studyId, importedGermplasm);
+			final List<StockModel> stockModelList = this.stockModelTransformer.transformToStockModels(studyId, importedGermplasm);
 			// Delete the existing stocks so that we can replace it with the current list.
 			this.stockModelService.deleteStocksForStudy(studyId);
 			this.stockModelService.saveStocks(stockModelList);
@@ -351,8 +354,8 @@ public class ImportGermplasmListController extends SettingsController {
 				//					// BMS-1419, set the id to the original list's id
 				//					mainInfo.setListId(germplasmList.getListRef());
 				//				}
-				importedGermplasmList = new StockModelTransformer().
-					tranformToImportedGermplasm(stockModelList, this.stockModelService.getInventoryStockIdMap(stockModelList));
+				importedGermplasmList = this.stockModelTransformer.tranformToImportedGermplasm(stockModelList,
+					this.stockModelService.getInventoryStockIdMap(stockModelList));
 			}
 			form.setImportedGermplasm(importedGermplasmList);
 			final String defaultTestCheckId =

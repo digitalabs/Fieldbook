@@ -190,7 +190,9 @@
 					}
 
 					if (confirmationMessages.length) {
-						var confirmModal = $scope.openConfirmModal(confirmationMessages.map((m) => `<li>${m}</li>`));
+						const message = '<ul>' + confirmationMessages.map((m) => `<li>${m}</li>`).join('')
+							+ '</ul><p>Do you want to proceed?</p>';
+						var confirmModal = $scope.openConfirmModal(message);
 						confirmModal.result.then(deferred.resolve);
 					} else {
 						deferred.resolve(true);

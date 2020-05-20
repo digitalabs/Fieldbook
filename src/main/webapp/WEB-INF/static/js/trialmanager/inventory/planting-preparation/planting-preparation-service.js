@@ -3,7 +3,7 @@
 
 	const module = angular.module('manageTrialApp');
 
-	module.factory('PreparePlantingService', ['$http', 'serviceUtilities', 'studyContext',
+	module.factory('PlantingPreparationService', ['$http', 'serviceUtilities', 'studyContext',
 		function ($http, serviceUtilities, studyContext) {
 			var successHandler = serviceUtilities.restSuccessHandler,
 				failureHandler = serviceUtilities.restFailureHandler;
@@ -12,7 +12,7 @@
 
 			var service = {};
 
-			service.getPreparePlantingData = function (searchComposite, datasetId) {
+			service.getPlantingPreparationData = function (searchComposite, datasetId) {
 				return $http.post(`${BASE_URL}/datasets/${datasetId}/planting/preparation/search`, searchComposite)
 					.then(successHandler, failureHandler);
 			};

@@ -3,7 +3,7 @@
 
 	var subObsTabSelectedDeRegister = () => {};
 	var sampleListCreatedDeRegister = () => {};
-	var startPreparePlantingDeRegister = () => {};
+	var startPlantingPreparationDeRegister = () => {};
 
 	var subObservationModule = angular.module('subObservation', ['visualization']);
 	var TRIAL_INSTANCE = 8170,
@@ -210,8 +210,8 @@
 				loadTable();
 			});
 
-			startPreparePlantingDeRegister();
-			startPreparePlantingDeRegister = $rootScope.$on('startPreparePlanting', function (event) {
+			startPlantingPreparationDeRegister();
+			startPlantingPreparationDeRegister = $rootScope.$on('startPlantingPreparation', function (event) {
 				$scope.tableRenderedPromise.then(function () {
 					if (!$scope.validateSelection()) {
 						return;
@@ -219,7 +219,7 @@
 					$uibModal.open({
 						templateUrl: '/Fieldbook/static/js/trialmanager/inventory/planting-preparation/planting-preparation-modal.html',
 						windowClass: 'modal-very-huge',
-						controller: 'PreparePlantingModalCtrl',
+						controller: 'PlantingPreparationModalCtrl',
 						resolve: {
 							searchComposite: function () {
 								return {

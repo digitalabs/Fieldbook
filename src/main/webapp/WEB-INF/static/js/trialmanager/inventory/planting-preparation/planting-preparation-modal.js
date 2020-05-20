@@ -3,8 +3,8 @@
 
 	const module = angular.module('manageTrialApp');
 
-	module.controller('PreparePlantingModalCtrl', ['$scope', 'studyContext', '$uibModalInstance', 'DTOptionsBuilder', 'DTColumnBuilder',
-		'PreparePlantingService', 'InventoryService', '$timeout', '$q',
+	module.controller('PlantingPreparationModalCtrl', ['$scope', 'studyContext', '$uibModalInstance', 'DTOptionsBuilder', 'DTColumnBuilder',
+		'PlantingPreparationService', 'InventoryService', '$timeout', '$q',
 		function ($scope, studyContext, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, service, InventoryService, $timeout, $q) {
 
 			$scope.unitsDTOptions = DTOptionsBuilder.newOptions().withDOM('<"row"<"col-sm-12"tr>>');
@@ -40,7 +40,7 @@
 			/** { "unitId": { "entryNo1": entryObj } } */
 			$scope.entryMap = {};
 
-			service.getPreparePlantingData($scope.$resolve.searchComposite, $scope.$resolve.datasetId).then(function (data) {
+			service.getPlantingPreparationData($scope.$resolve.searchComposite, $scope.$resolve.datasetId).then(function (data) {
 				return $scope.transformData(data);
 			});
 

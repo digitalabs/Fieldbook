@@ -1029,7 +1029,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			$scope.preparePlanting = function () {
 				$scope.navigateToSubObsTab(studyContext.measurementDatasetId).then(function () {
-					$rootScope.$broadcast('startPreparePlanting');
+					$rootScope.$broadcast('startPlantingPreparation');
 				});
 			}
 

@@ -14,7 +14,7 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.FieldbookService;
-import org.generationcp.middleware.service.api.StockModelService;
+import org.generationcp.middleware.service.api.study.StudyGermplasmListService;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,7 +55,7 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 	private ExportGermplasmListService exportGermplasmListService;
 
 	@Resource
-	private StockModelService stockModelService;
+	private StudyGermplasmListService studyGermplasmListService;
 
 	private final InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
@@ -110,7 +110,7 @@ public class ExportGermplasmListController extends AbstractBaseFieldbookControll
 		if (this.userSelection.getImportedGermplasmMainInfo() != null) {
 			list = this.fieldbookMiddlewareService.getGermplasmListById(this.userSelection.getImportedGermplasmMainInfo().getListId());
 		}
-		final boolean hasStocks = this.stockModelService.countStocksForStudy(this.userSelection.getWorkbook().getStudyDetails().getId()) > 0l;
+		final boolean hasStocks = this.studyGermplasmListService.countStudyGermplasmList(this.userSelection.getWorkbook().getStudyDetails().getId()) > 0l;
 
 		if (list != null || hasStocks) {
 

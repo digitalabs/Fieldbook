@@ -27,17 +27,15 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.StudyDataManager;
-import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
-import org.generationcp.middleware.service.api.StockModelService;
+import org.generationcp.middleware.service.api.study.StudyGermplasmListService;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,7 +99,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 	private UserService userService;
 
 	@Resource
-	private StockModelService stockModelService;
+	private StudyGermplasmListService studyGermplasmListService;
 
 	@Override
 	public String getContentName() {
@@ -140,7 +138,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		}
 
 		model.addAttribute("trialDetails", details);
-		model.addAttribute("numberOfChecks", this.stockModelService.countStocksByStudyAndEntryTypeIds(id, Arrays.asList(String.valueOf(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId()))));
+		model.addAttribute("numberOfChecks", this.studyGermplasmListService.countStudyGermplasmByEntryTypeIds(id, Arrays.asList(String.valueOf(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId()))));
 		this.setIsSuperAdminAttribute(model);
 		return this.showAjaxPage(model, this.getContentName());
 	}

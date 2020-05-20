@@ -44,7 +44,8 @@ import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.dms.StockModel;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.service.api.OntologyService;
-import org.generationcp.middleware.service.api.StockModelService;
+import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
+import org.generationcp.middleware.service.api.study.StudyGermplasmListService;
 import org.generationcp.middleware.util.FieldbookListUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -150,7 +151,7 @@ public class ImportGermplasmListController extends SettingsController {
 	private InventoryDataManager inventoryDataManager;
 
 	@Resource
-	private StockModelService stockModelService;
+	private StudyGermplasmListService studyGermplasmListService;
 
 	@Resource
 	private StockModelTransformer stockModelTransformer;
@@ -284,11 +285,11 @@ public class ImportGermplasmListController extends SettingsController {
 			final List<ImportedGermplasm> importedGermplasm = importedGermplasmList.getImportedGermplasms();
 			final List<StockModel> stockModelList = this.stockModelTransformer.transformToStockModels(studyId, importedGermplasm);
 			// Delete the existing stocks so that we can replace it with the current list.
-			this.stockModelService.deleteStocksForStudy(studyId);
-			this.stockModelService.saveStocks(stockModelList);
+			this.studyGermplasmListService.deleteStudyGermplasmList(studyId);
+			this.studyGermplasmListService.saveStudyGermplasmList(stockModelList);
 		} else {
 			// we delete the record in the db
-			this.stockModelService.deleteStocksForStudy(studyId);
+			this.studyGermplasmListService.deleteStudyGermplasmList(studyId);
 		}
 
 	}
@@ -344,18 +345,11 @@ public class ImportGermplasmListController extends SettingsController {
 			final Integer studyIdFromWorkbook = this.userSelection.getWorkbook().getStudyDetails().getId();
 			final int studyId = studyIdFromWorkbook == null ? ImportGermplasmListController.NO_ID : studyIdFromWorkbook;
 
-			final List<StockModel> stockModelList = this.stockModelService.getStocksForStudy(studyIdFromWorkbook);
+			final List<StudyGermplasmDto> studyGermplasmDtoList = this.studyGermplasmListService.getGermplasmList(studyIdFromWorkbook);
 
 			List<ImportedGermplasm> importedGermplasmList = new ArrayList<>();
-			if (!stockModelList.isEmpty()) {
-				// TODO: IBP-3697
-				//				if (germplasmList != null && germplasmList.getListRef() != null) {
-				//					form.setLastDraggedPrimaryList(germplasmList.getListRef().toString());
-				//					// BMS-1419, set the id to the original list's id
-				//					mainInfo.setListId(germplasmList.getListRef());
-				//				}
-				importedGermplasmList = this.stockModelTransformer.tranformToImportedGermplasm(stockModelList,
-					this.stockModelService.getInventoryStockIdMap(stockModelList));
+			if (!studyGermplasmDtoList.isEmpty()) {
+				importedGermplasmList = this.stockModelTransformer.tranformToImportedGermplasm(studyGermplasmDtoList);
 			}
 			form.setImportedGermplasm(importedGermplasmList);
 			final String defaultTestCheckId =

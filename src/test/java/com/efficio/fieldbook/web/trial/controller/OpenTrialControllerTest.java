@@ -23,15 +23,11 @@ import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.generationcp.commons.constant.AppConstants;
-import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
-import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.security.AuthorizationService;
 import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.middleware.data.initializer.ListDataProjectTestDataInitializer;
 import org.generationcp.middleware.data.initializer.MeasurementDataTestDataInitializer;
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.StandardVariableTestDataInitializer;
@@ -64,15 +60,14 @@ import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.manager.ontology.api.TermDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.dms.StudyType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.SampleListService;
-import org.generationcp.middleware.service.api.StockModelService;
 import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.generationcp.middleware.service.api.dataset.DatasetTypeService;
+import org.generationcp.middleware.service.api.study.StudyGermplasmListService;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.generationcp.middleware.util.Util;
 import org.generationcp.middleware.utils.test.UnitTestDaoIDGenerator;
@@ -186,7 +181,7 @@ public class OpenTrialControllerTest {
 	private TermDataManager termDataManager;
 
 	@Mock
-	private StockModelService stockModelService;
+	private StudyGermplasmListService studyGermplasmListService;
 
 	@Before
 	public void setUp() {
@@ -1168,7 +1163,7 @@ public class OpenTrialControllerTest {
 		final int studyId = 1;
 
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).getListDataProject(germplasmListId);
-		Mockito.verify(this.stockModelService, Mockito.times(0)).countStocksByStudyAndEntryTypeIds(studyId,
+		Mockito.verify(this.studyGermplasmListService, Mockito.times(0)).countStudyGermplasmByEntryTypeIds(studyId,
 			Arrays.asList(String.valueOf(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId())));
 
 		Assert.assertNull(this.userSelection.getImportedGermplasmMainInfo());
@@ -1191,7 +1186,7 @@ public class OpenTrialControllerTest {
 		listOfGermplasmList.add(germplasmList);
 
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).getListDataProject(germplasmListId);
-		Mockito.verify(this.stockModelService, Mockito.times(0)).countStocksByStudyAndEntryTypeIds(studyId,
+		Mockito.verify(this.studyGermplasmListService, Mockito.times(0)).countStudyGermplasmByEntryTypeIds(studyId,
 			Arrays.asList(String.valueOf(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId())));
 
 		Assert.assertNull(this.userSelection.getImportedGermplasmMainInfo());

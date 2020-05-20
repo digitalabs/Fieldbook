@@ -9,7 +9,6 @@ import com.efficio.fieldbook.web.trial.bean.CrossesList;
 import com.efficio.fieldbook.web.trial.bean.TrialData;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
@@ -36,16 +35,14 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.manager.ontology.api.TermDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.dms.DmsProject;
-import org.generationcp.middleware.pojos.dms.StockModel;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.SampleListService;
-import org.generationcp.middleware.service.api.StockModelService;
 import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.generationcp.middleware.service.api.dataset.DatasetTypeService;
-import org.generationcp.middleware.util.FieldbookListUtil;
+import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
+import org.generationcp.middleware.service.api.study.StudyGermplasmListService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -107,7 +104,7 @@ public class OpenTrialController extends BaseTrialController {
 	private InventoryDataManager inventoryDataManager;
 
 	@Resource
-	private StockModelService stockModelService;
+	private StudyGermplasmListService studyGermplasmListService;
 
 	@Resource
 	private StockModelTransformer stockModelTransformer;
@@ -317,19 +314,18 @@ public class OpenTrialController extends BaseTrialController {
 
 	void setUserSelectionImportedGermplasmMainInfo(final UserSelection userSelection, final Integer studyId, final Model model) {
 
-		final List<StockModel> stockModelList = this.stockModelService.getStocksForStudy(studyId);
-		if (!stockModelList.isEmpty()) {
+		final List<StudyGermplasmDto> studyGermplasmDtoList = this.studyGermplasmListService.getGermplasmList(studyId);
+		if (!studyGermplasmDtoList.isEmpty()) {
 
 			final long germplasmListChecksSize;
 			if (ExperimentDesignType.P_REP.getId().equals(this.userSelection.getExpDesignParams().getDesignType())) {
-				germplasmListChecksSize = this.stockModelService.countStocksByStudyAndEntryTypeIds(studyId, this.getAllCheckEntryTypeIds());
+				germplasmListChecksSize = this.studyGermplasmListService.countStudyGermplasmByEntryTypeIds(studyId, this.getAllCheckEntryTypeIds());
 			} else {
-				germplasmListChecksSize = this.stockModelService.countStocksByStudyAndEntryTypeIds(studyId,
+				germplasmListChecksSize = this.studyGermplasmListService.countStudyGermplasmByEntryTypeIds(studyId,
 					Arrays.asList(String.valueOf(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId())));
 			}
 
-			final Map<Integer, String> inventoryStockIdMap = this.stockModelService.getInventoryStockIdMap(stockModelList);
-			final List<ImportedGermplasm> list = this.stockModelTransformer.tranformToImportedGermplasm(stockModelList, inventoryStockIdMap);
+			final List<ImportedGermplasm> list = this.stockModelTransformer.tranformToImportedGermplasm(studyGermplasmDtoList);
 			final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
 			importedGermplasmList.setImportedGermplasms(list);
 			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
@@ -339,7 +335,7 @@ public class OpenTrialController extends BaseTrialController {
 			userSelection.setImportedGermplasmMainInfo(mainInfo);
 			userSelection.setImportValid(true);
 
-			model.addAttribute("germplasmListSize", stockModelList.size());
+			model.addAttribute("germplasmListSize", studyGermplasmDtoList.size());
 			model.addAttribute("germplasmChecksSize", germplasmListChecksSize);
 
 		}

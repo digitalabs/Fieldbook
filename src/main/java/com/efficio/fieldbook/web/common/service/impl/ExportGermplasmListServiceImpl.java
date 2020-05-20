@@ -30,7 +30,8 @@ import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.dms.StockModel;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
-import org.generationcp.middleware.service.api.StockModelService;
+import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
+import org.generationcp.middleware.service.api.study.StudyGermplasmListService;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import javax.annotation.Resource;
@@ -70,7 +71,7 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 	private InventoryDataManager inventoryDataManager;
 
 	@Resource
-	private StockModelService stockModelService;
+	private StudyGermplasmListService studyGermplasmListService;
 
 	@Resource
 	private StockModelTransformer stockModelTransformer;
@@ -100,10 +101,8 @@ public class ExportGermplasmListServiceImpl implements ExportGermplasmListServic
 
 		try {
 			final int studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
-			final List<StockModel> stockModelList = this.stockModelService.getStocksForStudy(studyId);
-			final List<GermplasmExportSource> germplasmlistData = this.stockModelTransformer.tranformToGermplasmExportSource(stockModelList,
-				this.stockModelService.getInventoryStockIdMap(stockModelList));
-
+			final List<StudyGermplasmDto> studyGermplasmDtoList = this.studyGermplasmListService.getGermplasmList(studyId);
+			final List<GermplasmExportSource> germplasmlistData = this.stockModelTransformer.tranformToGermplasmExportSource(studyGermplasmDtoList);
 
 			final GermplasmListExportInputValues input = new GermplasmListExportInputValues();
 			final GermplasmList germplasmList = new GermplasmList();

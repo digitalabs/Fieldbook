@@ -9,6 +9,7 @@ import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.dms.StockModel;
 import org.generationcp.middleware.pojos.dms.StockProperty;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import javax.annotation.Resource;
@@ -33,96 +34,85 @@ public class StockModelTransformer {
 	@Resource
 	private ContextUtil contextUtil;
 
-	public List<ImportedGermplasm> tranformToImportedGermplasm(final List<StockModel> stockModelList,
-		final Map<Integer, String> inventoryStockIdMap) {
+	public List<ImportedGermplasm> tranformToImportedGermplasm(final List<StudyGermplasmDto> studyGermplasmDtoList) {
 
 		final Map<Integer, String> checkTypesDescriptionMap =
 			this.ontologyService.getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID())
 				.getEnumerations().stream().collect(Collectors.toMap(Enumeration::getId, Enumeration::getDescription));
 
 		final List<ImportedGermplasm> importedGermplasmList = new ArrayList<>();
-		int index = 1;
-		if (stockModelList != null && !stockModelList.isEmpty()) {
-			for (final StockModel stockModel : stockModelList) {
-				final Germplasm germplasm = stockModel.getGermplasm();
+		if (studyGermplasmDtoList != null && !studyGermplasmDtoList.isEmpty()) {
+			for (final StudyGermplasmDto studyGermplasmDto : studyGermplasmDtoList) {
 				final ImportedGermplasm importedGermplasm = new ImportedGermplasm();
-				final String entryTypeId = this.findStockPropValue(TermId.ENTRY_TYPE.getId(), stockModel.getProperties());
-				final String seedSource = this.findStockPropValue(TermId.SEED_SOURCE.getId(), stockModel.getProperties());
-				importedGermplasm.setEntryTypeName(checkTypesDescriptionMap.getOrDefault(Integer.valueOf(entryTypeId), ""));
-				importedGermplasm.setEntryTypeValue(entryTypeId);
-				importedGermplasm.setEntryTypeCategoricalID(Integer.valueOf(entryTypeId));
-				importedGermplasm.setCross(germplasm.getCrossName());
-				importedGermplasm.setDesig(stockModel.getName());
-				importedGermplasm.setEntryCode(stockModel.getValue());
-				importedGermplasm.setEntryId(Integer.valueOf(stockModel.getUniqueName()));
-				importedGermplasm.setGid(germplasm.getGid().toString());
-				importedGermplasm.setMgid(germplasm.getMgid());
-				importedGermplasm.setSource(seedSource);
-				importedGermplasm.setGroupName(germplasm.getMgid().toString());
-				importedGermplasm.setGroupId(germplasm.getMgid());
-				importedGermplasm.setStockIDs(inventoryStockIdMap.getOrDefault(germplasm.getGid(), ""));
-				importedGermplasm.setIndex(index++);
+				importedGermplasm.setEntryTypeName(checkTypesDescriptionMap.getOrDefault(studyGermplasmDto.getCheckType(), ""));
+				importedGermplasm.setEntryTypeValue(studyGermplasmDto.getCheckType().toString());
+				importedGermplasm.setEntryTypeCategoricalID(studyGermplasmDto.getCheckType());
+				importedGermplasm.setCross(studyGermplasmDto.getCross());
+				importedGermplasm.setDesig(studyGermplasmDto.getDesignation());
+				importedGermplasm.setEntryCode(studyGermplasmDto.getEntryCode());
+				importedGermplasm.setEntryId(studyGermplasmDto.getEntryNumber());
+				importedGermplasm.setGid(studyGermplasmDto.getGermplasmId().toString());
+				importedGermplasm.setMgid(studyGermplasmDto.getGroupId());
+				importedGermplasm.setSource(studyGermplasmDto.getSeedSource());
+				importedGermplasm.setGroupName(studyGermplasmDto.getGroupId().toString());
+				importedGermplasm.setGroupId(studyGermplasmDto.getGroupId());
+				importedGermplasm.setStockIDs(studyGermplasmDto.getStockIds());
+				importedGermplasm.setIndex(Integer.valueOf(studyGermplasmDto.getPosition()));
 				importedGermplasmList.add(importedGermplasm);
 			}
 		}
 		return importedGermplasmList;
 	}
 
-	public List<GermplasmExportSource> tranformToGermplasmExportSource(final List<StockModel> stockModelList,
-		final Map<Integer, String> inventoryStockIdMap) {
+	public List<GermplasmExportSource> tranformToGermplasmExportSource(final List<StudyGermplasmDto> studyGermplasmDtoList) {
 
 		final Map<Integer, String> checkTypesDescriptionMap =
 			this.ontologyService.getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID())
 				.getEnumerations().stream().collect(Collectors.toMap(Enumeration::getId, Enumeration::getDescription));
 
 		final List<GermplasmExportSource> germplasmExportSourceList = new ArrayList<>();
-		if (stockModelList != null && !stockModelList.isEmpty()) {
-			for (final StockModel stockModel : stockModelList) {
-
-				final Germplasm germplasm = stockModel.getGermplasm();
-				final String checkTypeId = this.findStockPropValue(TermId.ENTRY_TYPE.getId(), stockModel.getProperties());
-				final String seedSource = this.findStockPropValue(TermId.SEED_SOURCE.getId(), stockModel.getProperties());
-
+		if (studyGermplasmDtoList != null && !studyGermplasmDtoList.isEmpty()) {
+			for (final StudyGermplasmDto studyGermplasmDto : studyGermplasmDtoList) {
 				final GermplasmExportSource germplasmExportSource = new GermplasmExportSource() {
 
 					@Override
 					public Integer getGermplasmId() {
-						return germplasm.getGid();
+						return studyGermplasmDto.getGermplasmId();
 					}
 
 					@Override
 					public Integer getCheckType() {
-						return Integer.valueOf(checkTypeId);
+						return studyGermplasmDto.getCheckType();
 					}
 
 					@Override
 					public String getCheckTypeDescription() {
-						return checkTypesDescriptionMap.getOrDefault(Integer.valueOf(checkTypeId), "");
+						return checkTypesDescriptionMap.getOrDefault(studyGermplasmDto.getCheckType(), "");
 					}
 
 					@Override
 					public Integer getEntryId() {
-						return Integer.valueOf(stockModel.getUniqueName());
+						return studyGermplasmDto.getEntryNumber();
 					}
 
 					@Override
 					public String getEntryCode() {
-						return stockModel.getValue();
+						return studyGermplasmDto.getEntryCode();
 					}
 
 					@Override
 					public String getSeedSource() {
-						return seedSource;
+						return studyGermplasmDto.getSeedSource();
 					}
 
 					@Override
 					public String getDesignation() {
-						return stockModel.getName();
+						return studyGermplasmDto.getDesignation();
 					}
 
 					@Override
 					public String getGroupName() {
-						return germplasm.getMgid().toString();
+						return studyGermplasmDto.getGroupId().toString();
 					}
 
 					@Override
@@ -147,7 +137,7 @@ public class StockModelTransformer {
 
 					@Override
 					public String getStockIDs() {
-						return inventoryStockIdMap.getOrDefault(germplasm.getGid(), "");
+						return studyGermplasmDto.getStockIds();
 					}
 
 					@Override
@@ -157,7 +147,7 @@ public class StockModelTransformer {
 
 					@Override
 					public Integer getGroupId() {
-						return germplasm.getMgid();
+						return Integer.valueOf(studyGermplasmDto.getGroupId());
 					}
 
 					@Override
@@ -212,17 +202,6 @@ public class StockModelTransformer {
 			stockModelList.add(stockModel);
 		}
 		return stockModelList;
-	}
-
-	private String findStockPropValue(final int termId, final Set<StockProperty> properties) {
-		if (properties != null) {
-			for (final StockProperty property : properties) {
-				if (termId == property.getTypeId()) {
-					return property.getValue();
-				}
-			}
-		}
-		return null;
 	}
 
 }

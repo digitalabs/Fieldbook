@@ -34,6 +34,8 @@
 
 			$scope.isCommitOnSaving = false;
 			$scope.notes = "";
+			$scope.numberOfInstances = 0;
+			$scope.numberOfPlots = 0;
 
 			/** { "unitId": { "entryNo1": entryObj } } */
 			$scope.entryMap = {};
@@ -52,8 +54,6 @@
 					$scope.entries = data.entries;
 
 					$scope.entries.forEach((entry) => {
-						entry.numberOfPackets = entry.observationUnits.length;
-
 						if ($scope.size(entry.stockByStockId)) {
 							// not possible to compare units, order by availableBalance at least
 							entry.stockSelected = Object.entries(entry.stockByStockId)
@@ -66,7 +66,7 @@
 								$scope.entryMap[stock.unitId][entry.entryNo] = entry;
 							}
 						}
-					})
+					});
 					$scope.units = $scope.entries
 						.reduce((unitIds, entry) => {
 							return unitIds.concat(Object.values(entry.stockByStockId).map((stock) => stock.unitId));
@@ -75,6 +75,13 @@
 							units[unitId] = {unitName: unitsById[unitId], groupTransactions: true};
 							return units;
 						}, {});
+
+					$scope.numberOfInstances = Object.keys($scope.entries.reduce((instanceMap, entry) => {
+						entry.numberOfPackets = entry.observationUnits.length;
+						$scope.numberOfPlots += entry.observationUnits.length;
+						entry.observationUnits.forEach((ou) => instanceMap[ou.instanceId] = true);
+						return instanceMap;
+					}, {})).length;
 
 					if ($scope.size($scope.units) === 0) {
 						showErrorMessage('', $.fieldbookMessages.plantingNoStockError);

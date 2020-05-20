@@ -75,14 +75,16 @@
 							return unitIds.concat(Object.values(entry.stockByStockId).map((stock) => stock.unitId));
 						}, [])
 						.reduce((units, unitId) => {
-							units[unitId] = {unitName: unitsById[unitId]};
+							units[unitId] = {unitName: unitsById[unitId], groupTransactions: true};
 							return units;
 						}, {});
 				});
 			};
 
 			$scope.onGroupTransactionsChecked = function (unitId, unit) {
-				unit.withdrawAll = false;
+				if (!unit.groupTransactions) {
+					unit.withdrawAll = false;
+				}
 				$scope.revalidateEntries(unitId);
 			};
 

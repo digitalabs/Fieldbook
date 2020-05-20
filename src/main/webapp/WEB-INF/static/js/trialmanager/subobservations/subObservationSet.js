@@ -217,7 +217,7 @@
 						return;
 					}
 					$uibModal.open({
-						templateUrl: '/Fieldbook/static/js/trialmanager/subobservations/prepare-planting/prepare-planting-modal.html',
+						templateUrl: '/Fieldbook/static/js/trialmanager/inventory/planting-preparation/planting-preparation-modal.html',
 						windowClass: 'modal-very-huge',
 						controller: 'PreparePlantingModalCtrl',
 						resolve: {

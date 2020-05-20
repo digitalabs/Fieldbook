@@ -202,7 +202,7 @@ var ImportCrosses = {
 		$('#openCrossListNextButton').on('click', function() {
 			$('#openCrossesListModal').modal('hide');
 			$('#settingsNextButton').off('click');
-			// delete temporary list created on BreedingManager
+			// delete temporary list created from Design Crosses
 			ImportCrosses.deleteCrossList(createdCrossesListId)
 				.done(ImportCrosses.openSaveListModal)
 				.fail(function () {

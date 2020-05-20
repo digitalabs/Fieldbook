@@ -78,6 +78,10 @@
 							units[unitId] = {unitName: unitsById[unitId], groupTransactions: true};
 							return units;
 						}, {});
+
+					if ($scope.size($scope.units) === 0) {
+						showErrorMessage('', $.fieldbookMessages.plantingNoStockError);
+					}
 				});
 			};
 
@@ -90,7 +94,7 @@
 
 			$scope.onWithdrawAllChecked = function (unitId, unit) {
 				if (unit.withdrawAll) {
-					unit.amountPerPacket = 0;
+					unit.amountPerPacket = null;
 				}
 				$scope.revalidateEntries(unitId);
 			};

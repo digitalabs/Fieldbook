@@ -96,7 +96,7 @@ public class ExportStudyGermplasmListServiceImpl implements ExportStudyGermplasm
 			GermplasmList germplasmList = new GermplasmList();
 			germplasmList.setUserId(currentLocalIbdbUserId);
 			final List<GermplasmList> germplasmLists =
-				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY)
+				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY);
 			if (!germplasmLists.isEmpty()) {
 				germplasmList = germplasmLists.listIterator().next();
 			}

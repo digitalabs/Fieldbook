@@ -84,6 +84,7 @@ module.exports = function (config) {
 			'WEB-INF/static/js/design-import/design-import-main.js',
 			'WEB-INF/static/js/trialmanager/importStudy.js',
 			'WEB-INF/static/js/trialmanager/createSample.js',
+			'WEB-INF/static/js/trialmanager/inventory/planting-preparation/planting-preparation-modal.js',
 
 			// unit test files
 			'WEB-INF/static/js/angular-tests/lib/angular-mocks.js',

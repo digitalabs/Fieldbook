@@ -7,6 +7,12 @@
 		'PlantingPreparationService', 'InventoryService', '$timeout', '$q',
 		function ($scope, studyContext, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, service, InventoryService, $timeout, $q) {
 
+			// used also in tests - to call $rootScope.$apply()
+			var initResolve;
+			$scope.initPromise = new Promise(function (resolve) {
+				initResolve = resolve;
+			});
+
 			$scope.unitsDTOptions = DTOptionsBuilder.newOptions().withDOM('<"row"<"col-sm-12"tr>>');
 			$scope.entriesDTOptions = DTOptionsBuilder.newOptions().withDOM('<"row"<"col-sm-6"l><"col-sm-6"f>>' +
 				'<"row"<"col-sm-12"tr>>' +
@@ -86,6 +92,8 @@
 					if ($scope.size($scope.units) === 0) {
 						showErrorMessage('', $.fieldbookMessages.plantingNoStockError);
 					}
+
+					initResolve();
 				});
 			};
 

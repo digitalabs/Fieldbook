@@ -223,8 +223,8 @@
 						resolve: {
 							searchComposite: function () {
 								return {
-									itemIds: $scope.selectedItems,
-									searchRequest: {
+									itemIds: $scope.selectedItems.length ? $scope.selectedItems : null,
+									searchRequest: $scope.selectedItems.length  ? null : {
 										instanceId: $scope.nested.selectedEnvironment.instanceDbId,
 										draftMode: $scope.isPendingView,
 										filter: getFilter()

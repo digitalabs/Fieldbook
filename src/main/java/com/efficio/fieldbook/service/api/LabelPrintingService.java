@@ -22,7 +22,6 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 
 import java.util.List;
@@ -32,19 +31,6 @@ import java.util.Locale;
  * The Interface LabelPrintingService.
  */
 public interface LabelPrintingService {
-
-	/**
-	 * Generate labels for seed preparation.
-	 *
-	 * @param labelType (xls, pdf or csv)
-	 * @param germplasmListDataList the germplasm list data
-	 * @param userLabelPrinting the user label printing settings
-	 * @return the name of the file with labels being created
-	 * @throws LabelPrintingException the label printing exception
-	 */
-	String generateLabelsForGermplasmList(String labelType, List<GermplasmListData> germplasmListDataList, UserLabelPrinting
-			userLabelPrinting) throws LabelPrintingException;
-
 
 	/**
 	 * Generate pdf labels.
@@ -67,7 +53,6 @@ public interface LabelPrintingService {
 	 */
 	List<LabelFields> getAvailableLabelFieldsForFieldMap(boolean hasFieldMap, Locale locale);
 
-	List<LabelFields> getAvailableLabelFieldsForInventory(final Locale locale);
 
 	/**
 	 * Gets the available label fields for Nursery, Trial.

@@ -34,6 +34,8 @@ import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.pojos.workbench.WorkbenchUser;
+import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
+import org.generationcp.middleware.service.api.study.StudyGermplasmListService;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.generationcp.middleware.util.PoiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +56,6 @@ import java.util.UUID;
 public class CrossingTemplateExcelExporter {
 
 	public static final String EXPORT_FILE_NAME_FORMAT = "CrossingTemplate-%s";
-	public static final String PROGRAM_UUID = UUID.randomUUID().toString();
 	public static final String FIELDMAP_COLUMN = "FIELDMAP COLUMN";
 	public static final String FIELDMAP_RANGE = "FIELDMAP RANGE";
 
@@ -76,6 +77,9 @@ public class CrossingTemplateExcelExporter {
 	@Resource
 	private GermplasmDataManager germplasmDataManager;
 
+	@Resource
+	private StudyGermplasmListService studyGermplasmListService;
+
 	private final InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 	private String templateFile;
 
@@ -83,12 +87,8 @@ public class CrossingTemplateExcelExporter {
 		try {
 			final Workbook excelWorkbook = this.fileService.retrieveWorkbookTemplate(this.templateFile);
 
-			// 1. parse the workbook to the template file
-			final List<GermplasmList> crossesList = this.retrieveAndValidateIfHasGermplasmList(studyId);
-
-			// 2. update description sheet
-			final GermplasmList gpList = crossesList.get(0);
-			gpList.setType(GermplasmListType.LST.name());
+			// 1. validate if the study has germplasm list (stock)
+			this.validateIfHasStudyGermplasmList(studyId);
 
 			// 3. write details
 			this.writeListDetailsSection(excelWorkbook.getSheetAt(0), 1, new ExcelCellStyleBuilder((HSSFWorkbook) excelWorkbook),
@@ -309,13 +309,11 @@ public class CrossingTemplateExcelExporter {
 		return new FileExportInfo(outputFilepath, downloadFilename + AppConstants.EXPORT_XLS_SUFFIX.getString());
 	}
 
-	List<GermplasmList> retrieveAndValidateIfHasGermplasmList(final Integer studyId) throws CrossingTemplateExportException {
-		final List<GermplasmList> crossesList = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY);
-
-		if (crossesList.isEmpty()) {
+	void validateIfHasStudyGermplasmList(final Integer studyId) throws CrossingTemplateExportException {
+		final long count = this.studyGermplasmListService.countStudyGermplasmList(studyId);
+		if (count == 0) {
 			throw new CrossingTemplateExportException("study.export.crosses.no.germplasm.list.available");
 		}
-		return crossesList;
 	}
 
 }

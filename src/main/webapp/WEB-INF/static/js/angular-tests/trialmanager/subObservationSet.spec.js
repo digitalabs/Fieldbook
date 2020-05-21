@@ -202,36 +202,6 @@ describe('SubObservationSetCtrl', function () {
 		},
 		columns = [
 			{
-				"termId": 8170,
-				"name": "TRIAL_INSTANCE",
-				"alias": "TRIAL_INSTANCE",
-				"cropOntology": null,
-				"dataType": null,
-				"dataTypeCode": "",
-				"dataTypeId": null,
-				"description": null,
-				"factor": true,
-				"formula": null,
-				"label": "",
-				"maxRange": null,
-				"method": null,
-				"minRange": null,
-				"operation": null,
-				"possibleValues": null,
-				"possibleValuesString": null,
-				"property": null,
-				"required": false,
-				"role": null,
-				"scale": null,
-				"scaleMaxRange": null,
-				"scaleMinRange": null,
-				"treatmentLabel": null,
-				"value": null,
-				"variableMaxRange": null,
-				"variableMinRange": null,
-				"variableType": null
-			},
-			{
 				"termId": 8255,
 				"name": "ENTRY_TYPE",
 				"alias": "ENTRY_TYPE",
@@ -997,15 +967,17 @@ describe('SubObservationSetCtrl', function () {
 			});
 
 			it('should have datatables functionality', function () {
-				// AleuCol_E_1to5
-				expect(scope.columnsObj.columnsDef[12].render({value: scope.columnsObj.columns[12].columnData.possibleValues[1].name}))
-					.toContain(scope.columnsObj.columns[12].columnData.possibleValues[1].displayDescription);
+				// AleuCol_E_1to5 (+ 1 (checkbox))
+				const AleuCol_E_1to5_index = 10+1;
+				expect(scope.columnsObj.columnsDef[AleuCol_E_1to5_index].render({value: scope.columnsObj.columns[AleuCol_E_1to5_index].columnData.possibleValues[1].name}))
+					.toContain(scope.columnsObj.columns[AleuCol_E_1to5_index].columnData.possibleValues[1].displayDescription);
 
 				spyOn($.fn, 'addClass').and.callFake(function () {
 				});
 
-				// nah_expected_range
-				scope.columnsObj.columnsDef[10].createdCell({}, {value: 60}, {}, scope.columnsObj.columns[8].columnData);
+				// nah_expected_range (+ 1 (checkbox))
+				const nah_expected_range_index = 8+1;
+				scope.columnsObj.columnsDef[nah_expected_range_index].createdCell({}, {value: 60}, {}, scope.columnsObj.columns[nah_expected_range_index].columnData);
 				expect($.fn.addClass).toHaveBeenCalledWith('accepted-value')
 			});
 

@@ -1312,13 +1312,15 @@
 			}
 
 			function addCheckBoxColumn(columnsData) {
-				columnsData.unshift({
+				// copy array to avoid modifying the parameter (unit test might reuse the same object)
+				var columns = columnsData.slice();
+				columns.unshift({
 					alias: "",
 					factor: true,
 					name: "CHECK",
 					termId: -3,
 				});
-				return columnsData;
+				return columns;
 			}
 
 			function mapColumns(columnsData) {

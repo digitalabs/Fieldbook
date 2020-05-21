@@ -54,7 +54,7 @@ public class StockModelTransformer {
 				importedGermplasm.setGid(studyGermplasmDto.getGermplasmId().toString());
 				importedGermplasm.setMgid(studyGermplasmDto.getGroupId());
 				importedGermplasm.setSource(studyGermplasmDto.getSeedSource());
-				importedGermplasm.setGroupName(studyGermplasmDto.getGroupId().toString());
+				importedGermplasm.setGroupName(studyGermplasmDto.getCross());
 				importedGermplasm.setGroupId(studyGermplasmDto.getGroupId());
 				importedGermplasm.setStockIDs(studyGermplasmDto.getStockIds());
 				importedGermplasm.setIndex(Integer.valueOf(studyGermplasmDto.getPosition()));
@@ -112,7 +112,7 @@ public class StockModelTransformer {
 
 					@Override
 					public String getGroupName() {
-						return studyGermplasmDto.getGroupId().toString();
+						return studyGermplasmDto.getCross().toString();
 					}
 
 					@Override
@@ -196,6 +196,13 @@ public class StockModelTransformer {
 			seedSourceProperty.setTypeId(TermId.SEED_SOURCE.getId());
 			seedSourceProperty.setValue(importedGermplasm.getSource());
 			stockProperties.add(seedSourceProperty);
+
+			final StockProperty crossProperty = new StockProperty();
+			crossProperty.setStock(stockModel);
+			crossProperty.setRank(3);
+			crossProperty.setTypeId(TermId.CROSS.getId());
+			crossProperty.setValue(importedGermplasm.getCross());
+			stockProperties.add(crossProperty);
 
 			stockModel.setProperties(stockProperties);
 

@@ -16,7 +16,6 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.dao.GermplasmListDAO;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.Variable;
@@ -85,21 +84,12 @@ public class ExportStudyGermplasmListServiceImpl implements ExportStudyGermplasm
 
 		try {
 
-			final Integer currentLocalIbdbUserId = this.contextUtil.getCurrentWorkbenchUserId();
-
 			final List<StudyGermplasmDto> studyGermplasmDtoList = this.studyGermplasmListService.getGermplasmList(studyId);
 			final List<GermplasmExportSource> germplasmlistData =
 				this.stockModelTransformer.tranformToGermplasmExportSource(studyGermplasmDtoList);
 
 			final GermplasmListExportInputValues input = new GermplasmListExportInputValues();
-
-			GermplasmList germplasmList = new GermplasmList();
-			germplasmList.setUserId(currentLocalIbdbUserId);
-			final List<GermplasmList> germplasmLists =
-				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY);
-			if (!germplasmLists.isEmpty()) {
-				germplasmList = germplasmLists.listIterator().next();
-			}
+			final GermplasmList germplasmList = new GermplasmList();
 
 			input.setFileName(fileNamePath);
 
@@ -109,8 +99,10 @@ public class ExportStudyGermplasmListServiceImpl implements ExportStudyGermplasm
 
 			input.setOwnerName(this.fieldbookMiddlewareService.getOwnerListName(germplasmList.getUserId()));
 
+			final Integer currentLocalIbdbUserId = this.contextUtil.getCurrentWorkbenchUserId();
 			input.setCurrentLocalIbdbUserId(currentLocalIbdbUserId);
 			input.setExporterName(this.fieldbookMiddlewareService.getOwnerListName(currentLocalIbdbUserId));
+			germplasmList.setUserId(currentLocalIbdbUserId);
 			input.setVisibleColumnMap(visibleColumns);
 
 			// Get the variables that will be put into the Inventory Section

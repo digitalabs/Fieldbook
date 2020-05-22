@@ -10,22 +10,14 @@
 
 package com.efficio.fieldbook.web.label.printing.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import com.efficio.fieldbook.web.common.controller.CrossingSettingsControllerTest;
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
+import com.efficio.fieldbook.utils.test.LabelPrintingDataUtil;
+import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
+import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
+import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
+import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
+import net.sf.jasperreports.engine.JRException;
+import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.pojo.CustomReportType;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
@@ -35,7 +27,6 @@ import org.generationcp.middleware.data.initializer.FieldMapInfoTestDataInitiali
 import org.generationcp.middleware.data.initializer.ProjectTestDataInitializer;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
-import org.generationcp.middleware.domain.inventory.GermplasmInventory;
 import org.generationcp.middleware.domain.inventory.ListDataInventory;
 import org.generationcp.middleware.domain.inventory.LotDetails;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -67,15 +58,19 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 
-import com.efficio.fieldbook.AbstractBaseIntegrationTest;
-import com.efficio.fieldbook.utils.test.LabelPrintingDataUtil;
-import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
-import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
-import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
-import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
-import org.generationcp.commons.constant.AppConstants;
-
-import net.sf.jasperreports.engine.JRException;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 
@@ -428,24 +423,6 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 
 		final String responseEntityFileName = reponseEntity.getBody().getFilename();
 		Assert.assertEquals("The file name should be " + filenameWithExtension, filenameWithExtension, responseEntityFileName);
-	}
-
-	@Test
-	public void testGetGermplasmListDataListWithExistingReservations() {
-		final List<GermplasmListData> dataToTest = new ArrayList<>();
-
-		final GermplasmList germplasmList = getTestGermplasmList();
-
-		final GermplasmListData listEntry1 = getTestGermplasmListData(germplasmList, 1, 665036, "", 0.0);
-		dataToTest.add(listEntry1);
-		final GermplasmListData listEntry2 = getTestGermplasmListData(germplasmList, 2, 665037, "", 0.0);
-		dataToTest.add(listEntry2);
-		final GermplasmListData listEntry3 = getTestGermplasmListData(germplasmList, 3, 665036, GermplasmInventory.RESERVED, 1.0);
-		dataToTest.add(listEntry3);
-		final GermplasmListData listEntry4 = getTestGermplasmListData(germplasmList, 4, 665037, GermplasmInventory.WITHDRAWN, 1.0);
-		dataToTest.add(listEntry4);
-
-		Assert.assertEquals(1, this.labelPrintingController.getGermplasmListDataListWithExistingReservations(dataToTest).size());
 	}
 
 	@Test

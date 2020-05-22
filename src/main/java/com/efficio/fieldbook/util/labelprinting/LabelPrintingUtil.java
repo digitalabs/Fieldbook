@@ -1,18 +1,14 @@
 package com.efficio.fieldbook.util.labelprinting;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.service.LabelPrintingServiceImpl;
+import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
+import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.google.common.collect.Maps;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
-import org.generationcp.commons.pojo.ExportColumnHeader;
+import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.inventory.GermplasmInventory;
@@ -25,17 +21,11 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
-import com.efficio.fieldbook.service.LabelPrintingServiceImpl;
-import com.efficio.fieldbook.util.labelprinting.comparators.GermplasmListDataDesignationComparator;
-import com.efficio.fieldbook.util.labelprinting.comparators.GermplasmListDataEntryNumberComparator;
-import com.efficio.fieldbook.util.labelprinting.comparators.GermplasmListDataGIDComparator;
-import com.efficio.fieldbook.util.labelprinting.comparators.GermplasmListDataStockIdComparator;
-import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
-import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
-import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
-import org.generationcp.commons.constant.AppConstants;
-import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.google.common.collect.Maps;
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @Component
 public class LabelPrintingUtil {
@@ -75,18 +65,6 @@ public class LabelPrintingUtil {
 		}
 		// remove the trailing ', ' symbols if they were appended
 		return listIds.length() > 2 ? listIds.substring(0, listIds.length() - 2) : listIds;
-	}
-
-	List<ExportColumnHeader> generateColumnHeaders(final List<Integer> selectedFieldIDs, final Map<Integer, String> labelHeaders) {
-		final List<ExportColumnHeader> columnHeaders = new ArrayList<>();
-
-		for (final Integer selectedFieldID : selectedFieldIDs) {
-			final String headerName = this.getColumnHeader(selectedFieldID, labelHeaders);
-			final ExportColumnHeader columnHeader = new ExportColumnHeader(selectedFieldID, headerName, true);
-			columnHeaders.add(columnHeader);
-		}
-
-		return columnHeaders;
 	}
 
 	String appendBarcode(final boolean isBarcodeNeeded, final String mainSelectedFields) {
@@ -327,31 +305,6 @@ public class LabelPrintingUtil {
 		}
 	}
 
-	Map<Integer, String> getLabelHeadersForSeedPreparation(final List<Integer> selectedFieldIDs) {
-		final Locale locale = LocaleContextHolder.getLocale();
-		final Map<Integer, String> labelHeaders = Maps.newHashMap();
-		for (final Integer selectedFieldId : selectedFieldIDs) {
-			if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_LIST_NAME.getInt()) {
-				labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.available.fields.list.name", null, locale));
-			} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM.getInt()) {
-				labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.available.fields.entry.num", null, locale));
-			} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
-				labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.available.fields.gid", null, locale));
-			} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_DESIGNATION.getInt()) {
-				labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.available.fields.designation", null, locale));
-			} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_CROSS.getInt()) {
-				labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.available.fields.cross", null, locale));
-			} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID.getInt()) {
-				labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.available.fields.stockid", null, locale));
-			} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()) {
-				labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.seed.inventory.lotid", null, locale));
-			} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_SEED_SOURCE.getInt()) {
-				labelHeaders.put(selectedFieldId, this.messageSource.getMessage("label.printing.seed.inventory.source", null, locale));
-			}
-		}
-		return labelHeaders;
-	}
-
 	private Map<Integer, String> getAllLabelHeadersForSeedPreparation() {
 		final Locale locale = LocaleContextHolder.getLocale();
 		final Map<Integer, String> labelHeaders = Maps.newHashMap();
@@ -377,42 +330,6 @@ public class LabelPrintingUtil {
 	String getSelectedFieldValue(final int selectedFieldId, final GermplasmListData germplasmListData, final UserLabelPrinting
 			userLabelPrinting) {
 		return this.getSelectedFieldValue(selectedFieldId, germplasmListData, userLabelPrinting, false);
-	}
-	
-	/**
-	 * This method is only called by Inventory View Label Printing classes. Handles the special case for getting the values of LOTS, STOCKID, and BARCODE
-	 * @param selectedFieldId
-	 * @param germplasmListData
-	 * @param userLabelPrinting
-	 * @param lotRow
-	 * @param includeHeaderLabel
-	 * @return
-	 */
-	String getSelectedFieldValue(final int selectedFieldId, final GermplasmListData germplasmListData, final UserLabelPrinting
-			userLabelPrinting, ListEntryLotDetails lotRow, final boolean includeHeaderLabel) {
-		final StringBuilder selectedValueFieldBuffer = new StringBuilder();
-
-		if (includeHeaderLabel) {
-			final String headerName = this.getColumnHeader(selectedFieldId, this.getAllLabelHeadersForSeedPreparation());
-			selectedValueFieldBuffer.append(headerName).append(" : ");
-		}
-		if (selectedFieldId == AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt()){
-			String lotId = lotRow.getLotId() == null ? "" : lotRow.getLotId().toString();
-			selectedValueFieldBuffer.append(lotId);
-		} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID.getInt()) {
-			String stockId = lotRow.getStockIds() == null ? "" : lotRow.getStockIds();
-			selectedValueFieldBuffer.append(stockId);
-		} else if (selectedFieldId == AppConstants.AVAILABLE_LABEL_BARCODE.getInt()) {
-			return this.getBarcodeStringForSeedPrep(germplasmListData, userLabelPrinting, includeHeaderLabel, lotRow);
-		} else { 
-			return this.getSelectedFieldValue(selectedFieldId, germplasmListData, userLabelPrinting, includeHeaderLabel);
-		}
-		return selectedValueFieldBuffer.toString();
-	}
-	
-	String getSelectedFieldValue(final int selectedFieldId, final GermplasmListData germplasmListData, final UserLabelPrinting
-			userLabelPrinting, ListEntryLotDetails lotRow) {
-		return this.getSelectedFieldValue(selectedFieldId, germplasmListData, userLabelPrinting, lotRow, false);
 	}
 
 	/**
@@ -560,50 +477,6 @@ public class LabelPrintingUtil {
 			}
 		}
 		return buffer.toString();
-	}
-
-	/**
-	 * Sort seed preparation levels by 1 of the 4 ways (by Entry number, Designation, GID, StockId)
-	 * @param fullGermplasmListWithExistingReservations collection to sort
-	 * @param sortingType how the collection should be sorted
-	 */
-	public void sortGermplasmListDataList(final List<GermplasmListData> fullGermplasmListWithExistingReservations, final String sortingType)
-			throws LabelPrintingException {
-		if (sortingType.equalsIgnoreCase(ENTRY)) {
-			this.sortByEntry(fullGermplasmListWithExistingReservations);
-		} else if (sortingType.equalsIgnoreCase(DESIGNATION)) {
-			this.sortByDesignation(fullGermplasmListWithExistingReservations);
-		} else if (sortingType.equalsIgnoreCase(GID)) {
-			this.sortByGID(fullGermplasmListWithExistingReservations);
-		} else if (sortingType.equalsIgnoreCase(STOCK_ID)) {
-			this.sortByStockId(fullGermplasmListWithExistingReservations);
-		} else {
-			throw new LabelPrintingException("No such type of sorting defined");
-		}
-	}
-
-	private List<GermplasmListData> sortByStockId(final List<GermplasmListData> fullGermplasmListWithExistingReservations) {
-		final GermplasmListDataStockIdComparator comparator = new GermplasmListDataStockIdComparator();
-		Collections.sort(fullGermplasmListWithExistingReservations, comparator);
-		return fullGermplasmListWithExistingReservations;
-	}
-
-	private List<GermplasmListData> sortByGID(final List<GermplasmListData> fullGermplasmListWithExistingReservations) {
-		final GermplasmListDataGIDComparator comparator = new GermplasmListDataGIDComparator();
-		Collections.sort(fullGermplasmListWithExistingReservations, comparator);
-		return fullGermplasmListWithExistingReservations;
-	}
-
-	private List<GermplasmListData> sortByDesignation(final List<GermplasmListData> fullGermplasmListWithExistingReservations) {
-		final GermplasmListDataDesignationComparator comparator = new GermplasmListDataDesignationComparator();
-		Collections.sort(fullGermplasmListWithExistingReservations, comparator);
-		return fullGermplasmListWithExistingReservations;
-	}
-
-	private List<GermplasmListData> sortByEntry(final List<GermplasmListData> fullGermplasmListWithExistingReservations) {
-		final GermplasmListDataEntryNumberComparator comparator = new GermplasmListDataEntryNumberComparator();
-		Collections.sort(fullGermplasmListWithExistingReservations, comparator);
-		return fullGermplasmListWithExistingReservations;
 	}
 
 }

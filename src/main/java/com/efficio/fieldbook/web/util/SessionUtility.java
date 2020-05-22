@@ -39,10 +39,7 @@ public class SessionUtility {
 	 * This is the session object being use for fieldmap process
 	 */
 	public static String FIELDMAP_SESSION_NAME = "scopedTarget.userFieldmap";
-	/*
-	 * This is the session object being use for label printing
-	 */
-	public static String LABEL_PRINTING_SESSION_NAME = "scopedTarget.userLabelPrinting";
+
 	/*
 	 * This is the session object being use to store paginated pages like the one being use in the review page
 	 */

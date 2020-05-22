@@ -63,6 +63,7 @@ module.exports = function (config) {
 			'WEB-INF/static/js/importObservations/variateGroupImporter.js',
 			'WEB-INF/static/js/angular/fieldbook-utils.js',
 			'WEB-INF/static/js/trialmanager/manageTrial.js',
+			'WEB-INF/static/js/auth/auth.module.js',
 			'WEB-INF/static/js/trialmanager/trial-settings-manager.js',
 			'WEB-INF/static/js/trialmanager/selectEnvironmentModal.js',
 			'WEB-INF/static/js/trialmanager/studyStateService.js',

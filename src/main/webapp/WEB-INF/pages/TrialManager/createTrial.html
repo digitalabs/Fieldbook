@@ -117,7 +117,7 @@
 										<a href="javascript: subObservationUnitDatasetSelector();" id="create-sub-Observation-link"
 										   th:text="#{study.studydetails.action.observationunits.create}">Create sub-observation units</a>
 									</li>
-									<li>
+									<li ng-show="hasAnyAuthority(PERMISSIONS.PREPARE_PLANTING_PERMISSIONS)">
 										<a ng-click="preparePlanting();" id="prepare-planting-inventory-link"
 										   th:text="#{study.studydetails.action.observationunits.prepare.plating}">Prepare planting inventory</a>
 									</li>
@@ -812,6 +812,11 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/inventory/inventory.service.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/inventory/planting-preparation/planting-preparation-modal.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/inventory/planting-preparation/planting-preparation-service.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/auth/auth.module.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/auth/account.service.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/auth/principal.service.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/auth/has-any-authority.service.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/auth/permissions.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/import-design.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-tabdrop.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/variableService.js}"></script>

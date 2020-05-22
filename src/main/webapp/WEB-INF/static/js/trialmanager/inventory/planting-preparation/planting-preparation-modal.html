@@ -101,7 +101,7 @@
 				<textarea rows="4" class="form-control" ng-model="notes"></textarea>
 			</div>
 		</div>
-		<div class="checkbox">
+		<div class="checkbox" ng-show="hasAnyAuthority(PERMISSIONS.MS_CREATE_CONFIRMED_WITHDRAWALS)">
 			<label class="col-sm-offset-1 col-sm-5">
 				<input type="checkbox" ng-model="isCommitOnSaving"></input>
 				Commit withdrawal on saving

@@ -4,8 +4,12 @@
 	const module = angular.module('manageTrialApp');
 
 	module.controller('PlantingPreparationModalCtrl', ['$scope', 'studyContext', '$uibModalInstance', 'DTOptionsBuilder', 'DTColumnBuilder',
-		'PlantingPreparationService', 'InventoryService', '$timeout', '$q',
-		function ($scope, studyContext, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, service, InventoryService, $timeout, $q) {
+		'PlantingPreparationService', 'InventoryService', '$timeout', '$q', 'HasAnyAuthorityService', 'PERMISSIONS',
+		function ($scope, studyContext, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, service, InventoryService, $timeout, $q,
+				  HasAnyAuthorityService, PERMISSIONS) {
+
+			$scope.hasAnyAuthority = HasAnyAuthorityService.hasAnyAuthority;
+			$scope.PERMISSIONS = PERMISSIONS;
 
 			// used also in tests - to call $rootScope.$apply()
 			var initResolve;

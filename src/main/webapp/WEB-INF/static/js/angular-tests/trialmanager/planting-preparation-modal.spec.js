@@ -28,7 +28,9 @@ describe('PlantingPreparationModalCtrl:', function () {
 			'getPlantingPreparationData',
 			'getMetadata',
 			'confirmPlanting'
-		]);
+		]),
+		HasAnyAuthorityServiceMock = {},
+		PERMISSIONSMock	= [];
 
 	beforeEach(function (done) {
 		module('manageTrialApp');
@@ -62,7 +64,9 @@ describe('PlantingPreparationModalCtrl:', function () {
 				$uibModalInstance: uibModalInstanceMock,
 				service: PlantingPreparationServiceMock,
 				InventoryService: InventoryServiceMock,
-				studyContext: studyContextMock
+				studyContext: studyContextMock,
+				HasAnyAuthorityService: HasAnyAuthorityServiceMock,
+				PERMISSIONS: PERMISSIONSMock
 			});
 
 			scope.initPromise.then(function () {

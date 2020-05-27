@@ -607,7 +607,6 @@
     <bean id="labelGeneratorFactory" class="com.efficio.fieldbook.util.labelprinting.LabelGeneratorFactory"/>
     <bean id="excelLabelGenerator" class="com.efficio.fieldbook.util.labelprinting.ExcelLabelGenerator"/>
     <bean id="pdfLabelGenerator" class="com.efficio.fieldbook.util.labelprinting.PDFLabelGenerator"/>
-    <bean id="csvSeedPreparationLabelGenerator" class="com.efficio.fieldbook.util.labelprinting.CSVSeedPreparationLabelGenerator"/>
 
 	<bean id="workbenchHibernateSessionProvider"
 		class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider"

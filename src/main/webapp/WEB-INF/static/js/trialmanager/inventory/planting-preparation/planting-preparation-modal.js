@@ -150,7 +150,7 @@
 				if (unit.withdrawAll) {
 					return stock.availableBalance > 0;
 				}
-				return unit.amountPerPacket && //
+				return unit.amountPerPacket > 0 && //
 					unit.amountPerPacket * entry.numberOfPackets <= stock.availableBalance;
 			};
 

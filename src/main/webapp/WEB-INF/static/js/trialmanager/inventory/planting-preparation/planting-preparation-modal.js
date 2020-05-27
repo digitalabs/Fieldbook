@@ -52,7 +52,7 @@
 
 			service.getPlantingPreparationData($scope.$resolve.searchComposite, $scope.$resolve.datasetId).then(function (data) {
 				return $scope.transformData(data);
-			});
+			}, onError);
 
 			$scope.transformData = function (data) {
 				return InventoryService.queryUnits().then((unitTypes) => {
@@ -98,7 +98,7 @@
 					}
 
 					initResolve();
-				});
+				}, onError);
 			};
 
 			$scope.onGroupTransactionsChecked = function (unitId, unit) {
@@ -169,13 +169,7 @@
 						service.confirmPlanting(getPlantingRequest(), $scope.$resolve.datasetId, $scope.isCommitOnSaving).then(() => {
 							$uibModalInstance.close();
 							showSuccessfulMessage('', $.fieldbookMessages.plantingSuccess);
-						}, (response) => {
-							if (response.errors && response.errors.length) {
-								showErrorMessage('', response.errors[0].message);
-							} else {
-								showErrorMessage('', ajaxGenericErrorMsg);
-							}
-						});
+						}, onError);
 					}
 				});
 			};
@@ -219,7 +213,7 @@
 					} else {
 						deferred.resolve(true);
 					}
-				});
+				}, onError);
 
 				return deferred.promise;
 			}
@@ -249,6 +243,14 @@
 					}),
 					notes: $scope.notes
 				};
+			}
+
+			function onError(response) {
+				if (response.errors && response.errors.length) {
+					showErrorMessage('', response.errors[0].message);
+				} else {
+					showErrorMessage('', ajaxGenericErrorMsg);
+				}
 			}
 
 			function adjustColumns() {

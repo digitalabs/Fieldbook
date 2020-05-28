@@ -267,7 +267,7 @@
 						   ng-change="columnFilter.selectAll()"/>
 					Select all
 				</li>
-				<li ng-repeat='option in columnFilter.columnData.possibleValues | orderBy: "name" | filter: columnFilter.search '
+				<li ng-repeat="option in columnFilter.columnData.possibleValues | orderBy: 'name' | filter: columnFilter.search "
 					ng-if="option.name"
 					class="list-group-item">
 					<input type="checkbox" class="checkbox" ng-model="option.isSelectedInFilters"

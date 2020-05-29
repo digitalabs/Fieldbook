@@ -184,7 +184,7 @@
 			$scope.importObservations = function (processWarnings) {
 				datasetService.importObservations(datasetId, $rootScope.importedData, processWarnings).then(function () {
 					displaySaveSuccessMessage('page-message', 'Your data was successfully imported and may need confirmation.');
-					$rootScope.navigateToSubObsTab(datasetId);
+					$rootScope.navigateToSubObsTab(datasetId, {reload: true});
 					$scope.close();
 				}, function (response) {
 					if (response.status == 400) {

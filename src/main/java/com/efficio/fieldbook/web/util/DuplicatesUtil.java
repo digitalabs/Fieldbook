@@ -58,7 +58,7 @@ public class DuplicatesUtil {
 
 	private static void setDuplicateEntries(ImportedCross importedCross, Collection<Integer> entries) {
 		if (importedCross.getDuplicateEntries() == null) {
-			importedCross.setDuplicateEntries(new TreeSet<Integer>());
+			importedCross.setDuplicateEntries(new TreeSet<>());
 		}
 		for (Integer entryId : entries) {
 			if (importedCross.getEntryId().equals(entryId)) {
@@ -93,11 +93,11 @@ public class DuplicatesUtil {
 				continue;
 			}
 
-			final String nFemalePlotNo = importedCrossMain.getFemalePlotNo().toString();
-			final String nFemaleGid = importedCrossMain.getFemaleGid();
-			// FIXME - check back how to handle for polycross. For now pass the first male parent
-			final String nMalePlotNo = importedCrossMain.getMalePlotNos().get(0).toString();
-			final String nMaleGid = importedCrossMain.getMaleGids().get(0).toString();
+			final Integer nFemalePlotNo = importedCrossMain.getFemalePlotNo();
+			final Integer nFemaleGid = Integer.parseInt(importedCrossMain.getFemaleGid());
+
+			final List<Integer> nMalePlotNo = importedCrossMain.getMalePlotNos();
+			final List<Integer> nMaleGid = importedCrossMain.getMaleGids();
 
 			final StringBuilder plotDupePrefix = new StringBuilder(ImportedCross.PLOT_DUPE_PREFIX);
 			final StringBuilder pedigreeDupePrefix = new StringBuilder(ImportedCross.PEDIGREE_DUPE_PREFIX);
@@ -107,34 +107,49 @@ public class DuplicatesUtil {
 			for (ImportedCross possibleDuplicatesAndReciprocals : importedCrossesList.getImportedCrosses()) {
 				if (!Objects.equals(importedCrossMain.getEntryId(), possibleDuplicatesAndReciprocals.getEntryId())) {
 
-					final String femaleGidExcludingMain = possibleDuplicatesAndReciprocals.getFemaleGid();
-					final String femalePlotNoExcludingMain = possibleDuplicatesAndReciprocals.getFemalePlotNo().toString();
-					// FIXME - check back how to handle for polycross. For now pass the first male parent
-					final String maleGidExcludingMain = possibleDuplicatesAndReciprocals.getMaleGids().get(0).toString();
-					final String malePlotNoExcludingMain = possibleDuplicatesAndReciprocals.getMalePlotNos().get(0).toString();
+					final Integer femaleGidExcludingMain = Integer.parseInt(possibleDuplicatesAndReciprocals.getFemaleGid());
+					final Integer femalePlotNoExcludingMain = possibleDuplicatesAndReciprocals.getFemalePlotNo();
+
+					final List<Integer> maleGidExcludingMain = possibleDuplicatesAndReciprocals.getMaleGids();
+					final List<Integer> malePlotNoExcludingMain = possibleDuplicatesAndReciprocals.getMalePlotNos();
+
+					boolean containsAllGids =
+						maleGidExcludingMain.stream().allMatch(gid -> nMaleGid.contains(gid))
+							&& nMaleGid.stream().allMatch(gid -> maleGidExcludingMain.contains(gid));
+
+					boolean containsAllPlots =
+						malePlotNoExcludingMain.stream().allMatch(plotNo -> nMalePlotNo.contains(plotNo))
+							&& nMalePlotNo.stream().allMatch(plotNo -> malePlotNoExcludingMain.contains(plotNo));
 
 					// Duplicate scenario
-					if (femaleGidExcludingMain.equals(nFemaleGid) && maleGidExcludingMain.equals(nMaleGid)) {
-						if (Objects.equals(femalePlotNoExcludingMain, nFemalePlotNo) && Objects.equals(malePlotNoExcludingMain, nMalePlotNo)) {
+					if (femaleGidExcludingMain.equals(nFemaleGid) && containsAllGids) {
+						if (Objects.equals(femalePlotNoExcludingMain, nFemalePlotNo) && containsAllPlots) {
 							// Plot Dupe
-							DuplicatesUtil.setDuplicatePrefixAndEntriesForDuplicates(Lists.newArrayList(possibleDuplicatesAndReciprocals),
-									ImportedCross.PLOT_DUPE_PREFIX);
+							DuplicatesUtil.setDuplicatePrefixAndEntriesForDuplicates(
+								Lists.newArrayList(possibleDuplicatesAndReciprocals),
+								ImportedCross.PLOT_DUPE_PREFIX);
 							plotDupePrefix.append(possibleDuplicatesAndReciprocals.getEntryId() + ", ");
 						} else {
 							// Pedigree Dupe
-							DuplicatesUtil.setDuplicatePrefixAndEntriesForDuplicates(Lists.newArrayList(possibleDuplicatesAndReciprocals),
-									ImportedCross.PEDIGREE_DUPE_PREFIX);
+							DuplicatesUtil.setDuplicatePrefixAndEntriesForDuplicates(
+								Lists.newArrayList(possibleDuplicatesAndReciprocals),
+								ImportedCross.PEDIGREE_DUPE_PREFIX);
 							pedigreeDupePrefix.append(possibleDuplicatesAndReciprocals.getEntryId() + ", ");
 						}
 						if (importedCrossMain.getDuplicateEntries() == null) {
-							importedCrossMain.setDuplicateEntries(new TreeSet<Integer>());
+							importedCrossMain.setDuplicateEntries(new TreeSet<>());
 						}
 						importedCrossMain.getDuplicateEntries().add(possibleDuplicatesAndReciprocals.getEntryId());
 						DuplicatesUtil.setDuplicateNotesBasedOnPrefixandEntries(importedCrossMain);
 					}
+
+					if (possibleDuplicatesAndReciprocals.getMalePlotNos().size() > 1 || importedCrossMain.getMalePlotNos().size() > 1) {
+						continue;
+					}
 					// Reciprocal scenario
-					if (Objects.equals(femaleGidExcludingMain, nMaleGid) && Objects.equals(maleGidExcludingMain, nFemaleGid)) {
-						if (femalePlotNoExcludingMain.equals(nMalePlotNo) && malePlotNoExcludingMain.equals(nFemalePlotNo)) {
+					if (Objects.equals(femaleGidExcludingMain, nMaleGid.get(0)) && Objects
+						.equals(maleGidExcludingMain.get(0), nFemaleGid)) {
+						if (femalePlotNoExcludingMain.equals(nMalePlotNo.get(0)) && malePlotNoExcludingMain.get(0).equals(nFemalePlotNo)) {
 							// Plot Reciprocal
 							List<Integer> plotReciprocalEntries = new ArrayList<>();
 							DuplicatesUtil.getAllEntries(Lists.newArrayList(possibleDuplicatesAndReciprocals), plotReciprocalEntries);
@@ -150,7 +165,7 @@ public class DuplicatesUtil {
 							pedigreeRecipPrefix.append(possibleDuplicatesAndReciprocals.getEntryId() + ", ");
 						}
 						if (importedCrossMain.getDuplicateEntries() == null) {
-							importedCrossMain.setDuplicateEntries(new TreeSet<Integer>());
+							importedCrossMain.setDuplicateEntries(new TreeSet<>());
 						}
 						importedCrossMain.getDuplicateEntries().add(possibleDuplicatesAndReciprocals.getEntryId());
 						DuplicatesUtil.setDuplicateNotesBasedOnPrefixandEntries(importedCrossMain);

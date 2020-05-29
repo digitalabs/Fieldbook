@@ -406,11 +406,9 @@ LabelPrinting = {
 	LabelPrinting.showOrHideBarcodeFields = function() {
 		var barcodeNeeded = $safeId('input[name=userLabelPrinting.barcodeNeeded]:checked').val();
 		var isStockList = $safeId('input[name=isStockList]').val().toString();
-		var inventory = $safeId('input[name=germplasmListId]').val().toString();
-
 		// isPlotCodePrefix
 		if (barcodeNeeded === '1') {
-			if (isStockList === 'false' && (inventory === null || inventory === '')) {
+			if (isStockList === 'false') {
 				$('.automatically-barcode-fields').show();
 				LabelPrinting.showOrHideBarcodeGeneratedAutomaticallyFields();
 			}else{

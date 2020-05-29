@@ -4,16 +4,15 @@ import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.LabelPrintingService;
 import com.efficio.fieldbook.service.api.SettingsService;
 import com.efficio.fieldbook.util.labelprinting.LabelGeneratorFactory;
-import com.efficio.fieldbook.util.labelprinting.SeedPreparationLabelGenerator;
 import com.efficio.fieldbook.util.labelprinting.comparators.FieldMapLabelComparator;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
-import org.generationcp.commons.constant.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.pojos.labelprinting.LabelPrintingProcessingParams;
+import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.constant.ColumnLabels;
@@ -33,7 +32,6 @@ import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.PresetService;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.ToolName;
@@ -133,15 +131,6 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		super();
 	}
 
-
-
-	@Override
-	public String generateLabelsForGermplasmList(final String labelType, final List<GermplasmListData> germplasmListDataList,
-			final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
-		final SeedPreparationLabelGenerator seedPreparationLabelGenerator =
-				this.labelGeneratorFactory.retrieveSeedPreparationLabelGenerator(labelType);
-		return seedPreparationLabelGenerator.generateLabels(germplasmListDataList, userLabelPrinting);
-	}
 
 	@Override
 	public String generateLabels(final String labelType, final List<StudyTrialInstanceInfo> trialInstances,
@@ -719,36 +708,6 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 				AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt(), false));
 
 		this.addAvailableFieldsForFieldMap(hasFieldMap, locale, labelFieldsList);
-
-		return labelFieldsList;
-	}
-
-	/**
-	 * Gets the available label fields for the inventory. The following options: {GID, Designation, Cross, Stock Id, Lot Id}
-	 *
-	 * @param locale the locale
-	 * @return the list of available label fields
-	 */
-	@Override
-	public List<LabelFields> getAvailableLabelFieldsForInventory(final Locale locale) {
-		final List<LabelFields> labelFieldsList = new ArrayList<>();
-
-		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.list.name", null, locale),
-				AppConstants.AVAILABLE_LABEL_FIELDS_LIST_NAME.getInt(), true));
-		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.entry.num", null, locale),
-				AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM.getInt(), true));
-		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.gid", null, locale),
-				AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt(), true));
-		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.designation", null, locale),
-				AppConstants.AVAILABLE_LABEL_FIELDS_DESIGNATION.getInt(), true));
-		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.cross", null, locale),
-				AppConstants.AVAILABLE_LABEL_FIELDS_CROSS.getInt(), true));
-		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.stockid", null, locale),
-				AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID.getInt(), true));
-		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.seed.inventory.lotid", null, locale),
-				AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt(), true));
-		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.seed.inventory.source", null, locale),
-				AppConstants.AVAILABLE_LABEL_SEED_SOURCE.getInt(), true));
 
 		return labelFieldsList;
 	}

@@ -27,12 +27,11 @@ import com.efficio.fieldbook.web.label.printing.xml.BarcodeLabelPrintingSetting;
 import com.efficio.fieldbook.web.label.printing.xml.CSVExcelLabelPrintingSetting;
 import com.efficio.fieldbook.web.label.printing.xml.LabelPrintingSetting;
 import com.efficio.fieldbook.web.label.printing.xml.PDFLabelPrintingSetting;
-import org.generationcp.commons.constant.AppConstants;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.google.common.base.Strings;
 import net.sf.jasperreports.engine.JRException;
 import org.apache.commons.lang3.StringUtils;
+import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
@@ -47,16 +46,13 @@ import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
-import org.generationcp.middleware.domain.inventory.GermplasmInventory;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
-import org.generationcp.middleware.domain.inventory.LotDetails;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.reports.BuildReportException;
@@ -186,8 +182,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	public String showTrialLabelDetails(@ModelAttribute("labelPrintingForm") final LabelPrintingForm form, final Model model,
 			final HttpServletRequest req, final HttpSession session, @PathVariable final int id, final Locale locale) {
 
-		SessionUtility.clearSessionData(session, new String[] {SessionUtility.LABEL_PRINTING_SESSION_NAME,
-				SessionUtility.FIELDMAP_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
+		SessionUtility.clearSessionData(session, new String[] {SessionUtility.FIELDMAP_SESSION_NAME,
+			SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
 		Study study = null;
 		final List<FieldMapInfo> fieldMapInfoList;
 		FieldMapInfo fieldMapInfo = null;
@@ -274,8 +270,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	public String showStockListLabelDetails(@ModelAttribute("labelPrintingForm") final LabelPrintingForm form, final Model model,
 			final HttpSession session, @PathVariable final int id, final Locale locale) {
 
-		SessionUtility.clearSessionData(session, new String[] {SessionUtility.LABEL_PRINTING_SESSION_NAME,
-				SessionUtility.FIELDMAP_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
+		SessionUtility.clearSessionData(session, new String[] {SessionUtility.FIELDMAP_SESSION_NAME,
+			SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
 
 		// retrieve the stock list
 		final GermplasmList stockList = this.germplasmListManager.getGermplasmListById(id);
@@ -315,63 +311,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 				this.labelPrintingService.getStockListType(stockList.getType()), locale, stockList.getProjectId()));
 
 		form.setIsStockList(true);
-
-		return super.show(model);
-	}
-
-	@RequestMapping(value = "/inventory/{id}", method = RequestMethod.GET)
-	public String showSeedPreparationLabelDetails(@ModelAttribute("labelPrintingForm") final LabelPrintingForm form, final Model model,
-			final HttpSession session, @PathVariable final int id, final Locale locale) {
-
-		SessionUtility.clearSessionData(session,
-				new String[] {SessionUtility.LABEL_PRINTING_SESSION_NAME, SessionUtility.FIELDMAP_SESSION_NAME,
-						SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
-		form.setGermplasmListId(id);
-
-		// retrieve the stock list
-		final GermplasmList germplasmList = this.germplasmListManager.getGermplasmListById(id);
-
-		final List<InventoryDetails> inventoryDetails = this.labelPrintingService.getInventoryDetails(germplasmList.getId());
-
-		//this name is used to generate a filename for the labels output
-		this.userLabelPrinting.setName(germplasmList.getName());
-		this.userLabelPrinting.setOwner(this.fieldbookMiddlewareService.getOwnerListName(germplasmList.getUserId()));
-		this.userLabelPrinting.setDescription(germplasmList.getDescription());
-		this.userLabelPrinting.setType(germplasmList.getType());
-		this.userLabelPrinting.setDate(String.valueOf(germplasmList.getDate()));
-		this.userLabelPrinting.setNumberOfEntries(String.valueOf(this.fieldbookMiddlewareService.countGermplasmListDataByListId(
-				germplasmList.getId())));
-
-		final List<GermplasmListData> germplasmListDataList = this.inventoryDataManager.getLotDetailsForList(id, 0, Integer
-				.MAX_VALUE); // TODO Find better way than Integer max value? Implement non-paginated method to retrieve all the records?
-		final List<GermplasmListData> listWithExistingReservations =  this.getGermplasmListDataListWithExistingReservations
-				(germplasmListDataList);
-		this.userLabelPrinting.setNumberOfLotsWithReservations(String.valueOf(listWithExistingReservations.size()));
-
-		this.userLabelPrinting.setStudyId(null);
-		this.userLabelPrinting.setTitle(StringUtils.EMPTY);
-		this.userLabelPrinting.setFieldMapInfo(null);
-		this.userLabelPrinting.setFieldMapInfoList(null);
-		this.userLabelPrinting.setBarcodeNeeded("0");
-		this.userLabelPrinting.setBarcodeGeneratedAutomatically("1");
-		this.userLabelPrinting.setIncludeColumnHeadinginNonPdf("1");
-		this.userLabelPrinting.setNumberOfLabelPerRow("3");
-		this.userLabelPrinting.setIsStockList(true);
-		this.userLabelPrinting.setStockListId(germplasmList.getId());
-		this.userLabelPrinting.setStockListTypeName(germplasmList.getType());
-		this.userLabelPrinting.setInventoryDetailsList(inventoryDetails);
-		this.userLabelPrinting.setFilename(this.generateDefaultFilename(this.userLabelPrinting));
-		this.userLabelPrinting.setFirstBarcodeField(StringUtils.EMPTY);
-		this.userLabelPrinting.setSecondBarcodeField(StringUtils.EMPTY);
-		this.userLabelPrinting.setThirdBarcodeField(StringUtils.EMPTY);
-		this.userLabelPrinting.setSettingsName(StringUtils.EMPTY);
-		this.userLabelPrinting.setNumberOfCopies("1");
-		this.userLabelPrinting.setSorting("entry");
-		form.setUserLabelPrinting(this.userLabelPrinting);
-		model.addAttribute(LabelPrintingController.AVAILABLE_FIELDS, this.labelPrintingService
-				.getAvailableLabelFieldsForInventory(locale));
-
-		form.setIsStockList(false);
 
 		return super.show(model);
 	}
@@ -492,146 +431,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		}
 	}
 
-	/**
-	 * Submits the details.
-	 *
-	 * @param form the form
-	 * @return the string
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/inventory", method = RequestMethod.POST)
-	public Map<String, Object> submitDetailsOfInventory(@ModelAttribute("labelPrintingForm") final LabelPrintingForm form) {
-
-		this.userLabelPrinting.setBarcodeNeeded(form.getUserLabelPrinting().getBarcodeNeeded());
-		this.userLabelPrinting.setBarcodeGeneratedAutomatically(form.getUserLabelPrinting().getBarcodeGeneratedAutomatically());
-		this.userLabelPrinting.setSizeOfLabelSheet(form.getUserLabelPrinting().getSizeOfLabelSheet());
-		this.userLabelPrinting.setNumberOfLabelPerRow(form.getUserLabelPrinting().getNumberOfLabelPerRow());
-		this.userLabelPrinting.setNumberOfRowsPerPageOfLabel(form.getUserLabelPrinting().getNumberOfRowsPerPageOfLabel());
-		this.userLabelPrinting.setLeftSelectedLabelFields(form.getUserLabelPrinting().getLeftSelectedLabelFields());
-		this.userLabelPrinting.setRightSelectedLabelFields(form.getUserLabelPrinting().getRightSelectedLabelFields());
-		this.userLabelPrinting.setMainSelectedLabelFields(form.getUserLabelPrinting().getMainSelectedLabelFields());
-		this.userLabelPrinting.setIncludeColumnHeadinginNonPdf(form.getUserLabelPrinting().getIncludeColumnHeadinginNonPdf());
-		this.userLabelPrinting.setSettingsName(form.getUserLabelPrinting().getSettingsName());
-		this.userLabelPrinting.setFirstBarcodeField(form.getUserLabelPrinting().getFirstBarcodeField());
-		this.userLabelPrinting.setSecondBarcodeField(form.getUserLabelPrinting().getSecondBarcodeField());
-		this.userLabelPrinting.setThirdBarcodeField(form.getUserLabelPrinting().getThirdBarcodeField());
-		this.userLabelPrinting.setFilename(form.getUserLabelPrinting().getFilename());
-		this.userLabelPrinting.setGenerateType(form.getUserLabelPrinting().getGenerateType());
-		this.userLabelPrinting.setNumberOfCopies(form.getUserLabelPrinting().getNumberOfCopies());
-		this.userLabelPrinting.setSorting(form.getUserLabelPrinting().getSorting());
-
-		// add validation for the file name
-		if (!FileUtils.isFilenameValid(this.userLabelPrinting.getFilename())) {
-			final Map<String, Object> results = new HashMap<>();
-			results.put(LabelPrintingController.IS_SUCCESS, 0);
-			results.put(AppConstants.MESSAGE.getString(),
-					this.messageSource.getMessage("common.error.invalid.filename.windows", new Object[] {}, Locale.getDefault()));
-
-			return results;
-		}
-
-		final Integer germplasmListId = form.getGermplasmListId();
-		final List<GermplasmListData> germplasmListDataList = this.inventoryDataManager.getLotDetailsForList(germplasmListId, 0,
-				Integer.MAX_VALUE); // TODO Find better way than Integer max value? Implement non-paginated method to retrieve all the records?
-		final List<GermplasmListData> germplasmListDataListWithExistingReservations =
-				this.getGermplasmListDataListWithExistingReservations(germplasmListDataList);
-
-		final int numberOfCopies = Strings.isNullOrEmpty(this.userLabelPrinting.getNumberOfCopies()) ?
-				1 :
-				Integer.parseInt(this.userLabelPrinting.getNumberOfCopies());
-
-
-		// GermplasmListData list sorting before printing
-		// Sort first and duplicate entries after that for performance
-		try {
-			if (!Strings.isNullOrEmpty(this.userLabelPrinting.getSorting())) {
-				this.labelPrintingUtil.sortGermplasmListDataList(germplasmListDataListWithExistingReservations, this.userLabelPrinting.getSorting());
-			}
-		} catch (final LabelPrintingException ex) {
-			final Map<String, Object> results = new HashMap<>();
-			LabelPrintingController.LOG.error(ex.getMessage(), ex);
-			results.put(LabelPrintingController.IS_SUCCESS, 0);
-			results.put(AppConstants.MESSAGE.getString(), ex.getMessage());
-			return results;
-		}
-
-		final List<GermplasmListData> fullGermplasmListWithExistingReservations = new ArrayList<>();
-
-		for (final GermplasmListData listData : germplasmListDataListWithExistingReservations) {
-			for (int i = 0; i < numberOfCopies; i++) {
-				fullGermplasmListWithExistingReservations.add(listData);
-			}
-		}
-
-		return this.generateLabels(fullGermplasmListWithExistingReservations);
-	}
-
-	/**
-	 * Get a list with seed reservations out of the list of germplasms
-	 * @param germplasmListDataList list of germplasms
-	 * @return a list with existing saved seed reservations
-	 */
-	List<GermplasmListData> getGermplasmListDataListWithExistingReservations(final List<GermplasmListData> germplasmListDataList) {
-		final List<GermplasmListData> germplasmListDataListWithReservations = new ArrayList<>();
-		for (final GermplasmListData germplasmListData : germplasmListDataList) {
-			if (germplasmListData.getInventoryInfo() != null && germplasmListData.getInventoryInfo().getLotRows() != null) {
-				for (final LotDetails lotDetails : germplasmListData.getInventoryInfo().getLotRows()) {
-					// We have reservations if withdrawal status is "Reserved"
-					if (lotDetails.getWithdrawalStatus().equalsIgnoreCase(GermplasmInventory.RESERVED)) {
-						germplasmListDataListWithReservations.add(germplasmListData);
-					}
-				}
-			}
-		}
-		return germplasmListDataListWithReservations;
-	}
-
-	private Map<String,Object> generateLabels(final List<GermplasmListData> germplasmListDataList) {
-		final Map<String, Object> results = new HashMap<>();
-
-		try {
-			final String fileName;
-			final LabelPrintingFileTypes selectedLabelPrintingType =
-					LabelPrintingFileTypes.getFileTypeByIndex(this.userLabelPrinting.getGenerateType());
-
-			if (selectedLabelPrintingType.isValid()) {
-				this.getFileNameAndSetFileLocations(selectedLabelPrintingType.getExtension());
-
-				fileName = this.labelPrintingService.generateLabelsForGermplasmList(selectedLabelPrintingType.getFormIndex(), germplasmListDataList,
-						this.userLabelPrinting);
-
-				results.put(LabelPrintingController.IS_SUCCESS, 1);
-				results.put(FILE_NAME, fileName);
-
-			} else {
-				final String errorMsg = this.messageSource.getMessage("label.printing.cannot.generate.invalid.type", new String[] {},
-						LocaleContextHolder.getLocale());
-
-				LabelPrintingController.LOG.error(errorMsg);
-				results.put(LabelPrintingController.IS_SUCCESS, 0);
-				results.put(AppConstants.MESSAGE.getString(), errorMsg);
-			}
-
-		} catch (final MiddlewareException | IOException e) {
-			LabelPrintingController.LOG.error(e.getMessage(), e);
-			results.put(LabelPrintingController.IS_SUCCESS, 0);
-			results.put(AppConstants.MESSAGE.getString(), e.getMessage());
-		} catch (final LabelPrintingException e) {
-			LabelPrintingController.LOG.error(e.getMessage(), e);
-			results.put(LabelPrintingController.IS_SUCCESS, 0);
-			final Locale locale = LocaleContextHolder.getLocale();
-
-			if (e.getErrorCode() != null) {
-				results.put(AppConstants.MESSAGE.getString(),
-						this.messageSource.getMessage(e.getErrorCode(), new String[] {e.getLabelError()}, locale));
-			} else if (e.getCause() != null) {
-				results.put(AppConstants.MESSAGE.getString(), e.getCause().getMessage());
-			}
-
-		}
-		return results;
-	}
-
 	String getSelectedLabelFields(final UserLabelPrinting userLabelPrinting) {
 		final String selectedLabelFields;
 		if (userLabelPrinting.getGenerateType().equalsIgnoreCase(AppConstants.LABEL_PRINTING_PDF.getString())) {
@@ -671,7 +470,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		}
 		return results;
 	}
-
 
 	void generateLabelForLabelTypes(final List<StudyTrialInstanceInfo> trialInstances, final Map<String, Object> results)
 			throws LabelPrintingException, IOException {

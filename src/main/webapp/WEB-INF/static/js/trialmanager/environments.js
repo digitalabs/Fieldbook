@@ -194,9 +194,13 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			// Proceed deleting existing environment
 			$scope.continueEnvironmentDeletion = function (index, locationId) {
-				studyInstanceService.deleteStudyInstance(locationId);
-				updateDeletedEnvironment(index);
-				showSuccessfulMessage('', $.environmentMessages.environmentDeletedSuccessfully);
+				studyInstanceService.deleteStudyInstance(locationId).then(function () {
+						updateDeletedEnvironment(index);
+						showSuccessfulMessage('', $.environmentMessages.environmentDeletedSuccessfully);
+					}, function (errResponse) {
+						showErrorMessage($.fieldbookMessages.errorServerError, errResponse.errors[0].message);
+					}
+				);
 			};
 
 

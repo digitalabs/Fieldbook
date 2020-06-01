@@ -23,6 +23,7 @@ import com.efficio.fieldbook.web.trial.bean.Environment;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
@@ -140,6 +141,8 @@ public class CreateTrialController extends BaseTrialController {
 			if (studyId != null && studyId != 0) {
 				final Workbook trialWorkbook = this.fieldbookMiddlewareService.getStudyDataSet(studyId);
 
+				this.excludeTreatmentFactorVariables(trialWorkbook);
+
 				this.removeAnalysisAndAnalysisSummaryVariables(trialWorkbook);
 
 				this.userSelection.setConstantsWithLabels(trialWorkbook.getConstants());
@@ -150,9 +153,11 @@ public class CreateTrialController extends BaseTrialController {
 						this.prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), true));
 				tabDetails.put("measurementsData",
 						this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.TRAIT, true));
-				this.fieldbookMiddlewareService
+
+				// TODO:Uncomment lines below related to treatment factors after resolving IBP-2207
+				/*this.fieldbookMiddlewareService
 						.setTreatmentFactorValues(trialWorkbook.getTreatmentFactors(), trialWorkbook.getMeasurementDatesetId());
-				tabDetails.put("treatmentFactorsData", this.prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), true));
+				tabDetails.put("treatmentFactorsData", this.prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), true));*/
 				form.setStudyTypeName(trialWorkbook.getStudyDetails().getStudyType().getName());
 			}
 		} catch (final MiddlewareException e) {
@@ -162,6 +167,18 @@ public class CreateTrialController extends BaseTrialController {
 
 		tabDetails.put("createTrialForm", form);
 		return tabDetails;
+	}
+
+	// TODO: Remove this method after resolving IBP-2207
+	void excludeTreatmentFactorVariables(final Workbook trialWorkbook) {
+		final List<Integer> treatmentFactorVariableIds = new ArrayList<>();
+		for(TreatmentVariable treatmentVariable: trialWorkbook.getTreatmentFactors()) {
+			treatmentFactorVariableIds.add(treatmentVariable.getValueVariable().getTermId());
+			treatmentFactorVariableIds.add(treatmentVariable.getLevelVariable().getTermId());
+		}
+
+		trialWorkbook.getFactors().removeIf(variable -> treatmentFactorVariableIds.contains(variable.getTermId()));
+		trialWorkbook.setTreatmentFactors(new ArrayList<>());
 	}
 
 	private CreateTrialForm addErrorMessageToResult(final MiddlewareException e) {

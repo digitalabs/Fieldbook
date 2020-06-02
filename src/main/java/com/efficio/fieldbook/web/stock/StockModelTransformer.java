@@ -5,19 +5,14 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.interfaces.GermplasmExportSource;
-import org.generationcp.middleware.pojos.Germplasm;
-import org.generationcp.middleware.pojos.dms.StockModel;
-import org.generationcp.middleware.pojos.dms.StockProperty;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Configurable
@@ -168,47 +163,22 @@ public class StockModelTransformer {
 		return germplasmExportSourceList;
 	}
 
-	public List<StockModel> transformToStockModels(final int studyId, final List<ImportedGermplasm> importedGermplasmList) {
+	public List<StudyGermplasmDto> transformToStudyGermplasmDto( final List<ImportedGermplasm> importedGermplasmList) {
 
-		final List<StockModel> stockModelList = new ArrayList<>();
+		final List<StudyGermplasmDto> list = new ArrayList<>();
 		for (final ImportedGermplasm importedGermplasm : importedGermplasmList) {
-			final StockModel stockModel = new StockModel();
-			stockModel.setProjectId(studyId);
-			stockModel.setName(importedGermplasm.getDesig());
-			stockModel.setGermplasm(new Germplasm(Integer.valueOf(importedGermplasm.getGid())));
-			stockModel.setTypeId(TermId.ENTRY_CODE.getId());
-			stockModel.setValue(importedGermplasm.getEntryCode());
-			stockModel.setUniqueName(importedGermplasm.getEntryId().toString());
-			stockModel.setIsObsolete(false);
+			final StudyGermplasmDto dto = new StudyGermplasmDto();
+			dto.setDesignation(importedGermplasm.getDesig());
+			dto.setGermplasmId(Integer.valueOf(importedGermplasm.getGid()));
+			dto.setEntryCode(importedGermplasm.getEntryCode());
+			dto.setEntryNumber(importedGermplasm.getEntryId());
+			dto.setCheckType(importedGermplasm.getEntryTypeCategoricalID());
+			dto.setSeedSource(importedGermplasm.getSource());
+			dto.setCross(importedGermplasm.getCross());
 
-			final Set<StockProperty> stockProperties = new HashSet<>();
-			final StockProperty entryTypeProperty = new StockProperty();
-			entryTypeProperty.setStock(stockModel);
-			entryTypeProperty.setRank(1);
-			entryTypeProperty.setTypeId(TermId.ENTRY_TYPE.getId());
-			entryTypeProperty.setValue(importedGermplasm.getEntryTypeCategoricalID().toString());
-			stockProperties.add(entryTypeProperty);
-			stockModel.setProperties(stockProperties);
-
-			final StockProperty seedSourceProperty = new StockProperty();
-			seedSourceProperty.setStock(stockModel);
-			seedSourceProperty.setRank(2);
-			seedSourceProperty.setTypeId(TermId.SEED_SOURCE.getId());
-			seedSourceProperty.setValue(importedGermplasm.getSource());
-			stockProperties.add(seedSourceProperty);
-
-			final StockProperty crossProperty = new StockProperty();
-			crossProperty.setStock(stockModel);
-			crossProperty.setRank(3);
-			crossProperty.setTypeId(TermId.CROSS.getId());
-			crossProperty.setValue(importedGermplasm.getCross());
-			stockProperties.add(crossProperty);
-
-			stockModel.setProperties(stockProperties);
-
-			stockModelList.add(stockModel);
+			list.add(dto);
 		}
-		return stockModelList;
+		return list;
 	}
 
 }

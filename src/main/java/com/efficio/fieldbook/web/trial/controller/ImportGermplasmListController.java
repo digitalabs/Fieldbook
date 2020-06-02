@@ -273,10 +273,10 @@ public class ImportGermplasmListController extends SettingsController {
 
 		if (importedGermplasmList != null && !Collections.isEmpty(importedGermplasmList.getImportedGermplasms())) {
 			final List<ImportedGermplasm> importedGermplasm = importedGermplasmList.getImportedGermplasms();
-			final List<StockModel> stockModelList = this.stockModelTransformer.transformToStockModels(studyId, importedGermplasm);
+			final List<StudyGermplasmDto> studyGermplasmDtoList = this.stockModelTransformer.transformToStudyGermplasmDto(importedGermplasm);
 			// Delete the existing stocks so that we can replace it with the current list.
 			this.studyGermplasmService.deleteStudyGermplasm(studyId);
-			this.studyGermplasmService.saveStudyGermplasm(studyId, stockModelList);
+			this.studyGermplasmService.saveStudyGermplasm(studyId, studyGermplasmDtoList);
 		} else {
 			// we delete the record in the db
 			this.studyGermplasmService.deleteStudyGermplasm(studyId);

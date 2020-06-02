@@ -1,4 +1,4 @@
-package com.efficio.fieldbook.web.stock;
+package com.efficio.fieldbook.web.study.germplasm;
 
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
 
 @Configurable
 // FIXME: IBP-3697 Is it possible to use ModelMapper instead???
-public class StockModelTransformer {
+public class StudyGermplasmTransformer {
 
-	public StockModelTransformer() {
+	public StudyGermplasmTransformer() {
 		// this constructor is necessary for aop proxy
 	}
 

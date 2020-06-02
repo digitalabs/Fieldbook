@@ -16,7 +16,7 @@ import com.efficio.fieldbook.web.common.bean.TableHeader;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.efficio.fieldbook.web.exception.FieldbookRequestValidationException;
-import com.efficio.fieldbook.web.stock.StockModelTransformer;
+import com.efficio.fieldbook.web.study.germplasm.StudyGermplasmTransformer;
 import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.form.UpdateGermplasmCheckForm;
 import com.efficio.fieldbook.web.util.SettingsUtil;
@@ -41,7 +41,6 @@ import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.pojos.GermplasmListData;
-import org.generationcp.middleware.pojos.dms.StockModel;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
@@ -144,7 +143,7 @@ public class ImportGermplasmListController extends SettingsController {
 	private StudyGermplasmService studyGermplasmService;
 
 	@Resource
-	private StockModelTransformer stockModelTransformer;
+	private StudyGermplasmTransformer studyGermplasmTransformer;
 
 	private static final String DEFAULT_TEST_VALUE = "T";
 
@@ -273,7 +272,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 		if (importedGermplasmList != null && !Collections.isEmpty(importedGermplasmList.getImportedGermplasms())) {
 			final List<ImportedGermplasm> importedGermplasm = importedGermplasmList.getImportedGermplasms();
-			final List<StudyGermplasmDto> studyGermplasmDtoList = this.stockModelTransformer.transformToStudyGermplasmDto(importedGermplasm);
+			final List<StudyGermplasmDto> studyGermplasmDtoList = this.studyGermplasmTransformer.transformToStudyGermplasmDto(importedGermplasm);
 			// Delete the existing stocks so that we can replace it with the current list.
 			this.studyGermplasmService.deleteStudyGermplasm(studyId);
 			this.studyGermplasmService.saveStudyGermplasm(studyId, studyGermplasmDtoList);
@@ -339,7 +338,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 			List<ImportedGermplasm> importedGermplasmList = new ArrayList<>();
 			if (!studyGermplasmDtoList.isEmpty()) {
-				importedGermplasmList = this.stockModelTransformer.tranformToImportedGermplasm(studyGermplasmDtoList);
+				importedGermplasmList = this.studyGermplasmTransformer.tranformToImportedGermplasm(studyGermplasmDtoList);
 			}
 			form.setImportedGermplasm(importedGermplasmList);
 			final String defaultTestCheckId =

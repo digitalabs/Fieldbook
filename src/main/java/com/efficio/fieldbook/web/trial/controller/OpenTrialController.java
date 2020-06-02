@@ -3,7 +3,7 @@ package com.efficio.fieldbook.web.trial.controller;
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.stock.StockModelTransformer;
+import com.efficio.fieldbook.web.study.germplasm.StudyGermplasmTransformer;
 import com.efficio.fieldbook.web.trial.bean.AdvanceList;
 import com.efficio.fieldbook.web.trial.bean.CrossesList;
 import com.efficio.fieldbook.web.trial.bean.TrialData;
@@ -96,7 +96,7 @@ public class OpenTrialController extends BaseTrialController {
 	private StudyGermplasmService studyGermplasmService;
 
 	@Resource
-	private StockModelTransformer stockModelTransformer;
+	private StudyGermplasmTransformer studyGermplasmTransformer;
 
 	@Resource
 	private SampleListService sampleListService;
@@ -314,7 +314,7 @@ public class OpenTrialController extends BaseTrialController {
 					Arrays.asList(String.valueOf(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId())));
 			}
 
-			final List<ImportedGermplasm> list = this.stockModelTransformer.tranformToImportedGermplasm(studyGermplasmDtoList);
+			final List<ImportedGermplasm> list = this.studyGermplasmTransformer.tranformToImportedGermplasm(studyGermplasmDtoList);
 			final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
 			importedGermplasmList.setImportedGermplasms(list);
 			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();

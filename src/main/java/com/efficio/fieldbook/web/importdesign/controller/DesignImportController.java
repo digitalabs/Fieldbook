@@ -12,8 +12,8 @@ import com.efficio.fieldbook.web.common.form.ImportDesignForm;
 import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
 import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
 import com.efficio.fieldbook.web.trial.controller.SettingsController;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.Instance;
+import com.efficio.fieldbook.web.trial.bean.InstanceInfo;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import org.generationcp.commons.constant.AppConstants;
 import com.efficio.fieldbook.web.util.ExpDesignUtil;
@@ -304,10 +304,10 @@ public class DesignImportController extends SettingsController {
 
 	@ResponseBody
 	@RequestMapping(value = "/showDetails/data", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
-	public List<Map<String, Object>> showDetailsData(@RequestBody final EnvironmentData environmentData,
+	public List<Map<String, Object>> showDetailsData(@RequestBody final InstanceInfo instanceInfo,
 			final Model model, @ModelAttribute("importDesignForm") final ImportDesignForm form) {
 
-		this.processEnvironmentData(environmentData);
+		this.processEnvironmentData(instanceInfo);
 
 		final Workbook workbook = this.userSelection.getTemporaryWorkbook();
 		final DesignImportData designImportData = this.userSelection.getDesignImportData();
@@ -315,7 +315,7 @@ public class DesignImportController extends SettingsController {
 		List<MeasurementRow> measurementRows = new ArrayList<>();
 
 		try {
-			measurementRows = this.designImportService.generateDesign(workbook, designImportData, environmentData,
+			measurementRows = this.designImportService.generateDesign(workbook, designImportData, instanceInfo,
 					false, this.generateAdditionalParams(DesignImportController.DEFAULT_STARTING_ENTRY_NO,
 							DesignImportController.DEFAULT_STARTING_PLOT_NO));
 		} catch (final DesignValidationException e) {
@@ -467,7 +467,7 @@ public class DesignImportController extends SettingsController {
 	public Map<String, Object> generateMeasurements(@RequestBody final GenerateDesignInput generateDesignInput) {
 
 		this.populateSettingData(this.userSelection.getStudyLevelConditions(), generateDesignInput.getTrialSettings().getUserInput());
-		final EnvironmentData environmentData = generateDesignInput.getEnvironmentData();
+		final InstanceInfo instanceInfo = generateDesignInput.getInstanceInfo();
 		final Integer startingEntryNo = generateDesignInput.getStartingEntryNo();
 		final Integer startingPlotNo = generateDesignInput.getStartingPlotNo();
 
@@ -475,7 +475,7 @@ public class DesignImportController extends SettingsController {
 
 		try {
 
-			this.generateDesign(environmentData, this.userSelection.getDesignImportData(),
+			this.generateDesign(instanceInfo, this.userSelection.getDesignImportData(),
 					ExperimentDesignType.CUSTOM_IMPORT, this.generateAdditionalParams(startingEntryNo, startingPlotNo));
 
 			this.initializeBasicUserSelectionLists();
@@ -504,13 +504,13 @@ public class DesignImportController extends SettingsController {
 			final List<MeasurementVariable> variablesForEnvironment = new ArrayList<>();
 			variablesForEnvironment.addAll(workbook.getTrialVariables());
 
-			final List<MeasurementRow> trialEnvironmentValues = WorkbookUtil.createMeasurementRowsFromEnvironments(generateDesignInput.getEnvironmentData().getEnvironments(), variablesForEnvironment,
+			final List<MeasurementRow> trialEnvironmentValues = WorkbookUtil.createMeasurementRowsFromEnvironments(generateDesignInput.getInstanceInfo().getInstances(), variablesForEnvironment,
 				this.userSelection.getExpDesignParams());
 			workbook.setTrialObservations(trialEnvironmentValues);
 
 			this.userSelection.setWorkbook(workbook);
 
-			this.userSelection.setTrialEnvironmentValues(this.convertToValueReference(generateDesignInput.getEnvironmentData().getEnvironments()));
+			this.userSelection.setTrialEnvironmentValues(this.convertToValueReference(generateDesignInput.getInstanceInfo().getInstances()));
 
 			WorkbookUtil.manageExpDesignVariablesAndObs(this.userSelection.getWorkbook(), this.userSelection.getTemporaryWorkbook());
 			WorkbookUtil.addMeasurementDataToRowsExp(this.userSelection.getWorkbook().getFactors(), this.userSelection.getWorkbook().getObservations(), false, this.ontologyService,
@@ -523,7 +523,7 @@ public class DesignImportController extends SettingsController {
 
 			this.fieldbookMiddlewareService.saveExperimentalDesign(this.userSelection.getWorkbook(), this.getCurrentProject().getUniqueID(), this.getCurrentProject().getCropType());
 			resultsMap.put(DesignImportController.IS_SUCCESS, 1);
-			resultsMap.put("environmentData", environmentData);
+			resultsMap.put("environmentData", instanceInfo);
 			resultsMap.put("environmentSettings", this.userSelection.getTrialLevelVariableList());
 
 		} catch (final Exception e) {
@@ -588,10 +588,10 @@ public class DesignImportController extends SettingsController {
 		return output;
 	}
 
-	protected void generateDesign(final EnvironmentData environmentData, final DesignImportData designImportData,
+	protected void generateDesign(final InstanceInfo instanceInfo, final DesignImportData designImportData,
 		final ExperimentDesignType experimentDesignType, final Map<String, Integer> additionalParams) throws DesignValidationException {
 
-		this.processEnvironmentData(environmentData);
+		this.processEnvironmentData(instanceInfo);
 
 		this.checkTheDeletedSettingDetails(this.userSelection, designImportData);
 
@@ -606,7 +606,7 @@ public class DesignImportController extends SettingsController {
 		final Set<StandardVariable> expDesignVariables;
 		final Set<MeasurementVariable> experimentalDesignMeasurementVariables;
 
-		measurementRows = this.designImportService.generateDesign(workbook, designImportData, environmentData, false, additionalParams);
+		measurementRows = this.designImportService.generateDesign(workbook, designImportData, instanceInfo, false, additionalParams);
 
 		workbook.setObservations(measurementRows);
 
@@ -635,7 +635,7 @@ public class DesignImportController extends SettingsController {
 
 		this.populateTrialLevelVariableListIfNecessary(workbook);
 
-		this.createTrialObservations(environmentData, workbook, designImportData);
+		this.createTrialObservations(instanceInfo, workbook, designImportData);
 
 	}
 
@@ -881,10 +881,10 @@ public class DesignImportController extends SettingsController {
 
 	}
 
-	protected void populateStudyLevelVariableListIfNecessary(final Workbook workbook, final EnvironmentData environmentData,
+	protected void populateStudyLevelVariableListIfNecessary(final Workbook workbook, final InstanceInfo instanceInfo,
 		final DesignImportData designImportData) {
 
-		final Map<String, String> managementDetailValues = environmentData.getEnvironments().get(0).getManagementDetailValues();
+		final Map<String, String> managementDetailValues = instanceInfo.getInstances().get(0).getManagementDetailValues();
 
 		final List<SettingDetail> newDetails = new ArrayList<>();
 
@@ -903,7 +903,7 @@ public class DesignImportController extends SettingsController {
 			newDetails.add(newDetail);
 		}
 
-		this.resolveIDNamePairingAndValuesForNursery(environmentData, designImportData, newDetails);
+		this.resolveIDNamePairingAndValuesForNursery(instanceInfo, designImportData, newDetails);
 
 		this.userSelection.getStudyLevelConditions().clear();
 		this.userSelection.getStudyLevelConditions().addAll(newDetails);
@@ -935,7 +935,7 @@ public class DesignImportController extends SettingsController {
 
 	}
 
-	protected void createTrialObservations(final EnvironmentData environmentData, final Workbook workbook,
+	protected void createTrialObservations(final InstanceInfo instanceInfo, final Workbook workbook,
 		final DesignImportData designImportData) {
 
 		// get the Experiment Design MeasurementVariable
@@ -951,10 +951,10 @@ public class DesignImportController extends SettingsController {
 			}
 		}
 
-		this.resolveIDNamePairingAndValuesForTrial(environmentData, designImportData, trialVariables);
+		this.resolveIDNamePairingAndValuesForTrial(instanceInfo, designImportData, trialVariables);
 
 		final List<MeasurementRow> trialEnvironmentValues = WorkbookUtil
-			.createMeasurementRowsFromEnvironments(environmentData.getEnvironments(), new ArrayList<>(trialVariables),
+			.createMeasurementRowsFromEnvironments(instanceInfo.getInstances(), new ArrayList<>(trialVariables),
 				this.userSelection.getExpDesignParams());
 
 		workbook.setTrialObservations(trialEnvironmentValues);
@@ -996,9 +996,9 @@ public class DesignImportController extends SettingsController {
 
 	}
 
-	protected void processEnvironmentData(final EnvironmentData data) {
-		for (int i = 0; i < data.getEnvironments().size(); i++) {
-			final Map<String, String> values = data.getEnvironments().get(i).getManagementDetailValues();
+	protected void processEnvironmentData(final InstanceInfo data) {
+		for (int i = 0; i < data.getInstances().size(); i++) {
+			final Map<String, String> values = data.getInstances().get(i).getManagementDetailValues();
 			if (!values.containsKey(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()))) {
 				values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
 			} else if (values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())) == null
@@ -1015,11 +1015,11 @@ public class DesignImportController extends SettingsController {
 	 * and added to the trial variables in order for the system to properly save
 	 * the Trial.
 	 *
-	 * @param environmentData
+	 * @param instanceInfo
 	 * @param designImportData
 	 * @param trialVariables
 	 */
-	protected void resolveIDNamePairingAndValuesForTrial(final EnvironmentData environmentData,
+	protected void resolveIDNamePairingAndValuesForTrial(final InstanceInfo instanceInfo,
 			final DesignImportData designImportData, final Set<MeasurementVariable> trialVariables) {
 
 		/**
@@ -1036,10 +1036,10 @@ public class DesignImportController extends SettingsController {
 		final Map<String, String> idNameMap = AppConstants.ID_NAME_COMBINATION.getMapOfValues();
 		final Map<String, String> nameIdMap = this.switchKey(idNameMap);
 
-		for (final Environment environment : environmentData.getEnvironments()) {
+		for (final Instance instance : instanceInfo.getInstances()) {
 
-			final Map<String, String> copyOfManagementDetailValues = new HashMap<>(environment.getManagementDetailValues());
-			for (final Entry<String, String> managementDetail : environment.getManagementDetailValues().entrySet()) {
+			final Map<String, String> copyOfManagementDetailValues = new HashMap<>(instance.getManagementDetailValues());
+			for (final Entry<String, String> managementDetail : instance.getManagementDetailValues().entrySet()) {
 
 				final Integer resolvingTermIdKey = Integer.valueOf(managementDetail.getKey());
 				final String resolvingTermIdValue = managementDetail.getValue();
@@ -1134,8 +1134,8 @@ public class DesignImportController extends SettingsController {
 
 			}
 
-			environment.getManagementDetailValues().clear();
-			environment.getManagementDetailValues().putAll(copyOfManagementDetailValues);
+			instance.getManagementDetailValues().clear();
+			instance.getManagementDetailValues().putAll(copyOfManagementDetailValues);
 
 		}
 
@@ -1202,20 +1202,20 @@ public class DesignImportController extends SettingsController {
 	 * and added to setting details list in order for the system to properly
 	 * save the study.
 	 *
-	 * @param environmentData
+	 * @param instanceInfo
 	 * @param designImportData
 	 * @param newDetails
 	 */
-	protected void resolveIDNamePairingAndValuesForNursery(final EnvironmentData environmentData,
+	protected void resolveIDNamePairingAndValuesForNursery(final InstanceInfo instanceInfo,
 			final DesignImportData designImportData, final List<SettingDetail> newDetails) {
 
 		final Map<String, String> idNameMap = AppConstants.ID_NAME_COMBINATION.getMapOfValues();
 		final Map<String, String> nameIdMap = this.switchKey(idNameMap);
 
-		final Environment environment = environmentData.getEnvironments().get(0);
+		final Instance instance = instanceInfo.getInstances().get(0);
 
-		final Map<String, String> copyOfManagementDetailValues = new HashMap<>(environment.getManagementDetailValues());
-		for (final Entry<String, String> managementDetail : environment.getManagementDetailValues().entrySet()) {
+		final Map<String, String> copyOfManagementDetailValues = new HashMap<>(instance.getManagementDetailValues());
+		for (final Entry<String, String> managementDetail : instance.getManagementDetailValues().entrySet()) {
 
 			final Integer resolvingTermIdKey = Integer.valueOf(managementDetail.getKey());
 			final String resolvingTermIdValue = managementDetail.getValue();
@@ -1281,8 +1281,8 @@ public class DesignImportController extends SettingsController {
 
 		}
 
-		environment.getManagementDetailValues().clear();
-		environment.getManagementDetailValues().putAll(copyOfManagementDetailValues);
+		instance.getManagementDetailValues().clear();
+		instance.getManagementDetailValues().putAll(copyOfManagementDetailValues);
 
 	}
 

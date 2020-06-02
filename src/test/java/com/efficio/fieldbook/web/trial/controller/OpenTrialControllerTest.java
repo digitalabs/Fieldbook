@@ -1208,7 +1208,7 @@ public class OpenTrialControllerTest {
 
 	private TrialData setUpTrialData() {
 		final TrialData data = Mockito.mock(TrialData.class);
-		Mockito.when(data.getEnvironments()).thenReturn(DesignImportTestDataInitializer.createEnvironmentData(1));
+		Mockito.when(data.getInstanceInfo()).thenReturn(DesignImportTestDataInitializer.createEnvironmentData(1));
 		final BasicDetails basicDetails = Mockito.mock(BasicDetails.class);
 		Mockito.when(basicDetails.getBasicDetails()).thenReturn(new HashMap<String, String>());
 		Mockito.when(data.getBasicDetails()).thenReturn(basicDetails);

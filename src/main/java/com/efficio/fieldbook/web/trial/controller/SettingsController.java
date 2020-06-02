@@ -23,7 +23,7 @@ import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
-import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.trial.bean.Instance;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -693,13 +693,13 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
-	protected List<List<ValueReference>> convertToValueReference(final List<Environment> environments) {
-		final List<List<ValueReference>> returnVal = new ArrayList<>(environments.size());
+	protected List<List<ValueReference>> convertToValueReference(final List<Instance> instances) {
+		final List<List<ValueReference>> returnVal = new ArrayList<>(instances.size());
 
-		for (final Environment environment : environments) {
+		for (final Instance instance : instances) {
 			final List<ValueReference> valueRefList = new ArrayList<>();
 
-			for (final Map.Entry<String, String> entry : environment.getManagementDetailValues().entrySet()) {
+			for (final Map.Entry<String, String> entry : instance.getManagementDetailValues().entrySet()) {
 				final ValueReference valueRef = new ValueReference(entry.getKey(), entry.getValue());
 				valueRefList.add(valueRef);
 			}

@@ -43,8 +43,8 @@ import org.springframework.ui.Model;
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.Instance;
+import com.efficio.fieldbook.web.trial.bean.InstanceInfo;
 import com.efficio.fieldbook.web.trial.bean.TabInfo;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import org.generationcp.commons.constant.AppConstants;
@@ -230,14 +230,14 @@ public class CreateTrialControllerTest {
 				.getStandardVariable(ArgumentMatchers.anyInt(), ArgumentMatchers.eq(CreateTrialControllerTest.PROGRAM_UUID));
 
 		final TabInfo tabInfo = this.controller.prepareEnvironmentsTabInfo(true);
-		final EnvironmentData environmentData = (EnvironmentData) tabInfo.getData();
+		final InstanceInfo instanceInfo = (InstanceInfo) tabInfo.getData();
 		final int environmentCount = Integer.parseInt(AppConstants.DEFAULT_NO_OF_ENVIRONMENT_COUNT.getString());
-		Assert.assertEquals(environmentCount, environmentData.getNoOfEnvironments());
-		Assert.assertEquals(environmentCount, environmentData.getEnvironments().size());
-		for (final Environment environment : environmentData.getEnvironments()) {
-			Assert.assertNotNull(environment.getManagementDetailValues());
+		Assert.assertEquals(environmentCount, instanceInfo.getNumberOfInstances());
+		Assert.assertEquals(environmentCount, instanceInfo.getInstances().size());
+		for (final Instance instance : instanceInfo.getInstances()) {
+			Assert.assertNotNull(instance.getManagementDetailValues());
 			Assert.assertEquals(String.valueOf(this.defaultLocationId),
-					environment.getManagementDetailValues().get(String.valueOf(TermId.LOCATION_ID.getId())));
+					instance.getManagementDetailValues().get(String.valueOf(TermId.LOCATION_ID.getId())));
 		}
 		Assert.assertNotNull(tabInfo.getSettingMap());
 		Assert.assertNotNull(tabInfo.getSettingMap().get("trialConditionDetails"));
@@ -255,12 +255,12 @@ public class CreateTrialControllerTest {
 			.getLocationsByName(Location.UNSPECIFIED_LOCATION, Operation.EQUAL);
 
 		final TabInfo tabInfo = this.controller.prepareEnvironmentsTabInfo(true);
-		final EnvironmentData environmentData = (EnvironmentData) tabInfo.getData();
+		final InstanceInfo instanceInfo = (InstanceInfo) tabInfo.getData();
 		final int environmentCount = Integer.parseInt(AppConstants.DEFAULT_NO_OF_ENVIRONMENT_COUNT.getString());
-		Assert.assertEquals(environmentCount, environmentData.getNoOfEnvironments());
-		Assert.assertEquals(environmentCount, environmentData.getEnvironments().size());
-		for (final Environment environment : environmentData.getEnvironments()) {
-			Assert.assertTrue(environment.getManagementDetailValues().isEmpty());
+		Assert.assertEquals(environmentCount, instanceInfo.getNumberOfInstances());
+		Assert.assertEquals(environmentCount, instanceInfo.getInstances().size());
+		for (final Instance instance : instanceInfo.getInstances()) {
+			Assert.assertTrue(instance.getManagementDetailValues().isEmpty());
 		}
 		Assert.assertNotNull(tabInfo.getSettingMap());
 		Assert.assertNotNull(tabInfo.getSettingMap().get("trialConditionDetails"));
@@ -277,13 +277,13 @@ public class CreateTrialControllerTest {
 		Assert.assertEquals(0, workbook.getTrialObservations().size());
 
 		final TabInfo tabInfo = this.controller.prepareEnvironmentsTabInfo(workbook, true);
-		final EnvironmentData environmentData = (EnvironmentData) tabInfo.getData();
-		Assert.assertEquals(1, environmentData.getNoOfEnvironments());
-		Assert.assertEquals(1, environmentData.getEnvironments().size());
-		final Environment environment = environmentData.getEnvironments().get(0);
-		Assert.assertNotNull(environment.getManagementDetailValues());
+		final InstanceInfo instanceInfo = (InstanceInfo) tabInfo.getData();
+		Assert.assertEquals(1, instanceInfo.getNumberOfInstances());
+		Assert.assertEquals(1, instanceInfo.getInstances().size());
+		final Instance instance = instanceInfo.getInstances().get(0);
+		Assert.assertNotNull(instance.getManagementDetailValues());
 		Assert.assertEquals(String.valueOf(this.defaultLocationId),
-				environment.getManagementDetailValues().get(String.valueOf(TermId.LOCATION_ID.getId())));
+				instance.getManagementDetailValues().get(String.valueOf(TermId.LOCATION_ID.getId())));
 	}
 
 	@Test

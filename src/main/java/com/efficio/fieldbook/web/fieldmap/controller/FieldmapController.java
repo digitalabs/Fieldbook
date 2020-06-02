@@ -171,7 +171,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 		final List<FieldMapInfo> fieldMapInfoList = this.userFieldmap.getFieldMapInfo();
 		String size = "0";
 		String datasetId = null;
-		String geolocationId = null;
+		String environmentId = null;
 		final String fieldMapInfoJson;
 		for (final FieldMapInfo fieldMapInfo : fieldMapInfoList) {
 			// for viewing of fieldmaps
@@ -182,7 +182,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 					size = String.valueOf(trials.size());
 					if (trials.size() == 1) {
 						datasetId = datasetList.get(0).getDatasetId().toString();
-						geolocationId = trials.get(0).getGeolocationId().toString();
+						environmentId = trials.get(0).getEnvironmentId().toString();
 					}
 				}
 			}
@@ -195,8 +195,8 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 		if (datasetId != null) {
 			result.put("datasetId", datasetId);
 		}
-		if (geolocationId != null) {
-			result.put("geolocationId", geolocationId);
+		if (environmentId != null) {
+			result.put("environmentId", environmentId);
 		}
 		return result;
 	}
@@ -343,11 +343,11 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	final String ids, final HttpServletRequest req, final HttpSession session) {
 		SessionUtility.clearSessionData(session, new String[] {SessionUtility.FIELDMAP_SESSION_NAME,
 				SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
-		final Map<String, String> result = new HashMap<String, String>();
+		final Map<String, String> result = new HashMap<>();
 
 		String nav = "1";
 		try {
-			final List<Integer> nurseryIds = new ArrayList<Integer>();
+			final List<Integer> nurseryIds = new ArrayList<>();
 			final String[] idList = ids.split(",");
 			for (final String id : idList) {
 				nurseryIds.add(Integer.parseInt(id));
@@ -367,7 +367,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 						final FieldMapDatasetInfo dataset = datasetList.get(0);
 						nav = "0";
 						this.userFieldmap.setSelectedDatasetId(dataset.getDatasetId());
-						this.userFieldmap.setSelectedGeolocationId(dataset.getTrialInstancesWithFieldMap().get(0).getGeolocationId());
+						this.userFieldmap.setSelectedGeolocationId(dataset.getTrialInstancesWithFieldMap().get(0).getEnvironmentId());
 						result.put("datasetId", this.userFieldmap.getSelectedDatasetId().toString());
 						result.put("geolocationId", this.userFieldmap.getSelectedGeolocationId().toString());
 					}
@@ -472,7 +472,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
 	 */
 	@Override
@@ -498,7 +498,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/getFields/{locationId}", method = RequestMethod.GET)
 	public Map<String, String> getFieldLocations(@PathVariable final int locationId) {
-		final Map<String, String> result = new HashMap<String, String>();
+		final Map<String, String> result = new HashMap<>();
 
 		try {
 			final List<Location> allFields = this.fieldbookMiddlewareService.getAllFieldLocations(locationId);
@@ -522,7 +522,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/getBlocks/{fieldId}", method = RequestMethod.GET)
 	public Map<String, String> getBlockFields(@PathVariable final int fieldId) {
-		final Map<String, String> result = new HashMap<String, String>();
+		final Map<String, String> result = new HashMap<>();
 
 		try {
 
@@ -547,7 +547,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/getBlockInformation/{blockId}", method = RequestMethod.GET)
 	public Map<String, String> getBlockInfo(@PathVariable final int blockId) {
-		final Map<String, String> result = new HashMap<String, String>();
+		final Map<String, String> result = new HashMap<>();
 
 		try {
 
@@ -661,7 +661,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	@ResponseBody
 	@RequestMapping(value = "/getFields", method = RequestMethod.GET)
 	public Map<String, String> getFieldLocations() {
-		final Map<String, String> result = new HashMap<String, String>();
+		final Map<String, String> result = new HashMap<>();
 
 		try {
 			final List<Location> allLocations = this.fieldbookMiddlewareService.getAllFields();

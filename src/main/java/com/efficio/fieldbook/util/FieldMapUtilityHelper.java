@@ -25,8 +25,8 @@ public class FieldMapUtilityHelper {
 	/** The Constant NEXT_LINE. */
 	private static final String NEXT_LINE = "<br/>";
 
-	public static Plot[][] initializePlots(int col, int range) {
-		Plot[][] plots = new Plot[col][range];
+	public static Plot[][] initializePlots(final int col, final int range) {
+		final Plot[][] plots = new Plot[col][range];
 		// this creates the initial data
 		for (int j = range - 1; j >= 0; j--) {
 			for (int i = 0; i < col; i++) {
@@ -51,12 +51,12 @@ public class FieldMapUtilityHelper {
 	 * @param deletedPlot the deleted plot
 	 * @return the int
 	 */
-	public static int populatePlotData(int counter, List<FieldMapLabel> labels, int col, int range, Plot[][] plots, boolean isUpward,
-			int startCol, int startRange, boolean isStartOk, Map<String, String> deletedPlot) {
+	public static int populatePlotData(int counter, final List<FieldMapLabel> labels, final int col, final int range, final Plot[][] plots, final boolean isUpward,
+			final int startCol, final int startRange, final boolean isStartOk, final Map<String, String> deletedPlot) {
 
 		String stringToDisplay = "";
-		int i = col;
-		int j = range;
+		final int i = col;
+		final int j = range;
 		boolean hasAvailableEntries = true;
 
 		if (counter < labels.size()) {
@@ -78,7 +78,7 @@ public class FieldMapUtilityHelper {
 					return counter;
 				}
 				if (counter < labels.size()) {
-					FieldMapLabel oldLabel = labels.get(counter);
+					final FieldMapLabel oldLabel = labels.get(counter);
 					if (oldLabel.getColumn() != null && oldLabel.getRange() != null) {
 						return counter;
 					}
@@ -107,13 +107,13 @@ public class FieldMapUtilityHelper {
 		return counter;
 	}
 
-	public static void markedDeletedPlot(Plot[][] plots, Map<String, String> deletedPlot) {
-		Plot[][] currentPlot = plots;
+	public static void markedDeletedPlot(final Plot[][] plots, final Map<String, String> deletedPlot) {
+		final Plot[][] currentPlot = plots;
 
 		if (currentPlot != null) {
 			for (int i = 0; i < currentPlot.length; i++) {
 				for (int j = 0; j < currentPlot[i].length; j++) {
-					Plot plot = currentPlot[i][j];
+					final Plot plot = currentPlot[i][j];
 					if (FieldMapUtilityHelper.isDeleted(i, j, deletedPlot)) {
 						plot.setPlotDeleted(true);
 					}
@@ -130,7 +130,7 @@ public class FieldMapUtilityHelper {
 	 * @param deletedPlot the deleted plot
 	 * @return true, if is deleted
 	 */
-	public static boolean isDeleted(int col, int range, Map<String, String> deletedPlot) {
+	private static boolean isDeleted(final int col, final int range, final Map<String, String> deletedPlot) {
 		if (deletedPlot.get(col + "_" + range) != null) {
 			return true;
 		}
@@ -143,8 +143,8 @@ public class FieldMapUtilityHelper {
 	 * @param label the label
 	 * @return the display string
 	 */
-	public static String getDisplayString(FieldMapLabel label) {
-		StringBuilder textLabel = new StringBuilder();
+	public static String getDisplayString(final FieldMapLabel label) {
+		final StringBuilder textLabel = new StringBuilder();
 		textLabel.append(label.getStudyName());
 		textLabel.append("-" + label.getPlotNo());
 		textLabel.append(FieldMapUtilityHelper.NEXT_LINE + "Entry " + label.getEntryNumber());
@@ -164,10 +164,11 @@ public class FieldMapUtilityHelper {
 	 * @param order the order
 	 * @return true, if successful
 	 */
-	public static boolean renderPlotCell(UserFieldmap info, Plot[][] plots, int i, int j, boolean isStarted,
-			List<String> possiblyDeletedCoordinates, int[] order) {
+	public static boolean renderPlotCell(
+		final UserFieldmap info, final Plot[][] plots, final int i, final int j, boolean isStarted,
+			final List<String> possiblyDeletedCoordinates, final int[] order) {
 
-		Plot plot = plots[i][j];
+		final Plot plot = plots[i][j];
 		if (plot.getDisplayString() != null && !plot.getDisplayString().isEmpty()) {
 			if (!isStarted) {
 				info.setStartingColumn(i + 1);
@@ -177,16 +178,15 @@ public class FieldMapUtilityHelper {
 
 			FieldMapTrialInstanceInfo trial = null;
 
-			if (plot.getDatasetId() != null && plot.getGeolocationId() != null) {
-				trial = info.getSelectedTrialInstanceByDatasetIdAndGeolocationId(plot.getDatasetId(), plot.getGeolocationId());
+			if (plot.getDatasetId() != null && plot.getEnvironmentId() != null) {
+				trial = info.getSelectedTrialInstanceByDatasetIdAndEnvironmentId(plot.getDatasetId(), plot.getEnvironmentId());
 			}
 			if (trial != null && trial.getOrder() == null) {
 				trial.setOrder(order[0]);
 				order[0] += 1;
 			}
 		} else {
-			if (isStarted) {
-			} else {
+			if (!isStarted) {
 				plot.setNotStarted(true);
 			}
 		}
@@ -194,17 +194,18 @@ public class FieldMapUtilityHelper {
 		return isStarted;
 	}
 
+
 	/**
 	 * Mark deleted coordinates.
 	 *
 	 * @param plots the plots
 	 * @param deletedCoordinates the deleted coordinates
 	 */
-	public static void markDeletedCoordinates(Plot[][] plots, List<String> deletedCoordinates) {
-		for (String deletedIndex : deletedCoordinates) {
-			String[] columnRange = deletedIndex.split("_");
-			int column = Integer.parseInt(columnRange[0]);
-			int range = Integer.parseInt(columnRange[1]);
+	public static void markDeletedCoordinates(final Plot[][] plots, final List<String> deletedCoordinates) {
+		for (final String deletedIndex : deletedCoordinates) {
+			final String[] columnRange = deletedIndex.split("_");
+			final int column = Integer.parseInt(columnRange[0]);
+			final int range = Integer.parseInt(columnRange[1]);
 			plots[column][range].setPlotDeleted(true);
 		}
 	}

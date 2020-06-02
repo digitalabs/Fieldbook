@@ -13,8 +13,8 @@
 		var successHandler = serviceUtilities.restSuccessHandler,
 			failureHandler = serviceUtilities.restFailureHandler;
 
-		studyInstanceService.createStudyInstance = function () {
-			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/instances/generation');
+		studyInstanceService.createStudyInstances = function (numberOfInstancesToGenerate) {
+			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/instances/generation/?numberOfInstancesToGenerate=' + numberOfInstancesToGenerate);
 			return request.then(successHandler, failureHandler);
 		}
 
@@ -23,17 +23,27 @@
 			return request.then(successHandler, failureHandler);
 		};
 
-		studyInstanceService.getStudyInstance = function (locationId) {
-			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/instances/' + locationId);
+		studyInstanceService.getStudyInstance = function (instanceId) {
+			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/instances/' + instanceId);
 			return request.then(successHandler, failureHandler);
 		};
 
-		studyInstanceService.deleteStudyInstance = function (locationId) {
-			var request = $http.delete(BASE_STUDY_URL + studyContext.studyId + '/instances/' + locationId);
+		studyInstanceService.deleteStudyInstances = function (instanceIds) {
+			var request = $http.delete(BASE_STUDY_URL + studyContext.studyId + '/instances/?instanceIds=' + instanceIds.join(','));
 			return request.then(successHandler, failureHandler);
 		};
 
-		studyInstanceService.environments = TrialManagerDataService.currentData.environments;
+		studyInstanceService.addInstanceData = function (instanceData) {
+			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/instances/' + instanceData.instanceId + '/instance-data', instanceData);
+			return request.then(successHandler, failureHandler);
+		};
+
+		studyInstanceService.updateInstanceData = function (instanceData) {
+			var request = $http.patch(BASE_STUDY_URL + studyContext.studyId + '/instances/' + instanceData.instanceId + '/instance-data/' + instanceData.instanceDataId, instanceData);
+			return request.then(successHandler, failureHandler);
+		};
+
+		studyInstanceService.instanceInfo = TrialManagerDataService.currentData.instanceInfo;
 
 		studyInstanceService.changeEnvironments = function () {
 			this.broadcastEnvironments();

@@ -13,15 +13,11 @@ import org.generationcp.commons.util.InstallationDirectoryUtil;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.FieldbookService;
-import org.generationcp.middleware.service.api.study.StudyGermplasmListService;
+import org.generationcp.middleware.service.api.study.StudyGermplasmService;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -55,7 +51,7 @@ public class ExportStudyGermplasmListController extends AbstractBaseFieldbookCon
 	private ExportStudyGermplasmListService exportStudyGermplasmListService;
 
 	@Resource
-	private StudyGermplasmListService studyGermplasmListService;
+	private StudyGermplasmService studyGermplasmService;
 
 	private final InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
@@ -107,7 +103,7 @@ public class ExportStudyGermplasmListController extends AbstractBaseFieldbookCon
 
 		final int studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
 		final boolean hasStocks =
-			this.studyGermplasmListService.countStudyGermplasmList(studyId) > 0l;
+			this.studyGermplasmService.countStudyGermplasm(studyId) > 0l;
 
 		if (hasStocks) {
 

@@ -5,11 +5,7 @@ import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportExceptio
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.parsing.ExcelCellStyleBuilder;
 import org.generationcp.commons.parsing.ExcelWorkbookRow;
@@ -24,18 +20,15 @@ import org.generationcp.middleware.domain.dms.Experiment;
 import org.generationcp.middleware.domain.dms.Variable;
 import org.generationcp.middleware.domain.dms.VariableList;
 import org.generationcp.middleware.domain.dms.VariableTypeList;
-import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
-import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.pojos.workbench.WorkbenchUser;
-import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
-import org.generationcp.middleware.service.api.study.StudyGermplasmListService;
+import org.generationcp.middleware.service.api.study.StudyGermplasmService;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.generationcp.middleware.util.PoiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +41,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * The class providing export crossing template as an excel file function
@@ -78,7 +70,7 @@ public class CrossingTemplateExcelExporter {
 	private GermplasmDataManager germplasmDataManager;
 
 	@Resource
-	private StudyGermplasmListService studyGermplasmListService;
+	private StudyGermplasmService studyGermplasmService;
 
 	private final InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 	private String templateFile;
@@ -310,7 +302,7 @@ public class CrossingTemplateExcelExporter {
 	}
 
 	void validateIfHasStudyGermplasmList(final Integer studyId) throws CrossingTemplateExportException {
-		final long count = this.studyGermplasmListService.countStudyGermplasmList(studyId);
+		final long count = this.studyGermplasmService.countStudyGermplasm(studyId);
 		if (count == 0) {
 			throw new CrossingTemplateExportException("study.export.crosses.no.germplasm.list.available");
 		}

@@ -29,16 +29,12 @@ import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
-import org.generationcp.middleware.service.api.study.StudyGermplasmListService;
+import org.generationcp.middleware.service.api.study.StudyGermplasmService;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Configurable
@@ -69,7 +65,7 @@ public class ExportStudyGermplasmListServiceImpl implements ExportStudyGermplasm
 	private InventoryDataManager inventoryDataManager;
 
 	@Resource
-	private StudyGermplasmListService studyGermplasmListService;
+	private StudyGermplasmService studyGermplasmService;
 
 	@Resource
 	private StockModelTransformer stockModelTransformer;
@@ -84,7 +80,7 @@ public class ExportStudyGermplasmListServiceImpl implements ExportStudyGermplasm
 
 		try {
 
-			final List<StudyGermplasmDto> studyGermplasmDtoList = this.studyGermplasmListService.getGermplasmList(studyId);
+			final List<StudyGermplasmDto> studyGermplasmDtoList = this.studyGermplasmService.getGermplasm(studyId);
 			final List<GermplasmExportSource> germplasmlistData =
 				this.stockModelTransformer.tranformToGermplasmExportSource(studyGermplasmDtoList);
 
@@ -256,7 +252,7 @@ public class ExportStudyGermplasmListServiceImpl implements ExportStudyGermplasm
 
 		// FIXME: Find a way to get the germplasm factors by not using userSelection
 		final List<SettingDetail> factorsList = this.userSelection.getPlotsLevelList();
-		final List<StudyGermplasmDto> studyGermplasmDtoList = this.studyGermplasmListService.getGermplasmList(studyId);
+		final List<StudyGermplasmDto> studyGermplasmDtoList = this.studyGermplasmService.getGermplasm(studyId);
 		final Map<Integer, String> checkTypesNameMap =
 			this.ontologyService.getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID())
 				.getEnumerations().stream().collect(Collectors.toMap(Enumeration::getId, Enumeration::getName));

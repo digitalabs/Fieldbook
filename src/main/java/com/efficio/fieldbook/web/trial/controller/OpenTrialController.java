@@ -42,30 +42,19 @@ import org.generationcp.middleware.service.api.SampleListService;
 import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.generationcp.middleware.service.api.dataset.DatasetTypeService;
 import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
-import org.generationcp.middleware.service.api.study.StudyGermplasmListService;
+import org.generationcp.middleware.service.api.study.StudyGermplasmService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping(OpenTrialController.URL)
@@ -104,7 +93,7 @@ public class OpenTrialController extends BaseTrialController {
 	private InventoryDataManager inventoryDataManager;
 
 	@Resource
-	private StudyGermplasmListService studyGermplasmListService;
+	private StudyGermplasmService studyGermplasmService;
 
 	@Resource
 	private StockModelTransformer stockModelTransformer;
@@ -314,14 +303,14 @@ public class OpenTrialController extends BaseTrialController {
 
 	void setUserSelectionImportedGermplasmMainInfo(final UserSelection userSelection, final Integer studyId, final Model model) {
 
-		final List<StudyGermplasmDto> studyGermplasmDtoList = this.studyGermplasmListService.getGermplasmList(studyId);
+		final List<StudyGermplasmDto> studyGermplasmDtoList = this.studyGermplasmService.getGermplasm(studyId);
 		if (!studyGermplasmDtoList.isEmpty()) {
 
 			final long germplasmListChecksSize;
 			if (ExperimentDesignType.P_REP.getId().equals(this.userSelection.getExpDesignParams().getDesignType())) {
-				germplasmListChecksSize = this.studyGermplasmListService.countStudyGermplasmByEntryTypeIds(studyId, this.getAllCheckEntryTypeIds());
+				germplasmListChecksSize = this.studyGermplasmService.countStudyGermplasmByEntryTypeIds(studyId, this.getAllCheckEntryTypeIds());
 			} else {
-				germplasmListChecksSize = this.studyGermplasmListService.countStudyGermplasmByEntryTypeIds(studyId,
+				germplasmListChecksSize = this.studyGermplasmService.countStudyGermplasmByEntryTypeIds(studyId,
 					Arrays.asList(String.valueOf(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId())));
 			}
 

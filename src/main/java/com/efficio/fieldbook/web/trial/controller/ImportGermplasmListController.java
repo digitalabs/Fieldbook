@@ -19,11 +19,11 @@ import com.efficio.fieldbook.web.exception.FieldbookRequestValidationException;
 import com.efficio.fieldbook.web.stock.StockModelTransformer;
 import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.form.UpdateGermplasmCheckForm;
-import org.fest.util.Collections;
-import org.generationcp.commons.constant.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.fest.util.Collections;
+import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
@@ -45,7 +45,7 @@ import org.generationcp.middleware.pojos.dms.StockModel;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
-import org.generationcp.middleware.service.api.study.StudyGermplasmListService;
+import org.generationcp.middleware.service.api.study.StudyGermplasmService;
 import org.generationcp.middleware.util.FieldbookListUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,21 +55,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * This controller handles the 2nd step in the study manager process.
@@ -151,7 +141,7 @@ public class ImportGermplasmListController extends SettingsController {
 	private InventoryDataManager inventoryDataManager;
 
 	@Resource
-	private StudyGermplasmListService studyGermplasmListService;
+	private StudyGermplasmService studyGermplasmService;
 
 	@Resource
 	private StockModelTransformer stockModelTransformer;
@@ -285,11 +275,11 @@ public class ImportGermplasmListController extends SettingsController {
 			final List<ImportedGermplasm> importedGermplasm = importedGermplasmList.getImportedGermplasms();
 			final List<StockModel> stockModelList = this.stockModelTransformer.transformToStockModels(studyId, importedGermplasm);
 			// Delete the existing stocks so that we can replace it with the current list.
-			this.studyGermplasmListService.deleteStudyGermplasmList(studyId);
-			this.studyGermplasmListService.saveStudyGermplasmList(stockModelList);
+			this.studyGermplasmService.deleteStudyGermplasm(studyId);
+			this.studyGermplasmService.saveStudyGermplasm(studyId, stockModelList);
 		} else {
 			// we delete the record in the db
-			this.studyGermplasmListService.deleteStudyGermplasmList(studyId);
+			this.studyGermplasmService.deleteStudyGermplasm(studyId);
 		}
 
 	}
@@ -345,7 +335,7 @@ public class ImportGermplasmListController extends SettingsController {
 			final Integer studyIdFromWorkbook = this.userSelection.getWorkbook().getStudyDetails().getId();
 			final int studyId = studyIdFromWorkbook == null ? ImportGermplasmListController.NO_ID : studyIdFromWorkbook;
 
-			final List<StudyGermplasmDto> studyGermplasmDtoList = this.studyGermplasmListService.getGermplasmList(studyIdFromWorkbook);
+			final List<StudyGermplasmDto> studyGermplasmDtoList = this.studyGermplasmService.getGermplasm(studyIdFromWorkbook);
 
 			List<ImportedGermplasm> importedGermplasmList = new ArrayList<>();
 			if (!studyGermplasmDtoList.isEmpty()) {

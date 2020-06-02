@@ -126,7 +126,7 @@
 										showSuccessfulMessage('', 'The design was deleted successfully');
 										window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
 									}, function (errResponse) {
-										showErrorMessage('', 'Something went wrong deleting the design.');
+										showErrorMessage('', errResponse.errors[0].message);
 									}
 								);
 							}

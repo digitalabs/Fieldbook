@@ -222,7 +222,7 @@
 			$scope.selected = {datasetId: $scope.measurementDatasetId};
 
 			$scope.next = function () {
-				$rootScope.navigateToSubObsTab($scope.selected.datasetId, false);
+				$rootScope.navigateToSubObsTab($scope.selected.datasetId, {isPendingView: false, reload: true});
 				derivedVariableModalService.openExecuteCalculatedVariableModal($scope.selected.datasetId);
 				$uibModalInstance.close();
 			};
@@ -253,7 +253,7 @@
 				};
 
 				$scope.reloadSubObservation = function () {
-					$rootScope.navigateToSubObsTab(datasetId, false);
+					$rootScope.navigateToSubObsTab(datasetId, {isPendingView: false, reload: true});
 					showSuccessfulMessage('', 'Calculated values for ' + $scope.selected.variable.name + ' were added successfully.');
 				};
 
@@ -363,7 +363,7 @@
 				derivedVariableService.calculateVariableForSubObservation(datasetId, calculateRequestData)
 					.then(function (response) {
 						if (response) {
-							$rootScope.navigateToSubObsTab(datasetId, false);
+							$rootScope.navigateToSubObsTab(datasetId, {isPendingView: false, reload: true});
 							showSuccessfulMessage('', 'Calculated values for ' + selectedVariable.name + ' were added successfully.');
 							$uibModalInstance.close();
 						}
@@ -404,7 +404,7 @@
 			};
 
 			$scope.reloadSubObservation = function () {
-				$rootScope.navigateToSubObsTab(datasetId, false);
+				$rootScope.navigateToSubObsTab(datasetId, {isPendingView: false, reload: true});
 				showSuccessfulMessage('', 'Calculated values for ' + selectedVariable.name + ' were added successfully.');
 			};
 

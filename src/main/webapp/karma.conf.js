@@ -63,6 +63,7 @@ module.exports = function (config) {
 			'WEB-INF/static/js/importObservations/variateGroupImporter.js',
 			'WEB-INF/static/js/angular/fieldbook-utils.js',
 			'WEB-INF/static/js/trialmanager/manageTrial.js',
+			'WEB-INF/static/js/auth/auth.module.js',
 			'WEB-INF/static/js/trialmanager/trial-settings-manager.js',
 			'WEB-INF/static/js/trialmanager/selectEnvironmentModal.js',
 			'WEB-INF/static/js/trialmanager/studyStateService.js',
@@ -84,6 +85,7 @@ module.exports = function (config) {
 			'WEB-INF/static/js/design-import/design-import-main.js',
 			'WEB-INF/static/js/trialmanager/importStudy.js',
 			'WEB-INF/static/js/trialmanager/createSample.js',
+			'WEB-INF/static/js/trialmanager/inventory/planting-preparation/planting-preparation-modal.js',
 
 			// unit test files
 			'WEB-INF/static/js/angular-tests/lib/angular-mocks.js',

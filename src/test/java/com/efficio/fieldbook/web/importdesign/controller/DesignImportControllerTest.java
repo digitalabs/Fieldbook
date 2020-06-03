@@ -1181,7 +1181,7 @@ public class DesignImportControllerTest {
 		for (int x = 1; x <= numberOfIntances; x++) {
 			final Instance env = new Instance();
 			env.setManagementDetailValues(this.createManagementDetailValues(x));
-			env.setLocationId(x);
+			env.setInstanceId(x);
 			instances.add(env);
 		}
 

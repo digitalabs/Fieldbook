@@ -225,7 +225,7 @@ public class UserFieldmap implements Serializable {
 			if (this.getSelectedFieldmapList() != null && !this.getSelectedFieldmapList().isEmpty()) {
 				for (final SelectedFieldmapRow row : this.getSelectedFieldmapList().getRows()) {
 					final FieldMapTrialInstanceInfo trial =
-							this.getSelectedTrialInstanceByDatasetIdAndEnvironmentId(row.getDatasetId(), row.getGeolocationId());
+							this.getSelectedTrialInstanceByDatasetIdAndEnvironmentId(row.getDatasetId(), row.getInstanceId());
 					allLabels.addAll(trial.getFieldMapLabels());
 				}
 			}
@@ -256,7 +256,7 @@ public class UserFieldmap implements Serializable {
 			if (this.getSelectedFieldmapListToBeAdded() != null && !this.getSelectedFieldmapListToBeAdded().isEmpty()) {
 				for (final SelectedFieldmapRow row : this.getSelectedFieldmapListToBeAdded().getRows()) {
 					final FieldMapTrialInstanceInfo trial =
-							this.getSelectedTrialInstanceByDatasetIdAndEnvironmentId(row.getDatasetId(), row.getGeolocationId());
+							this.getSelectedTrialInstanceByDatasetIdAndEnvironmentId(row.getDatasetId(), row.getInstanceId());
 					allLabels.addAll(trial.getFieldMapLabels());
 				}
 			}
@@ -556,7 +556,7 @@ public class UserFieldmap implements Serializable {
 						if (dataset.getDatasetId().equals(datasetId)) {
 							if (dataset.getTrialInstances() != null) {
 								for (final FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
-									if (trial.getEnvironmentId().equals(geolocationId)) {
+									if (trial.getInstanceId().equals(geolocationId)) {
 										return trial;
 									}
 								}

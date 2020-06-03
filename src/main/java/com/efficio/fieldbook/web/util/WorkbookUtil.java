@@ -145,8 +145,9 @@ public class WorkbookUtil {
 					data.setPhenotypeId(phenotypeId);
 					dataList.add(data);
 				}
-				final MeasurementRow row = new MeasurementRow(instance.getStockId(), instance.getLocationId(), dataList);
-				row.setExperimentId((int) instance.getInstanceId());
+				final MeasurementRow row = new MeasurementRow(instance.getStockId(), instance.getInstanceId(), dataList);
+				// TODO: IBP-3696
+				//row.setExperimentId((int) instance.getExperimentId());
 				observations.add(row);
 			}
 		}

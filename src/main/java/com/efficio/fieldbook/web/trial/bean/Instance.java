@@ -15,7 +15,6 @@ import java.util.Map;
 public class Instance {
 
 	private long stockId;
-	private long locationId;
 	private long instanceId;
 
 	private Map<String, String> managementDetailValues;
@@ -54,14 +53,6 @@ public class Instance {
 		this.stockId = stockId;
 	}
 
-	public long getLocationId() {
-		return this.locationId;
-	}
-
-	public void setLocationId(final long locationId) {
-		this.locationId = locationId;
-	}
-
 	public long getInstanceId() {
 		return this.instanceId;
 	}
@@ -85,4 +76,5 @@ public class Instance {
 	public void setExperimentPropertyIdMap(final Map<String, Integer> experimentPropertyIdMap) {
 		this.experimentPropertyIdMap = experimentPropertyIdMap;
 	}
+
 }

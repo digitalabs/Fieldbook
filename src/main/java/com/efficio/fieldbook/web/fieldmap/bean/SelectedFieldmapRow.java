@@ -48,8 +48,8 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 	/** The dataset id. */
 	private Integer datasetId;
 
-	/** The geolocation id. */
-	private Integer geolocationId;
+	/** The instance id. */
+	private Integer instanceId;
 
 	/**
 	 * Gets the order.
@@ -196,21 +196,21 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 	}
 
 	/**
-	 * Gets the geolocation id.
+	 * Gets the instance id.
 	 *
 	 * @return the geolocationId
 	 */
-	public Integer getGeolocationId() {
-		return this.geolocationId;
+	public Integer getInstanceId() {
+		return this.instanceId;
 	}
 
 	/**
-	 * Sets the geolocation id.
+	 * Sets the instance id.
 	 *
-	 * @param geolocationId the geolocationId to set
+	 * @param instanceId the geolocationId to set
 	 */
-	public void setGeolocationId(Integer geolocationId) {
-		this.geolocationId = geolocationId;
+	public void setInstanceId(Integer instanceId) {
+		this.instanceId = instanceId;
 	}
 
 	/**

@@ -463,8 +463,7 @@ public abstract class BaseTrialController extends SettingsController {
 		for (final MeasurementRow row : trialObservations) {
 			final Instance instance = new Instance();
 			if (!isUsePrevious) {
-				instance.setInstanceId(row.getExperimentId());
-				instance.setLocationId(row.getLocationId());
+				instance.setInstanceId(row.getLocationId());
 				instance.setStockId(row.getStockId());
 			}
 

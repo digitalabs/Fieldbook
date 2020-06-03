@@ -71,7 +71,7 @@ public class FieldMapServiceImpl implements FieldMapService {
 					plot.setColumn(column);
 					plot.setRange(range);
 					plot.setDatasetId(label.getDatasetId());
-					plot.setEnvironmentId(label.getEnvironmentId());
+					plot.setEnvironmentId(label.getInstanceId());
 					plot.setDisplayString(FieldMapUtilityHelper.getDisplayString(label));
 					plot.setNotStarted(false);
 					plot.setSavedAlready(isSavedAlready);

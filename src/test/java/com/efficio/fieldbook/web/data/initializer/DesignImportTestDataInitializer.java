@@ -270,7 +270,7 @@ public class DesignImportTestDataInitializer {
 			final Instance env = new Instance();
 			final Map<String, String> managementDetailValues = new HashMap<>();
 			managementDetailValues.put(Integer.toString(TermId.LOCATION_ID.getId()), Integer.toString(x));
-			env.setLocationId(x);
+			env.setInstanceId(x);
 			env.setManagementDetailValues(managementDetailValues);
 			instances.add(env);
 		}

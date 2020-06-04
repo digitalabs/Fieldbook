@@ -1,0 +1,51 @@
+<div class="row" ng-cloak="">
+	<div class="col-xs-12 col-md-12">
+		<label class="control-label">
+			<span class="bms-exp-design fbk-trial-summary-icons"></span>
+			<strong class="sub-content-heading">Inventory</strong>
+		</label>
+	</div>
+	<div class="col-xs-12 col-md-12">
+		<form class="form-inline">
+			<div class="form-group">
+				<label>Selected:</label>
+				<span class="control-label-bold">{{isAllPagesSelected ? getRecordsFiltered() : size(selectedItems)}}</span>
+			</div>
+			<div class="form-group  checkbox-inline">
+				<label style="margin-left: 15px">
+					<input type="checkbox" ng-checked="isAllPagesSelected" ng-click="onSelectAllPages()" id="check-select-all">
+					Select all pages</input>
+				</label>
+			</div>
+		</form>
+	</div>
+	<div class="col-xs-12 col-md-12">
+		<table datatable="" class="table table-curved table-condensed table-no-wrap"
+			   dt-instance="nested.dtInstance"
+			   dt-options="dtOptions"
+			   dt-columns="dtColumns"
+			   dt-column-defs="dtColumnDefs">
+			<thead>
+			<tr>
+				<th><input type="checkbox" title="select current page" ng-checked="isPageSelected()" ng-click="onSelectPage()"/></th>
+				<th>TRIAL_INSTANCE</th>
+				<th>TRN_ID</th>
+				<th>ENTRY_TYPE</th>
+				<th>GID</th>
+				<th>DESIGNATION</th>
+				<th>ENTRY_NO</th>
+				<th>PLOT_NO</th>
+				<th>STORAGE LOCATION ABBR</th>
+				<th>STOCK_ID</th>
+				<th>CREATED</th>
+				<th>USERNAME</th>
+				<th>TYPE</th>
+				<th>STATUS</th>
+				<th>UNITS</th>
+				<th>AMOUNT</th>
+				<th>NOTES</th>
+			</tr>
+			</thead>
+		</table>
+	</div>
+</div>

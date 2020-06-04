@@ -233,7 +233,7 @@ public class ImportGermplasmListController extends SettingsController {
 		this.fieldbookService.saveStudyImportedCrosses(this.userSelection.getImportedCrossesId(), studyId);
 
 		// for saving the list data project
-		this.saveStocks(studyId);
+		this.saveStudyGermplasm(studyId);
 
 		this.fieldbookService.saveStudyColumnOrdering(studyId,
 			form.getColumnOrders(), this.userSelection.getWorkbook());
@@ -262,10 +262,10 @@ public class ImportGermplasmListController extends SettingsController {
 	}
 
 	/**
-	 * Saves the stocks associated to the study.
+	 * Saves the study germplasm associated to the study.
 	 * @param studyId
 	 */
-	private void saveStocks(final int studyId) {
+	private void saveStudyGermplasm(final int studyId) {
 
 		final ImportedGermplasmMainInfo germplasmMainInfo = this.getUserSelection().getImportedGermplasmMainInfo();
 		final ImportedGermplasmList importedGermplasmList = germplasmMainInfo != null ? germplasmMainInfo.getImportedGermplasmList() : null;

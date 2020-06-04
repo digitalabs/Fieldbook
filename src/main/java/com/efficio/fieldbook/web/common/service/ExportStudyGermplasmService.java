@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
 
-public interface ExportStudyGermplasmListService {
+public interface ExportStudyGermplasmService {
 
 	void exportAsExcelFile(int studyId, String fileNamePath, Map<String, Boolean> visibleColumns) throws GermplasmListExporterException;
 

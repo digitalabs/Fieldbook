@@ -80,7 +80,7 @@ public class CrossingTemplateExcelExporter {
 			final Workbook excelWorkbook = this.fileService.retrieveWorkbookTemplate(this.templateFile);
 
 			// 1. validate if the study has germplasm list (stock)
-			this.validateIfHasStudyGermplasmList(studyId);
+			this.validateIfStudyHasGermplasm(studyId);
 
 			// 3. write details
 			this.writeListDetailsSection(excelWorkbook.getSheetAt(0), 1, new ExcelCellStyleBuilder((HSSFWorkbook) excelWorkbook),
@@ -301,7 +301,7 @@ public class CrossingTemplateExcelExporter {
 		return new FileExportInfo(outputFilepath, downloadFilename + AppConstants.EXPORT_XLS_SUFFIX.getString());
 	}
 
-	void validateIfHasStudyGermplasmList(final Integer studyId) throws CrossingTemplateExportException {
+	void validateIfStudyHasGermplasm(final Integer studyId) throws CrossingTemplateExportException {
 		final long count = this.studyGermplasmService.countStudyGermplasm(studyId);
 		if (count == 0) {
 			throw new CrossingTemplateExportException("study.export.crosses.no.germplasm.list.available");

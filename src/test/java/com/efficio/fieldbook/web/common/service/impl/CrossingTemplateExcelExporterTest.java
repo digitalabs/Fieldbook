@@ -348,7 +348,7 @@ public class CrossingTemplateExcelExporterTest {
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(CrossingTemplateExcelExporterTest.STUDY_ID,
 				GermplasmListType.STUDY)).thenReturn(Collections.EMPTY_LIST);
 
-		this.exporter.validateIfHasStudyGermplasmList(CrossingTemplateExcelExporterTest.STUDY_ID);
+		this.exporter.validateIfStudyHasGermplasm(CrossingTemplateExcelExporterTest.STUDY_ID);
 	}
 
 	private List<GermplasmList> initializeCrossesList() {

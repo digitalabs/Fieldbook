@@ -3,8 +3,8 @@ package com.efficio.fieldbook.web.common.service.impl;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.controller.ExportStudyGermplasmListController;
-import com.efficio.fieldbook.web.common.service.ExportStudyGermplasmListService;
+import com.efficio.fieldbook.web.common.controller.ExportStudyGermplasmController;
+import com.efficio.fieldbook.web.common.service.ExportStudyGermplasmService;
 import com.efficio.fieldbook.web.study.germplasm.StudyGermplasmTransformer;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
@@ -38,7 +38,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Configurable
-public class ExportStudyGermplasmListServiceImpl implements ExportStudyGermplasmListService {
+public class ExportStudyGermplasmServiceImpl implements ExportStudyGermplasmService {
 
 	@Resource
 	private OntologyService ontologyService;
@@ -70,7 +70,7 @@ public class ExportStudyGermplasmListServiceImpl implements ExportStudyGermplasm
 	@Resource
 	private StudyGermplasmTransformer studyGermplasmTransformer;
 
-	public ExportStudyGermplasmListServiceImpl() {
+	public ExportStudyGermplasmServiceImpl() {
 
 	}
 
@@ -338,7 +338,7 @@ public class ExportStudyGermplasmListServiceImpl implements ExportStudyGermplasm
 				if (origList.getStatus() != null && origList.getStatus().intValue() != GermplasmListDAO.STATUS_DELETED.intValue()) {
 					list.setType(origList.getType());
 				} else {
-					list.setType(ExportStudyGermplasmListController.GERPLASM_TYPE_LST);
+					list.setType(ExportStudyGermplasmController.GERPLASM_TYPE_LST);
 				}
 			}
 		}

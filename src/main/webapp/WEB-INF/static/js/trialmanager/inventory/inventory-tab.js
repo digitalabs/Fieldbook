@@ -73,9 +73,6 @@
 				{
 					name: "instanceNo",
 					data: function (row) {
-						if (!row.observationUnits || !row.observationUnits.length) {
-							return "";
-						}
 						return row.observationUnits[0].instanceNo
 							+ (row.observationUnits.length > 1 ? " and more" : "");
 					}
@@ -84,9 +81,6 @@
 				{
 					name: "entryType",
 					data: function (row) {
-						if (!row.observationUnits || !row.observationUnits.length) {
-							return "";
-						}
 						return row.observationUnits[0].entryType;
 					}
 				},
@@ -105,18 +99,12 @@
 				{
 					name: "entryNo",
 					data: function (row) {
-						if (!row.observationUnits || !row.observationUnits.length) {
-							return "";
-						}
 						return row.observationUnits[0].entryNo;
 					}
 				},
 				{
 					name: "plotNo",
 					data: function (row) {
-						if (!row.observationUnits || !row.observationUnits.length) {
-							return "";
-						}
 						return row.observationUnits[0].plotNo
 							+ (row.observationUnits.length > 1 ? " and more" : "");
 					}

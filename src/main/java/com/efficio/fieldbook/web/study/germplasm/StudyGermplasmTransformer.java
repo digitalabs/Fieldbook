@@ -172,7 +172,7 @@ public class StudyGermplasmTransformer {
 			dto.setGermplasmId(Integer.valueOf(importedGermplasm.getGid()));
 			dto.setEntryCode(importedGermplasm.getEntryCode());
 			dto.setEntryNumber(importedGermplasm.getEntryId());
-			dto.setCheckType(importedGermplasm.getEntryTypeCategoricalID());
+			dto.setEntryType(String.valueOf(importedGermplasm.getEntryTypeCategoricalID()));
 			dto.setSeedSource(importedGermplasm.getSource());
 			dto.setCross(importedGermplasm.getCross());
 

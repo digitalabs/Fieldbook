@@ -25,9 +25,8 @@
 							sortedPageRequest: {
 								pageSize: d.length,
 								pageNumber: d.length === 0 ? 1 : d.start / d.length + 1,
-								// TODO
-								// sortBy: ,
-								// sortOrder: order.dir
+								sortBy: $scope.dtColumns[order.column].name,
+								sortOrder: order.dir
 							}
 							// TODO filters
 						});
@@ -40,6 +39,7 @@
 				.withOption('scrollY', '500px')
 				.withOption('scrollCollapse', true)
 				.withOption('scrollX', '100%')
+				.withOption('order', [2, 'asc']) // transactionId
 				.withOption('language', {
 					processing: '<span class="throbber throbber-2x"></span>',
 					lengthMenu: 'Records per page: _MENU_',
@@ -80,7 +80,7 @@
 							+ (row.observationUnits.length > 1 ? " and more" : "");
 					}
 				},
-				{data: "transactionId"},
+				{name: "transactionId", data: "transactionId"},
 				{
 					name: "entryType",
 					data: function (row) {
@@ -91,13 +91,13 @@
 					}
 				},
 				{
-					name: "gid",
+					name: "lotGid",
 					data: function (row) {
 						return row.lot.gid;
 					}
 				},
 				{
-					name: "designation",
+					name: "lotDesignation",
 					data: function (row) {
 						return row.lot.designation;
 					}
@@ -121,24 +121,28 @@
 							+ (row.observationUnits.length > 1 ? " and more" : "");
 					}
 				},
-				{data: "lot.locationName"}, // TODO add loc abbr to query
-				{data: "lot.stockId"},
-				{data: "lot.createdDate"},
-				{data: "lot.createdByUsername"},
-				{data: "transactionType"},
-				{data: "transactionStatus"},
-				{data: "lot.unitName"},
-				{data: "amount"},
-				{data: "notes"}
+				{name: "lotLocationAbbr", data: "lot.locationAbbr"},
+				{name: "lotStockId", data: "lot.stockId"},
+				{name: "createdDate", data: "createdDate"},
+				{name: "createdByUsername", data: "createdByUsername"},
+				{name: "transactionType", data: "transactionType"},
+				{name: "transactionStatus", data: "transactionStatus"},
+				{name: "lotUnitName", data: "lot.unitName"},
+				{name: "amount", data: "amount"},
+				{name: "notes", data: "notes"}
 			];
+
 			$scope.dtColumnDefs = [
 				{
 					targets: 0,
-					orderable: false,
 					createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
 						$(td).append($compile('<span><input type="checkbox" ng-checked="isSelected(' + rowData.transactionId + ')" ng-click="toggleSelect(' + rowData.transactionId + ')"></span>')($scope));
 						$scope.$apply();
 					}
+				},
+				{
+					targets: "_all",
+					orderable: false
 				}
 			];
 

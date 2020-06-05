@@ -20,13 +20,13 @@ public class Instance {
 	private Map<String, String> managementDetailValues;
 	private Map<String, String> trialDetailValues;
 	private Map<String, Integer> phenotypeIDMap;
-	private Map<String, Integer> experimentPropertyIdMap;
+	private Map<String, Integer> instanceDataIdMap;
 
 	public Instance() {
 		this.managementDetailValues = new HashMap<String, String>();
 		this.trialDetailValues = new HashMap<String, String>();
 		this.phenotypeIDMap = new HashMap<String, Integer>();
-		this.experimentPropertyIdMap = new HashMap<String, Integer>();
+		this.instanceDataIdMap = new HashMap<String, Integer>();
 	}
 
 	public Map<String, String> getManagementDetailValues() {
@@ -69,12 +69,12 @@ public class Instance {
 		this.phenotypeIDMap = phenotypeIDMap;
 	}
 
-	public Map<String, Integer> getExperimentPropertyIdMap() {
-		return this.experimentPropertyIdMap;
+	public Map<String, Integer> getInstanceDataIdMap() {
+		return this.instanceDataIdMap;
 	}
 
-	public void setExperimentPropertyIdMap(final Map<String, Integer> experimentPropertyIdMap) {
-		this.experimentPropertyIdMap = experimentPropertyIdMap;
+	public void setInstanceDataIdMap(final Map<String, Integer> instanceDataIdMap) {
+		this.instanceDataIdMap = instanceDataIdMap;
 	}
 
 }

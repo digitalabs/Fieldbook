@@ -470,7 +470,7 @@ public abstract class BaseTrialController extends SettingsController {
 			final Map<String, String> managementDetailValues = new HashMap<>();
 			final Map<String, String> trialConditionValues = new HashMap<>();
 			final Map<String, Integer> phenotypeIDMap = new HashMap<>();
-			final Map<String, Integer> experimentPropertyIdMap = new HashMap<>();
+			final Map<String, Integer> instanceDataIdMap = new HashMap<>();
 			for (final SettingDetail detail : managementDetailList) {
 
 				final MeasurementData mData = row.getMeasurementData(detail.getVariable().getCvTermId());
@@ -481,7 +481,7 @@ public abstract class BaseTrialController extends SettingsController {
 					} else {
 						value = mData.getValue();
 					}
-					experimentPropertyIdMap.put(Integer.toString(mData.getMeasurementVariable().getTermId()), mData.getExperimentPropertyId());
+					instanceDataIdMap.put(Integer.toString(mData.getMeasurementVariable().getTermId()), mData.getInstanceDataId());
 					managementDetailValues.put(Integer.toString(mData.getMeasurementVariable().getTermId()), value);
 				}
 			}
@@ -500,7 +500,7 @@ public abstract class BaseTrialController extends SettingsController {
 			instance.setManagementDetailValues(managementDetailValues);
 			instance.setTrialDetailValues(trialConditionValues);
 			instance.setPhenotypeIDMap(phenotypeIDMap);
-			instance.setExperimentPropertyIdMap(experimentPropertyIdMap);
+			instance.setInstanceDataIdMap(instanceDataIdMap);
 			instances.add(instance);
 		}
 

@@ -283,7 +283,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
 						$scope.settings.managementDetails),
 					trialDetailValues: TrialManagerDataService.constructDataStructureFromDetails($scope.settings.trialConditionDetails),
-					experimentPropertyIdMap: {8190: studyInstance.locationInstanceDataId},
+					instanceDataIdMap: {8190: studyInstance.locationInstanceDataId},
 					phenotypeIDMap: {}
 				};
 				instance.managementDetailValues[LOCATION_ID] = UNSPECIFIED_LOCATION_ID;
@@ -363,7 +363,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				if (type === 'managementDetails') {
 					settingDetailSource = $scope.settings.managementDetails;
 					valuesPropertyKey = 'managementDetailValues';
-					idsPropertyKey = 'experimentPropertyIdMap';
+					idsPropertyKey = 'instanceDataIdMap';
 				} else if (type === 'trialConditionDetails') {
 					settingDetailSource = $scope.settings.trialConditionDetails;
 					valuesPropertyKey = 'trialDetailValues';
@@ -467,7 +467,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					if (isManagementDetailVariable) {
 						variableSettings = $scope.settings.managementDetails;
 						valueContainer = instance.managementDetailValues;
-						instanceDataIdMap = instance.experimentPropertyIdMap;
+						instanceDataIdMap = instance.instanceDataIdMap;
 					} else {
 						variableSettings = $scope.settings.trialConditionDetails;
 						valueContainer = instance.trialDetailValues;

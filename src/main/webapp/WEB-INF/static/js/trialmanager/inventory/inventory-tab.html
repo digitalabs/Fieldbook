@@ -29,7 +29,7 @@
 			<tr>
 				<th><input type="checkbox" title="select current page" ng-checked="isPageSelected()" ng-click="onSelectPage()"/></th>
 				<th>TRIAL_INSTANCE</th>
-				<th>TRN_ID</th>
+				<th class="info-modal-column">TRN_ID</th>
 				<th>ENTRY_TYPE</th>
 				<th>GID</th>
 				<th>DESIGNATION</th>
@@ -49,3 +49,39 @@
 		</table>
 	</div>
 </div>
+<script type="text/ng-template" id="inventory-tab-info-modal">
+	<div class="modal-body">
+		<div class="row form-group">
+			<div class="col-xs-10 col-md-11">
+				<h3 class="modal-title fbk-modal-title" id="heading-modal">TRN_ID: {{transactionId}} - STOCK_ID: {{stockId}}</h3>
+			</div>
+			<div class="col-xs-1 col-md-1">
+				<button type="button" class="close pull-right glyphicon glyphicon-remove" data-dismiss="modal" ng-click="cancel()"/>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12 col-md-12">
+				<table datatable="ng" dt-options="dtOptions" class="table table-curved table-condensed table-no-wrap" style="width: 100%">
+					<thead>
+					<tr>
+						<th>TRIAL_INSTANCE</th>
+						<th>PLOT_NO</th>
+						<th>REP_NO</th>
+						<th>BLOCK_NO</th>
+						<th>PLOT_UUID</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr ng-repeat="obsUnit in observationUnits">
+						<td>{{::obsUnit.instanceNo}}</td>
+						<td>{{::obsUnit.plotNo}}</td>
+						<td>{{::obsUnit.repNo}}</td>
+						<td>{{::obsUnit.blockNo}}</td>
+						<td>{{::obsUnit.obsUnitId}}</td>
+					</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</script>

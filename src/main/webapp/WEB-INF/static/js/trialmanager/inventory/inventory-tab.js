@@ -4,8 +4,9 @@
 	const module = angular.module('manageTrialApp');
 
 	module.controller('InventoryTabCtrl', ['$scope', 'DTOptionsBuilder', 'DTColumnBuilder', 'InventoryService', '$compile', '$timeout',
+		'$uibModal',
 		function (
-			$scope, DTOptionsBuilder, DTColumnBuilder, InventoryService, $compile, $timeout
+			$scope, DTOptionsBuilder, DTColumnBuilder, InventoryService, $compile, $timeout, $uibModal,
 		) {
 			$scope.nested = {};
 			$scope.nested.dtInstance = null;
@@ -129,10 +130,50 @@
 					}
 				},
 				{
+					targets: "info-modal-column",
+					createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
+						$(td).html($compile('<a href ng-click="openInfoModal(' + rowIndex + ')">' + cellData + '</a>')($scope));
+						$scope.$apply();
+					}
+				},
+				{
 					targets: "_all",
 					orderable: false
 				}
 			];
+
+			$scope.openInfoModal = function (rowIndex) {
+				$uibModal.open({
+					templateUrl: 'inventory-tab-info-modal',
+					size: 'lg',
+					controller: function($scope, $uibModalInstance) {
+						const rowData = table().row(rowIndex).data();
+						$scope.transactionId = rowData.transactionId;
+						$scope.stockId = rowData.lot.stockId;
+
+						$scope.observationUnits = rowData.observationUnits;
+						$scope.dtOptions = DTOptionsBuilder.newOptions()
+							.withOption("paging", $scope.observationUnits.length > 10)
+							.withOption('scrollX', '100%')
+							.withOption('language', {
+								lengthMenu: 'Records per page: _MENU_',
+								paginate: {
+									next: '>',
+									previous: '<',
+									first: '<<',
+									last: '>>'
+								}
+							})
+							.withPaginationType('full_numbers')
+							.withDOM('<"row"<"col-sm-12"t>>' + //
+								'<"row"<"col-sm-12 paginate-float-center"<"pull-left"i><"pull-right"l>p>>');
+
+						$scope.cancel = function () {
+							$uibModalInstance.dismiss();
+						};
+					}
+				});
+			};
 
 			$scope.totalItems = 0;
 			$scope.selectedItems = {};

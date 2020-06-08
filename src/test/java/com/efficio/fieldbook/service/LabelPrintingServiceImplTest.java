@@ -108,7 +108,7 @@ public class LabelPrintingServiceImplTest {
 
 	@Mock
 	private OntologyDataManager ontologyDataManager;
-	
+
 	@Mock
 	private UserLabelPrinting userLabelPrinting;
 
@@ -178,7 +178,7 @@ public class LabelPrintingServiceImplTest {
 				.thenReturn(searchResultPreset);
 
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(LabelPrintingServiceImplTest.DUMMY_PROGRAM_UUID);
-		
+
 		Mockito.when(this.userLabelPrinting.isStockList()).thenReturn(false);
 	}
 
@@ -230,39 +230,9 @@ public class LabelPrintingServiceImplTest {
 		Assert.assertTrue("should have an item", programPresetList.size() > 0);
 
 		Assert.assertTrue("should be empty", emptyProgramPresetList.isEmpty());
-		
+
 		Assert.assertEquals("should be the same item as we searched on", LabelPrintingServiceImplTest.TEST_EXISTING_PRESET_NAME,
 				programPresetList.get(0).getName());
-	}
-
-	@Test
-	public void testHasInventoryValues_ReturnsTrueForEntriesWithInventory() throws MiddlewareQueryException {
-
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
-		final Integer studyId = workbook.getStudyDetails().getId();
-		final List<GermplasmList> germplasmLists = GermplasmListTestDataInitializer.createGermplasmLists(1);
-		final GermplasmList germplasmList = germplasmLists.get(0);
-		final Integer numOfEntries = germplasmList.getListData().size();
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY)).thenReturn(
-				germplasmLists);
-		Mockito.when(this.inventoryMiddlewareService.getInventoryDetailsByGermplasmList(germplasmList.getId(), germplasmList.getType()))
-				.thenReturn(this.inventoryDetailsInitializer.createInventoryDetailList(numOfEntries));
-
-		Assert.assertTrue("Expecting to return true for germplasm list entries with inventory details.",
-				this.labelPrintingServiceImpl.hasInventoryValues(studyId));
-	}
-
-	@Test
-	public void testHasInventoryValues_ReturnsFalseForEntriesWithoutInventory() throws MiddlewareQueryException {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
-		final Integer studyId = workbook.getStudyDetails().getId();
-		final List<GermplasmList> germplasmLists = GermplasmListTestDataInitializer.createGermplasmLists(1);
-		final GermplasmList germplasmList = germplasmLists.get(0);
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY))
-				.thenReturn(germplasmLists);
-
-		Assert.assertFalse("Expecting to return false for germplasm list entries with inventory details.",
-				this.labelPrintingServiceImpl.hasInventoryValues(studyId));
 	}
 
 	@Test
@@ -510,7 +480,7 @@ public class LabelPrintingServiceImplTest {
 
 	/**
 	 * Bulk the first two entries to the 3rd entry (for testing purposes)
-	 * 
+	 *
 	 * @param inventoryDetailList
 	 */
 	private void bulkSomeStocksForTest(final List<InventoryDetails> inventoryDetailList) {

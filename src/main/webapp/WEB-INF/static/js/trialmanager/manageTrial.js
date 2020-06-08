@@ -187,6 +187,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 		]
 	);
 
+	let inventoryChangedDeRegister = () => {};
+
 	// THE parent controller for the manageTrial (create/edit) page
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'studyStateService', 'TrialManagerDataService', '$http',
 		'$timeout', '_', '$localStorage', '$state', '$location', 'HasAnyAuthorityService', 'derivedVariableService', 'exportStudyModalService',
@@ -250,6 +252,19 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				});
 
 				$scope.trialTabs.push($scope.inventoryTab);
+				loadInventoryTab();
+
+				studyStateService.updateHasListsOrSubObs(HAS_LISTS_OR_SUB_OBS);
+				studyStateService.updateGeneratedDesign(HAS_GENERATED_DESIGN);
+
+			};
+
+			inventoryChangedDeRegister();
+			inventoryChangedDeRegister = $rootScope.$on("inventoryChanged", function () {
+				loadInventoryTab();
+			});
+
+			function loadInventoryTab() {
 				InventoryService.searchStudyTransactions({
 					sortedPageRequest: {pageNumber: 1, pageSize: 1}
 				}).then((transactionsTable) => {
@@ -257,11 +272,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 						$scope.inventoryTab.hidden = false;
 					}
 				});
-
-				studyStateService.updateHasListsOrSubObs(HAS_LISTS_OR_SUB_OBS);
-				studyStateService.updateGeneratedDesign(HAS_GENERATED_DESIGN);
-
-			};
+			}
 
 			$http.get('/bmsapi/crops/' + cropName + '/study-types/visible?programUUID=' + studyContext.programId).success(function (data) {
 				$scope.studyTypes = data;

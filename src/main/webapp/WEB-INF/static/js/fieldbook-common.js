@@ -398,7 +398,7 @@ function createStudyTree(fieldMapInfoList, hasFieldMap) {
 			createRow(getPrefixName('dataset', value.datasetId), getPrefixName('study', fieldMapInfo.fieldbookId), value.datasetName, value.datasetId, hasFieldMap, hasOneInstance);
 			$.each(value.trialInstances, function (index, childValue) {
 				if ((hasFieldMap && childValue.hasFieldMap) || !hasFieldMap) {
-					createRow(getPrefixName('trialInstance', childValue.environmentId), getPrefixName('dataset', value.datasetId), childValue, childValue.environmentId, hasFieldMap, hasOneInstance);
+					createRow(getPrefixName('trialInstance', childValue.environmentId), getPrefixName('dataset', value.datasetId), childValue, childValue.instanceId, hasFieldMap, hasOneInstance);
 				}
 			});
 		});

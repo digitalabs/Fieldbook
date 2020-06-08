@@ -119,23 +119,23 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController 
 	 * @param form the form
 	 * @param model the model
 	 * @param datasetId the dataset id
-	 * @param geolocationId the geolocation id
+	 * @param instanceId the instance id
 	 * @param studyType the study type
 	 * @return the string
 	 */
-	@RequestMapping(value = "/viewFieldmap/{studyType}/{datasetId}/{geolocationId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/viewFieldmap/{studyType}/{datasetId}/{instanceId}", method = RequestMethod.GET)
 	public String viewFieldmap(@ModelAttribute("fieldmapForm") final FieldmapForm form, final Model model, @PathVariable final Integer datasetId,
-			@PathVariable final Integer geolocationId, @PathVariable final String studyType) {
+			@PathVariable final Integer instanceId, @PathVariable final String studyType) {
 		try {
 
 			this.userFieldmap.setSelectedDatasetId(datasetId);
-			this.userFieldmap.setSelectedGeolocationId(geolocationId);
+			this.userFieldmap.setSelectedInstanceId(instanceId);
 
 			this.userFieldmap.setSelectedFieldMaps(this.fieldbookMiddlewareService
-					.getAllFieldMapsInBlockByTrialInstanceId(datasetId, geolocationId, this.crossExpansionProperties));
+					.getAllFieldMapsInBlockByTrialInstanceId(datasetId, instanceId, this.crossExpansionProperties));
 
 			final FieldMapTrialInstanceInfo trialInfo =
-					this.userFieldmap.getSelectedTrialInstanceByDatasetIdAndEnvironmentId(datasetId, geolocationId);
+					this.userFieldmap.getSelectedTrialInstanceByDatasetIdAndEnvironmentId(datasetId, instanceId);
 			if (trialInfo != null) {
 				this.userFieldmap.setNumberOfRangesInBlock(trialInfo.getRangesInBlock());
 				this.userFieldmap.setNumberOfRowsInBlock(trialInfo.getRowsInBlock());

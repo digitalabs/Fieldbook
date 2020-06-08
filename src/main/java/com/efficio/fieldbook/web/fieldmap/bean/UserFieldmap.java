@@ -43,7 +43,7 @@ public class UserFieldmap implements Serializable {
 	private Integer selectedDatasetId;
 
 	/** The selected geolocation id. */
-	private Integer selectedGeolocationId;
+	private Integer selectedInstanceId;
 
 	/** The number of entries. */
 	private Long numberOfEntries;
@@ -190,10 +190,10 @@ public class UserFieldmap implements Serializable {
 	 */
 	public void setUserFieldmapInfo(final List<FieldMapInfo> fieldMapInfoList) {
 
-		if (this.getSelectedDatasetId() != null && this.getSelectedGeolocationId() != null) {
+		if (this.getSelectedDatasetId() != null && this.getSelectedInstanceId() != null) {
 
 			final int datasetId = this.getSelectedDatasetId();
-			final int trialInstanceId = this.getSelectedGeolocationId();
+			final int trialInstanceId = this.getSelectedInstanceId();
 
 			for (final FieldMapInfo fieldMapInfo : fieldMapInfoList) {
 				if (fieldMapInfo.getDataSet(datasetId) != null) {
@@ -545,10 +545,10 @@ public class UserFieldmap implements Serializable {
 	 * Gets the selected trial instance by dataset id and geolocation id.
 	 *
 	 * @param datasetId the dataset id
-	 * @param geolocationId the geolocation id
+	 * @param instanceId the instance id
 	 * @return the selected trial instance by dataset id and geolocation id
 	 */
-	public FieldMapTrialInstanceInfo getSelectedTrialInstanceByDatasetIdAndEnvironmentId(final int datasetId, final int geolocationId) {
+	public FieldMapTrialInstanceInfo getSelectedTrialInstanceByDatasetIdAndEnvironmentId(final int datasetId, final int instanceId) {
 		if (this.getSelectedFieldMaps() != null) {
 			for (final FieldMapInfo info : this.getSelectedFieldMaps()) {
 				if (info.getDatasets() != null) {
@@ -556,7 +556,7 @@ public class UserFieldmap implements Serializable {
 						if (dataset.getDatasetId().equals(datasetId)) {
 							if (dataset.getTrialInstances() != null) {
 								for (final FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
-									if (trial.getInstanceId().equals(geolocationId)) {
+									if (trial.getInstanceId().equals(instanceId)) {
 										return trial;
 									}
 								}
@@ -787,21 +787,21 @@ public class UserFieldmap implements Serializable {
 	}
 
 	/**
-	 * Gets the selected geolocation id.
+	 * Gets the selected instance id.
 	 *
-	 * @return the selectedGeolocationId
+	 * @return the instanceId
 	 */
-	public Integer getSelectedGeolocationId() {
-		return this.selectedGeolocationId;
+	public Integer getSelectedInstanceId() {
+		return this.selectedInstanceId;
 	}
 
 	/**
 	 * Sets the selected geolocation id.
 	 *
-	 * @param selectedGeolocationId the selectedGeolocationId to set
+	 * @param selectedInstanceId the selectedInstanceId to set
 	 */
-	public void setSelectedGeolocationId(final Integer selectedGeolocationId) {
-		this.selectedGeolocationId = selectedGeolocationId;
+	public void setSelectedInstanceId(final Integer selectedInstanceId) {
+		this.selectedInstanceId = selectedInstanceId;
 	}
 
 	/**

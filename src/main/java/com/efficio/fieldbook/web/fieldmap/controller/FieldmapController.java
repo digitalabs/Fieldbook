@@ -268,7 +268,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 			final String[] ids = group.split("\\|");
 			final int selectedStudyId = Integer.parseInt(ids[0]);
 			final int selectedDatasetId = Integer.parseInt(ids[1]);
-			final int selectedGeolocationId = Integer.parseInt(ids[2]);
+			final int selectedInstanceId = Integer.parseInt(ids[2]);
 
 			for (final FieldMapInfo fieldMapInfo : fieldMapInfoList) {
 				// if current study id is equal to the selected study id
@@ -303,7 +303,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 						}
 					}
 
-					trialInstance = fieldMapInfo.getDataSet(selectedDatasetId).getTrialInstance(selectedGeolocationId);
+					trialInstance = fieldMapInfo.getDataSet(selectedDatasetId).getTrialInstance(selectedInstanceId);
 					trialInstances.add(trialInstance);
 
 					datasetId = selectedDatasetId;
@@ -367,9 +367,9 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 						final FieldMapDatasetInfo dataset = datasetList.get(0);
 						nav = "0";
 						this.userFieldmap.setSelectedDatasetId(dataset.getDatasetId());
-						this.userFieldmap.setSelectedGeolocationId(dataset.getTrialInstancesWithFieldMap().get(0).getInstanceId());
+						this.userFieldmap.setSelectedInstanceId(dataset.getTrialInstancesWithFieldMap().get(0).getInstanceId());
 						result.put("datasetId", this.userFieldmap.getSelectedDatasetId().toString());
-						result.put("geolocationId", this.userFieldmap.getSelectedGeolocationId().toString());
+						result.put("instanceId", this.userFieldmap.getSelectedInstanceId().toString());
 					}
 				}
 			}
@@ -452,15 +452,15 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 			final int orderId;
 			final int fieldbookId;
 			final int datasetId;
-			final int geolocationId;
+			final int instanceId;
 			int ctr = 0;
 			orderId = Integer.parseInt(ids[0]);
 			fieldbookId = Integer.parseInt(ids[1]);
 			datasetId = Integer.parseInt(ids[2]);
-			geolocationId = Integer.parseInt(ids[3]);
+			instanceId = Integer.parseInt(ids[3]);
 			for (final FieldMapInfo fieldMapInfo : fieldMapInfoList) {
 				if (fieldMapInfo.getFieldbookId().equals(fieldbookId)) {
-					this.userFieldmap.getSelectedFieldMaps().get(ctr).getDataSet(datasetId).getTrialInstance(geolocationId)
+					this.userFieldmap.getSelectedFieldMaps().get(ctr).getDataSet(datasetId).getTrialInstance(instanceId)
 							.setOrder(orderId);
 					break;
 				}
@@ -683,7 +683,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	 */
 	private void setUserFieldMapDetails(final FieldmapForm form) {
 		this.userFieldmap.setSelectedDatasetId(form.getUserFieldmap().getSelectedDatasetId());
-		this.userFieldmap.setSelectedGeolocationId(form.getUserFieldmap().getSelectedGeolocationId());
+		this.userFieldmap.setSelectedInstanceId(form.getUserFieldmap().getSelectedInstanceId());
 		this.userFieldmap.setUserFieldmapInfo(this.userFieldmap.getFieldMapInfo());
 		this.userFieldmap.setNumberOfEntries(form.getUserFieldmap().getNumberOfEntries());
 		this.userFieldmap.setNumberOfReps(form.getUserFieldmap().getNumberOfReps());

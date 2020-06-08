@@ -198,7 +198,7 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 	/**
 	 * Gets the instance id.
 	 *
-	 * @return the geolocationId
+	 * @return the instanceId
 	 */
 	public Integer getInstanceId() {
 		return this.instanceId;
@@ -207,7 +207,7 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 	/**
 	 * Sets the instance id.
 	 *
-	 * @param instanceId the geolocationId to set
+	 * @param instanceId the instanceId to set
 	 */
 	public void setInstanceId(Integer instanceId) {
 		this.instanceId = instanceId;

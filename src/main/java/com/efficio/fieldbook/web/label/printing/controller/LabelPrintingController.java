@@ -790,13 +790,13 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 			final int order = Integer.parseInt(fieldMapGroup[0]);
 			final int studyId = Integer.parseInt(fieldMapGroup[1]);
 			final int datasetId = Integer.parseInt(fieldMapGroup[2]);
-			final int geolocationId = Integer.parseInt(fieldMapGroup[3]);
+			final int instanceId = Integer.parseInt(fieldMapGroup[3]);
 
 			for (final FieldMapInfo fieldMapInfo : fieldMapInfoList) {
 				if (fieldMapInfo.getFieldbookId().equals(studyId)) {
-					fieldMapInfo.getDataSet(datasetId).getTrialInstance(geolocationId).setOrder(order);
+					fieldMapInfo.getDataSet(datasetId).getTrialInstance(instanceId).setOrder(order);
 					final StudyTrialInstanceInfo trialInstance = new StudyTrialInstanceInfo(
-							fieldMapInfo.getDataSet(datasetId).getTrialInstance(geolocationId), fieldMapInfo.getFieldbookName());
+							fieldMapInfo.getDataSet(datasetId).getTrialInstance(instanceId), fieldMapInfo.getFieldbookName());
 					if (this.userFieldmap.getBlockName() != null && this.userFieldmap.getLocationName() != null) {
 						trialInstance.getTrialInstance().setBlockName(this.userFieldmap.getBlockName());
 						trialInstance.getTrialInstance().setFieldName(this.userFieldmap.getFieldName());

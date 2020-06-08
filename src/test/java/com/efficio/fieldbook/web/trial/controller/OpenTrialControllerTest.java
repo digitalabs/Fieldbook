@@ -220,7 +220,7 @@ public class OpenTrialControllerTest {
 
 	@Test
 	public void testOpenStudyNoRedirect() {
-		List<Integer> datasetTypes = new ArrayList<>();
+		final List<Integer> datasetTypes = new ArrayList<>();
 		datasetTypes.add(4);
 		Mockito.doReturn(datasetTypes).when(this.datasetTypeService).getObservationDatasetTypeIds();
 		final Workbook workbook =

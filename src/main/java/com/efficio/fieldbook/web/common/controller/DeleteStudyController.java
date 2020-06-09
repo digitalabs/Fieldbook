@@ -71,16 +71,6 @@ public class DeleteStudyController extends AbstractBaseFieldbookController {
 			}
 
 			this.fieldbookMiddlewareService.deleteStudy(studyId, this.contextUtil.getCurrentWorkbenchUserId());
-
-			germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY);
-
-			// Also set the status of checklist to deleted
-			final List<GermplasmList> checkGermplasmLists =
-				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.CHECK);
-			this.deleteGermplasmList(checkGermplasmLists);
-
-			// Set germplasm list status to deleted
-			this.deleteGermplasmList(germplasmLists);
 			results.put(DeleteStudyController.IS_SUCCESS, "1");
 
 		} catch (final UnpermittedDeletionException ude) {

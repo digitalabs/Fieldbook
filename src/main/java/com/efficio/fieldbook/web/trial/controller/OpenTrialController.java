@@ -242,7 +242,6 @@ public class OpenTrialController extends BaseTrialController {
 						workbook.getMeasurementDatesetId(),
 						SettingsUtil.buildVariates(workbook.getVariates())));
 				form.setStudyId(studyId);
-				form.setGermplasmListId(this.getGermplasmListId(studyId));
 				form.setStudyTypeName(dmsProject.getStudyType().getName());
 				this.setModelAttributes(form, studyId, model, workbook);
 				this.setUserSelectionImportedGermplasmMainInfo(this.userSelection, studyId, model);
@@ -265,29 +264,6 @@ public class OpenTrialController extends BaseTrialController {
 						AppConstants.STUDY.getString()}, "\n"));
 			return REDIRECT + ManageTrialController.URL;
 		}
-	}
-
-	private Integer getGermplasmListId(final int studyId) {
-		if (this.userSelection.getImportedAdvancedGermplasmList() == null) {
-			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
-			final GermplasmListType listType = GermplasmListType.STUDY;
-			final List<GermplasmList> germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, listType);
-
-			if (germplasmLists != null && !germplasmLists.isEmpty()) {
-				final GermplasmList germplasmList = germplasmLists.get(0);
-
-				if (germplasmList != null) {
-					// BMS-1419, set the id to the original list's id
-					mainInfo.setListId(germplasmList.getListRef() != null ? germplasmList.getListRef() : germplasmList.getId());
-				}
-			}
-			this.userSelection.setImportedGermplasmMainInfo(mainInfo);
-		}
-
-		return this.userSelection.getImportedGermplasmMainInfo() != null
-			&& this.userSelection.getImportedGermplasmMainInfo().getListId() != null ?
-			this.userSelection.getImportedGermplasmMainInfo().getListId() :
-			OpenTrialController.NO_LIST_ID;
 	}
 
 	List<String> getAllCheckEntryTypeIds() {

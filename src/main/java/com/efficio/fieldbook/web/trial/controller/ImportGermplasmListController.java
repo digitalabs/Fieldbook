@@ -483,7 +483,6 @@ public class ImportGermplasmListController extends SettingsController {
 		try {
 			// TODO: IBP-3697 Find a way not to use UserSelection
 			if (this.getUserSelection().getImportedGermplasmMainInfo() != null) {
-				final String type = GermplasmListType.STUDY.toString();
 				final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
 				final List<Enumeration> checkList = this.fieldbookService.getCheckTypeList();
 				final List<ImportedGermplasm> list =
@@ -518,7 +517,6 @@ public class ImportGermplasmListController extends SettingsController {
 
 				model.addAttribute(ImportGermplasmListController.CHECK_LISTS, checkList);
 				model.addAttribute(ImportGermplasmListController.LIST_DATA_TABLE, dataTableDataList);
-				model.addAttribute(ImportGermplasmListController.TYPE2, type);
 				model.addAttribute(ImportGermplasmListController.TABLE_HEADER_LIST, this.getGermplasmTableHeader(this.userSelection.getPlotsLevelList()));
 				model.addAttribute("hasMeasurement", this.hasMeasurement());
 

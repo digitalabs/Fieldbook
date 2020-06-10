@@ -301,15 +301,7 @@ public class OpenTrialController extends BaseTrialController {
 
 			final List<ListDataProject> listDataProjects = this.fieldbookMiddlewareService.getListDataProject(germplasmList.getId());
 
-			final long germplasmListChecksSize;
-			if (ExperimentDesignType.P_REP.getId().equals(this.userSelection.getExpDesignParams().getDesignType())) {
-
-				germplasmListChecksSize = this.fieldbookService.getGermplasmListChecksSize(germplasmList.getId());
-			} else {
-				germplasmListChecksSize = this.fieldbookMiddlewareService
-					.countListDataProjectByListIdAndEntryTypeIds(
-						germplasmList.getId(), Arrays.asList(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId()));
-			}
+			final long germplasmListChecksSize = this.fieldbookService.getGermplasmListChecksSize(germplasmList.getId());
 
 			if (listDataProjects != null && !listDataProjects.isEmpty()) {
 

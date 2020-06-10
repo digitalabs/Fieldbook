@@ -220,7 +220,7 @@ public class OpenTrialControllerTest {
 
 	@Test
 	public void testOpenStudyNoRedirect() {
-		List<Integer> datasetTypes = new ArrayList<>();
+		final List<Integer> datasetTypes = new ArrayList<>();
 		datasetTypes.add(4);
 		Mockito.doReturn(datasetTypes).when(this.datasetTypeService).getObservationDatasetTypeIds();
 		final Workbook workbook =
@@ -1147,11 +1147,9 @@ public class OpenTrialControllerTest {
 
 		final ExpDesignParameterUi expDesignParameterUi = new ExpDesignParameterUi();
 		expDesignParameterUi.setDesignType(ExperimentDesignType.AUGMENTED_RANDOMIZED_BLOCK.getId());
-		Mockito.when(this.userSelection.getExpDesignParams()).thenReturn(expDesignParameterUi);
 		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(germplasmListId)).thenReturn(Lists.newArrayList(listDataProject));
 
-		Mockito.when(this.fieldbookMiddlewareService.countListDataProjectByListIdAndEntryTypeIds(germplasmListId,
-			Arrays.asList(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId()))).thenReturn(checkCount);
+		Mockito.when(this.fieldbookService.getGermplasmListChecksSize(germplasmListId)).thenReturn(checkCount);
 
 		final Map<Integer, String> mockData = Maps.newHashMap();
 		mockData.put(0, "StockID101, StockID102");
@@ -1486,5 +1484,89 @@ public class OpenTrialControllerTest {
 			var.setOperation(Operation.ADD);
 		}
 		return conditions;
+	}
+
+	@Test
+	public void testSetUserSelectionImportedGermplasmMainInfoNoDesignTypeWithChecks() {
+
+		final int germplasmListId = 111;
+		final int germplasmListRef = 222;
+		final int studyId = 1;
+		final long checkCount = 2;
+		final int germplasmCount = 1;
+
+		final GermplasmList germplasmList = new GermplasmList();
+		germplasmList.setId(germplasmListId);
+		germplasmList.setListRef(germplasmListRef);
+
+		final List<GermplasmList> listOfGermplasmList = new ArrayList<>();
+		listOfGermplasmList.add(germplasmList);
+
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY))
+			.thenReturn(listOfGermplasmList);
+		final ListDataProject listDataProject = ListDataProjectTestDataInitializer.createListDataProject(germplasmList, 0, 0, 1,
+			"entryCode", "seedSource", "designation", "groupName", "duplicate", "notes", 20170125);
+		listDataProject.setGroupId(12);
+
+		final ExpDesignParameterUi expDesignParameterUi = new ExpDesignParameterUi();
+		expDesignParameterUi.setDesignType(null);
+		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(germplasmListId)).thenReturn(Lists.newArrayList(listDataProject));
+
+		Mockito.when(this.fieldbookService.getGermplasmListChecksSize(germplasmListId)).thenReturn(checkCount);
+
+		final Map<Integer, String> mockData = Maps.newHashMap();
+		mockData.put(0, "StockID101, StockID102");
+		Mockito.when(this.inventoryDataManager.retrieveStockIds(ArgumentMatchers.anyListOf(Integer.class))).thenReturn(mockData);
+
+		final Model model = new ExtendedModelMap();
+
+		final UserSelection userSelection = new UserSelection();
+
+		this.openTrialController.setUserSelectionImportedGermplasmMainInfo(userSelection, 1, model);
+
+		Assert.assertEquals(Integer.valueOf(germplasmCount), model.asMap().get(OpenTrialControllerTest.GERMPLASM_LIST_SIZE));
+		Assert.assertEquals(checkCount, model.asMap().get(OpenTrialControllerTest.GERMPLASM_CHECKS_SIZE));
+	}
+
+	@Test
+	public void testSetUserSelectionImportedGermplasmMainInfoWithDesignTypeWithChecks() {
+
+		final int germplasmListId = 111;
+		final int germplasmListRef = 222;
+		final int studyId = 1;
+		final long checkCount = 2;
+		final int germplasmCount = 1;
+
+		final GermplasmList germplasmList = new GermplasmList();
+		germplasmList.setId(germplasmListId);
+		germplasmList.setListRef(germplasmListRef);
+
+		final List<GermplasmList> listOfGermplasmList = new ArrayList<>();
+		listOfGermplasmList.add(germplasmList);
+
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY))
+			.thenReturn(listOfGermplasmList);
+		final ListDataProject listDataProject = ListDataProjectTestDataInitializer.createListDataProject(germplasmList, 0, 0, 1,
+			"entryCode", "seedSource", "designation", "groupName", "duplicate", "notes", 20170125);
+		listDataProject.setGroupId(12);
+
+		final ExpDesignParameterUi expDesignParameterUi = new ExpDesignParameterUi();
+		expDesignParameterUi.setDesignType(ExperimentDesignType.AUGMENTED_RANDOMIZED_BLOCK.getId());
+		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(germplasmListId)).thenReturn(Lists.newArrayList(listDataProject));
+
+		Mockito.when(this.fieldbookService.getGermplasmListChecksSize(germplasmListId)).thenReturn(checkCount);
+
+		final Map<Integer, String> mockData = Maps.newHashMap();
+		mockData.put(0, "StockID101, StockID102");
+		Mockito.when(this.inventoryDataManager.retrieveStockIds(ArgumentMatchers.anyListOf(Integer.class))).thenReturn(mockData);
+
+		final Model model = new ExtendedModelMap();
+
+		final UserSelection userSelection = new UserSelection();
+
+		this.openTrialController.setUserSelectionImportedGermplasmMainInfo(userSelection, 1, model);
+
+		Assert.assertEquals(Integer.valueOf(germplasmCount), model.asMap().get(OpenTrialControllerTest.GERMPLASM_LIST_SIZE));
+		Assert.assertEquals(checkCount, model.asMap().get(OpenTrialControllerTest.GERMPLASM_CHECKS_SIZE));
 	}
 }

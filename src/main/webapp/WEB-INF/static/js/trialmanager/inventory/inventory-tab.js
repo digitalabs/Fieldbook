@@ -144,9 +144,9 @@
 
 			$scope.openInfoModal = function (rowIndex) {
 				$uibModal.open({
-					templateUrl: 'inventory-tab-info-modal',
+					templateUrl: 'inventory-tab-info-modal.html',
 					size: 'lg',
-					controller: function($scope, $uibModalInstance) {
+					controller: function ($scope, $uibModalInstance) {
 						const rowData = table().row(rowIndex).data();
 						$scope.transactionId = rowData.transactionId;
 						$scope.stockId = rowData.lot.stockId;

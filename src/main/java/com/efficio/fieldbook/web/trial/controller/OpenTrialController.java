@@ -271,14 +271,7 @@ public class OpenTrialController extends BaseTrialController {
 		final List<StudyGermplasmDto> studyGermplasmDtoList = this.studyGermplasmService.getGermplasm(studyId);
 		if (!studyGermplasmDtoList.isEmpty()) {
 
-			final long germplasmListChecksSize;
-			if (ExperimentDesignType.P_REP.getId().equals(this.userSelection.getExpDesignParams().getDesignType())) {
-				germplasmListChecksSize = this.studyGermplasmService.countStudyGermplasmByEntryTypeIds(studyId, this.getAllCheckEntryTypeIds());
-			} else {
-				germplasmListChecksSize = this.studyGermplasmService.countStudyGermplasmByEntryTypeIds(studyId,
-					Arrays.asList(String.valueOf(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId())));
-			}
-
+			final long germplasmListChecksSize = this.studyGermplasmService.countStudyGermplasmByEntryTypeIds(studyId, this.getAllCheckEntryTypeIds());
 			final List<ImportedGermplasm> list = this.studyGermplasmTransformer.tranformToImportedGermplasm(studyGermplasmDtoList);
 			final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
 			importedGermplasmList.setImportedGermplasms(list);

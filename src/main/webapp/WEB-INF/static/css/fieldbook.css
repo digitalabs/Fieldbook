@@ -2443,10 +2443,6 @@ table.dataTable thead th.sorting_desc
 .column-filter {
     width: 200px;
 }
-.column-filter input {
-    margin-top: 10px;
-    margin-bottom: 20px;
-}
 .column-filter ul {
     max-height: 190px;
     overflow-y: auto;

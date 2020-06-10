@@ -17,6 +17,16 @@
 					.then(successHandler, failureHandler);
 			}
 
+			service.queryTransactionTypes = function () {
+				return $http.get(`${BASE_URL}/transaction-types`)
+					.then(successHandler, failureHandler);
+			};
+
+			service.queryTransactionStatusTypes = function () {
+				return $http.get(`${BASE_URL}/transaction-status-types`)
+					.then(successHandler, failureHandler);
+			};
+
 			service.searchStudyTransactions = function (searchRequest) {
 				return $http.post(service.getSearchStudyTransactionsUrl(), searchRequest)
 					.then(successHandler, failureHandler);

@@ -28,22 +28,101 @@
 			<thead>
 			<tr>
 				<th><input type="checkbox" title="select current page" ng-checked="isPageSelected()" ng-click="onSelectPage()"/></th>
-				<th>TRIAL_INSTANCE</th>
-				<th class="info-modal-column">TRN_ID</th>
-				<th>ENTRY_TYPE</th>
-				<th>GID</th>
-				<th>DESIGNATION</th>
-				<th>ENTRY_NO</th>
-				<th>PLOT_NO</th>
-				<th>STORAGE LOCATION ABBR</th>
-				<th>STOCK_ID</th>
-				<th>CREATED</th>
-				<th>USERNAME</th>
-				<th>TYPE</th>
-				<th>STATUS</th>
-				<th>UNITS</th>
-				<th>AMOUNT</th>
-				<th>NOTES</th>
+				<th>TRIAL_INSTANCE
+					<study-column-filter-icon study-column-filter-popover-template="studyColumnFilterText.html"
+											  filter="columns.instanceNo.filter"
+											  column-name="instanceNo"
+											  filter-helper="filterHelper"/>
+				</th>
+				<th class="info-modal-column">TRN_ID
+					<study-column-filter-icon study-column-filter-popover-template="studyColumnFilterText.html"
+											  filter="columns.transactionId.filter"
+											  column-name="transactionId"
+											  filter-helper="filterHelper"/>
+				</th>
+				<th>ENTRY_TYPE
+					<study-column-filter-icon study-column-filter-popover-template="studyColumnFilterText.html"
+											  filter="columns.entryType.filter"
+											  column-name="entryType"
+											  filter-helper="filterHelper"/>
+				</th>
+				<th>GID
+					<study-column-filter-icon study-column-filter-popover-template="studyColumnFilterText.html"
+											  filter="columns.lotGid.filter"
+											  column-name="lotGid"
+											  filter-helper="filterHelper"/>
+				</th>
+				<th>DESIGNATION
+					<study-column-filter-icon study-column-filter-popover-template="studyColumnFilterText.html"
+											  filter="columns.lotDesignation.filter"
+											  column-name="lotDesignation"
+											  filter-helper="filterHelper"/>
+				</th>
+				<th>ENTRY_NO
+					<study-column-filter-icon study-column-filter-popover-template="studyColumnFilterText.html"
+											  filter="columns.entryNo.filter"
+											  column-name="entryNo"
+											  filter-helper="filterHelper"/>
+				</th>
+				<th>PLOT_NO
+					<study-column-filter-icon study-column-filter-popover-template="studyColumnFilterText.html"
+											  filter="columns.plotNo.filter"
+											  column-name="plotNo"
+											  filter-helper="filterHelper"/>
+				</th>
+				<th>STORAGE LOCATION ABBR
+					<!-- TODO backend
+					<study-column-filter-icon study-column-filter-popover-template="studyColumnFilterText.html"
+											  filter="columns.lotLocationAbbr.filter"
+											  column-name="lotLocationAbbr"
+											  filter-helper="filterHelper"/>
+											  -->
+				</th>
+				<th>STOCK_ID
+					<study-column-filter-icon study-column-filter-popover-template="studyColumnFilterText.html"
+											  filter="columns.lotStockId.filter"
+											  column-name="lotStockId"
+											  filter-helper="filterHelper"/>
+				</th>
+				<th>CREATED
+					<!-- TODO filter -->
+				</th>
+				<th>USERNAME
+					<study-column-filter-icon study-column-filter-popover-template="studyColumnFilterText.html"
+											  filter="columns.createdByUsername.filter"
+											  column-name="createdByUsername"
+											  filter-helper="filterHelper"/>
+				</th>
+				<th>TYPE
+					<study-column-filter-icon study-column-filter-popover-template="studyColumnFilterChecklist.html"
+											  filter="columns.transactionType.filter"
+											  column-name="transactionType"
+											  filter-helper="filterHelper"/>
+				</th>
+				<th>STATUS
+					<study-column-filter-icon study-column-filter-popover-template="studyColumnFilterChecklist.html"
+											  filter="columns.transactionStatus.filter"
+											  column-name="transactionStatus"
+											  filter-helper="filterHelper"/>
+				</th>
+				<th>UNITS
+					<study-column-filter-icon study-column-filter-popover-template="studyColumnFilterChecklist.html"
+											  filter="columns.lotUnitName.filter"
+											  column-name="lotUnitName"
+											  filter-helper="filterHelper"/>
+				</th>
+				<th>AMOUNT
+					<study-column-filter-icon study-column-filter-popover-template="studyColumnFilterNumber.html"
+											  filter="columns.amount.filter"
+											  column-name="amount"
+											  filter-helper="filterHelper"/>
+				</th>
+				<th>NOTES
+					<study-column-filter-icon study-column-filter-popover-template="studyColumnFilterText.html"
+											  filter="columns.notes.filter"
+											  column-name="notes"
+											  filter-helper="filterHelper"/>
+				</th>
 			</tr>
 			</thead>
 		</table>

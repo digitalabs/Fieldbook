@@ -1,6 +1,8 @@
 (function () {
 	'use strict';
 
+	const AND_MORE_LABEL = " and more";
+
 	const module = angular.module('manageTrialApp');
 
 	module.controller('InventoryTabCtrl', ['$scope', 'DTOptionsBuilder', 'DTColumnBuilder', 'InventoryService', '$compile', '$timeout',
@@ -21,7 +23,7 @@
 					data: function (d) {
 						var order = d.order && d.order[0];
 
-						return JSON.stringify({
+						return JSON.stringify(addFilters({
 							draw: d.draw,
 							sortedPageRequest: {
 								pageSize: d.length,
@@ -29,8 +31,7 @@
 								sortBy: $scope.dtColumns[order.column].name,
 								sortOrder: order.dir
 							}
-							// TODO filters
-						});
+						}));
 					}
 				})
 				.withDataProp('data')
@@ -40,7 +41,7 @@
 				.withOption('scrollY', '500px')
 				.withOption('scrollCollapse', true)
 				.withOption('scrollX', '100%')
-				.withOption('order', [2, 'asc']) // transactionId
+				.withOption('order', [[2, 'asc']]) // transactionId
 				.withOption('language', {
 					processing: '<span class="throbber throbber-2x"></span>',
 					lengthMenu: 'Records per page: _MENU_',
@@ -64,62 +65,288 @@
 				}])
 				.withPaginationType('full_numbers');
 
-			$scope.dtColumns = [
-				{
-					// checkbox
+			function addFilters(request) {
+				request.transactionsSearch = {};
+				Object.entries($scope.columns).forEach(([name, column]) => {
+					if (column.filter && column.filter.transform) {
+						column.filter.transform(request);
+					}
+				});
+
+				return request;
+			}
+
+			$scope.columns = {
+				checkbox: {
 					data: function () {
 						return "";
 					}
 				},
-				{
-					name: "instanceNo",
+				instanceNo: {
 					data: function (row) {
 						return row.observationUnits[0].instanceNo
-							+ (row.observationUnits.length > 1 ? " and more" : "");
+							+ (row.observationUnits.length > 1 ? AND_MORE_LABEL : "");
+					},
+					filter: {
+						transform(request) {
+							if (this.value) {
+								request.instanceNoList = [this.value];
+							}
+						}
 					}
 				},
-				{name: "transactionId", data: "transactionId"},
-				{
-					name: "entryType",
+				transactionId: {
+					data: "transactionId",
+					filter: {
+						transform(request) {
+							if (this.value) {
+								request.transactionsSearch.transactionIds = [this.value];
+							}
+						}
+					}
+				},
+				entryType: {
 					data: function (row) {
 						return row.observationUnits[0].entryType;
+					},
+					filter: {
+						transform(request) {
+							if (this.value) {
+								request.entryType = this.value;
+							}
+						}
 					}
 				},
-				{
-					name: "lotGid",
+				lotGid: {
 					data: function (row) {
 						return row.lot.gid;
+					},
+					filter: {
+						transform(request) {
+							if (this.value) {
+								request.transactionsSearch.gids = [this.value];
+							}
+						}
 					}
 				},
-				{
-					name: "lotDesignation",
+				lotDesignation: {
 					data: function (row) {
 						return row.lot.designation;
+					},
+					filter: {
+						transform(request) {
+							if (this.value) {
+								request.transactionsSearch.designation = this.value;
+							}
+						}
 					}
 				},
-				{
-					name: "entryNo",
+				entryNo: {
 					data: function (row) {
 						return row.observationUnits[0].entryNo;
+					},
+					filter: {
+						transform(request) {
+							if (this.value) {
+								request.entryNoList = [this.value];
+							}
+						}
 					}
 				},
-				{
-					name: "plotNo",
+				plotNo: {
 					data: function (row) {
 						return row.observationUnits[0].plotNo
-							+ (row.observationUnits.length > 1 ? " and more" : "");
+							+ (row.observationUnits.length > 1 ? AND_MORE_LABEL : "");
+					},
+					filter: {
+						transform(request) {
+							if (this.value) {
+								request.plotNoList = [this.value];
+							}
+						}
 					}
 				},
-				{name: "lotLocationAbbr", data: "lot.locationAbbr"},
-				{name: "lotStockId", data: "lot.stockId"},
-				{name: "createdDate", data: "createdDate"},
-				{name: "createdByUsername", data: "createdByUsername"},
-				{name: "transactionType", data: "transactionType"},
-				{name: "transactionStatus", data: "transactionStatus"},
-				{name: "lotUnitName", data: "lot.unitName"},
-				{name: "amount", data: "amount"},
-				{name: "notes", data: "notes"}
-			];
+				lotLocationAbbr: {
+					data: "lot.locationAbbr",
+					filter: {
+						transform(request) {
+							if (this.value) {
+								// TODO backend
+								// request.transactionsSearch.lotLocationAbbr = this.value;
+							}
+						}
+					}
+				},
+				lotStockId: {
+					data: "lot.stockId",
+					filter: {
+						transform(request) {
+							if (this.value) {
+								request.transactionsSearch.stockId = this.value;
+							}
+						}
+					}
+				},
+				createdDate: {
+					data: "createdDate",
+					filter: {
+						transform(request) {
+							if (this.value) {
+								// TODO
+								// request.createdDateFrom = this.from;
+								// request.createdDateTo = this.to;
+							}
+						}
+					}
+				},
+				createdByUsername: {
+					data: "createdByUsername",
+					filter: {
+						transform(request) {
+							if (this.value) {
+								request.transactionsSearch.createdByUsername = this.value;
+							}
+						}
+					}
+				},
+				transactionType: {
+					data: "transactionType",
+					filter: {
+						options: [],
+						transform(request) {
+							const selectedOptions = this.options.filter((option) => option.checked);
+							if (selectedOptions.length) {
+								this.value = selectedOptions.map(option => option.id);
+								request.transactionsSearch.transactionTypes = this.value;
+							}
+						},
+						reset() {
+							this.options.forEach(option => option.checked = false);
+						}
+					}
+				},
+				transactionStatus: {
+					data: "transactionStatus",
+					filter: {
+						options: [],
+						transform(request) {
+							const selectedOptions = this.options.filter((option) => option.checked);
+							if (selectedOptions.length) {
+								this.value = selectedOptions.map(option => option.id);
+								request.transactionsSearch.transactionStatus = this.value;
+							}
+						},
+						reset() {
+							this.options.forEach(option => option.checked = false);
+						}
+					}
+				},
+				lotUnitName: {
+					data: "lot.unitName",
+					filter: {
+						options: [],
+						transform(request) {
+							const selectedOptions = this.options.filter((option) => option.checked);
+							if (selectedOptions.length) {
+								this.value = selectedOptions.map(option => option.id);
+								request.transactionsSearch.unitIds = this.value;
+							}
+						},
+						reset() {
+							this.options.forEach(option => option.checked = false);
+						}
+					}
+				},
+				amount: {
+					data: "amount",
+					filter: {
+						transform(request) {
+							if (this.min) {
+								request.transactionsSearch.minAmount = this.min;
+							}
+							if (this.max) {
+								request.transactionsSearch.maxAmount = this.max;
+							}
+						},
+						reset() {
+							this.min = null;
+							this.max = null;
+						}
+					}
+				},
+				notes: {
+					data: "notes",
+					filter: {
+						transform(request) {
+							if (this.value) {
+								request.transactionsSearch.notes = this.value;
+							}
+						}
+					}
+				}
+			};
+
+			$scope.filterHelper = {
+				filterByColumn(filter) {
+					table().ajax.reload();
+				},
+				resetFilterByColumn(filter) {
+					filter.value = null;
+					if (filter.reset) {
+						filter.reset();
+					}
+					table().ajax.reload();
+				},
+				sortColumn(columnName, asc) {
+					table().order([$scope.dtColumns.findIndex((column) => column.name === columnName), asc ? 'asc' : 'desc']).draw();
+				},
+				isSortingAsc(columnName) {
+					const index = $scope.dtColumns.findIndex((column) => column.name === columnName);
+					const order = table().order().find((order) => order[0] === index);
+					if (order) {
+						return order[1] === 'asc';
+					}
+					return null;
+				}
+			};
+
+			InventoryService.queryUnits().then((unitTypes) => {
+				$scope.columns.lotUnitName.filter.options = unitTypes.map((unitType) => {
+					return {
+						name: unitType.name,
+						id: unitType.id
+					}
+				});
+			});
+
+			InventoryService.queryTransactionTypes().then((transactionTypes) => {
+				$scope.columns.transactionType.filter.options = transactionTypes.map((transactionType) => {
+					return {
+						name: transactionType.value,
+						id: transactionType.id
+					}
+				});
+			});
+
+			InventoryService.queryTransactionStatusTypes().then((statusTypes) => {
+				$scope.columns.transactionStatus.filter.options = statusTypes.map((statusType) => {
+					return {
+						name: statusType.value,
+						id: statusType.intValue
+					}
+				});
+			});
+
+
+			/**
+			 * - column.name used for sorting
+			 */
+			$scope.dtColumns = Object.entries($scope.columns).map(([name, column]) => {
+				return {
+					name: name,
+					data: column.data
+				}
+			});
 
 			$scope.dtColumnDefs = [
 				{

@@ -17,7 +17,10 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.FileUtils;
 import org.generationcp.commons.util.InstallationDirectoryUtil;
 import org.generationcp.middleware.data.initializer.ProjectTestDataInitializer;
+import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.etl.StudyDetails;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
@@ -26,25 +29,18 @@ import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.generationcp.middleware.service.api.study.StudyGermplasmService;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Matchers;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 public class ExportStudyGermplasmControllerTest {
@@ -99,6 +95,9 @@ public class ExportStudyGermplasmControllerTest {
 	private ExportStudyGermplasmService exportStudyGermplasmService;
 
 	@Mock
+	private StudyGermplasmService studyGermplasmService;
+
+	@Mock
 	private ContextUtil contextUtil;
 
 	@InjectMocks
@@ -130,7 +129,7 @@ public class ExportStudyGermplasmControllerTest {
 				.thenReturn(this.createStandardVariable(TermId.CHECK.getId(), ExportStudyGermplasmControllerTest.CHECK));
 		Mockito.doReturn(this.getPlotLevelList()).when(this.userSelection).getPlotsLevelList();
 
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListById(Matchers.anyInt())).thenReturn(this.getGermplasmList());
+		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListById(ArgumentMatchers.anyInt())).thenReturn(this.getGermplasmList());
 
 		Mockito.when(this.userSelection.getImportedGermplasmMainInfo()).thenReturn(Mockito.mock(ImportedGermplasmMainInfo.class));
 		Mockito.when(this.userSelection.getImportedGermplasmMainInfo().getListId()).thenReturn(LIST_ID);
@@ -147,7 +146,8 @@ public class ExportStudyGermplasmControllerTest {
 		Assert.assertTrue(outputDirectoryFile.exists());
 		File outputFile = null;
 		for (final File file : outputDirectoryFile.listFiles()) {
-			if (file.getName().startsWith(SAMPLE_LIST)) {
+			System.out.println(file.getName());
+			if (file.getName().startsWith(ExportStudyGermplasmController.EXPORTED_GERMPLASM_LIST)) {
 				outputFile = file;
 			}
 		}
@@ -159,6 +159,13 @@ public class ExportStudyGermplasmControllerTest {
 
 		final ExportGermplasmListForm form = new ExportGermplasmListForm();
 		form.setGermplasmListVisibleColumns("0");
+		final Workbook workbook = new Workbook();
+		final StudyDetails studyDetails = new StudyDetails();
+		final int studyId = new Random().nextInt();
+		studyDetails.setId(studyId);
+		workbook.setStudyDetails(studyDetails);
+		Mockito.doReturn(workbook).when(this.userSelection).getWorkbook();
+		Mockito.doReturn(10L).when(this.studyGermplasmService).countStudyGermplasm(studyId);
 
 		try {
 			final String output =
@@ -166,13 +173,13 @@ public class ExportStudyGermplasmControllerTest {
 
 			//  Verify temporary file is created in proper directory and response object is properly set
 			final ArgumentCaptor<String> filenameCaptor = ArgumentCaptor.forClass(String.class);
-			Mockito.verify(this.exportStudyGermplasmService, Mockito.times(1)).exportAsCSVFile(1, filenameCaptor.capture(),
-					Matchers.any(Map.class));
+			Mockito.verify(this.exportStudyGermplasmService, Mockito.times(1)).exportAsCSVFile(ArgumentMatchers.eq(studyId), filenameCaptor.capture(),
+					ArgumentMatchers.any(Map.class));
 			final File outputFile = this.getOutputFilePath();
 			Assert.assertNotNull(outputFile);
 			Assert.assertEquals(outputFile.getAbsolutePath(), filenameCaptor.getValue());
 			final Map<String, Object> result = new ObjectMapper().readValue(output, Map.class);
-			Assert.assertEquals(SAMPLE_LIST + ".csv", result.get(ExportStudyGermplasmController.FILENAME));
+			Assert.assertEquals(ExportStudyGermplasmController.EXPORTED_GERMPLASM_LIST + ".csv", result.get(ExportStudyGermplasmController.FILENAME));
 			Assert.assertEquals(outputFile.getAbsolutePath(), result.get(ExportStudyGermplasmController.OUTPUT_FILENAME));
 			Mockito.verify(this.response).setContentType(FileUtils.MIME_CSV);
 		} catch (final GermplasmListExporterException e) {
@@ -185,19 +192,24 @@ public class ExportStudyGermplasmControllerTest {
 	public void testExportGermplasmListCSVForStudy_NoSelectedGermplasmList() {
 
 		try {
-			Mockito.doReturn(null).when(this.fieldbookMiddlewareService).getGermplasmListById(Matchers.anyInt());
+			Mockito.doReturn(null).when(this.fieldbookMiddlewareService).getGermplasmListById(ArgumentMatchers.anyInt());
 		} catch (final MiddlewareQueryException e1) {
 			Assert.fail();
 		}
 		Mockito.when(this.userSelection.getImportedGermplasmMainInfo()).thenReturn(null);
-
+		final Workbook workbook = new Workbook();
+		final StudyDetails studyDetails = new StudyDetails();
+		final int studyId = new Random().nextInt();
+		studyDetails.setId(studyId);
+		workbook.setStudyDetails(studyDetails);
+		Mockito.doReturn(workbook).when(this.userSelection).getWorkbook();
 		final ExportGermplasmListForm form = new ExportGermplasmListForm();
 		form.setGermplasmListVisibleColumns("0");
 
 		try {
 			this.exportStudyGermplasmController.exportStudyGermplasm(form, ExportStudyGermplasmControllerTest.CSV_TYPE, this.response);
-			Mockito.verify(this.exportStudyGermplasmService, Mockito.times(0)).exportAsCSVFile(1, Matchers.anyString(),
-					Matchers.any(Map.class));
+			Mockito.verify(this.exportStudyGermplasmService, Mockito.times(0)).exportAsCSVFile(ArgumentMatchers.eq(studyId), ArgumentMatchers.anyString(),
+					ArgumentMatchers.any(Map.class));
 		} catch (final GermplasmListExporterException e) {
 			Assert.fail();
 		}

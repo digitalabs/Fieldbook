@@ -27,7 +27,6 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
@@ -44,7 +43,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 @Controller
 @RequestMapping(ReviewStudyDetailsController.URL)
@@ -67,9 +69,6 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
-
-	@Resource
-	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
 
 	@Resource
 	private ErrorHandlerService errorHandlerService;
@@ -129,7 +128,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		}
 
 		model.addAttribute("trialDetails", details);
-		model.addAttribute("numberOfChecks", this.studyGermplasmService.countStudyGermplasmByEntryTypeIds(id, Arrays.asList(String.valueOf(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId()))));
+		model.addAttribute("numberOfChecks", this.studyGermplasmService.countStudyGermplasmByEntryTypeIds(id, getAllCheckEntryTypeIds()));
 		this.setIsSuperAdminAttribute(model);
 		return this.showAjaxPage(model, this.getContentName());
 	}
@@ -273,5 +272,9 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 			}
 		}
 
+	}
+
+	public void setStudyGermplasmService(final StudyGermplasmService studyGermplasmService) {
+		this.studyGermplasmService = studyGermplasmService;
 	}
 }

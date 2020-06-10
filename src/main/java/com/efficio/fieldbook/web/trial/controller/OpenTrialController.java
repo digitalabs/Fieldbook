@@ -266,17 +266,6 @@ public class OpenTrialController extends BaseTrialController {
 		}
 	}
 
-	List<String> getAllCheckEntryTypeIds() {
-		final List<ValueReference> entryTypes = this.fieldbookService.getAllPossibleValues(TermId.ENTRY_TYPE.getId(), true);
-		final List<String> checkEntryTypeIds = new ArrayList<>();
-		for (final ValueReference entryType : entryTypes) {
-			if (SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId() != entryType.getId()) {
-				checkEntryTypeIds.add(entryType.getId().toString());
-			}
-		}
-		return checkEntryTypeIds;
-	}
-
 	void setUserSelectionImportedGermplasmMainInfo(final UserSelection userSelection, final Integer studyId, final Model model) {
 
 		final List<StudyGermplasmDto> studyGermplasmDtoList = this.studyGermplasmService.getGermplasm(studyId);

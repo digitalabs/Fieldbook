@@ -60,17 +60,8 @@ public class DeleteStudyControllerTest {
 	public void setUp() {
 		this.locale = new Locale("en", "US");
 		this.germplasmListTestDataInitializer = new GermplasmListTestDataInitializer();
-		final GermplasmList nurseryList = this.germplasmListTestDataInitializer.createGermplasmListWithType(1,
-				GermplasmListType.STUDY.name());
-		final GermplasmList germplasmListWithType = this.germplasmListTestDataInitializer.createGermplasmListWithType(1,
-				GermplasmListType.STUDY.name());
-
-		Mockito.when(this.fieldbookMiddlewareService
-				.getGermplasmListsByProjectId(DeleteStudyControllerTest.PROJECT_ID, GermplasmListType.STUDY))
-				.thenReturn(Arrays.asList(nurseryList));
-		Mockito.when(this.fieldbookMiddlewareService
-				.getGermplasmListsByProjectId(DeleteStudyControllerTest.PROJECT_ID, GermplasmListType.STUDY))
-				.thenReturn(Arrays.asList(germplasmListWithType));
+		final GermplasmList nurseryList = this.germplasmListTestDataInitializer.createGermplasmListWithType(1, null);
+		final GermplasmList germplasmListWithType = this.germplasmListTestDataInitializer.createGermplasmListWithType(1, null);
 	}
 
 	@Test
@@ -83,12 +74,6 @@ public class DeleteStudyControllerTest {
 		Assert.assertEquals("The value should be 1", "1", result.get(DeleteStudyController.IS_SUCCESS));
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1))
 				.deleteStudy(DeleteStudyControllerTest.PROJECT_ID, this.contextUtil.getCurrentWorkbenchUserId());
-		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1))
-				.getGermplasmListsByProjectId(DeleteStudyControllerTest.PROJECT_ID, GermplasmListType.STUDY);
-		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1))
-				.getGermplasmListsByProjectId(DeleteStudyControllerTest.PROJECT_ID, GermplasmListType.CHECK);
-		Mockito.verify(this.germplasmListManager, Mockito.times(1))
-				.deleteGermplasmList(Matchers.any(GermplasmList.class));
 	}
 
 	@Test
@@ -101,8 +86,6 @@ public class DeleteStudyControllerTest {
 		Assert.assertEquals("The value should be 1", "1", result.get(DeleteStudyController.IS_SUCCESS));
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1))
 				.deleteStudy(DeleteStudyControllerTest.PROJECT_ID, this.contextUtil.getCurrentWorkbenchUserId());
-		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1))
-				.getGermplasmListsByProjectId(DeleteStudyControllerTest.PROJECT_ID, GermplasmListType.STUDY);
 		Mockito.verify(this.germplasmListManager, Mockito.times(1))
 				.deleteGermplasmList(Matchers.any(GermplasmList.class));
 	}

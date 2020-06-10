@@ -391,8 +391,6 @@ public class LabelPrintingServiceImplTest {
 		this.labelPrintingServiceImpl.checkAndSetFieldMapInstanceInfo(fieldMapList, workbook, isStockList, params,
 				this.measurementData, this.environmentData, userLabelPrinting);
 		try {
-			Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0))
-					.getGermplasmListsByProjectId(LabelPrintingServiceImplTest.TEST_STUDY_ID, GermplasmListType.STUDY);
 		} catch (final NeverWantedButInvoked e) {
 			Assert.fail("Expecting that the method processInventorySpecificLabelsForInstance is never invoked.");
 		}
@@ -429,9 +427,6 @@ public class LabelPrintingServiceImplTest {
 			Mockito.verify(this.pedigreeService, Mockito.times(numberOfEntries)).getCrossExpansion(gidCaptor.capture(),
 					crossExpansionProperties.capture());
 			Assert.assertNotNull(gidCaptor.getValue());
-
-			Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).getGermplasmListsByProjectId(
-					LabelPrintingServiceImplTest.TEST_STUDY_ID, GermplasmListType.STUDY);
 		} catch (final NeverWantedButInvoked e) {
 			Assert.fail("Expecting that the method processInventorySpecificLabelsForInstance is never invoked.");
 		}
@@ -530,8 +525,6 @@ public class LabelPrintingServiceImplTest {
 				this.measurementData, this.environmentData, null);
 
 		try {
-			Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1))
-					.getGermplasmListsByProjectId(LabelPrintingServiceImplTest.TEST_STUDY_ID, GermplasmListType.STUDY);
 		} catch (final TooLittleActualInvocations e) {
 			Assert.fail("Expecting that the method processInventorySpecificLabelsForInstance is invoked.");
 		}

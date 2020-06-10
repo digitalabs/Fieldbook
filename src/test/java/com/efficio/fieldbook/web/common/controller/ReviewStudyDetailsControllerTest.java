@@ -88,7 +88,6 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		Mockito.doReturn(project).when(this.contextUtil).getProjectInContext();
 
 		final GermplasmList germplasmList = new GermplasmList(1);
-		Mockito.when(this.fieldbookMWService.getGermplasmListsByProjectId(1, GermplasmListType.STUDY)).thenReturn(Arrays.asList(germplasmList));
 	}
 
 	@Test

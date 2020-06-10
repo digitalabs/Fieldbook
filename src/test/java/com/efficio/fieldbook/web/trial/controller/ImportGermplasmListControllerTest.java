@@ -294,8 +294,6 @@ public class ImportGermplasmListControllerTest {
 	@Test
 	public void testDisplayGermplasmDetailsOfCurrentStudyForNursery() throws MiddlewareException {
 
-		Mockito.doReturn(this.createGermplasmList()).when(this.fieldbookMiddlewareService)
-				.getGermplasmListsByProjectId(ImportGermplasmListControllerTest.STUDY_ID, GermplasmListType.STUDY);
 		Mockito.doReturn(this.createListDataProject()).when(this.fieldbookMiddlewareService)
 				.getListDataProject(ImportGermplasmListControllerTest.GERMPLASM_LIST_ID);
 
@@ -389,8 +387,6 @@ public class ImportGermplasmListControllerTest {
 	@Test
 	public void testDisplayGermplasmDetailsOfCurrentStudyForStudy() throws MiddlewareException {
 
-		Mockito.doReturn(this.createGermplasmList()).when(this.fieldbookMiddlewareService)
-				.getGermplasmListsByProjectId(ImportGermplasmListControllerTest.STUDY_ID, GermplasmListType.STUDY);
 		Mockito.doReturn(this.createListDataProject()).when(this.fieldbookMiddlewareService)
 				.getListDataProject(ImportGermplasmListControllerTest.GERMPLASM_LIST_ID);
 

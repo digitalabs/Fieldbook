@@ -3,9 +3,7 @@ package com.efficio.fieldbook.web.common.controller;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import org.generationcp.middleware.domain.dms.Study;
-import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.exceptions.UnpermittedDeletionException;
-import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
@@ -44,9 +42,6 @@ public class DeleteStudyController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private MessageSource messageSource;
-
-	@Resource
-	private GermplasmListManager germplasmListManager;
 
 	@Override
 	public String getContentName() {
@@ -87,9 +82,5 @@ public class DeleteStudyController extends AbstractBaseFieldbookController {
 		return results;
 	}
 
-	private void deleteGermplasmList(final List<GermplasmList> germplasmLists) {
-		if (germplasmLists != null && !germplasmLists.isEmpty()) {
-			this.germplasmListManager.deleteGermplasmList(germplasmLists.get(0));
-		}
-	}
+
 }

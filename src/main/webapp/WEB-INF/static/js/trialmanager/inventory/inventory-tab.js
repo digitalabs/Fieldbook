@@ -72,12 +72,14 @@
 				request.transactionsSearch = {};
 				Object.entries($scope.columns).forEach(([name, column]) => {
 					if (column.filter && column.filter.transform) {
+						column.filter.isFiltered = false;
 						column.filter.transform(request);
 					}
 				});
 				const instanceNumber = $scope.nested.selectedEnvironment && $scope.nested.selectedEnvironment.instanceNumber;
 				if (instanceNumber) {
 					request.instanceNoList = [instanceNumber];
+					$scope.columns.instanceNo.filter.isFiltered = true;
 				}
 
 				return request;
@@ -99,6 +101,7 @@
 						transform(request) {
 							if (this.value) {
 								request.instanceNoList = [this.value];
+								this.isFiltered = true;
 							}
 						}
 					}
@@ -109,6 +112,7 @@
 						transform(request) {
 							if (this.value) {
 								request.transactionsSearch.transactionIds = [this.value];
+								this.isFiltered = true;
 							}
 						}
 					}
@@ -121,6 +125,7 @@
 						transform(request) {
 							if (this.value) {
 								request.entryType = this.value;
+								this.isFiltered = true;
 							}
 						}
 					}
@@ -133,6 +138,7 @@
 						transform(request) {
 							if (this.value) {
 								request.transactionsSearch.gids = [this.value];
+								this.isFiltered = true;
 							}
 						}
 					}
@@ -145,6 +151,7 @@
 						transform(request) {
 							if (this.value) {
 								request.transactionsSearch.designation = this.value;
+								this.isFiltered = true;
 							}
 						}
 					}
@@ -157,6 +164,7 @@
 						transform(request) {
 							if (this.value) {
 								request.entryNoList = [this.value];
+								this.isFiltered = true;
 							}
 						}
 					}
@@ -170,6 +178,7 @@
 						transform(request) {
 							if (this.value) {
 								request.plotNoList = [this.value];
+								this.isFiltered = true;
 							}
 						}
 					}
@@ -180,6 +189,7 @@
 						transform(request) {
 							if (this.value) {
 								request.transactionsSearch.lotLocationAbbr = this.value;
+								this.isFiltered = true;
 							}
 						}
 					}
@@ -187,9 +197,11 @@
 				lotStockId: {
 					data: "lot.stockId",
 					filter: {
+						placeholder: 'starts with',
 						transform(request) {
 							if (this.value) {
 								request.transactionsSearch.stockId = this.value;
+								this.isFiltered = true;
 							}
 						}
 					}
@@ -202,6 +214,7 @@
 								// TODO
 								// request.createdDateFrom = this.from;
 								// request.createdDateTo = this.to;
+								// this.isFiltered = true;
 							}
 						}
 					}
@@ -212,6 +225,7 @@
 						transform(request) {
 							if (this.value) {
 								request.transactionsSearch.createdByUsername = this.value;
+								this.isFiltered = true;
 							}
 						}
 					}
@@ -225,6 +239,7 @@
 							if (selectedOptions.length) {
 								this.value = selectedOptions.map(option => option.id);
 								request.transactionsSearch.transactionTypes = this.value;
+								this.isFiltered = true;
 							}
 						},
 						reset() {
@@ -241,6 +256,7 @@
 							if (selectedOptions.length) {
 								this.value = selectedOptions.map(option => option.id);
 								request.transactionsSearch.transactionStatus = this.value;
+								this.isFiltered = true;
 							}
 						},
 						reset() {
@@ -257,6 +273,7 @@
 							if (selectedOptions.length) {
 								this.value = selectedOptions.map(option => option.id);
 								request.transactionsSearch.unitIds = this.value;
+								this.isFiltered = true;
 							}
 						},
 						reset() {
@@ -270,9 +287,11 @@
 						transform(request) {
 							if (this.min) {
 								request.transactionsSearch.minAmount = this.min;
+								this.isFiltered = true;
 							}
 							if (this.max) {
 								request.transactionsSearch.maxAmount = this.max;
+								this.isFiltered = true;
 							}
 						},
 						reset() {
@@ -287,6 +306,7 @@
 						transform(request) {
 							if (this.value) {
 								request.transactionsSearch.notes = this.value;
+								this.isFiltered = true;
 							}
 						}
 					}
@@ -314,6 +334,11 @@
 						return order[1] === 'asc';
 					}
 					return null;
+				},
+				getFilteringByClass(filter) {
+					if (filter.isFiltered) {
+						return 'filtering-by';
+					}
 				}
 			};
 

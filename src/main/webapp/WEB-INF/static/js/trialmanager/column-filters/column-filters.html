@@ -1,7 +1,8 @@
 <script type="text/ng-template" id="studyColumnFilterIcon.html">
 	<span class="glyphicon glyphicon-filter"
+		  ng-class="filterHelper.getFilteringByClass(filter)"
 		  style="cursor:pointer; padding-left: 5px;"
-		  popover-placement="bottom"
+		  popover-placement="auto bottom"
 		  popover-append-to-body="true"
 		  popover-trigger="'outsideClick'"
 		  uib-popover-template="studyColumnFilterPopoverTemplate"
@@ -36,7 +37,7 @@
 </script>
 <script type="text/ng-template" id="studyColumnFilterText.html">
 	<study-column-filter>
-		<input class="form-control" ng-model='filter.value' placeholder="{{filter.placeholder || 'Filter values'}}"/>
+		<input class="form-control" ng-model='filter.value' placeholder="{{filter.placeholder || 'Filter value'}}"/>
 	</study-column-filter>
 </script>
 <script type="text/ng-template" id="studyColumnFilterChecklist.html">

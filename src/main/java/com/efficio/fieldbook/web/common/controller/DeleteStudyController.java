@@ -3,9 +3,7 @@ package com.efficio.fieldbook.web.common.controller;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import org.generationcp.middleware.domain.dms.Study;
-import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.exceptions.UnpermittedDeletionException;
-import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
@@ -45,9 +43,6 @@ public class DeleteStudyController extends AbstractBaseFieldbookController {
 	@Resource
 	private MessageSource messageSource;
 
-	@Resource
-	private GermplasmListManager germplasmListManager;
-
 	@Override
 	public String getContentName() {
 		return null;
@@ -71,16 +66,6 @@ public class DeleteStudyController extends AbstractBaseFieldbookController {
 			}
 
 			this.fieldbookMiddlewareService.deleteStudy(studyId, this.contextUtil.getCurrentWorkbenchUserId());
-
-			germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY);
-
-			// Also set the status of checklist to deleted
-			final List<GermplasmList> checkGermplasmLists =
-				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.CHECK);
-			this.deleteGermplasmList(checkGermplasmLists);
-
-			// Set germplasm list status to deleted
-			this.deleteGermplasmList(germplasmLists);
 			results.put(DeleteStudyController.IS_SUCCESS, "1");
 
 		} catch (final UnpermittedDeletionException ude) {
@@ -97,9 +82,5 @@ public class DeleteStudyController extends AbstractBaseFieldbookController {
 		return results;
 	}
 
-	private void deleteGermplasmList(final List<GermplasmList> germplasmLists) {
-		if (germplasmLists != null && !germplasmLists.isEmpty()) {
-			this.germplasmListManager.deleteGermplasmList(germplasmLists.get(0));
-		}
-	}
+
 }

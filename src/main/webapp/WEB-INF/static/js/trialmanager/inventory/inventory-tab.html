@@ -5,6 +5,21 @@
 			<strong class="sub-content-heading">Inventory</strong>
 		</label>
 	</div>
+	<div class="col-xs-12">
+		<div class="form-group" >
+			<label style="padding-right: 10px;">Select Environment: </label>
+			<ui-select ng-model="nested.selectedEnvironment"
+					   class="input-sm form-control inline-select"
+					   ng-change="changeEnvironment()" search-enabled="false" theme="select2">
+				<ui-select-match class="ui-select-match">
+					{{(nested.selectedEnvironment.instanceNumber ? nested.selectedEnvironment.instanceNumber + ' - ' : '') + (nested.selectedEnvironment.locationName || nested.selectedEnvironment.locationAbbreviation || nested.selectedEnvironment.instanceNumber)}}
+				</ui-select-match>
+				<ui-select-choices repeat="env in (environments | filter: { locationName: $select.search})">
+					{{(env.instanceNumber ? env.instanceNumber + ' - ' : '') + (env.locationName || env.locationAbbreviation || env.instanceNumber)}}
+				</ui-select-choices>
+			</ui-select>
+		</div>
+	</div>
 	<div class="col-xs-12 col-md-12">
 		<form class="form-inline">
 			<div class="form-group">

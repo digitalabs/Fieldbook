@@ -6,9 +6,9 @@
 	const module = angular.module('manageTrialApp');
 
 	module.controller('InventoryTabCtrl', ['$scope', 'DTOptionsBuilder', 'DTColumnBuilder', 'InventoryService', '$compile', '$timeout',
-		'$uibModal',
+		'$uibModal', 'studyInstanceService',
 		function (
-			$scope, DTOptionsBuilder, DTColumnBuilder, InventoryService, $compile, $timeout, $uibModal,
+			$scope, DTOptionsBuilder, DTColumnBuilder, InventoryService, $compile, $timeout, $uibModal, studyInstanceService,
 		) {
 			$scope.nested = {};
 			$scope.nested.dtInstance = null;
@@ -72,6 +72,10 @@
 						column.filter.transform(request);
 					}
 				});
+				const instanceNumber = $scope.nested.selectedEnvironment && $scope.nested.selectedEnvironment.instanceNumber;
+				if (instanceNumber) {
+					request.instanceNoList = [instanceNumber];
+				}
 
 				return request;
 			}
@@ -337,6 +341,23 @@
 				});
 			});
 
+			studyInstanceService.getStudyInstances().then((instances) => {
+				$scope.environments = [{
+					instanceNumber: null,
+					locationName: 'All environments'
+				}].concat(instances.filter((instance) => instance.hasInventory));
+				$scope.nested.selectedEnvironment = $scope.environments[1];
+				setInstanceNoVisibility();
+			});
+
+			$scope.changeEnvironment = function () {
+				setInstanceNoVisibility();
+				table().ajax.reload();
+			};
+
+			function setInstanceNoVisibility() {
+				table().columns("instanceNo:name").visible($scope.nested.selectedEnvironment === $scope.environments[0])
+			}
 
 			/**
 			 * - column.name used for sorting

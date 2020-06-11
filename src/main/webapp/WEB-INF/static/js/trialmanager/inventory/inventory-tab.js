@@ -5,14 +5,17 @@
 
 	const module = angular.module('manageTrialApp');
 
-	module.controller('InventoryTabCtrl', ['$scope', 'DTOptionsBuilder', 'DTColumnBuilder', 'InventoryService', '$compile', '$timeout',
+	module.controller('InventoryTabCtrl', ['$scope', '$q', 'DTOptionsBuilder', 'DTColumnBuilder', 'InventoryService', '$compile', '$timeout',
 		'$uibModal', 'studyInstanceService',
 		function (
-			$scope, DTOptionsBuilder, DTColumnBuilder, InventoryService, $compile, $timeout, $uibModal, studyInstanceService,
+			$scope, $q, DTOptionsBuilder, DTColumnBuilder, InventoryService, $compile, $timeout, $uibModal, studyInstanceService,
 		) {
 			$scope.nested = {};
-			$scope.nested.dtInstance = null;
-			$scope.dtOptions = DTOptionsBuilder.newOptions()
+			$scope.nested.dtInstance = {};
+
+			const dtOptionsDeferred = $q.defer();
+			$scope.dtOptions = dtOptionsDeferred.promise;
+			const dtOptions = DTOptionsBuilder.newOptions()
 				.withOption('ajax', {
 					url: InventoryService.getSearchStudyTransactionsUrl(),
 					type: 'POST',
@@ -91,6 +94,7 @@
 						return row.observationUnits[0].instanceNo
 							+ (row.observationUnits.length > 1 ? AND_MORE_LABEL : "");
 					},
+					visible: false,
 					filter: {
 						transform(request) {
 							if (this.value) {
@@ -340,35 +344,18 @@
 				});
 			});
 
-			studyInstanceService.getStudyInstances().then((instances) => {
-				$scope.environments = [{
-					instanceNumber: null,
-					locationName: 'All environments'
-				}].concat(instances.filter((instance) => instance.hasInventory));
-				$scope.nested.selectedEnvironment = $scope.environments[1];
-				setInstanceNoVisibility();
-			});
-
-			$scope.changeEnvironment = function () {
-				setInstanceNoVisibility();
-				table().ajax.reload();
-			};
-
-			function setInstanceNoVisibility() {
-				table().columns("instanceNo:name").visible($scope.nested.selectedEnvironment === $scope.environments[0])
-			}
-
 			/**
 			 * - column.name used for sorting
 			 */
 			$scope.dtColumns = Object.entries($scope.columns).map(([name, column]) => {
 				return {
 					name: name,
-					data: column.data
+					data: column.data,
+					visible: column.visible
 				}
 			});
 
-			$scope.dtColumnDefs = [
+			$scope.dtColumnDefs =  [
 				{
 					targets: 0,
 					createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
@@ -477,7 +464,11 @@
 			};
 
 			function getPageItemIds() {
-				return table().data().toArray().map((data) => {
+				const dataTable = table();
+				if (!dataTable) {
+					return [];
+				}
+				return dataTable.data().toArray().map((data) => {
 					return data.transactionId;
 				});
 			}
@@ -485,6 +476,21 @@
 			function table() {
 				return $scope.nested.dtInstance.DataTable;
 			}
+
+			$scope.changeEnvironment = function () {
+				table().columns("instanceNo:name").visible($scope.nested.selectedEnvironment === $scope.environments[0])
+				table().ajax.reload();
+			};
+
+			studyInstanceService.getStudyInstances().then((instances) => {
+				$scope.environments = [{
+					instanceNumber: null,
+					locationName: 'All environments'
+				}].concat(instances.filter((instance) => instance.hasInventory));
+				$scope.nested.selectedEnvironment = $scope.environments[1];
+
+				dtOptionsDeferred.resolve(dtOptions);
+			});
 		}
 	]);
 })();

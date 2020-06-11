@@ -30,6 +30,7 @@ import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.pojos.workbench.WorkbenchUser;
+import org.generationcp.middleware.service.api.study.StudyGermplasmService;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.junit.After;
 import org.junit.Assert;
@@ -89,6 +90,9 @@ public class CrossingTemplateExcelExporterTest {
 	@Mock
 	private UserService userService;
 
+	@Mock
+	private StudyGermplasmService studyGermplasmService;
+
 	@InjectMocks
 	private CrossingTemplateExcelExporter exporter;
 
@@ -112,14 +116,12 @@ public class CrossingTemplateExcelExporterTest {
 
 	@Test
 	public void testExport() throws Exception {
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(CrossingTemplateExcelExporterTest.STUDY_ID,
-				GermplasmListType.STUDY)).thenReturn(this.initializeCrossesList());
-
 		Mockito.doReturn(1).when(this.fieldbookMiddlewareService).getMeasurementDatasetId(Matchers.anyInt());
 		Mockito.doReturn(this.workbook).when(this.fileService).retrieveWorkbookTemplate(TEST_FILENAME);
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(ProjectTestDataInitializer.createProject());
 		Mockito.when(this.userService.getUsersByProjectId(ArgumentMatchers.anyLong()))
 			.thenReturn(new ArrayList<WorkbenchUser>());
+		Mockito.when(this.studyGermplasmService.countStudyGermplasm(CrossingTemplateExcelExporterTest.STUDY_ID)).thenReturn(1l);
 
 		final FileExportInfo exportInfo = this.exporter.export(CrossingTemplateExcelExporterTest.STUDY_ID,
 				CrossingTemplateExcelExporterTest.STUDY_NAME, CrossingTemplateExcelExporterTest.CURRENT_USER_ID);
@@ -316,14 +318,13 @@ public class CrossingTemplateExcelExporterTest {
 	public void testChangeInvalidaCharacterExportFilename() throws Exception {
 		final String studyName = "Nueva Nursery \\ / : * ? \" \\&quot; &lt; &gt; | ,";
 		final String expectedBaseFilename = "CrossingTemplate-Nueva Nursery _ _ _ _ _ _ __ _ _ _ _";
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(CrossingTemplateExcelExporterTest.STUDY_ID,
-				GermplasmListType.STUDY)).thenReturn(this.initializeCrossesList());
 
 		Mockito.doReturn(1).when(this.fieldbookMiddlewareService).getMeasurementDatasetId(Matchers.anyInt());
 		Mockito.doReturn(this.workbook).when(this.fileService).retrieveWorkbookTemplate(TEST_FILENAME);
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(ProjectTestDataInitializer.createProject());
 		Mockito.when(this.userService.getUsersByProjectId(ArgumentMatchers.anyLong()))
 			.thenReturn(new ArrayList<WorkbenchUser>());
+		Mockito.when(this.studyGermplasmService.countStudyGermplasm(CrossingTemplateExcelExporterTest.STUDY_ID)).thenReturn(1l);
 
 		// to test
 		final FileExportInfo exportInfo = this.exporter.export(CrossingTemplateExcelExporterTest.STUDY_ID, studyName,
@@ -345,10 +346,8 @@ public class CrossingTemplateExcelExporterTest {
 	@Test(expected = CrossingTemplateExportException.class)
 	@SuppressWarnings("unchecked")
 	public void retrieveAndValidateIfHasGermplasmListExceptionHandling() throws Exception {
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(CrossingTemplateExcelExporterTest.STUDY_ID,
-				GermplasmListType.STUDY)).thenReturn(Collections.EMPTY_LIST);
-
-		this.exporter.retrieveAndValidateIfHasGermplasmList(CrossingTemplateExcelExporterTest.STUDY_ID);
+		Mockito.when(this.studyGermplasmService.countStudyGermplasm(CrossingTemplateExcelExporterTest.STUDY_ID)).thenReturn(0l);
+		this.exporter.validateIfStudyHasGermplasm(CrossingTemplateExcelExporterTest.STUDY_ID);
 	}
 
 	private List<GermplasmList> initializeCrossesList() {

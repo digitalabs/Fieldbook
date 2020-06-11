@@ -27,26 +27,20 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.StudyDataManager;
-import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.generationcp.middleware.service.api.study.StudyGermplasmService;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -77,9 +71,6 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 	private FieldbookService fieldbookMiddlewareService;
 
 	@Resource
-	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
-
-	@Resource
 	private ErrorHandlerService errorHandlerService;
 
 	@Resource
@@ -96,6 +87,9 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	@Resource
 	private UserService userService;
+
+	@Resource
+	private StudyGermplasmService studyGermplasmService;
 
 	@Override
 	public String getContentName() {
@@ -134,7 +128,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		}
 
 		model.addAttribute("trialDetails", details);
-		model.addAttribute("numberOfChecks", this.getNumberOfChecks(id));
+		model.addAttribute("numberOfChecks", this.studyGermplasmService.countStudyGermplasmByEntryTypeIds(id, getAllCheckEntryTypeIds()));
 		this.setIsSuperAdminAttribute(model);
 		return this.showAjaxPage(model, this.getContentName());
 	}
@@ -154,17 +148,6 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 	@RequestMapping(value = "/datasets/{nurseryId}")
 	public List<DatasetReference> loadDatasets(@PathVariable final int nurseryId) {
 		return this.fieldbookMiddlewareService.getDatasetReferences(nurseryId);
-	}
-
-
-	long getNumberOfChecks(final int studyId) {
-		final List<GermplasmList> germplasmLists =
-			this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY);
-		if (germplasmLists != null && !germplasmLists.isEmpty()) {
-			final GermplasmList germplasmList = germplasmLists.get(0);
-			return this.fieldbookService.getGermplasmListChecksSize(germplasmList.getId());
-		}
-		return 0;
 	}
 
 	private void rearrangeDetails(final StudyDetails details) {
@@ -289,5 +272,9 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 			}
 		}
 
+	}
+
+	public void setStudyGermplasmService(final StudyGermplasmService studyGermplasmService) {
+		this.studyGermplasmService = studyGermplasmService;
 	}
 }

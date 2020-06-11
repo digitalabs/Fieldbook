@@ -16,14 +16,14 @@ import com.efficio.fieldbook.web.common.bean.TableHeader;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.efficio.fieldbook.web.exception.FieldbookRequestValidationException;
+import com.efficio.fieldbook.web.study.germplasm.StudyGermplasmTransformer;
 import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.form.UpdateGermplasmCheckForm;
-import org.generationcp.commons.constant.AppConstants;
-import com.efficio.fieldbook.web.util.ListDataProjectUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.fest.util.Collections;
+import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
@@ -40,11 +40,11 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
-import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
-import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
+import org.generationcp.middleware.service.api.study.StudyGermplasmService;
 import org.generationcp.middleware.util.FieldbookListUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,23 +54,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This controller handles the 2nd step in the study manager process.
@@ -80,6 +68,7 @@ import java.util.Set;
 @Controller
 @RequestMapping({ ImportGermplasmListController.URL,
 		ImportGermplasmListController.URL_1, ImportGermplasmListController.URL_2 })
+@Transactional
 public class ImportGermplasmListController extends SettingsController {
 
 	private static final String SUCCESS = "success";
@@ -149,6 +138,12 @@ public class ImportGermplasmListController extends SettingsController {
 	/** The Inventory list manager. */
 	@Resource
 	private InventoryDataManager inventoryDataManager;
+
+	@Resource
+	private StudyGermplasmService studyGermplasmService;
+
+	@Resource
+	private StudyGermplasmTransformer studyGermplasmTransformer;
 
 	private static final String DEFAULT_TEST_VALUE = "T";
 
@@ -238,7 +233,7 @@ public class ImportGermplasmListController extends SettingsController {
 		this.fieldbookService.saveStudyImportedCrosses(this.userSelection.getImportedCrossesId(), studyId);
 
 		// for saving the list data project
-		this.saveListDataProject(studyId);
+		this.saveStudyGermplasm(studyId);
 
 		this.fieldbookService.saveStudyColumnOrdering(studyId,
 			form.getColumnOrders(), this.userSelection.getWorkbook());
@@ -267,31 +262,23 @@ public class ImportGermplasmListController extends SettingsController {
 	}
 
 	/**
-	 * List data project data is the germplasm list that is attached to a study This method is saving the germplasm for this
-	 * study
-	 *
-	 * @param studyId - the study id
+	 * Saves the study germplasm associated to the study.
+	 * @param studyId
 	 */
-	private void saveListDataProject(final int studyId) {
+	private void saveStudyGermplasm(final int studyId) {
 
 		final ImportedGermplasmMainInfo germplasmMainInfo = this.getUserSelection().getImportedGermplasmMainInfo();
+		final ImportedGermplasmList importedGermplasmList = germplasmMainInfo != null ? germplasmMainInfo.getImportedGermplasmList() : null;
 
-		if (germplasmMainInfo != null && germplasmMainInfo.getListId() != null) {
-			// we save the list
-			// we need to create a new germplasm list
-			final Integer listId = germplasmMainInfo.getListId();
-			final List<ImportedGermplasm> projectGermplasmList;
-
-			final ImportedGermplasmList importedGermplasmList = germplasmMainInfo.getImportedGermplasmList();
-
-			projectGermplasmList = importedGermplasmList.getImportedGermplasms();
-
-			final List<ListDataProject> listDataProject = ListDataProjectUtil.createListDataProject(projectGermplasmList);
-			this.fieldbookMiddlewareService
-				.saveOrUpdateListDataProject(studyId, GermplasmListType.STUDY, listId, listDataProject, this.getCurrentIbdbUserId());
+		if (importedGermplasmList != null && !Collections.isEmpty(importedGermplasmList.getImportedGermplasms())) {
+			final List<ImportedGermplasm> importedGermplasm = importedGermplasmList.getImportedGermplasms();
+			final List<StudyGermplasmDto> studyGermplasmDtoList = this.studyGermplasmTransformer.transformToStudyGermplasmDto(importedGermplasm);
+			// Delete the existing stocks so that we can replace it with the current list.
+			this.studyGermplasmService.deleteStudyGermplasm(studyId);
+			this.studyGermplasmService.saveStudyGermplasm(studyId, studyGermplasmDtoList);
 		} else {
 			// we delete the record in the db
-			this.fieldbookMiddlewareService.deleteListDataProjects(studyId, GermplasmListType.STUDY);
+			this.studyGermplasmService.deleteStudyGermplasm(studyId);
 		}
 
 	}
@@ -347,33 +334,18 @@ public class ImportGermplasmListController extends SettingsController {
 			final Integer studyIdFromWorkbook = this.userSelection.getWorkbook().getStudyDetails().getId();
 			final int studyId = studyIdFromWorkbook == null ? ImportGermplasmListController.NO_ID : studyIdFromWorkbook;
 
-			List<ImportedGermplasm> list = new ArrayList<>();
+			final List<StudyGermplasmDto> studyGermplasmDtoList = this.studyGermplasmService.getGermplasm(studyIdFromWorkbook);
 
-			final GermplasmListType germplasmListType = GermplasmListType.STUDY;
-
-			final List<GermplasmList> germplasmLists =
-				this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, germplasmListType);
-
-			if (germplasmLists != null && !germplasmLists.isEmpty()) {
-				final GermplasmList germplasmList = germplasmLists.get(0);
-
-				if (germplasmList != null && germplasmList.getListRef() != null) {
-					form.setLastDraggedPrimaryList(germplasmList.getListRef().toString());
-					// BMS-1419, set the id to the original list's id
-					mainInfo.setListId(germplasmList.getListRef());
-				}
-				final List<ListDataProject> data =
-					this.fieldbookMiddlewareService.getListDataProject(germplasmList != null ? germplasmList.getId() : null);
-				FieldbookListUtil.populateStockIdInListDataProject(data, this.inventoryDataManager);
-				list = ListDataProjectUtil.transformListDataProjectToImportedGermplasm(data);
+			List<ImportedGermplasm> importedGermplasmList = new ArrayList<>();
+			if (!studyGermplasmDtoList.isEmpty()) {
+				importedGermplasmList = this.studyGermplasmTransformer.tranformToImportedGermplasm(studyGermplasmDtoList);
 			}
-
+			form.setImportedGermplasm(importedGermplasmList);
 			final String defaultTestCheckId =
 				this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckTypeList());
-			form.setImportedGermplasm(list);
 
-			final List<Map<String, Object>> dataTableDataList = this.generateGermplasmListDataTable(list, defaultTestCheckId, false);//
-			this.initializeObjectsForGermplasmDetailsView(form, model, mainInfo, list, dataTableDataList);
+			final List<Map<String, Object>> dataTableDataList = this.generateGermplasmListDataTable(importedGermplasmList, defaultTestCheckId, false);//
+			this.initializeObjectsForGermplasmDetailsView(form, model, mainInfo, importedGermplasmList, dataTableDataList);
 
 			// setting the form
 			form.setImportedGermplasmMainInfo(mainInfo);
@@ -509,8 +481,8 @@ public class ImportGermplasmListController extends SettingsController {
 			@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form) {
 
 		try {
+			// TODO: IBP-3697 Find a way not to use UserSelection
 			if (this.getUserSelection().getImportedGermplasmMainInfo() != null) {
-				final String type = GermplasmListType.STUDY.toString();
 				final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
 				final List<Enumeration> checkList = this.fieldbookService.getCheckTypeList();
 				final List<ImportedGermplasm> list =
@@ -545,7 +517,6 @@ public class ImportGermplasmListController extends SettingsController {
 
 				model.addAttribute(ImportGermplasmListController.CHECK_LISTS, checkList);
 				model.addAttribute(ImportGermplasmListController.LIST_DATA_TABLE, dataTableDataList);
-				model.addAttribute(ImportGermplasmListController.TYPE2, type);
 				model.addAttribute(ImportGermplasmListController.TABLE_HEADER_LIST, this.getGermplasmTableHeader(this.userSelection.getPlotsLevelList()));
 				model.addAttribute("hasMeasurement", this.hasMeasurement());
 

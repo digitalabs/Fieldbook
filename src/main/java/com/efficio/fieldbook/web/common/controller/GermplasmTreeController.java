@@ -967,8 +967,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			dataResults.put("date", germplasmList.getDate());
 			dataResults.put("owner", this.fieldbookMiddlewareService.getOwnerListName(germplasmList.getUserId()));
 			dataResults.put("notes", germplasmList.getNotes());
-			if (germplasmList.getType() != null && (germplasmList.getType().equalsIgnoreCase(GermplasmListType.STUDY.toString()))
-				|| germplasmList.getType().equalsIgnoreCase(GermplasmListType.CHECK.toString()) || GermplasmListType.isCrosses(germplasmList.getType())
+			if (germplasmList.getType() != null	|| GermplasmListType.isCrosses(germplasmList.getType())
 					|| germplasmList.getType().equalsIgnoreCase(GermplasmListType.ADVANCED.toString())) {
 				dataResults.put("totalEntries", this.fieldbookMiddlewareService.countListDataProjectGermplasmListDataByListId(listId));
 			} else {

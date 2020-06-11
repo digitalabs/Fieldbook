@@ -175,8 +175,7 @@
 					filter: {
 						transform(request) {
 							if (this.value) {
-								// TODO backend
-								// request.transactionsSearch.lotLocationAbbr = this.value;
+								request.transactionsSearch.lotLocationAbbr = this.value;
 							}
 						}
 					}

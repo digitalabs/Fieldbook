@@ -995,7 +995,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 					$uibModal.open({
 						template: '<single-instance-selector-modal instances="instances" ' +
-							' instance-id-property="instanceDbId" ' +
+							' instance-id-property="instanceId" ' +
 							' selected="selected" ' +
 							' on-select-instance="onSelectInstance" ' +
 							' on-continue="onContinue" ' +
@@ -1014,7 +1014,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 											return Boolean(isViewGeoJSON);
 										},
 										instanceId: function () {
-											return $scope.selected.instanceDbId;
+											return $scope.selected.instanceId;
 										}
 									}
 								});

@@ -384,6 +384,14 @@
 					}
 				},
 				{
+					targets: "germplasm-link-column",
+					render: function (data, type, rowData, meta) {
+						return '<a class="gid-link" href="javascript: void(0)"'
+							+ ` onclick="openGermplasmDetailsPopopWithGidAndDesig('${rowData.lot.gid}','${rowData.lot.designation}')">`
+							+ EscapeHTML.escape(data) + '</a>';
+					}
+				},
+				{
 					targets: "_all",
 					orderable: false
 				}

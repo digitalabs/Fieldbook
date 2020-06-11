@@ -23,6 +23,7 @@ import com.efficio.fieldbook.web.trial.bean.Environment;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
@@ -75,8 +76,8 @@ public class CreateTrialController extends BaseTrialController {
 	 * The Constant URL.
 	 */
 	public static final String URL = "/TrialManager/createTrial";
-	public static final String ENVIRONMENT_DATA_TAB = "environmentData";
-	public static final String TRIAL_SETTINGS_DATA_TAB = "trialSettingsData";
+	static final String ENVIRONMENT_DATA_TAB = "environmentData";
+	static final String TRIAL_SETTINGS_DATA_TAB = "trialSettingsData";
 
 	/**
 	 * The Constant URL_SETTINGS.
@@ -140,6 +141,8 @@ public class CreateTrialController extends BaseTrialController {
 			if (studyId != null && studyId != 0) {
 				final Workbook trialWorkbook = this.fieldbookMiddlewareService.getStudyDataSet(studyId);
 
+				this.excludeTreatmentFactorVariables(trialWorkbook);
+
 				this.removeAnalysisAndAnalysisSummaryVariables(trialWorkbook);
 
 				this.userSelection.setConstantsWithLabels(trialWorkbook.getConstants());
@@ -150,9 +153,11 @@ public class CreateTrialController extends BaseTrialController {
 						this.prepareTrialSettingsTabInfo(trialWorkbook.getStudyConditions(), true));
 				tabDetails.put("measurementsData",
 						this.prepareMeasurementVariableTabInfo(trialWorkbook.getVariates(), VariableType.TRAIT, true));
-				this.fieldbookMiddlewareService
+
+				// TODO:Uncomment lines below related to treatment factors after resolving IBP-2207
+				/*this.fieldbookMiddlewareService
 						.setTreatmentFactorValues(trialWorkbook.getTreatmentFactors(), trialWorkbook.getMeasurementDatesetId());
-				tabDetails.put("treatmentFactorsData", this.prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), true));
+				tabDetails.put("treatmentFactorsData", this.prepareTreatmentFactorsInfo(trialWorkbook.getTreatmentFactors(), true));*/
 				form.setStudyTypeName(trialWorkbook.getStudyDetails().getStudyType().getName());
 			}
 		} catch (final MiddlewareException e) {
@@ -162,6 +167,18 @@ public class CreateTrialController extends BaseTrialController {
 
 		tabDetails.put("createTrialForm", form);
 		return tabDetails;
+	}
+
+	// TODO: Remove this method after resolving IBP-2207
+	void excludeTreatmentFactorVariables(final Workbook trialWorkbook) {
+		final List<Integer> treatmentFactorVariableIds = new ArrayList<>();
+		for(final TreatmentVariable treatmentVariable: trialWorkbook.getTreatmentFactors()) {
+			treatmentFactorVariableIds.add(treatmentVariable.getValueVariable().getTermId());
+			treatmentFactorVariableIds.add(treatmentVariable.getLevelVariable().getTermId());
+		}
+
+		trialWorkbook.getFactors().removeIf(variable -> treatmentFactorVariableIds.contains(variable.getTermId()));
+		trialWorkbook.setTreatmentFactors(new ArrayList<>());
 	}
 
 	private CreateTrialForm addErrorMessageToResult(final MiddlewareException e) {
@@ -253,26 +270,23 @@ public class CreateTrialController extends BaseTrialController {
 		// transfer over data from user input into the list of setting details stored in the session
 		this.populateSettingData(basicDetails, data.getBasicDetails().getBasicDetails());
 
-		final List<SettingDetail> combinedList = new ArrayList<>();
-		combinedList.addAll(basicDetails);
 
 		if (studyLevelConditions != null) {
 			this.populateSettingData(studyLevelConditions, data.getTrialSettings().getUserInput());
-			combinedList.addAll(studyLevelConditions);
 		}
 
 		final String name = data.getBasicDetails().getStudyName();
 
 		if (this.userSelection.getStudyLevelConditions() == null) {
-			this.userSelection.setStudyLevelConditions(new ArrayList<SettingDetail>());
+			this.userSelection.setStudyLevelConditions(new ArrayList<>());
 		}
 
 		if (this.userSelection.getBaselineTraitsList() == null) {
-			this.userSelection.setBaselineTraitsList(new ArrayList<SettingDetail>());
+			this.userSelection.setBaselineTraitsList(new ArrayList<>());
 		}
 
 		if (this.userSelection.getSelectionVariates() == null) {
-			this.userSelection.setSelectionVariates(new ArrayList<SettingDetail>());
+			this.userSelection.setSelectionVariates(new ArrayList<>());
 		}
 
 		// Combining variates to baseline traits
@@ -292,8 +306,7 @@ public class CreateTrialController extends BaseTrialController {
 					this.userSelection.getTemporaryWorkbook().getTrialObservations());
 		}
 
-		final List<MeasurementVariable> variablesForEnvironment = new ArrayList<>();
-		variablesForEnvironment.addAll(workbook.getTrialVariables());
+		final List<MeasurementVariable> variablesForEnvironment = new ArrayList<>(workbook.getTrialVariables());
 
 		final List<MeasurementRow> trialEnvironmentValues = WorkbookUtil
 				.createMeasurementRowsFromEnvironments(data.getEnvironments().getEnvironments(), variablesForEnvironment,
@@ -418,7 +431,7 @@ public class CreateTrialController extends BaseTrialController {
 
 	protected TabInfo prepareTrialSettingsTabInfo() {
 		final TabInfo info = new TabInfo();
-		info.setSettings(new ArrayList<SettingDetail>());
+		info.setSettings(new ArrayList<>());
 		info.setData(new TrialSettingsBean());
 		return info;
 	}
@@ -434,8 +447,8 @@ public class CreateTrialController extends BaseTrialController {
 			this.prepareExperimentalDesignSpecialData();
 			List<SettingDetail> detailList = new ArrayList<>();
 			this.userSelection.setBaselineTraitsList(detailList);
-			this.userSelection.setStudyLevelConditions(new ArrayList<SettingDetail>());
-			this.userSelection.setStudyConditions(new ArrayList<SettingDetail>());
+			this.userSelection.setStudyLevelConditions(new ArrayList<>());
+			this.userSelection.setStudyConditions(new ArrayList<>());
 			detailList = new ArrayList<>();
 			this.userSelection.setTreatmentFactors(detailList);
 			if (this.userSelection.getTemporaryWorkbook() != null) {

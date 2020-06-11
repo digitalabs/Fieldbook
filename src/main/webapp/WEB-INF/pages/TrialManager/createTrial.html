@@ -105,17 +105,21 @@
 									</li>
 									<!--Design new crosses-->
 									<li id="create-new-crosses">
-										<a th:href="@{~/BreedingManager/main/createcrosses(studyid=*{studyId},germplasmlistid=*{germplasmListId},loggedInUserId=${contextInfo.loggedInUserId},selectedProjectId=${contextInfo.selectedProjectId},studyType=*{studyTypeName})}"
+										<a th:href="@{~/ibpworkbench/bm/createcrosses(studyid=*{studyId},germplasmlistid=*{germplasmListId},loggedInUserId=${contextInfo.loggedInUserId},selectedProjectId=${contextInfo.selectedProjectId},studyType=*{studyTypeName})}"
 										   class="create-new-crosses" th:text="#{study.studydetails.action.create.new.crosses}">Design new crosses</a>
 									</li>
 								</ul>
 							</li>
 							<li ng-show="hasDesignGenerated" class="dropdown-submenu pull-left">
-								<a tabindex="-1" href="#">Observation unit options</a>
+								<a tabindex="-1" href="#" th:text="#{study.studydetails.action.observationunits}">Observation unit options</a>
 								<ul class="dropdown-menu" style="margin-left: -25px;">
 									<li>
 										<a href="javascript: subObservationUnitDatasetSelector();" id="create-sub-Observation-link"
-										   th:text="#{study.studydetails.action.create.sub.observation.units}">Create sub-observation units</a>
+										   th:text="#{study.studydetails.action.observationunits.create}">Create sub-observation units</a>
+									</li>
+									<li ng-show="hasAnyAuthority(PERMISSIONS.PREPARE_PLANTING_PERMISSIONS)">
+										<a ng-click="preparePlanting();" id="prepare-planting-inventory-link"
+										   th:text="#{study.studydetails.action.observationunits.prepare.plating}">Prepare planting inventory</a>
 									</li>
 								</ul>
                             </li>
@@ -626,6 +630,7 @@
 		var ajaxGenericErrorMsg = /*[[#{ajax.generic.exception.error.message}]]*/ '';
 		var environmentModalConfirmationText = /*[[#{study.change.environment.confirmation}]]*/ '',
 			environmentConfirmLabel = /*[[#{common.form.ok.text}]]*/ '',
+			okLabel = /*[[#{common.form.ok.text}]]*/ '',
 			cancelLabel = /*[[#{form.cancel.text}]]*/ '',
 			keepLabel = /*[[#{common.form.keep.text}]]*/ '',
 			discardLabel = /*[[#{common.form.discard.text}]]*/ '',
@@ -804,6 +809,14 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/visualization/visualization.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/subobservations/subObservationTab.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/subobservations/subObservationSet.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/inventory/inventory.service.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/inventory/planting-preparation/planting-preparation-modal.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/inventory/planting-preparation/planting-preparation-service.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/auth/auth.module.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/auth/account.service.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/auth/principal.service.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/auth/has-any-authority.service.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/auth/permissions.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/import-design.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-tabdrop.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/variableService.js}"></script>

@@ -126,7 +126,7 @@
 										showSuccessfulMessage('', 'The design was deleted successfully');
 										window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
 									}, function (errResponse) {
-										showErrorMessage('', 'Something went wrong deleting the design.');
+										showErrorMessage('', errResponse.errors[0].message);
 									}
 								);
 							}
@@ -289,7 +289,7 @@
 								});
 							} else {
 								showAlertMessage('', 'All instances cannot be regenerated due to internal validations (presence of ' +
-									'samples or subobservations or advance/cross list).');
+									'samples or inventory transactions or subobservations or advance/cross list).');
 							}
 						});
 					};

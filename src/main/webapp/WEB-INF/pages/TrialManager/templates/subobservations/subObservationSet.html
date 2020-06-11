@@ -216,6 +216,16 @@
 				</div>
 			</div>
 			<div class="row add_top_padding">
+				<div class="col-xs-12 checkbox-inline" style="padding-top: 20px;">
+					<label>Selected:</label>
+					<label class="control-label-bold" style="padding-right: 15px;"> {{isAllPagesSelected ? allTableItems() : selectedItems.length}}</label>
+					<label style="padding-left: 15px;">
+						<input type="checkbox" ng-checked="isAllPagesSelected" ng-click="onSelectAllPages()" id="check-select-all">
+						Select all pages</input>
+					</label>
+				</div>
+			</div>
+			<div class="row add_top_padding">
 				<div class="col-xs-12">
 					<table id="subobservation-table-{{subObservationTab.id}}-{{subObservationSet.id}}"
 						   datatable=""
@@ -257,7 +267,7 @@
 						   ng-change="columnFilter.selectAll()"/>
 					Select all
 				</li>
-				<li ng-repeat='option in columnFilter.columnData.possibleValues | orderBy: "name" | filter: columnFilter.search '
+				<li ng-repeat="option in columnFilter.columnData.possibleValues | orderBy: 'name' | filter: columnFilter.search "
 					ng-if="option.name"
 					class="list-group-item">
 					<input type="checkbox" class="checkbox" ng-model="option.isSelectedInFilters"

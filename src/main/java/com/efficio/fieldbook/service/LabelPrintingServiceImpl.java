@@ -270,7 +270,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		try {
 			inventoryDetailsMap = this.inventoryMiddlewareService.getInventoryDetails(studyId).stream()
 				.filter(inventoryDetails -> inventoryDetails.getLotId() != null)
-				.collect(Collectors.toMap(InventoryDetails::getGid, inventoryDetails -> inventoryDetails));
+				.collect(Collectors.toMap(InventoryDetails::getGid, inventoryDetails -> inventoryDetails,
+					(inventoryDetails1, inventoryDetails2) -> inventoryDetails2));
 		} catch (final MiddlewareQueryException e) {
 			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
 		}

@@ -345,9 +345,6 @@
 					if (filter.isFiltered) {
 						return 'filtering-by';
 					}
-				},
-				datepickerOptions: {
-					showWeeks: false
 				}
 			};
 

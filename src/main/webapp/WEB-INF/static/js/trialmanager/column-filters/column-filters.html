@@ -10,7 +10,7 @@
 </script>
 <script type="text/ng-template" id="studyColumnFilter.html">
 	<div class="column-filter">
-		<form class="form-horizontal">
+		<form class="form-horizontal" name="studyColumnFilterForm">
 			<div class="btn-group btn-group-justified " role="group">
 				<div class="btn-group" role="group">
 					<button ng-click="filterHelper.sortColumn(columnName, true)" class="btn btn-sm"
@@ -29,7 +29,7 @@
 				<ng-transclude></ng-transclude>
 			</div>
 			<div class="add_top_padding">
-				<button class="btn btn-info" ng-click="filterHelper.filterByColumn(filter)" title="Apply filter">Apply</button>
+				<button class="btn btn-info" ng-click="filterHelper.filterByColumn(filter)" ng-disabled="studyColumnFilterForm.$invalid" title="Apply filter">Apply</button>
 				<button class="btn btn-default" ng-click="filterHelper.resetFilterByColumn(filter)" title="Reset filter">Reset</button>
 			</div>
 		</form>
@@ -52,36 +52,49 @@
 </script>
 <script type="text/ng-template" id="studyColumnFilterNumber.html">
 	<study-column-filter>
-		<div class="form-group">
-			<label class="col-sm-3 control-label control-label-left" for="column-filter-number-{{columnName}}-max">Min</label>
+		<div class="form-group" ng-class="{'has-error': studyColumnFilterForm.columnFilterNumberMin.$invalid}">
+			<label class="col-sm-3 control-label control-label-left" for="columnFilterNumberMin">Min</label>
 			<div class="col-sm-9">
-				<input type="number" class="form-control" id="column-filter-number-{{columnName}}-min" placeholder="min value"
+				<input type="number" class="form-control" placeholder="min value"
+					   id="columnFilterNumberMin"
+					   name="columnFilterNumberMin"
+					   max="{{filter.max}}"
+					   ng-max="filter.max"
 					   ng-model="filter.min"/>
 			</div>
 		</div>
-		<div class="form-group">
-			<label class="col-sm-3 control-label control-label-left" for="column-filter-number-{{columnName}}-max">Max</label>
+		<div class="form-group" ng-class="{'has-error': studyColumnFilterForm.columnFilterNumberMax.$invalid}">
+			<label class="col-sm-3 control-label control-label-left" for="columnFilterNumberMax">Max</label>
 			<div class="col-sm-9">
-				<input type="number" class="form-control" id="column-filter-number-{{columnName}}-max" placeholder="max value"
+				<input type="number" class="form-control" placeholder="max value"
+					   id="columnFilterNumberMax"
+					   name="columnFilterNumberMax"
+					   min="{{filter.min}}"
+					   ng-min="filter.min"
 					   ng-model="filter.max"/>
 			</div>
+		</div>
+		<div ng-messages="studyColumnFilterForm.$error" class="text-danger" role="alert">
+			<div ng-message="min">Max must be higher than min</div>
+			<div ng-message="max">Max must be higher than min</div>
 		</div>
 	</study-column-filter>
 </script>
 <script type="text/ng-template" id="studyColumnFilterDate.html">
 	<study-column-filter>
-		<div class="form-group">
-			<label class="col-sm-4 control-label control-label-left" for="column-filter-date-{{columnName}}-from">From</label>
+		<div class="form-group" ng-class="{'has-error': studyColumnFilterForm.columnFilterDateFrom.$invalid}">
+			<label class="col-sm-4 control-label control-label-left" for="columnFilterDateFrom">From</label>
 			<div class="col-sm-8">
 				<div class="input-group uib-datepicker-style-trasformer">
 					<input type="text" class="form-control"
-						   id="column-filter-date-{{columnName}}-from"
+						   id="columnFilterDateFrom"
+						   name="columnFilterDateFrom"
 						   placeholder="from"
 						   uib-datepicker-popup="yyyy-MM-dd"
 						   is-open="isDatepickerFromOpen"
 						   close-on-date-selection="false"
 						   ng-model="filter.from"
-						   datepicker-options="filterHelper.datepickerOptions"/>
+						   datepicker-options="{maxDate: filter.to, showWeeks: false}"/>
 					<span class="input-group-btn">
 						<button type="button" class="btn" ng-click="isDatepickerFromOpen = !isDatepickerFromOpen">
 							<i class="glyphicon glyphicon-calendar"></i>
@@ -90,18 +103,19 @@
 				</div>
 			</div>
 		</div>
-		<div class="form-group">
-			<label class="col-sm-4 control-label control-label-left" for="column-filter-date-{{columnName}}-to">To</label>
+		<div class="form-group" ng-class="{'has-error': studyColumnFilterForm.columnFilterDateTo.$invalid}">
+			<label class="col-sm-4 control-label control-label-left" for="columnFilterDateTo">To</label>
 			<div class="col-sm-8">
 				<div class="input-group uib-datepicker-style-trasformer">
 					<input type="text" class="form-control"
-						   id="column-filter-date-{{columnName}}-to"
+						   id="columnFilterDateTo"
+						   name="columnFilterDateTo"
 						   placeholder="to"
 						   uib-datepicker-popup="yyyy-MM-dd"
 						   is-open="isDatepickerToOpen"
 						   close-on-date-selection="false"
 						   ng-model="filter.to"
-						   datepicker-options="filterHelper.datepickerOptions"/>
+						   datepicker-options="{minDate: filter.from, showWeeks: false}"/>
 					<span class="input-group-btn">
 						<button type="button" class="btn" ng-click="isDatepickerToOpen = !isDatepickerToOpen">
 							<i class="glyphicon glyphicon-calendar"></i>
@@ -109,6 +123,9 @@
 					</span>
 				</div>
 			</div>
+		</div>
+		<div ng-messages="studyColumnFilterForm.$error" class="text-danger" role="alert">
+			<div ng-message="dateDisabled">"To" must be after "From"</div>
 		</div>
 	</study-column-filter>
 </script>

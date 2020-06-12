@@ -53,14 +53,14 @@
 <script type="text/ng-template" id="studyColumnFilterNumber.html">
 	<study-column-filter>
 		<div class="form-group">
-			<label class="col-sm-3 control-label" for="column-filter-number-{{columnName}}-max">Min</label>
+			<label class="col-sm-3 control-label control-label-left" for="column-filter-number-{{columnName}}-max">Min</label>
 			<div class="col-sm-9">
 				<input type="number" class="form-control" id="column-filter-number-{{columnName}}-min" placeholder="min value"
 					   ng-model="filter.min"/>
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label" for="column-filter-number-{{columnName}}-max">Max</label>
+			<label class="col-sm-3 control-label control-label-left" for="column-filter-number-{{columnName}}-max">Max</label>
 			<div class="col-sm-9">
 				<input type="number" class="form-control" id="column-filter-number-{{columnName}}-max" placeholder="max value"
 					   ng-model="filter.max"/>
@@ -70,6 +70,45 @@
 </script>
 <script type="text/ng-template" id="studyColumnFilterDate.html">
 	<study-column-filter>
-		<!-- TODO -->
+		<div class="form-group">
+			<label class="col-sm-4 control-label control-label-left" for="column-filter-date-{{columnName}}-from">From</label>
+			<div class="col-sm-8">
+				<div class="input-group uib-datepicker-style-trasformer">
+					<input type="text" class="form-control"
+						   id="column-filter-date-{{columnName}}-from"
+						   placeholder="from"
+						   uib-datepicker-popup="yyyy-MM-dd"
+						   is-open="isDatepickerFromOpen"
+						   close-on-date-selection="false"
+						   ng-model="filter.from"
+						   datepicker-options="filterHelper.datepickerOptions"/>
+					<span class="input-group-btn">
+						<button type="button" class="btn" ng-click="isDatepickerFromOpen = !isDatepickerFromOpen">
+							<i class="glyphicon glyphicon-calendar"></i>
+						</button>
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-4 control-label control-label-left" for="column-filter-date-{{columnName}}-to">To</label>
+			<div class="col-sm-8">
+				<div class="input-group uib-datepicker-style-trasformer">
+					<input type="text" class="form-control"
+						   id="column-filter-date-{{columnName}}-to"
+						   placeholder="to"
+						   uib-datepicker-popup="yyyy-MM-dd"
+						   is-open="isDatepickerToOpen"
+						   close-on-date-selection="false"
+						   ng-model="filter.to"
+						   datepicker-options="filterHelper.datepickerOptions"/>
+					<span class="input-group-btn">
+						<button type="button" class="btn" ng-click="isDatepickerToOpen = !isDatepickerToOpen">
+							<i class="glyphicon glyphicon-calendar"></i>
+						</button>
+					</span>
+				</div>
+			</div>
+		</div>
 	</study-column-filter>
 </script>

@@ -2458,34 +2458,38 @@ table.dataTable thead th.sorting_desc
 }
 
 /* Make uib-datepicker look like native bootstrap datepicker */
-.uib-datepicker-style-trasformer { }
-.uib-datepicker-style-trasformer.well {
+.uib-datepicker-style-trasformer[uib-datepicker] .well,
+.uib-datepicker-style-trasformer [uib-datepicker] .well {
     background: none;
 }
-.uib-datepicker-style-trasformer table { }
-.uib-datepicker-style-trasformer table thead,
-.uib-datepicker-style-trasformer table thead th {
+.uib-datepicker-style-trasformer[uib-datepicker] table thead,
+.uib-datepicker-style-trasformer [uib-datepicker] table thead,
+.uib-datepicker-style-trasformer[uib-datepicker] table thead th,
+.uib-datepicker-style-trasformer [uib-datepicker] table thead th {
     background: none;
 }
-.uib-datepicker-style-trasformer table tbody { }
-.uib-datepicker-style-trasformer table tbody tr { }
-.uib-datepicker-style-trasformer table tbody tr td { }
-.uib-datepicker-style-trasformer button,
-.uib-datepicker-style-trasformer button.btn:hover {
+.uib-datepicker-style-trasformer .uib-button-bar button,
+.uib-datepicker-style-trasformer[uib-datepicker] button,
+.uib-datepicker-style-trasformer [uib-datepicker] button,
+.uib-datepicker-style-trasformer[uib-datepicker] button.btn:hover,
+.uib-datepicker-style-trasformer [uib-datepicker] button.btn:hover {
     background: none;
     border: none;
     padding: 2px;
     color: inherit;
 }
-.uib-datepicker-style-trasformer table button:hover {
+.uib-datepicker-style-trasformer[uib-datepicker] table button:hover,
+.uib-datepicker-style-trasformer [uib-datepicker] table button:hover {
     background: #eee;
 }
-.uib-datepicker-style-trasformer table button.active {
+.uib-datepicker-style-trasformer[uib-datepicker] table button.active,
+.uib-datepicker-style-trasformer [uib-datepicker] table button.active {
     background: #357ebd;
     color: #fff;
 }
 /* current date */
-.uib-datepicker-style-trasformer table button.active .text-info {
+.uib-datepicker-style-trasformer[uib-datepicker] table button.active .text-info,
+.uib-datepicker-style-trasformer [uib-datepicker] table button.active .text-info {
     color: #fff;
 }
 

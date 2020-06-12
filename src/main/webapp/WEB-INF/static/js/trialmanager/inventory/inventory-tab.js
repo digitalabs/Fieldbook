@@ -210,12 +210,18 @@
 					data: "createdDate",
 					filter: {
 						transform(request) {
-							if (this.value) {
-								// TODO
-								// request.createdDateFrom = this.from;
-								// request.createdDateTo = this.to;
-								// this.isFiltered = true;
+							if (this.from) {
+								request.transactionsSearch.createdDateFrom = $.datepicker.formatDate("yy-mm-dd", this.from);
+								this.isFiltered = true;
 							}
+							if (this.to) {
+								request.transactionsSearch.createdDateTo = $.datepicker.formatDate("yy-mm-dd", this.to);
+								this.isFiltered = true;
+							}
+						},
+						reset() {
+							this.from = null;
+							this.to = null;
 						}
 					}
 				},
@@ -339,6 +345,9 @@
 					if (filter.isFiltered) {
 						return 'filtering-by';
 					}
+				},
+				datepickerOptions: {
+					showWeeks: false
 				}
 			};
 

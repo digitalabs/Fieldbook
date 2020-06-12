@@ -100,7 +100,7 @@
 					filter: {
 						transform(request) {
 							if (this.value) {
-								request.instanceNoList = [this.value];
+								request.instanceNoList = this.value.split(',');
 								this.isFiltered = true;
 							}
 						}
@@ -111,7 +111,7 @@
 					filter: {
 						transform(request) {
 							if (this.value) {
-								request.transactionsSearch.transactionIds = [this.value];
+								request.transactionsSearch.transactionIds = this.value.split(',');
 								this.isFiltered = true;
 							}
 						}
@@ -137,7 +137,7 @@
 					filter: {
 						transform(request) {
 							if (this.value) {
-								request.transactionsSearch.gids = [this.value];
+								request.transactionsSearch.gids = this.value.split(',');
 								this.isFiltered = true;
 							}
 						}
@@ -163,7 +163,7 @@
 					filter: {
 						transform(request) {
 							if (this.value) {
-								request.entryNoList = [this.value];
+								request.entryNoList = this.value.split(',');
 								this.isFiltered = true;
 							}
 						}
@@ -177,7 +177,7 @@
 					filter: {
 						transform(request) {
 							if (this.value) {
-								request.plotNoList = [this.value];
+								request.plotNoList = this.value.split(',');
 								this.isFiltered = true;
 							}
 						}

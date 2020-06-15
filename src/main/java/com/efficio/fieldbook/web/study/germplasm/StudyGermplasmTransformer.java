@@ -45,7 +45,7 @@ public class StudyGermplasmTransformer {
 				importedGermplasm.setCross(studyGermplasmDto.getCross());
 				importedGermplasm.setDesig(studyGermplasmDto.getDesignation());
 				importedGermplasm.setEntryCode(studyGermplasmDto.getEntryCode());
-				importedGermplasm.setEntryId(studyGermplasmDto.getEntryNumber());
+				importedGermplasm.setEntryNumber(studyGermplasmDto.getEntryNumber());
 				importedGermplasm.setGid(studyGermplasmDto.getGermplasmId().toString());
 				importedGermplasm.setMgid(studyGermplasmDto.getGroupId());
 				importedGermplasm.setSource(studyGermplasmDto.getSeedSource());
@@ -171,7 +171,7 @@ public class StudyGermplasmTransformer {
 			dto.setDesignation(importedGermplasm.getDesig());
 			dto.setGermplasmId(Integer.valueOf(importedGermplasm.getGid()));
 			dto.setEntryCode(importedGermplasm.getEntryCode());
-			dto.setEntryNumber(importedGermplasm.getEntryId());
+			dto.setEntryNumber(importedGermplasm.getEntryNumber());
 			dto.setEntryType(String.valueOf(importedGermplasm.getEntryTypeCategoricalID()));
 			dto.setSeedSource(importedGermplasm.getSource());
 			dto.setCross(importedGermplasm.getCross());

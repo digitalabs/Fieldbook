@@ -269,7 +269,7 @@ public class CrossingServiceImplTest {
 
 		assertEquals(CrossingServiceImplTest.SAVED_CROSSES_GID1, cross1.getGid());
 		assertEquals(this.getExpectedName(CrossingServiceImplTest.NEXT_NUMBER), cross1.getDesig());
-		assertEquals((Integer) 1, cross1.getEntryId());
+		assertEquals((Integer) 1, cross1.getEntryNumber());
 		assertEquals("1", cross1.getEntryCode());
 		assertNull(cross1.getNames().get(0).getGermplasmId());
 		assertEquals((Integer) 0, cross1.getNames().get(0).getLocationId());
@@ -279,7 +279,7 @@ public class CrossingServiceImplTest {
 
 		assertEquals(CrossingServiceImplTest.SAVED_CROSSES_GID2, cross2.getGid());
 		assertEquals(this.getExpectedName(NEXT_NUMBER + 1), cross2.getDesig());
-		assertEquals((Integer) 2, cross2.getEntryId());
+		assertEquals((Integer) 2, cross2.getEntryNumber());
 		assertEquals("2", cross2.getEntryCode());
 		assertNull(cross2.getNames().get(0).getGermplasmId());
 		assertEquals((Integer) 0, cross2.getNames().get(0).getLocationId());
@@ -299,7 +299,7 @@ public class CrossingServiceImplTest {
 		assertNull(cross1.getGid());
 		assertEquals(this.getExpectedName(NEXT_NUMBER), cross1.getDesig());
 		assertEquals(cross1.getFemaleDesignation() + setting.getSeparator() + cross1.getMaleDesignationsAsString(), cross1.getCross());
-		assertEquals((Integer) 1, cross1.getEntryId());
+		assertEquals((Integer) 1, cross1.getEntryNumber());
 		assertEquals("1", cross1.getEntryCode());
 
 		final ImportedCross cross2 = this.importedCrossesList.getImportedCrosses().get(1);
@@ -307,7 +307,7 @@ public class CrossingServiceImplTest {
 		assertNull(cross2.getGid());
 		assertEquals(this.getExpectedName(NEXT_NUMBER + 1), cross2.getDesig());
 		assertEquals(cross2.getFemaleDesignation() + setting.getSeparator() + cross2.getMaleDesignationsAsString(), cross2.getCross());
-		assertEquals((Integer) 2, cross2.getEntryId());
+		assertEquals((Integer) 2, cross2.getEntryNumber());
 		assertEquals("2", cross2.getEntryCode());
 	}
 
@@ -730,9 +730,9 @@ public class CrossingServiceImplTest {
 
 		int counter = 1;
 		for (final ImportedCross importedCross : importedCrossesList.getImportedCrosses()) {
-			assertEquals(importedCross.getEntryCode(), importedCross.getEntryId());
+			assertEquals(importedCross.getEntryCode(), importedCross.getEntryNumber());
 			assertTrue(importedCross.getEntryCode().equals(counter));
-			assertTrue(importedCross.getEntryId().equals(counter));
+			assertTrue(importedCross.getEntryNumber().equals(counter));
 			counter++;
 		}
 	}
@@ -880,7 +880,7 @@ public class CrossingServiceImplTest {
 		cross.setSource("MALE:1:FEMALE:1");
 		cross.setDesig(
 			"G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML150xCLG2501)-B-31-1-B-1-BBB/CML193-BB)-B-1-BB(NonQ)-B*8)-B/((G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML161xCML451)-B-18-1-BBB/CML1612345");
-		cross.setEntryId(1);
+		cross.setEntryNumber(1);
 		importedCrosses.add(cross);
 		final ImportedCross cross2 = this.createSecondCross();
 		importedCrosses.add(cross2);
@@ -900,7 +900,7 @@ public class CrossingServiceImplTest {
 		cross2.setSource("MALE:2:FEMALE:2");
 		cross2.setDesig(
 			"((G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML150xCLG2501)-B-31-1-B-1-BBB/CML193-BB)-B-1-BB(NonQ)-B*8)-B((G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML150xCLG2501)-B-31-1-B-1-BBB/CML193-BB)-B-1-BB(NonQ)-B*8)-B/((G9BC0RL34-1P-5P-2-1P-3P-B/G9BC1TSR8P-1P-1P-5P-3P-1P-1P)-3-1-1-1-B*8/((CML161xCML451)-B-18-1-BBB/CML161");
-		cross2.setEntryId(2);
+		cross2.setEntryNumber(2);
 		return cross2;
 	}
 

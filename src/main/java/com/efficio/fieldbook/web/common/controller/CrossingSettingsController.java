@@ -501,7 +501,7 @@ public class CrossingSettingsController extends SettingsController {
 			}
 
 			importedCrosses.add(importedCross);
-			importedCrossesMap.put(importedCross.getEntryId(), importedCross);
+			importedCrossesMap.put(importedCross.getEntryNumber(), importedCross);
 		}
 		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();
 		final GermplasmList germplasmList = this.germplasmListManager.getGermplasmListById(crossesListId);

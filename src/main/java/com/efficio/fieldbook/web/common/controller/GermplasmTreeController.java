@@ -52,14 +52,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
-import org.generationcp.middleware.pojos.Attribute;
-import org.generationcp.middleware.pojos.Germplasm;
-import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.pojos.GermplasmListData;
-import org.generationcp.middleware.pojos.ListDataProject;
-import org.generationcp.middleware.pojos.ListMetadata;
-import org.generationcp.middleware.pojos.Name;
-import org.generationcp.middleware.pojos.UserDefinedField;
+import org.generationcp.middleware.pojos.*;
 import org.generationcp.middleware.pojos.germplasm.GermplasmParent;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
@@ -69,26 +62,12 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The Class GermplasmTreeController.
@@ -612,7 +591,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 			// Create list data items to save - Map<Germplasm,
 			// GermplasmListData>
-			final Integer entryId = importedCross.getEntryId();
+			final Integer entryNumber = importedCross.getEntryNumber();
 			final String entryCode = importedCross.getEntryCode();
 			final String seedSource = importedCross.getSource();
 			final String designation = importedCross.getDesig();
@@ -638,7 +617,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			}
 
 			final GermplasmListData listData =
-					this.createGermplasmListData(germplasmList, gid, entryId, entryCode, seedSource, designation, notes, crossingDate,
+					this.createGermplasmListData(germplasmList, gid, entryNumber, entryCode, seedSource, designation, notes, crossingDate,
 							groupName, listDataId, listDataStatus, localRecordId);
 
 			listDataItems.add(new ImmutablePair<>(germplasm, listData));
@@ -741,7 +720,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 			// Create list data items to save - Map<Germplasm,
 			// GermplasmListData>
-			final Integer entryId = importedGermplasm.getEntryId();
+			final Integer entryNumber = importedGermplasm.getEntryNumber();
 			final String entryCode = importedGermplasm.getEntryCode();
 			final String seedSource = importedGermplasm.getSource();
 			final String designation = importedGermplasm.getDesig();
@@ -753,7 +732,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			}
 
 			final GermplasmListData listData =
-				new GermplasmListData(listDataId, germplasmList, gid, entryId, entryCode, seedSource, designation, groupName,
+				new GermplasmListData(listDataId, germplasmList, gid, entryNumber, entryCode, seedSource, designation, groupName,
 					listDataStatus, localRecordId);
 
 			listDataItems.add(new ImmutablePair<>(germplasm, listData));

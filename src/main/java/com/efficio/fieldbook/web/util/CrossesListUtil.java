@@ -1,13 +1,8 @@
 
 package com.efficio.fieldbook.web.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
@@ -19,8 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class CrossesListUtil {
@@ -55,7 +53,7 @@ public class CrossesListUtil {
 
 		final Map<String, Object> dataMap = new HashMap<>();
 
-		dataMap.put(this.getTermNameFromOntology(ColumnLabels.ENTRY_ID), importedCross.getEntryId());
+		dataMap.put(this.getTermNameFromOntology(ColumnLabels.ENTRY_ID), importedCross.getEntryNumber());
 		dataMap.put(this.getTermNameFromOntology(ColumnLabels.PARENTAGE), importedCross.getCross());
 		dataMap.put(this.getTermNameFromOntology(ColumnLabels.ENTRY_CODE), importedCross.getEntryCode());
 		dataMap.put(this.getTermNameFromOntology(ColumnLabels.FEMALE_PARENT), importedCross.getFemaleDesignation());
@@ -90,7 +88,7 @@ public class CrossesListUtil {
 	public ImportedCross convertGermplasmListDataToImportedCrosses(final GermplasmListData crossesData, final String studyName) {
 		final ImportedCross importedCross = new ImportedCross();
 		importedCross.setCrossListId(crossesData.getId());
-		importedCross.setEntryId(crossesData.getEntryId());
+		importedCross.setEntryNumber(crossesData.getEntryId());
 		importedCross.setGid(crossesData.getGid() != null ? Integer.toString(crossesData.getGid()) : null);
 		importedCross.setEntryCode(crossesData.getEntryCode());
 		importedCross.setSource(crossesData.getSeedSource());
@@ -118,7 +116,7 @@ public class CrossesListUtil {
 
 		final Map<String, Object> dataMap = new HashMap<>();
 
-		dataMap.put(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX), importedCross.getEntryId());
+		dataMap.put(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX), importedCross.getEntryNumber());
 		dataMap.put(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX), importedCross.getCross());
 		dataMap.put(ColumnLabels.DUPLICATE.name(), importedCross.getDuplicate());
 		dataMap.put(tableHeaderList.get(CrossesListUtil.FEMALE_PEDIGREE), importedCross.getFemalePedigree());

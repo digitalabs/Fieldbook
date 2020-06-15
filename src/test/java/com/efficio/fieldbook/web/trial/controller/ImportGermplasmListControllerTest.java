@@ -553,7 +553,7 @@ public class ImportGermplasmListControllerTest {
 		final ArrayList<ImportedGermplasm> germplasmList = new ArrayList<>();
 		final ImportedGermplasm importedGermplasm = new ImportedGermplasm();
 		importedGermplasm.setGid("1");
-		importedGermplasm.setEntryId(1);
+		importedGermplasm.setEntryNumber(1);
 		importedGermplasm.setEntryCode("2");
 		importedGermplasm.setDesig("(CML454 X CML451)-B-4-1-112");
 		importedGermplasm.setEntryTypeCategoricalID(1);
@@ -627,7 +627,7 @@ public class ImportGermplasmListControllerTest {
 		final List<ImportedGermplasm> list = new ArrayList<>();
 		for (int x = 1; x <= 5; x++) {
 			final ImportedGermplasm data = new ImportedGermplasm();
-			data.setEntryId(x);
+			data.setEntryNumber(x);
 			data.setDesig("DESIGNATION" + x);
 			data.setEntryCode(String.valueOf(x));
 			data.setCross("GROUPNAME" + x);
@@ -835,7 +835,7 @@ public class ImportGermplasmListControllerTest {
 	private ImportedGermplasm createImportedGermplasmTestData(final int index, final int entryNo) {
 		final ImportedGermplasm importedGermplasm = new ImportedGermplasm();
 		importedGermplasm.setIndex(index);
-		importedGermplasm.setEntryId(entryNo);
+		importedGermplasm.setEntryNumber(entryNo);
 		importedGermplasm.setMgid(entryNo * 10);
 		return importedGermplasm;
 	}

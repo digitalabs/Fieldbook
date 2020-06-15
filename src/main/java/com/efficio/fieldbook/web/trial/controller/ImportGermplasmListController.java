@@ -33,7 +33,6 @@ import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -368,7 +367,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 			dataMap.put(ImportGermplasmListController.POSITION, germplasm.getIndex().toString());
 			dataMap.put(ImportGermplasmListController.CHECK_OPTIONS, checkList);
-			dataMap.put(ImportGermplasmListController.ENTRY, germplasm.getEntryId().toString());
+			dataMap.put(ImportGermplasmListController.ENTRY, germplasm.getEntryNumber().toString());
 			dataMap.put(ImportGermplasmListController.DESIG, germplasm.getDesig());
 			dataMap.put(ImportGermplasmListController.GID, germplasm.getGid());
 			dataMap.put(ImportGermplasmListController.ENTRY_CODE, germplasm.getEntryCode());
@@ -458,7 +457,7 @@ public class ImportGermplasmListController extends SettingsController {
 			} else if (term == TermId.ENTRY_CODE.getId()) {
 				val = germplasm.getEntryCode();
 			} else if (term == TermId.ENTRY_NO.getId()) {
-				val = germplasm.getEntryId().toString();
+				val = germplasm.getEntryNumber().toString();
 			} else if (term == TermId.SOURCE.getId() || term == TermId.GERMPLASM_SOURCE.getId()) {
 				val = germplasm.getSource();
 			} else if (term == TermId.CROSS.getId()) {
@@ -494,7 +493,7 @@ public class ImportGermplasmListController extends SettingsController {
 					final Map<String, Object> dataMap = new HashMap<>();
 					dataMap.put(ImportGermplasmListController.POSITION, germplasm.getIndex().toString());
 					dataMap.put(ImportGermplasmListController.CHECK_OPTIONS, checkList);
-					dataMap.put(ImportGermplasmListController.ENTRY, germplasm.getEntryId().toString());
+					dataMap.put(ImportGermplasmListController.ENTRY, germplasm.getEntryNumber().toString());
 					dataMap.put(ImportGermplasmListController.DESIG, germplasm.getDesig());
 					dataMap.put(ImportGermplasmListController.GID, germplasm.getGid());
 					dataMap.put(ImportGermplasmListController.GROUP_ID, germplasm.getMgid());
@@ -667,7 +666,7 @@ public class ImportGermplasmListController extends SettingsController {
 				germplasm.setCross(aData.getGroupName());
 				germplasm.setDesig(aData.getDesignation());
 				germplasm.setEntryCode(aData.getEntryCode());
-				germplasm.setEntryId(aData.getEntryId());
+				germplasm.setEntryNumber(aData.getEntryId());
 				germplasm.setGid(aData.getGid().toString());
 				germplasm.setMgid(aData.getGroupId()); // set Group_Id from
 														// germplasm

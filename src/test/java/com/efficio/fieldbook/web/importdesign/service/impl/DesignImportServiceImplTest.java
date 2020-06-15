@@ -533,7 +533,7 @@ public class DesignImportServiceImplTest {
 
 							@Override
 							public Integer apply(final ImportedGermplasm input) {
-								return input.getEntryId();
+								return input.getEntryNumber();
 							}
 						});
 

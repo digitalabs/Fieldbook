@@ -1,23 +1,14 @@
 package com.efficio.fieldbook.web.naming.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import javax.annotation.Resource;
-
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessor;
 import com.efficio.fieldbook.web.naming.expression.dataprocessor.ExpressionDataProcessorFactory;
 import com.efficio.fieldbook.web.trial.bean.AdvanceType;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
-import org.generationcp.commons.pojo.AdvancingSource;
-import org.generationcp.commons.pojo.AdvancingSourceList;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.commons.pojo.AdvancingSource;
+import org.generationcp.commons.pojo.AdvancingSourceList;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -35,6 +26,9 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.*;
 
 @Service
 @Transactional
@@ -235,7 +229,7 @@ public class AdvancingSourceListFactory {
 		germplasm.setCross(row.getMeasurementDataValue(TermId.CROSS.getId()));
 		germplasm.setDesig(row.getMeasurementDataValue(TermId.DESIG.getId()));
 		germplasm.setEntryCode(row.getMeasurementDataValue(TermId.ENTRY_CODE.getId()));
-		germplasm.setEntryId(this.getIntegerValue(row.getMeasurementDataValue(TermId.ENTRY_NO.getId())));
+		germplasm.setEntryNumber(this.getIntegerValue(row.getMeasurementDataValue(TermId.ENTRY_NO.getId())));
 		germplasm.setGid(row.getMeasurementDataValue(TermId.GID.getId()));
 		germplasm.setSource(row.getMeasurementDataValue(TermId.SOURCE.getId()));
 		return germplasm;

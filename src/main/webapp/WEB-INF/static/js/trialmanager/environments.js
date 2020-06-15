@@ -168,7 +168,10 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			};
 
 			$scope.updateInstanceCount = function () {
-				if ($scope.temp.numberOfInstances > $scope.instanceInfo.instances.length) {
+
+				if ($scope.temp.numberOfInstances === '0') {
+					showErrorMessage('', $.environmentMessages.studyShouldHaveAtLeastOneEnvironment);
+				} else if ($scope.temp.numberOfInstances > $scope.instanceInfo.instances.length) {
 					$scope.instanceInfo.numberOfInstances = $scope.temp.numberOfInstances;
 					$scope.addInstances($scope.temp.numberOfInstances - $scope.instanceInfo.instances.length);
 				} else if ($scope.temp.numberOfInstances < $scope.instanceInfo.instances.length) {

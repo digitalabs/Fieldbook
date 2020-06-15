@@ -396,13 +396,17 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			ctrl.initializePossibleValuesMap = function initializePossibleValuesMap() {
 
-				angular.forEach($scope.settings.managementDetails.vals(), function (settingVariable) {
-					ctrl.createPossibleValuesById(settingVariable);
-				});
-				angular.forEach($scope.settings.trialConditionDetails.vals(), function (settingVariable) {
-					ctrl.createPossibleValuesById(settingVariable);
-				});
+				if ($scope.settings.managementDetails) {
+					angular.forEach($scope.settings.managementDetails.vals(), function (settingVariable) {
+						ctrl.createPossibleValuesById(settingVariable);
+					});
+				}
 
+				if ($scope.settings.trialConditionDetails) {
+					angular.forEach($scope.settings.trialConditionDetails.vals(), function (settingVariable) {
+						ctrl.createPossibleValuesById(settingVariable);
+					});
+				}
 
 			};
 

@@ -1298,15 +1298,4 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return this.getOntologyService().getStandardVariable(termId, this.contextUtil.getCurrentProgramUUID());
 	}
 
-	@Override
-	public long getGermplasmListChecksSize(final int germplasmListId) {
-		final List<ValueReference> entryTypes = this.getAllPossibleValues(TermId.ENTRY_TYPE.getId(), true);
-		final List<Integer> checkEntryTypeIds = new ArrayList<>();
-		for (final ValueReference entryType : entryTypes) {
-			if (SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId() != entryType.getId()) {
-				checkEntryTypeIds.add(entryType.getId());
-			}
-		}
-		return this.fieldbookMiddlewareService.countListDataProjectByListIdAndEntryTypeIds(germplasmListId, checkEntryTypeIds);
-	}
 }

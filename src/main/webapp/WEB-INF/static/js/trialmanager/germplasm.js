@@ -3,12 +3,15 @@
 (function () {
     'use strict';
 
-    angular.module('manageTrialApp').controller('GermplasmCtrl',
-        ['$scope', 'TrialManagerDataService', 'studyStateService', function ($scope, TrialManagerDataService, studyStateService) {
+    var manageTrialAppModule = angular.module('manageTrialApp');
+
+    manageTrialAppModule.controller('GermplasmCtrl',
+        ['$scope', 'TrialManagerDataService', 'studyStateService', '$uibModal', function ($scope, TrialManagerDataService, studyStateService, $uibModal) {
 
             $scope.settings = TrialManagerDataService.settings.germplasm;
             $scope.isOpenStudy = TrialManagerDataService.isOpenStudy;
             $scope.trialMeasurement = {hasMeasurement: studyStateService.hasGeneratedDesign()};
+            $scope.selectedItems = [];
 
             if ($scope.isOpenStudy()) {
                 displaySelectedGermplasmDetails();
@@ -54,9 +57,9 @@
 
             $(document).on('germplasmListUpdated', function () {
                 TrialManagerDataService.applicationData.germplasmListSelected = true;
-				if (TrialManagerDataService.isOpenStudy()) {
-					studyStateService.updateOccurred();
-				}
+                if (TrialManagerDataService.isOpenStudy()) {
+                    studyStateService.updateOccurred();
+                }
             });
 
             $scope.openGermplasmTree = function () {
@@ -123,7 +126,54 @@
                 });
 
             };
+
+            $scope.replaceGermplasm = function() {
+                if (studyStateService.hasGeneratedDesign()) {
+                    var confirmMessage = 'The entry that you’re trying to replace has been assigned to one or more plots already through an experimental design. If you change the entry, all the information related to these plots (including observations) will be now reference the new GID. Are you sure you want to proceed?';
+                    var modalConfirmReplacement = $scope.openConfirmModal(confirmMessage, 'Yes','No');
+                    modalConfirmReplacement.result.then(function (shouldContinue) {
+                        if (shouldContinue) {
+                            $scope.openReplaceGermplasmModal();
+                        }
+                    });
+                } else {
+                    // TODO pass the entry selected
+                    $scope.openReplaceGermplasmModal();
+                }
+
+            };
+
+            $scope.openReplaceGermplasmModal = function() {
+                $uibModal.open({
+                    templateUrl: '/Fieldbook/static/angular-templates/germplasm/replaceGermplasm.html',
+                    controller: "replaceGermplasmCtrl",
+                    size: 'md'
+                });
+            };
+
+            $scope.toggleSelect = function (entryId) {
+                consoloe.log(entryId + ' selected');
+                var idx = $scope.selectedItems.indexOf(entryId);
+                if (idx > -1) {
+                    $scope.selectedItems.splice(idx, 1)
+                } else {
+                    $scope.selectedItems.push(entryId);
+                }
+            };
         }]);
+
+    manageTrialAppModule.controller('replaceGermplasmCtrl', ['$scope', '$uibModalInstance',
+        function ($scope, $uibModalInstance) {
+
+            $scope.cancel = function () {
+                $uibModalInstance.dismiss();
+            };
+
+            $scope.performGermplasmReplacement = function () {
+                console.log('call service to replace GID');
+            };
+        }
+    ]);
 })();
 
 // README IMPORTANT: Code unmanaged by angular should go here

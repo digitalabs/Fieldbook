@@ -205,7 +205,7 @@ public class ImportGermplasmListControllerTest {
 			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListControllerTest.ENTRY_NO_FACTOR));
 			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.POSITION));
 			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY_CODE));
-			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY));
+			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY_NUMBER));
 			x++;
 		}
 		Assert.assertEquals("The starting plot number should be 1.", form.getStartingPlotNo(),
@@ -240,7 +240,7 @@ public class ImportGermplasmListControllerTest {
 			Assert.assertEquals("GROUPNAME" + x, map.get(ImportGermplasmListControllerTest.CROSS_FACTOR));
 			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListControllerTest.ENTRY_NO_FACTOR));
 			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.POSITION));
-			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY));
+			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY_NUMBER));
 			Assert.assertEquals("1", map.get(ImportGermplasmListController.CHECK));
 			x++;
 		}
@@ -261,7 +261,7 @@ public class ImportGermplasmListControllerTest {
 				map.get(ImportGermplasmListController.POSITION));
 			Assert.assertEquals("The check's value should be 1", "1", map.get(ImportGermplasmListController.CHECK));
 			Assert.assertEquals("The entry's value should be " + x, String.valueOf(x),
-				map.get(ImportGermplasmListController.ENTRY));
+				map.get(ImportGermplasmListController.ENTRY_NUMBER));
 			Assert.assertEquals("The check option's value should be " + this.checkList, this.checkList,
 				map.get(ImportGermplasmListController.CHECK_OPTIONS));
 			Assert.assertEquals("The desig's value should be Desig", "Desig",
@@ -287,7 +287,7 @@ public class ImportGermplasmListControllerTest {
 			Assert.assertEquals("The check's value should be empty string", "1",
 				map.get(ImportGermplasmListController.CHECK));
 			Assert.assertEquals("The entry's value should be " + x, String.valueOf(x),
-				map.get(ImportGermplasmListController.ENTRY));
+				map.get(ImportGermplasmListController.ENTRY_NUMBER));
 			Assert.assertEquals("The check option's value should be " + this.checkList, this.checkList,
 				map.get(ImportGermplasmListController.CHECK_OPTIONS));
 			Assert.assertEquals("The desig's value should be Desig", "Desig",
@@ -324,7 +324,7 @@ public class ImportGermplasmListControllerTest {
 		for (final Map<String, Object> map : listDataTable) {
 			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.POSITION));
 			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY_CODE));
-			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY));
+			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY_NUMBER));
 			Assert.assertEquals(this.checkList, map.get(ImportGermplasmListController.CHECK_OPTIONS));
 			Assert.assertEquals("DESIGNATION" + x, map.get(ImportGermplasmListControllerTest.DESIGNATION_FACTOR));
 			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListControllerTest.GID_FACTOR));
@@ -422,7 +422,7 @@ public class ImportGermplasmListControllerTest {
 		int x = 1;
 		for (final Map<String, Object> map : listDataTable) {
 			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.POSITION));
-			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY));
+			Assert.assertEquals(String.valueOf(x), map.get(ImportGermplasmListController.ENTRY_NUMBER));
 			Assert.assertEquals("1", map.get(ImportGermplasmListController.CHECK));
 			Assert.assertEquals(this.checkList, map.get(ImportGermplasmListController.CHECK_OPTIONS));
 			Assert.assertEquals("DESIGNATION" + x, map.get(ImportGermplasmListControllerTest.DESIGNATION_FACTOR));

@@ -84,6 +84,8 @@ public class ImportGermplasmListController extends SettingsController {
 
 	protected static final String ENTRY_CODE = "entryCode";
 
+	protected static final String ENTRY_ID = "entryId";
+
 	protected static final String SOURCE = "source";
 
 	protected static final String CROSS = "cross";
@@ -94,7 +96,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	protected static final String DESIG = "desig";
 
-	protected static final String ENTRY = "entry";
+	protected static final String ENTRY_NUMBER = "entryNumber";
 
 	static final String CHECK_OPTIONS = "checkOptions";
 
@@ -367,10 +369,11 @@ public class ImportGermplasmListController extends SettingsController {
 
 			dataMap.put(ImportGermplasmListController.POSITION, germplasm.getIndex().toString());
 			dataMap.put(ImportGermplasmListController.CHECK_OPTIONS, checkList);
-			dataMap.put(ImportGermplasmListController.ENTRY, germplasm.getEntryNumber().toString());
+			dataMap.put(ImportGermplasmListController.ENTRY_NUMBER, germplasm.getEntryNumber().toString());
 			dataMap.put(ImportGermplasmListController.DESIG, germplasm.getDesig());
 			dataMap.put(ImportGermplasmListController.GID, germplasm.getGid());
 			dataMap.put(ImportGermplasmListController.ENTRY_CODE, germplasm.getEntryCode());
+			dataMap.put(ImportGermplasmListController.ENTRY_ID, germplasm.getId());
 
 			if (isDefaultTestCheck || germplasm.getEntryTypeValue() == null || "0".equals(germplasm.getEntryTypeValue())) {
 				germplasm.setEntryTypeValue(defaultTestCheckId);
@@ -490,13 +493,15 @@ public class ImportGermplasmListController extends SettingsController {
 				// we need to take note of the check here
 
 				for (final ImportedGermplasm germplasm : list) {
+					// FIXME - extract duplicate code in generateGermplasmListDataTable
 					final Map<String, Object> dataMap = new HashMap<>();
 					dataMap.put(ImportGermplasmListController.POSITION, germplasm.getIndex().toString());
 					dataMap.put(ImportGermplasmListController.CHECK_OPTIONS, checkList);
-					dataMap.put(ImportGermplasmListController.ENTRY, germplasm.getEntryNumber().toString());
+					dataMap.put(ImportGermplasmListController.ENTRY_NUMBER, germplasm.getEntryNumber().toString());
 					dataMap.put(ImportGermplasmListController.DESIG, germplasm.getDesig());
 					dataMap.put(ImportGermplasmListController.GID, germplasm.getGid());
 					dataMap.put(ImportGermplasmListController.GROUP_ID, germplasm.getMgid());
+					dataMap.put(ImportGermplasmListController.ENTRY_ID, germplasm.getId());
 
 					final List<SettingDetail> factorsList = this.userSelection.getPlotsLevelList();
 					if (factorsList != null) {

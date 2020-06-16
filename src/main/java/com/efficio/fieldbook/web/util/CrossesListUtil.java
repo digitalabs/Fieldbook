@@ -87,7 +87,7 @@ public class CrossesListUtil {
 	
 	public ImportedCross convertGermplasmListDataToImportedCrosses(final GermplasmListData crossesData, final String studyName) {
 		final ImportedCross importedCross = new ImportedCross();
-		importedCross.setCrossListId(crossesData.getId());
+		importedCross.setId(crossesData.getId());
 		importedCross.setEntryNumber(crossesData.getEntryId());
 		importedCross.setGid(crossesData.getGid() != null ? Integer.toString(crossesData.getGid()) : null);
 		importedCross.setEntryCode(crossesData.getEntryCode());

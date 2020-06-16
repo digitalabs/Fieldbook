@@ -39,6 +39,7 @@ public class StudyGermplasmTransformer {
 		if (studyGermplasmDtoList != null && !studyGermplasmDtoList.isEmpty()) {
 			for (final StudyGermplasmDto studyGermplasmDto : studyGermplasmDtoList) {
 				final ImportedGermplasm importedGermplasm = new ImportedGermplasm();
+				importedGermplasm.setId(studyGermplasmDto.getEntryId());
 				importedGermplasm.setEntryTypeName(checkTypesDescriptionMap.getOrDefault(studyGermplasmDto.getCheckType(), ""));
 				importedGermplasm.setEntryTypeValue(studyGermplasmDto.getCheckType().toString());
 				importedGermplasm.setEntryTypeCategoricalID(studyGermplasmDto.getCheckType());

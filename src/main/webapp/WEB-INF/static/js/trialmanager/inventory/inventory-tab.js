@@ -94,7 +94,13 @@
 				instanceNo: {
 					data: function (row) {
 						return row.observationUnits[0].instanceNo
-							+ (row.observationUnits.length > 1 ? AND_MORE_LABEL : "");
+							+ (row.observationUnits
+								.map(ou => ou.instanceNo)
+								.filter((item, pos, self) => {
+									// remove dups
+									return self.indexOf(item) === pos;
+								})
+								.length > 1 ? AND_MORE_LABEL : "");
 					},
 					visible: false,
 					filter: {

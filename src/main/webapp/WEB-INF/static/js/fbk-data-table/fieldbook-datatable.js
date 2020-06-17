@@ -469,6 +469,15 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 						return '<a data-index="' + meta.row + '" class="check-href edit-check' + meta.row + '" data-code="' + actualCode + '" href="javascript: showPopoverCheck(&quot;' + (meta.row) + '&quot;, &quot;.germplasm-list-items&quot;, &quot;edit-check' + meta.row + '&quot;)">' + actualVal + '</a>' + domElem;
 					}
 				});
+			} else if ($(this).data('col-name') == 'entry-checkbox') {
+				// Checkbox for Entry selection
+				columnsDef.push({
+					targets: columns.length - 1,
+					data: $(this).html(),
+					render: function(data, type, full, meta) {
+						return '<span><input type="checkbox" name="entryId" value="' + full.entryId + '"></span>';
+					}
+				});
 			}
 		});
 

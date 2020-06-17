@@ -84,10 +84,7 @@
 
 
 					$scope.$watch('settings', function(newValue, oldValue) {
-                        // Watch the settings variable if it has changed (triggered by adding/removing variables). if changed, then
-                        // tell the studyStateService that the study has been updated.
 						if (oldValue.m_keys.length !== newValue.m_keys.length) {
-                            studyStateService.updateOccurred();
 							$scope.options.selectAll = false;
 						}
 					}, true);
@@ -136,13 +133,8 @@
 
 					$scope.doDeleteSelectedSettings = function() {
 						TrialManagerDataService.removeSettings($attrs.variableType, $scope.settings).then(function(data) {
-							if (data.length > 0) {
-								$scope.$emit('deleteOccurred');
-							}
-
 							$scope.options.selectAll = false;
 						});
-
 					};
 
 					$scope.size = function() {

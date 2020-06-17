@@ -9,7 +9,7 @@ import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
 import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmMainInfoInitializer;
 import com.efficio.fieldbook.web.importdesign.generator.DesignImportMeasurementRowGenerator;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.InstanceInfo;
 import com.efficio.fieldbook.web.util.parsing.DesignImportCsvParser;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
@@ -182,10 +182,10 @@ public class DesignImportServiceImplTest {
 	@Test
 	public void testExtractTrialInstancesFromEnvironmentData() {
 		final int expectedNumberOfTrialInstances = 5;
-		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(expectedNumberOfTrialInstances);
-		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
+		final InstanceInfo instanceInfo = DesignImportTestDataInitializer.createEnvironmentData(expectedNumberOfTrialInstances);
+		DesignImportTestDataInitializer.processEnvironmentData(instanceInfo);
 
-		final Set<String> result = this.service.extractTrialInstancesFromEnvironmentData(environmentData);
+		final Set<String> result = this.service.extractTrialInstancesFromEnvironmentData(instanceInfo);
 
 		final int actualNoOfExtractedTrialInstances = result.size();
 		Assert.assertEquals("The number of extracted trial instances must be equal to " + expectedNumberOfTrialInstances + " but returned "
@@ -201,12 +201,12 @@ public class DesignImportServiceImplTest {
 				.getImportedGermplasmMainInfo();
 
 		// Make sure that there is only 1 trial instance included in the selected environments from the UI
-		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(1);
+		final InstanceInfo instanceInfo = DesignImportTestDataInitializer.createEnvironmentData(1);
 
-		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
+		DesignImportTestDataInitializer.processEnvironmentData(instanceInfo);
 
 		final List<MeasurementRow> measurements =
-				this.service.generateDesign(workbook, this.designImportData, environmentData, true, this.createAdditionalParamsMap(1, 1));
+				this.service.generateDesign(workbook, this.designImportData, instanceInfo, true, this.createAdditionalParamsMap(1, 1));
 
 		Assert.assertEquals(
 				"The first trial instance must only have " + DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES + " observations.",
@@ -225,13 +225,13 @@ public class DesignImportServiceImplTest {
 		Mockito.doReturn(ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo()).when(this.userSelection)
 				.getImportedGermplasmMainInfo();
 
-		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(1);
+		final InstanceInfo instanceInfo = DesignImportTestDataInitializer.createEnvironmentData(1);
 
-		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
+		DesignImportTestDataInitializer.processEnvironmentData(instanceInfo);
 
 		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData(startingEntryNo, startingPlotNo);
 
-		final List<MeasurementRow> measurements = this.service.generateDesign(workbook, designImportData, environmentData, true,
+		final List<MeasurementRow> measurements = this.service.generateDesign(workbook, designImportData, instanceInfo, true,
 				this.createAdditionalParamsMap(startingEntryNo, startingPlotNo));
 
 		Assert.assertEquals(
@@ -263,13 +263,13 @@ public class DesignImportServiceImplTest {
 
 		Mockito.doReturn(importedGermplasmMainInfo).when(this.userSelection).getImportedGermplasmMainInfo();
 
-		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(1);
+		final InstanceInfo instanceInfo = DesignImportTestDataInitializer.createEnvironmentData(1);
 
-		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
+		DesignImportTestDataInitializer.processEnvironmentData(instanceInfo);
 
 		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData(startingEntryNo, startingPlotNo);
 
-		final List<MeasurementRow> measurements = this.service.generateDesign(workbook, designImportData, environmentData, true,
+		final List<MeasurementRow> measurements = this.service.generateDesign(workbook, designImportData, instanceInfo, true,
 				this.createAdditionalParamsMap(startingEntryNo, startingPlotNo));
 
 		Assert.assertEquals(
@@ -298,12 +298,12 @@ public class DesignImportServiceImplTest {
 				.getImportedGermplasmMainInfo();
 
 		// Make sure that there is only 3 trial instances included in the selected environments from the UI
-		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(noOfTrialInstances);
+		final InstanceInfo instanceInfo = DesignImportTestDataInitializer.createEnvironmentData(noOfTrialInstances);
 
-		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
+		DesignImportTestDataInitializer.processEnvironmentData(instanceInfo);
 
 		final List<MeasurementRow> measurements =
-				this.service.generateDesign(workbook, this.designImportData, environmentData, true, this.createAdditionalParamsMap(1, 1));
+				this.service.generateDesign(workbook, this.designImportData, instanceInfo, true, this.createAdditionalParamsMap(1, 1));
 
 		// Not including the header row from the count of number of rows from the csv file
 		final int expectedNumberOfMeasurements = this.designImportData.getRowDataMap().size() - 1;
@@ -325,11 +325,11 @@ public class DesignImportServiceImplTest {
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(5, StudyTypeDto.getNurseryDto());
 
 		// Setting to 1 since there is only 1 environment for nursery
-		final EnvironmentData environmentData = DesignImportTestDataInitializer.createEnvironmentData(1);
-		DesignImportTestDataInitializer.processEnvironmentData(environmentData);
+		final InstanceInfo instanceInfo = DesignImportTestDataInitializer.createEnvironmentData(1);
+		DesignImportTestDataInitializer.processEnvironmentData(instanceInfo);
 
 		final List<MeasurementRow> measurements =
-				this.service.generateDesign(workbook, this.designImportData, environmentData, true, this.createAdditionalParamsMap(1, 1));
+				this.service.generateDesign(workbook, this.designImportData, instanceInfo, true, this.createAdditionalParamsMap(1, 1));
 
 		Assert.assertEquals("Expecting that the number of measurement rows generated for nursery is "
 						+ DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES + " observations but returned " + measurements.size() + " instead.",

@@ -22,9 +22,9 @@ public class ObjectMapperTest {
 
 		try {
 			final TrialData data = mapper.readValue(
-				"{\"trialSettings\":{\"userInput\":{}},\"environments\":{\"environments\":[{\"managementDetailValues\":{\"8170\":null,\"8192\":\"2\",\"8194\":\"1\"},\""
+				"{\"trialSettings\":{\"userInput\":{}},\"instanceInfo\":{\"instances\":[{\"managementDetailValues\":{\"8170\":null,\"8192\":\"2\",\"8194\":\"1\"},\""
 					+ "trialDetailValues\":{}},{\"managementDetailValues\":{\"8170\":null,\"8192\":\"4\",\"8194\":\"3\"},\"trialDetailValues\":{}},{\"managementDetailValues\":{\"8170\":null,\"8192\":\""
-					+ "6\",\"8194\":\"5\"},\"trialDetailValues\":{}}],\"noOfEnvironments\":\"3\"},\"basicDetails\":{\"folderId\":1,\"folderName\":\"Program Trials\",\"folderNameLabel\":\"Program Trials\",\"userID\":-1,\"userName\":\"Daniel Villafuerte\"}}",
+					+ "6\",\"8194\":\"5\"},\"trialDetailValues\":{}}],\"numberOfInstances\":\"3\"},\"basicDetails\":{\"folderId\":1,\"folderName\":\"Program Trials\",\"folderNameLabel\":\"Program Trials\",\"userID\":-1,\"userName\":\"Daniel Villafuerte\"}}",
 				TrialData.class);
 
 			Assert.assertNotNull(data);

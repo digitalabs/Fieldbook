@@ -1,4 +1,4 @@
-/*global angular, showAlertMessage, showErrorMessage, selectEnvironmentContinueAdvancing*/
+/*global angular, showAlertMessage, showErrorMessage, selectContinueAdvancing*/
 (function() {
 	'use strict';
 
@@ -18,10 +18,10 @@
 		$scope.TRIAL_LOCATION_ABBR_INDEX = 8189;
 		$scope.LOCATION_NAME_ID = 8190;
 		$scope.applicationData = TrialManagerDataService.applicationData;
-		$scope.data = TrialManagerDataService.currentData.environments;
+		$scope.instanceInfo = studyInstanceService.instanceInfo;
 
 		$scope.$on('changeEnvironments', function () {
-			$scope.data = studyInstanceService.environments;
+			$scope.instanceInfo = studyInstanceService.instanceInfo;
 
 			//create a map for location dropdown values
 			var locationMap = {};
@@ -29,15 +29,15 @@
 				locationMap[locationVariable.id] = locationVariable;
 			});
 
-			angular.forEach($scope.data.environments, function (environment) {
-				if (locationMap[environment.managementDetailValues[$scope.LOCATION_NAME_ID]]) {
+			angular.forEach($scope.instanceInfo.instances, function (instance) {
+				if (locationMap[instance.managementDetailValues[$scope.LOCATION_NAME_ID]]) {
 
-					// Ensure that the location id and location name details of the $scope.data.environments
+					// Ensure that the location id and location name details of the $scope.instanceInfo.instances
 					// are updated with values from Location json object
-					environment.managementDetailValues[$scope.LOCATION_NAME_ID]
-						= locationMap[environment.managementDetailValues[$scope.LOCATION_NAME_ID]].id;
-					environment.managementDetailValues[$scope.TRIAL_LOCATION_NAME_INDEX]
-						= locationMap[environment.managementDetailValues[$scope.LOCATION_NAME_ID]].name;
+					instance.managementDetailValues[$scope.LOCATION_NAME_ID]
+						= locationMap[instance.managementDetailValues[$scope.LOCATION_NAME_ID]].id;
+					instance.managementDetailValues[$scope.TRIAL_LOCATION_NAME_INDEX]
+						= locationMap[instance.managementDetailValues[$scope.LOCATION_NAME_ID]].name;
 				}
 			});
 		});
@@ -49,7 +49,7 @@
 		$scope.isEmptySelection = false;
 
 		//NOTE: Continue action for navigate from Locations to Advance Study Modal
-		$scope.selectEnvironmentContinue = function() {
+		$scope.selectInstanceContinue = function() {
 
 			// Do not go ahead for Advancing unless study has experimental design & number of replications variables
 			if (TrialManagerDataService.currentData.experimentalDesign.designType === null) {
@@ -73,19 +73,19 @@
 						.push($scope.settings.managementDetails.val($scope.LOCATION_NAME_ID).variable.name);
 				}
 
-				angular.forEach($scope.instances, function (environment) {
-					var isSelected = $scope.selectedInstances[environment.instanceNumber];
+				angular.forEach($scope.instances, function (instance) {
+					var isSelected = $scope.selectedInstances[instance.instanceNumber];
 					if (isSelected) {
-						selectedTrialInstances.push(environment.instanceNumber);
+						selectedTrialInstances.push(instance.instanceNumber);
 						if (locationAbbr) {
-							selectedLocationDetails.push(environment.customLocationAbbreviation);
+							selectedLocationDetails.push(instance.customLocationAbbreviation);
 						} else {
-							selectedLocationDetails.push(environment.locationName);
+							selectedLocationDetails.push(instance.locationName);
 						}
 					}
 				});
 
-				selectEnvironmentContinueAdvancing(selectedTrialInstances, $scope.noOfReplications, selectedLocationDetails,
+				selectInstanceContinueAdvancing(selectedTrialInstances, $scope.noOfReplications, selectedLocationDetails,
 					$scope.applicationData.advanceType);
 			}
 

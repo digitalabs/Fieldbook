@@ -233,7 +233,7 @@ public class ImportGermplasmListController extends SettingsController {
 				this.getCurrentProject().getCropType());
 		this.fieldbookService.saveStudyImportedCrosses(this.userSelection.getImportedCrossesId(), studyId);
 
-		// for saving the list data project
+		// for saving the stocks
 		this.saveStudyGermplasm(studyId);
 
 		this.fieldbookService.saveStudyColumnOrdering(studyId,
@@ -367,13 +367,8 @@ public class ImportGermplasmListController extends SettingsController {
 		for (final ImportedGermplasm germplasm : list) {
 			final Map<String, Object> dataMap = new HashMap<>();
 
-			dataMap.put(ImportGermplasmListController.POSITION, germplasm.getIndex().toString());
+			this.setDataMapAttributesFromImportedGermplasm(germplasm, dataMap);
 			dataMap.put(ImportGermplasmListController.CHECK_OPTIONS, checkList);
-			dataMap.put(ImportGermplasmListController.ENTRY_NUMBER, germplasm.getEntryNumber().toString());
-			dataMap.put(ImportGermplasmListController.DESIG, germplasm.getDesig());
-			dataMap.put(ImportGermplasmListController.GID, germplasm.getGid());
-			dataMap.put(ImportGermplasmListController.ENTRY_CODE, germplasm.getEntryCode());
-			dataMap.put(ImportGermplasmListController.ENTRY_ID, germplasm.getId());
 
 			if (isDefaultTestCheck || germplasm.getEntryTypeValue() == null || "0".equals(germplasm.getEntryTypeValue())) {
 				germplasm.setEntryTypeValue(defaultTestCheckId);
@@ -397,6 +392,16 @@ public class ImportGermplasmListController extends SettingsController {
 		}
 
 		return dataTableDataList;
+	}
+
+	private void setDataMapAttributesFromImportedGermplasm(ImportedGermplasm germplasm, Map<String, Object> dataMap) {
+		dataMap.put(ImportGermplasmListController.POSITION, germplasm.getIndex().toString());
+		dataMap.put(ImportGermplasmListController.ENTRY_NUMBER, germplasm.getEntryNumber().toString());
+		dataMap.put(ImportGermplasmListController.DESIG, germplasm.getDesig());
+		dataMap.put(ImportGermplasmListController.GID, germplasm.getGid());
+		dataMap.put(ImportGermplasmListController.GROUP_ID, germplasm.getMgid());
+		dataMap.put(ImportGermplasmListController.ENTRY_ID, germplasm.getId());
+		dataMap.put(ImportGermplasmListController.ENTRY_CODE, germplasm.getEntryCode());
 	}
 
 	void initializeObjectsForGermplasmDetailsView(final ImportGermplasmListForm form,
@@ -493,15 +498,10 @@ public class ImportGermplasmListController extends SettingsController {
 				// we need to take note of the check here
 
 				for (final ImportedGermplasm germplasm : list) {
-					// FIXME - extract duplicate code in generateGermplasmListDataTable
 					final Map<String, Object> dataMap = new HashMap<>();
-					dataMap.put(ImportGermplasmListController.POSITION, germplasm.getIndex().toString());
+					this.setDataMapAttributesFromImportedGermplasm(germplasm, dataMap);
 					dataMap.put(ImportGermplasmListController.CHECK_OPTIONS, checkList);
-					dataMap.put(ImportGermplasmListController.ENTRY_NUMBER, germplasm.getEntryNumber().toString());
-					dataMap.put(ImportGermplasmListController.DESIG, germplasm.getDesig());
-					dataMap.put(ImportGermplasmListController.GID, germplasm.getGid());
-					dataMap.put(ImportGermplasmListController.GROUP_ID, germplasm.getMgid());
-					dataMap.put(ImportGermplasmListController.ENTRY_ID, germplasm.getId());
+
 
 					final List<SettingDetail> factorsList = this.userSelection.getPlotsLevelList();
 					if (factorsList != null) {
@@ -523,6 +523,7 @@ public class ImportGermplasmListController extends SettingsController {
 				model.addAttribute(ImportGermplasmListController.LIST_DATA_TABLE, dataTableDataList);
 				model.addAttribute(ImportGermplasmListController.TABLE_HEADER_LIST, this.getGermplasmTableHeader(this.userSelection.getPlotsLevelList()));
 				model.addAttribute("hasMeasurement", this.hasMeasurement());
+				model.addAttribute("savedStocks", this.studyGermplasmService.countStudyGermplasm(this.userSelection.getstudy));
 
 				form.setImportedGermplasmMainInfo(this.getUserSelection().getImportedGermplasmMainInfo());
 				form.setImportedGermplasm(list);

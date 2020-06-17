@@ -435,6 +435,7 @@ public class ImportGermplasmListController extends SettingsController {
 		model.addAttribute(ImportGermplasmListController.LIST_DATA_TABLE, dataTableDataList);
 		model.addAttribute(ImportGermplasmListController.TABLE_HEADER_LIST,
 				this.getGermplasmTableHeader(this.userSelection.getPlotsLevelList()));
+		model.addAttribute("hasSavedGermplasm", this.hasSavedGermplasm());
 	}
 
 
@@ -523,7 +524,6 @@ public class ImportGermplasmListController extends SettingsController {
 				model.addAttribute(ImportGermplasmListController.LIST_DATA_TABLE, dataTableDataList);
 				model.addAttribute(ImportGermplasmListController.TABLE_HEADER_LIST, this.getGermplasmTableHeader(this.userSelection.getPlotsLevelList()));
 				model.addAttribute("hasMeasurement", this.hasMeasurement());
-				model.addAttribute("savedStocks", this.studyGermplasmService.countStudyGermplasm(this.userSelection.getstudy));
 
 				form.setImportedGermplasmMainInfo(this.getUserSelection().getImportedGermplasmMainInfo());
 				form.setImportedGermplasm(list);
@@ -538,6 +538,14 @@ public class ImportGermplasmListController extends SettingsController {
 	protected Boolean hasMeasurement() {
 		return this.userSelection.getMeasurementRowList() != null
 				&& !this.userSelection.getMeasurementRowList().isEmpty();
+	}
+
+	protected Boolean hasSavedGermplasm() {
+		final Integer studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
+		if (studyId != null) {
+			return this.studyGermplasmService.countStudyGermplasm(studyId) > 0;
+		}
+		return false;
 	}
 
 	private String getCheckId(final String checkCode, final List<Enumeration> checksList) {

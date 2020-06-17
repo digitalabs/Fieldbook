@@ -6,7 +6,7 @@
     var manageTrialAppModule = angular.module('manageTrialApp');
 
     manageTrialAppModule.controller('GermplasmCtrl',
-        ['$scope', 'TrialManagerDataService', 'studyStateService', '$uibModal', function ($scope, TrialManagerDataService, studyStateService, $uibModal) {
+        ['$scope', 'TrialManagerDataService', 'studyStateService', 'studyGermplasmService', '$uibModal', function ($scope, TrialManagerDataService, studyStateService, studyGermplasmService, $uibModal) {
 
             $scope.settings = TrialManagerDataService.settings.germplasm;
             $scope.isOpenStudy = TrialManagerDataService.isOpenStudy;
@@ -152,28 +152,71 @@
             };
 
             $scope.toggleSelect = function (entryId) {
-                consoloe.log(entryId + ' selected');
-                var idx = $scope.selectedItems.indexOf(entryId);
-                if (idx > -1) {
-                    $scope.selectedItems.splice(idx, 1)
-                } else {
-                    $scope.selectedItems.push(entryId);
-                }
+                studyGermplasmService.toggleSelect(entryId);
             };
         }]);
 
-    manageTrialAppModule.controller('replaceGermplasmCtrl', ['$scope', '$uibModalInstance',
-        function ($scope, $uibModalInstance) {
+    manageTrialAppModule.factory('studyGermplasmService', ['$http', 'serviceUtilities', 'studyContext', function ($http, serviceUtilities, studyContext) {
+
+        var BASE_STUDY_URL = '/bmsapi/crops/' + studyContext.cropName + '/programs/' + studyContext.programId + '/studies/';
+
+        var selectedEntries = [];
+        var studyGermplasmService = {};
+
+        var successHandler = serviceUtilities.restSuccessHandler,
+            failureHandler = serviceUtilities.restFailureHandler;
+
+        studyGermplasmService.replaceStudyGermplasm = function (entryId, newGid) {
+            var request = $http.put(BASE_STUDY_URL + studyContext.studyId + '/germplasm/' + entryId, {
+                params: {
+                    gid: newGid
+                }
+            });
+            return request.then(successHandler, failureHandler);
+        };
+
+
+        studyGermplasmService.toggleSelect = function (entryId) {
+            var idx = selectedEntries.indexOf(entryId);
+            if (idx > -1) {
+                selectedEntries.splice(idx, 1)
+            } else {
+                selectedEntries.push(entryId);
+            }
+        };
+
+        studyGermplasmService.getSelectedEntries = function() {
+            return selectedEntries;
+        };
+
+        return studyGermplasmService;
+
+    }
+    ]);
+
+    manageTrialAppModule.controller('replaceGermplasmCtrl', ['$scope', '$uibModalInstance', 'studyContext', 'studyGermplasmService',
+        function ($scope, $uibModalInstance, studyContext, studyGermplasmService) {
 
             $scope.cancel = function () {
                 $uibModalInstance.dismiss();
             };
 
             $scope.performGermplasmReplacement = function () {
-                console.log('call service to replace GID');
+                var newGid = $('#replaceGermplasmGID').val();
+                var selectedEntries = studyGermplasmService.getSelectedEntries();
+                // if there are multiple entries selected, get only the first entry for replacement
+                studyGermplasmService.replaceStudyGermplasm(selectedEntries[0], newGid).then(function (response) {
+                    showSuccessfulMessage('', 'The germplasm was replaced successfully.');
+                    window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
+                }, function(errResponse) {
+                    // TODO use proper error messasge
+                    showErrorMessage($.fieldbookMessages.errorServerError, $.experimentDesignMessages.bvLicenseGenericError);
+                });
             };
         }
     ]);
+
+
 })();
 
 // README IMPORTANT: Code unmanaged by angular should go here

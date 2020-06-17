@@ -95,7 +95,7 @@ describe('Dataset Service', function () {
 			var mockData = {};
 
 			$httpBackend.whenGET('/bmsapi/crops/maize/studies/' + studyContext.studyId + '/datasets/' +
-				datasetId + '/environments')
+				datasetId + '/instances')
 				.respond(mockData);
 
 			datasetService.getDatasetInstances(datasetId).then(function (response) {

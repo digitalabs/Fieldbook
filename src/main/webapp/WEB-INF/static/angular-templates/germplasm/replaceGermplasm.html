@@ -17,8 +17,7 @@
 		</div>
 		<div class="col-xs-8">
 			<div class="input-group">
-				<input id="replaceGermplasmGID" name="replaceGermplasmGID" type="text" class="form-control"placeholder="GID"/>
-
+				<input id="replaceGermplasmGID" name="replaceGermplasmGID" type="text" class="form-control" ng-model="replaceGermplasmGID"/>
 			</div>
 		</div>
 		<br/>
@@ -27,5 +26,5 @@
 </div>
 <div class="modal-footer">
 	<button class="btn btn-default" ng-click="cancel()">Cancel</button>
-	<button class="btn btn-primary" ng-disabled="isEmptySelection" ng-click="performGermplasmReplacement()" th:text="#{replace.germplasm.accept}">Accept</button>
+	<button class="btn btn-primary" ng-disabled="replaceGermplasmGID === undefined || replaceGermplasmGID.length === 0" ng-click="performGermplasmReplacement()" th:text="#{replace.germplasm.accept}">Accept</button>
 </div>

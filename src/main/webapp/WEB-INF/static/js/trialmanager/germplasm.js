@@ -127,6 +127,21 @@
 
             };
 
+            $scope.validateGermplasmForReplacement = function() {
+                studyGermplasmService.resetSelectedEntries();
+                $.each($("input[name='entryId']:checked"), function(){
+                    studyGermplasmService.toggleSelect($(this).val());
+                });
+                var selectedEntries = studyGermplasmService.getSelectedEntries();
+                if (selectedEntries.length === 0) {
+                    showAlertMessage('', 'Please select entry to be replaced.');
+                } else if (selectedEntries.length !== 1) {
+                    showAlertMessage('', 'Only one germplasm entry can be replaced.');
+                } else {
+                    $scope.replaceGermplasm();
+                }
+            };
+
             $scope.replaceGermplasm = function() {
                 if (studyStateService.hasGeneratedDesign()) {
                     var confirmMessage = 'The entry that you’re trying to replace has been assigned to one or more plots already through an experimental design. If you change the entry, all the information related to these plots (including observations) will be now reference the new GID. Are you sure you want to proceed?';
@@ -137,7 +152,6 @@
                         }
                     });
                 } else {
-                    // TODO pass the entry selected
                     $scope.openReplaceGermplasmModal();
                 }
 
@@ -151,9 +165,7 @@
                 });
             };
 
-            $scope.toggleSelect = function (entryId) {
-                studyGermplasmService.toggleSelect(entryId);
-            };
+
         }]);
 
     manageTrialAppModule.factory('studyGermplasmService', ['$http', 'serviceUtilities', 'studyContext', function ($http, serviceUtilities, studyContext) {
@@ -167,11 +179,10 @@
             failureHandler = serviceUtilities.restFailureHandler;
 
         studyGermplasmService.replaceStudyGermplasm = function (entryId, newGid) {
-            var request = $http.put(BASE_STUDY_URL + studyContext.studyId + '/germplasm/' + entryId, {
-                params: {
-                    gid: newGid
-                }
-            });
+            var request = $http.put(BASE_STUDY_URL + studyContext.studyId + '/germplasm/' + entryId,
+                {
+                    germplasmId: newGid
+                });
             return request.then(successHandler, failureHandler);
         };
 
@@ -189,6 +200,10 @@
             return selectedEntries;
         };
 
+        studyGermplasmService.resetSelectedEntries = function() {
+            selectedEntries = [];
+        };
+
         return studyGermplasmService;
 
     }
@@ -203,15 +218,21 @@
 
             $scope.performGermplasmReplacement = function () {
                 var newGid = $('#replaceGermplasmGID').val();
-                var selectedEntries = studyGermplasmService.getSelectedEntries();
-                // if there are multiple entries selected, get only the first entry for replacement
-                studyGermplasmService.replaceStudyGermplasm(selectedEntries[0], newGid).then(function (response) {
-                    showSuccessfulMessage('', 'The germplasm was replaced successfully.');
-                    window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
-                }, function(errResponse) {
-                    // TODO use proper error messasge
-                    showErrorMessage($.fieldbookMessages.errorServerError, $.experimentDesignMessages.bvLicenseGenericError);
-                });
+                var regex = new RegExp('^[0-9]+$');
+                if (!regex.test(newGid)) {
+                    showAlertMessage('', 'Please enter valid GID.');
+                } else {
+                    var selectedEntries = studyGermplasmService.getSelectedEntries();
+                    // if there are multiple entries selected, get only the first entry for replacement
+                    studyGermplasmService.replaceStudyGermplasm(selectedEntries[0], newGid).then(function (response) {
+                        showSuccessfulMessage('', 'The germplasm was replaced successfully.');
+                        window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
+                    }, function(errResponse) {
+                        // TODO use proper error messasge
+                        showErrorMessage($.fieldbookMessages.errorServerError,  errResponse.errors[0].message);
+                    });
+                }
+
             };
         }
     ]);

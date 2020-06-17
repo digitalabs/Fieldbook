@@ -131,7 +131,7 @@ public class WorkbookUtil {
 					Integer phenotypeId = null;
 					if (value == null) {
 						value = instance.getTrialDetailValues().get(Integer.toString(var.getTermId()));
-						phenotypeId = instance.getPhenotypeIDMap().get(Integer.toString(var.getTermId()));
+						phenotypeId = instance.getTrialConditionDataIdMap().get(Integer.toString(var.getTermId()));
 					}
 					if (params != null && value == null) {
 						final TermId termId = TermId.getById(var.getTermId());
@@ -142,7 +142,7 @@ public class WorkbookUtil {
 
 					final boolean isEditable = !(var.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId());
 					final MeasurementData data = new MeasurementData(var.getName(), value, isEditable, var.getDataType(), var);
-					data.setPhenotypeId(phenotypeId);
+					data.setMeasurementDataId(phenotypeId);
 					dataList.add(data);
 				}
 				final MeasurementRow row = new MeasurementRow(instance.getStockId(), instance.getInstanceId(), dataList);
@@ -235,7 +235,7 @@ public class WorkbookUtil {
 						final MeasurementData measurementData = new MeasurementData(variable.getName(), "", true,
 								WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
 
-						measurementData.setPhenotypeId(null);
+						measurementData.setMeasurementDataId(null);
 						final int insertIndex = WorkbookUtil.getInsertIndex(row.getDataList(), isVariate);
 						row.getDataList().add(insertIndex, measurementData);
 					}
@@ -273,7 +273,7 @@ public class WorkbookUtil {
 						final MeasurementData measurementData = new MeasurementData(variable.getName(), "", true,
 								WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
 
-						measurementData.setPhenotypeId(null);
+						measurementData.setMeasurementDataId(null);
 						final int insertIndex = WorkbookUtil.getInsertIndex(row.getDataList(), isVariate);
 						row.getDataList().add(insertIndex, measurementData);
 					}
@@ -352,7 +352,7 @@ public class WorkbookUtil {
 					new MeasurementData(variable.getName(), value, true, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
 		}
 
-		measurementData.setPhenotypeId(null);
+		measurementData.setMeasurementDataId(null);
 		final int insertIndex = WorkbookUtil.getInsertIndex(row.getDataList(), isVariate);
 		row.getDataList().add(insertIndex, measurementData);
 
@@ -375,7 +375,7 @@ public class WorkbookUtil {
 					final MeasurementData measurementData =
 							new MeasurementData(variable.getName(), "", true, WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
 
-					measurementData.setPhenotypeId(null);
+					measurementData.setMeasurementDataId(null);
 					final int insertIndex = WorkbookUtil.getInsertIndex(row.getDataList(), isVariate);
 					row.getDataList().add(insertIndex, measurementData);
 

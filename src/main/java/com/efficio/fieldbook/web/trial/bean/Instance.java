@@ -19,14 +19,14 @@ public class Instance {
 
 	private Map<String, String> managementDetailValues;
 	private Map<String, String> trialDetailValues;
-	private Map<String, Integer> phenotypeIDMap;
-	private Map<String, Integer> instanceDataIdMap;
+	private Map<String, Integer> trialConditionDataIdMap;
+	private Map<String, Integer> managementDetailDataIdMap;
 
 	public Instance() {
-		this.managementDetailValues = new HashMap<String, String>();
-		this.trialDetailValues = new HashMap<String, String>();
-		this.phenotypeIDMap = new HashMap<String, Integer>();
-		this.instanceDataIdMap = new HashMap<String, Integer>();
+		this.managementDetailValues = new HashMap<>();
+		this.trialDetailValues = new HashMap<>();
+		this.trialConditionDataIdMap = new HashMap<>();
+		this.managementDetailDataIdMap = new HashMap<>();
 	}
 
 	public Map<String, String> getManagementDetailValues() {
@@ -61,20 +61,20 @@ public class Instance {
 		this.instanceId = instanceId;
 	}
 
-	public Map<String, Integer> getPhenotypeIDMap() {
-		return this.phenotypeIDMap;
+	public Map<String, Integer> getTrialConditionDataIdMap() {
+		return this.trialConditionDataIdMap;
 	}
 
-	public void setPhenotypeIDMap(final Map<String, Integer> phenotypeIDMap) {
-		this.phenotypeIDMap = phenotypeIDMap;
+	public void setTrialConditionDataIdMap(final Map<String, Integer> trialConditionDataIdMap) {
+		this.trialConditionDataIdMap = trialConditionDataIdMap;
 	}
 
-	public Map<String, Integer> getInstanceDataIdMap() {
-		return this.instanceDataIdMap;
+	public Map<String, Integer> getManagementDetailDataIdMap() {
+		return this.managementDetailDataIdMap;
 	}
 
-	public void setInstanceDataIdMap(final Map<String, Integer> instanceDataIdMap) {
-		this.instanceDataIdMap = instanceDataIdMap;
+	public void setManagementDetailDataIdMap(final Map<String, Integer> managementDetailDataIdMap) {
+		this.managementDetailDataIdMap = managementDetailDataIdMap;
 	}
 
 }

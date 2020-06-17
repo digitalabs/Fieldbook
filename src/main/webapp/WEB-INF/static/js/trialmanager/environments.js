@@ -286,8 +286,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
 						$scope.settings.managementDetails),
 					trialDetailValues: TrialManagerDataService.constructDataStructureFromDetails($scope.settings.trialConditionDetails),
-					instanceDataIdMap: {8190: studyInstance.locationInstanceDataId},
-					phenotypeIDMap: {}
+					managementDetailDataIdMap: {8190: studyInstance.locationInstanceDataId},
+					trialConditionDataIdMap: {}
 				};
 				instance.managementDetailValues[LOCATION_ID] = UNSPECIFIED_LOCATION_ID;
 				instance.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = studyInstance.instanceNumber;
@@ -366,11 +366,11 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				if (type === 'managementDetails') {
 					settingDetailSource = $scope.settings.managementDetails;
 					valuesPropertyKey = 'managementDetailValues';
-					idsPropertyKey = 'instanceDataIdMap';
+					idsPropertyKey = 'managementDetailDataIdMap';
 				} else if (type === 'trialConditionDetails') {
 					settingDetailSource = $scope.settings.trialConditionDetails;
 					valuesPropertyKey = 'trialDetailValues';
-					idsPropertyKey = 'phenotypeIDMap';
+					idsPropertyKey = 'trialConditionDataIdMap';
 				}
 
 				angular.forEach($scope.instanceInfo.instances, function (instance) {
@@ -474,11 +474,11 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					if (isManagementDetailVariable) {
 						variableSettings = $scope.settings.managementDetails;
 						valueContainer = instance.managementDetailValues;
-						instanceDataIdMap = instance.instanceDataIdMap;
+						instanceDataIdMap = instance.managementDetailDataIdMap;
 					} else {
 						variableSettings = $scope.settings.trialConditionDetails;
 						valueContainer = instance.trialDetailValues;
-						instanceDataIdMap = instance.phenotypeIDMap;
+						instanceDataIdMap = instance.trialConditionDataIdMap;
 					}
 
 					var $inlineScope = $scope.$new(true);

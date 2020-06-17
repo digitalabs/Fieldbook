@@ -185,7 +185,7 @@ public class WorkbookUtilTest {
 		Assert.assertTrue(newMeasurementData.isEditable());
 		Assert.assertTrue(newMeasurementData.getValue().isEmpty());
 		Assert.assertEquals(variable, newMeasurementData.getMeasurementVariable());
-		Assert.assertNull(newMeasurementData.getPhenotypeId());
+		Assert.assertNull(newMeasurementData.getMeasurementDataId());
 		Assert.assertEquals(this.breedingMethods, variable.getPossibleValues());
 
 		WorkbookUtil.addMeasurementDataToRowsExp(variableList, observations, isVariate, this.ontologyService, this.fieldbookService,
@@ -215,7 +215,7 @@ public class WorkbookUtilTest {
 		Assert.assertTrue(newMeasurementData.isEditable());
 		Assert.assertTrue(newMeasurementData.getValue().isEmpty());
 		Assert.assertEquals(variable, newMeasurementData.getMeasurementVariable());
-		Assert.assertNull(newMeasurementData.getPhenotypeId());
+		Assert.assertNull(newMeasurementData.getMeasurementDataId());
 		Assert.assertEquals(this.breedingMethods, variable.getPossibleValues());
 	}
 
@@ -240,7 +240,7 @@ public class WorkbookUtilTest {
 		Assert.assertTrue(newMeasurementData.isEditable());
 		Assert.assertTrue(newMeasurementData.getValue().isEmpty());
 		Assert.assertEquals(variable, newMeasurementData.getMeasurementVariable());
-		Assert.assertNull(newMeasurementData.getPhenotypeId());
+		Assert.assertNull(newMeasurementData.getMeasurementDataId());
 		Assert.assertEquals(this.breedingMethods, variable.getPossibleValues());
 
 		WorkbookUtil.addMeasurementDataToRowsExp(variableList, observations, isVariate, this.ontologyService, this.fieldbookService,
@@ -273,7 +273,7 @@ public class WorkbookUtilTest {
 		Assert.assertTrue(newMeasurementData.isEditable());
 		Assert.assertTrue(newMeasurementData.getValue().isEmpty());
 		Assert.assertEquals(variable, newMeasurementData.getMeasurementVariable());
-		Assert.assertNull(newMeasurementData.getPhenotypeId());
+		Assert.assertNull(newMeasurementData.getMeasurementDataId());
 		Assert.assertEquals(this.breedingMethods, variable.getPossibleValues());
 		Mockito.verify(userSelection).getMeasurementRowList();
 		Mockito.verifyNoMoreInteractions(userSelection);
@@ -313,7 +313,7 @@ public class WorkbookUtilTest {
 		Assert.assertFalse(newMeasurementData.isEditable());
 		Assert.assertEquals(factorValue, newMeasurementData.getValue());
 		Assert.assertEquals(variable, newMeasurementData.getMeasurementVariable());
-		Assert.assertNull(newMeasurementData.getPhenotypeId());
+		Assert.assertNull(newMeasurementData.getMeasurementDataId());
 		Assert.assertEquals(WorkbookUtil.transformPossibleValues(stdVariable.getEnumerations()), variable.getPossibleValues());
 	}
 

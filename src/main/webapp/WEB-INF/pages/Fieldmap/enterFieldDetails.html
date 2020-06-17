@@ -70,7 +70,7 @@
 						<div th:each="dataset : ${map.datasets}">
 							<tr th:each="trial, row : ${dataset.trialInstances}">
 								<td>
-									<input class="trialOrder" type="hidden" th:value="${map.fieldbookId}+'|'+${dataset.datasetId}+'|'+${trial.geolocationId}" />
+									<input class="trialOrder" type="hidden" th:value="${map.fieldbookId}+'|'+${dataset.datasetId}+'|'+${trial.instanceId}" />
 									<span class="orderNo"></span>
 								</td>
 								<td th:text="${map.fieldbookName}"></td>

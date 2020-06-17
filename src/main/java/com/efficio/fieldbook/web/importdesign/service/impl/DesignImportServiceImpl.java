@@ -7,8 +7,8 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.importdesign.generator.DesignImportMeasurementRowGenerator;
 import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.Instance;
+import com.efficio.fieldbook.web.trial.bean.InstanceInfo;
 import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
@@ -72,16 +72,16 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 	@Override
 	public List<MeasurementRow> generateDesign(final Workbook workbook, final DesignImportData designImportData,
-			final EnvironmentData environmentData, final boolean isPreview,
+			final InstanceInfo instanceInfo, final boolean isPreview,
 			final Map<String, Integer> additionalParams) throws DesignValidationException {
 
-		final Set<String> generatedTrialInstancesFromUI = this.extractTrialInstancesFromEnvironmentData(environmentData);
+		final Set<String> generatedTrialInstancesFromUI = this.extractTrialInstancesFromEnvironmentData(instanceInfo);
 
 		/**
 		 * this will add the trial environment factors and their values to ManagementDetailValues so we can pass them to the UI and reflect
 		 * the values in the Environments Tab.
 		 **/
-		this.populateEnvironmentDataWithValuesFromCsvFile(environmentData, designImportData);
+		this.populateEnvironmentDataWithValuesFromCsvFile(instanceInfo, designImportData);
 
 		final Map<Integer, ImportedGermplasm> importedGermplasm =
 				Maps.uniqueIndex(this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(),
@@ -436,15 +436,15 @@ public class DesignImportServiceImpl implements DesignImportService {
 		return map;
 	}
 
-	protected Set<String> extractTrialInstancesFromEnvironmentData(final EnvironmentData environmentData) {
+	protected Set<String> extractTrialInstancesFromEnvironmentData(final InstanceInfo instanceInfo) {
 		final Set<String> generatedTrialInstancesFromUI = new HashSet<>();
-		for (final Environment env : environmentData.getEnvironments()) {
+		for (final Instance env : instanceInfo.getInstances()) {
 			generatedTrialInstancesFromUI.add(env.getManagementDetailValues().get(String.valueOf(TermId.TRIAL_INSTANCE_FACTOR.getId())));
 		}
 		return generatedTrialInstancesFromUI;
 	}
 
-	protected void populateEnvironmentDataWithValuesFromCsvFile(final EnvironmentData environmentData,
+	protected void populateEnvironmentDataWithValuesFromCsvFile(final InstanceInfo instanceInfo,
 		final DesignImportData designImportData) throws DesignValidationException {
 
 		final List<DesignHeaderItem> trialEnvironmentsDesignHeaderItems =
@@ -455,16 +455,16 @@ public class DesignImportServiceImpl implements DesignImportService {
 		final Map<String, Map<Integer, List<String>>> groupedCsvRows =
 				this.groupCsvRowsIntoTrialInstance(trialInstanceHeaderItem, designImportData.getRowDataMap());
 
-		final Iterator<Environment> iteratorEnvironment = environmentData.getEnvironments().iterator();
+		final Iterator<Instance> iteratorEnvironment = instanceInfo.getInstances().iterator();
 		while (iteratorEnvironment.hasNext()) {
-			final Environment environment = iteratorEnvironment.next();
+			final Instance instance = iteratorEnvironment.next();
 			final String trialInstanceNo =
-					environment.getManagementDetailValues().get(String.valueOf(TermId.TRIAL_INSTANCE_FACTOR.getId()));
+					instance.getManagementDetailValues().get(String.valueOf(TermId.TRIAL_INSTANCE_FACTOR.getId()));
 			final Map<Integer, List<String>> csvData = groupedCsvRows.get(trialInstanceNo);
 			if (csvData != null) {
 				for (final DesignHeaderItem item : trialEnvironmentsDesignHeaderItems) {
 					final String value = this.getTheFirstValueFromCsv(item, csvData);
-					environment.getManagementDetailValues().put(String.valueOf(item.getId()), value);
+					instance.getManagementDetailValues().put(String.valueOf(item.getId()), value);
 				}
 			} else {
 				iteratorEnvironment.remove();

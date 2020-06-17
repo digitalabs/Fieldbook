@@ -360,8 +360,8 @@ function selectTrialInstance() {
 					// Redirect to step 3
 					var fieldMapInfo = $.parseJSON(data.fieldMapInfo);
 					var datasetId = data.datasetId;
-					var geolocationId = data.geolocationId;
-					location.href = '/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/trial/' + datasetId + '/' + geolocationId;
+					var environmentId = data.environmentId;
+					location.href = '/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/trial/' + datasetId + '/' + environmentId;
 				}
 			}
 		}
@@ -398,7 +398,7 @@ function createStudyTree(fieldMapInfoList, hasFieldMap) {
 			createRow(getPrefixName('dataset', value.datasetId), getPrefixName('study', fieldMapInfo.fieldbookId), value.datasetName, value.datasetId, hasFieldMap, hasOneInstance);
 			$.each(value.trialInstances, function (index, childValue) {
 				if ((hasFieldMap && childValue.hasFieldMap) || !hasFieldMap) {
-					createRow(getPrefixName('trialInstance', childValue.geolocationId), getPrefixName('dataset', value.datasetId), childValue, childValue.geolocationId, hasFieldMap, hasOneInstance);
+					createRow(getPrefixName('trialInstance', childValue.environmentId), getPrefixName('dataset', value.datasetId), childValue, childValue.instanceId, hasFieldMap, hasOneInstance);
 				}
 			});
 		});
@@ -892,7 +892,7 @@ function createSample() {
 	}
 }
 
-function selectEnvironmentContinueAdvancing(trialInstances, noOfReplications, selectedLocations, advanceType) {
+function selectInstanceContinueAdvancing(trialInstances, noOfReplications, selectedLocations, advanceType) {
 	'use strict';
 	var studyId = $('#studyId').val();
 	$('#selectEnvironmentModal').modal('hide');

@@ -258,7 +258,7 @@
 						if (experimentDesignInput && experimentDesignInput.treatmentFactors) {
 							experimentDesignInput.treatmentFactors = $scope.data.treatmentFactors.vals();
 						}
-						experimentDesignInput.environments = TrialManagerDataService.currentData.environments.environments;
+						experimentDesignInput.environments = TrialManagerDataService.currentData.instanceInfo.instances;
 						experimentDesignInput.trialSettings = TrialManagerDataService.currentData.trialSettings;
 
 						$scope.openSelectEnvironmentToGenerateModal(experimentDesignInput);

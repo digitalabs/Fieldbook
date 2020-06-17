@@ -19,7 +19,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
-import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.web.trial.bean.Instance;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -48,7 +48,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.trial.bean.BasicDetails;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.InstanceInfo;
 import com.efficio.fieldbook.web.trial.bean.TabInfo;
 import com.efficio.fieldbook.web.trial.bean.TrialData;
 import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
@@ -264,7 +264,7 @@ public class CreateTrialController extends BaseTrialController {
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<String> submit(@RequestBody final TrialData data) {
-		this.processEnvironmentData(data.getEnvironments());
+		this.processEnvironmentData(data.getInstanceInfo());
 		final List<SettingDetail> studyLevelConditions = this.userSelection.getStudyLevelConditions();
 		final List<SettingDetail> basicDetails = this.userSelection.getBasicDetails();
 		// transfer over data from user input into the list of setting details stored in the session
@@ -302,14 +302,14 @@ public class CreateTrialController extends BaseTrialController {
 						this.contextUtil.getCurrentProgramUUID());
 
 		if (this.userSelection.getTemporaryWorkbook() != null) {
-			this.addMeasurementVariablesToTrialObservationIfNecessary(data.getEnvironments().getEnvironments(), workbook,
+			this.addMeasurementVariablesToTrialObservationIfNecessary(data.getInstanceInfo().getInstances(), workbook,
 					this.userSelection.getTemporaryWorkbook().getTrialObservations());
 		}
 
 		final List<MeasurementVariable> variablesForEnvironment = new ArrayList<>(workbook.getTrialVariables());
 
 		final List<MeasurementRow> trialEnvironmentValues = WorkbookUtil
-				.createMeasurementRowsFromEnvironments(data.getEnvironments().getEnvironments(), variablesForEnvironment,
+				.createMeasurementRowsFromEnvironments(data.getInstanceInfo().getInstances(), variablesForEnvironment,
 						this.userSelection.getExpDesignParams());
 		workbook.setTrialObservations(trialEnvironmentValues);
 		data.getBasicDetails().setCreatedBy(String.valueOf(this.contextUtil.getCurrentWorkbenchUserId()));
@@ -317,7 +317,7 @@ public class CreateTrialController extends BaseTrialController {
 
 		this.userSelection.setWorkbook(workbook);
 
-		this.userSelection.setTrialEnvironmentValues(this.convertToValueReference(data.getEnvironments().getEnvironments()));
+		this.userSelection.setTrialEnvironmentValues(this.convertToValueReference(data.getInstanceInfo().getInstances()));
 
 		this.fieldbookService.saveStudyColumnOrdering(workbook.getStudyDetails().getId(), data.getColumnOrders(), workbook);
 
@@ -351,9 +351,9 @@ public class CreateTrialController extends BaseTrialController {
 
 	protected TabInfo prepareEnvironmentsTabInfo(final boolean isClearSettings) {
 		final TabInfo info = new TabInfo();
-		final EnvironmentData data = new EnvironmentData();
+		final InstanceInfo data = new InstanceInfo();
 		final int noOfEnvironments = Integer.parseInt(AppConstants.DEFAULT_NO_OF_ENVIRONMENT_COUNT.getString());
-		data.setNoOfEnvironments(noOfEnvironments);
+		data.setNumberOfInstances(noOfEnvironments);
 		info.setData(data);
 
 		final Integer unspecifiedLocationid = this.unspecifiedLocationId();
@@ -361,9 +361,9 @@ public class CreateTrialController extends BaseTrialController {
 			if (unspecifiedLocationid > 0) {
 				// Create an environment with default location ONLY IF the system found a default location
 				// If unspecifiedLocationid is more than 0, it means the default location exists.
-				data.getEnvironments().add(this.createEnvironmentWithDefaultLocation(unspecifiedLocationid));
+				data.getInstances().add(this.createEnvironmentWithDefaultLocation(unspecifiedLocationid));
 			} else {
-				data.getEnvironments().add(new Environment());
+				data.getInstances().add(new Instance());
 			}
 		}
 

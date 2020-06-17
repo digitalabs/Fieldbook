@@ -31,7 +31,7 @@ describe('Export Study', function () {
 
 	var datasetId = 2010;
 	var instances = [{
-		"instanceDbId": 1,
+		"instanceId": 1,
 		"locationName": "CENTER FOR INTERNATIONAL FORESTRY RESEARCH",
 		"locationAbbreviation": "CIFOR",
 		"instanceNumber": 1,
@@ -39,7 +39,7 @@ describe('Export Study', function () {
 		"hasFieldmap": true
 	},
 		{
-			"instanceDbId": 2,
+			"instanceId": 2,
 			"locationName": "Agua Fria",
 			"locationAbbreviation": "Agua Fria",
 			"instanceNumber": 2,

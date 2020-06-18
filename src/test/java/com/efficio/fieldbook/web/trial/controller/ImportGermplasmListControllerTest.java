@@ -343,7 +343,7 @@ public class ImportGermplasmListControllerTest {
 		final List<ImportedGermplasm> list = ImportedGermplasmMainInfoInitializer.createImportedGermplasmList();
 		final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
 		this.importGermplasmListController.initializeObjectsForGermplasmDetailsView(form, model, mainInfo, list,
-			dataTableDataList);
+			dataTableDataList, true);
 
 		Assert.assertEquals("The current page should be " + ImportGermplasmListControllerTest.CURRENT_PAGE,
 			ImportGermplasmListControllerTest.CURRENT_PAGE, form.getCurrentPage());
@@ -375,7 +375,7 @@ public class ImportGermplasmListControllerTest {
 		final List<ImportedGermplasm> list = new ArrayList<>();
 		final List<Map<String, Object>> dataTableDataList = new ArrayList<>();
 		this.importGermplasmListController.initializeObjectsForGermplasmDetailsView(form, model, mainInfo, list,
-			dataTableDataList);
+			dataTableDataList, true);
 
 		Assert.assertEquals("The current page should be " + ImportGermplasmListControllerTest.CURRENT_PAGE,
 			ImportGermplasmListControllerTest.CURRENT_PAGE, form.getCurrentPage());

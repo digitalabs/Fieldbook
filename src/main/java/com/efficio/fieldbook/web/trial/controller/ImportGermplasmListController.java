@@ -312,7 +312,7 @@ public class ImportGermplasmListController extends SettingsController {
 			form.setImportedGermplasm(list);
 
 			final List<Map<String, Object>> dataTableDataList = this.generateGermplasmListDataTable(list, defaultTestCheckId, true);
-			this.initializeObjectsForGermplasmDetailsView(form, model, mainInfo, list, dataTableDataList);
+			this.initializeObjectsForGermplasmDetailsView(form, model, mainInfo, list, dataTableDataList, true);
 		} catch (final Exception e) {
 			ImportGermplasmListController.LOG.error(e.getMessage(), e);
 		}
@@ -346,7 +346,7 @@ public class ImportGermplasmListController extends SettingsController {
 				this.getCheckId(ImportGermplasmListController.DEFAULT_TEST_VALUE, this.fieldbookService.getCheckTypeList());
 
 			final List<Map<String, Object>> dataTableDataList = this.generateGermplasmListDataTable(importedGermplasmList, defaultTestCheckId, false);//
-			this.initializeObjectsForGermplasmDetailsView(form, model, mainInfo, importedGermplasmList, dataTableDataList);
+			this.initializeObjectsForGermplasmDetailsView(form, model, mainInfo, importedGermplasmList, dataTableDataList, false);
 
 			// setting the form
 			form.setImportedGermplasmMainInfo(mainInfo);
@@ -406,7 +406,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 	void initializeObjectsForGermplasmDetailsView(final ImportGermplasmListForm form,
 		final Model model, final ImportedGermplasmMainInfo mainInfo, final List<ImportedGermplasm> list,
-		final List<Map<String, Object>> dataTableDataList) {
+		final List<Map<String, Object>> dataTableDataList, final Boolean isNewList) {
 		// Set first entry number from the list
 		if (!list.isEmpty()) {
 			final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
@@ -435,7 +435,7 @@ public class ImportGermplasmListController extends SettingsController {
 		model.addAttribute(ImportGermplasmListController.LIST_DATA_TABLE, dataTableDataList);
 		model.addAttribute(ImportGermplasmListController.TABLE_HEADER_LIST,
 				this.getGermplasmTableHeader(this.userSelection.getPlotsLevelList()));
-		model.addAttribute("hasSavedGermplasm", this.hasSavedGermplasm());
+		model.addAttribute("hasSavedGermplasm", this.hasSavedGermplasm(isNewList));
 	}
 
 
@@ -540,11 +540,14 @@ public class ImportGermplasmListController extends SettingsController {
 				&& !this.userSelection.getMeasurementRowList().isEmpty();
 	}
 
-	protected Boolean hasSavedGermplasm() {
-		final Integer studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
-		if (studyId != null) {
-			return this.studyGermplasmService.countStudyGermplasm(studyId) > 0;
+	protected Boolean hasSavedGermplasm(final Boolean isNewList) {
+		if (!isNewList) {
+			final Integer studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
+			if (studyId != null) {
+				return this.studyGermplasmService.countStudyGermplasm(studyId) > 0;
+			}
 		}
+
 		return false;
 	}
 

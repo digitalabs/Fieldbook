@@ -474,6 +474,7 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 				columnsDef.push({
 					targets: columns.length - 1,
 					data: $(this).html(),
+					width: '40px',
 					render: function(data, type, full, meta) {
 						return '<span><input type="checkbox" name="entryId" value="' + full.entryId + '"></span>';
 					}

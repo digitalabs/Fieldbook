@@ -25,10 +25,6 @@
                 placeholderLabel: 'Temp placeholder here'
             };
 
-            $('#imported-germplasm-list').bind("germplasmListIsUpdated", function () {
-                studyStateService.updateOccurred();
-            });
-
             $scope.updateOccurred = false;
 
             $scope.$on('deleteOccurred', function () {
@@ -61,13 +57,18 @@
 
             $(document).on('germplasmListUpdated', function () {
                 TrialManagerDataService.applicationData.germplasmListSelected = true;
-                $scope.$apply(function () {
-                    TrialManagerDataService.applicationData.germplasmChangesUnsaved = true;
-                });
+                $scope.germplasmChangesOccurred();
                 if (TrialManagerDataService.isOpenStudy()) {
                     studyStateService.updateOccurred();
                 }
+
             });
+
+            $scope.germplasmChangesOccurred = function() {
+                $scope.$apply(function () {
+                    TrialManagerDataService.applicationData.germplasmChangesUnsaved = true;
+                });
+            }
 
             $scope.openGermplasmTree = function () {
                 openListTree(1, $scope.germplasmListSelected);
@@ -123,8 +124,8 @@
                     $('#numberOfEntries').html($('#totalGermplasms').val());
                     $('#imported-germplasm-list-reset-button').css('opacity', '1');
                     $scope.updateOccurred = false;
-
                     TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount = $scope.getTotalListNo();
+                    $scope.germplasmChangesOccurred();
 
                     if (!$scope.$$phase) {
                         $scope.$apply();

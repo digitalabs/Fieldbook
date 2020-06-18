@@ -169,7 +169,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			$scope.updateInstanceCount = function () {
 
-				if ($scope.temp.numberOfInstances === '0') {
+				if (!$scope.temp.numberOfInstances || parseInt($scope.temp.numberOfInstances) === 0) {
 					showErrorMessage('', $.environmentMessages.studyShouldHaveAtLeastOneEnvironment);
 				} else if ($scope.temp.numberOfInstances > $scope.instanceInfo.instances.length) {
 					$scope.instanceInfo.numberOfInstances = $scope.temp.numberOfInstances;

@@ -128,6 +128,13 @@
             };
 
             $scope.validateGermplasmForReplacement = function() {
+                // Check if study has advance or cross list
+                if ($scope.hasAdvanceListCreated() || $scope.hasCrossListCreated()) {
+                    showAlertMessage('', $.germplasmMessages.studyHasAdvanceOrCrossList);
+                    return;
+                }
+
+                // Validate entry for replacement
                 studyGermplasmService.resetSelectedEntries();
                 $.each($("input[name='entryId']:checked"), function(){
                     studyGermplasmService.toggleSelect($(this).val());

@@ -82,6 +82,17 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				},
 				deepStateRedirect: true, sticky: true
 			})
+
+			.state('inventory', {
+				url: '/inventory',
+				views: {
+					inventory: {
+						controller: 'InventoryTabCtrl',
+						templateUrl: '/Fieldbook/static/js/trialmanager/inventory/inventory-tab.html'
+					}
+				}
+			})
+
 			.state('subObservationTabs', {
 				url: '/subObservationTabs/:subObservationTabId',
 				views: {
@@ -176,12 +187,14 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 		]
 	);
 
+	let inventoryChangedDeRegister = () => {};
+
 	// THE parent controller for the manageTrial (create/edit) page
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'studyStateService', 'TrialManagerDataService', '$http',
 		'$timeout', '_', '$localStorage', '$state', '$location', 'HasAnyAuthorityService', 'derivedVariableService', 'exportStudyModalService',
-		'importStudyModalService', 'createSampleModalService', 'derivedVariableModalService', '$uibModal', '$q', 'datasetService', 'studyContext', 'PERMISSIONS', 'LABEL_PRINTING_TYPE', 'HAS_LISTS_OR_SUB_OBS', 'HAS_GENERATED_DESIGN',
+		'importStudyModalService', 'createSampleModalService', 'derivedVariableModalService', '$uibModal', '$q', 'datasetService', 'InventoryService', 'studyContext', 'PERMISSIONS', 'LABEL_PRINTING_TYPE', 'HAS_LISTS_OR_SUB_OBS', 'HAS_GENERATED_DESIGN',
 		function ($scope, $rootScope, studyStateService, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $location, HasAnyAuthorityService,
-				  derivedVariableService, exportStudyModalService, importStudyModalService, createSampleModalService, derivedVariableModalService, $uibModal, $q, datasetService,
+				  derivedVariableService, exportStudyModalService, importStudyModalService, createSampleModalService, derivedVariableModalService, $uibModal, $q, datasetService, InventoryService,
 				  studyContext, PERMISSIONS, LABEL_PRINTING_TYPE, HAS_LISTS_OR_SUB_OBS, HAS_GENERATED_DESIGN) {
 
 			$scope.trialTabs = [
@@ -204,6 +217,12 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			$scope.sampleTabs = [];
 			$scope.crossesTabsData = [];
 			$scope.crossesTabs = [];
+			$scope.inventoryTab = {
+				name: 'Inventory',
+				state: 'inventory',
+				hidden: true
+			};
+
 			$scope.isOpenStudy = TrialManagerDataService.isOpenStudy;
 			$scope.isLockedStudy = TrialManagerDataService.isLockedStudy;
 			$scope.studyTypes = [];
@@ -228,10 +247,28 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					state: 'experimentalDesign'
 				});
 
+				$scope.trialTabs.push($scope.inventoryTab);
+				loadInventoryTab();
+
 				studyStateService.updateHasListsOrSubObs(HAS_LISTS_OR_SUB_OBS);
 				studyStateService.updateGeneratedDesign(HAS_GENERATED_DESIGN);
 
 			};
+
+			inventoryChangedDeRegister();
+			inventoryChangedDeRegister = $rootScope.$on("inventoryChanged", function () {
+				loadInventoryTab();
+			});
+
+			function loadInventoryTab() {
+				InventoryService.searchStudyTransactions({
+					sortedPageRequest: {pageNumber: 1, pageSize: 1}
+				}).then((transactionsTable) => {
+					if (transactionsTable.data.length) {
+						$scope.inventoryTab.hidden = false;
+					}
+				});
+			}
 
 			$http.get('/bmsapi/crops/' + cropName + '/study-types/visible?programUUID=' + studyContext.programId).success(function (data) {
 				$scope.studyTypes = data;

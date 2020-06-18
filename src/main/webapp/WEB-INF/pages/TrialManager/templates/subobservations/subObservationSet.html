@@ -195,8 +195,8 @@
 									   is-open="isDatepickerActionOpen"
 									   datepicker-options="datepickerOptions"
 									   placeholder="yyyyMMdd"/>
-								<span style="padding-left: 1px;" class="input-group-btn inline-select">
-        						<button type="button" class="btn form-control" ng-click="isDatepickerActionOpen = !isDatepickerActionOpen">
+								<span style="padding-left: 1px;" class="input-group-btn">
+        						<button type="button" class="btn" ng-click="isDatepickerActionOpen = !isDatepickerActionOpen">
           							<i class="glyphicon glyphicon-calendar"></i>
        							</button>
       						</span>
@@ -234,7 +234,7 @@
 						   dt-columns="dtColumns"
 						   dt-column-defs="dtColumnDefs"
 						   width="100%"
-						   class="table table-curved table-condensed">
+						   class="table table-curved table-condensed table-sorted">
 					</table>
 				</div>
 			</div>
@@ -257,11 +257,11 @@
 				</button>
 			</div>
 		</div>
-		<div ng-if="columnFilter.columnData.dataTypeCode !== 'D'">
+		<div ng-if="columnFilter.columnData.dataTypeCode !== 'D'" class="add_top_padding">
 			<input class="form-control" ng-model='columnFilter.columnData.query'
 				   placeholder="Filter value"
 				   title="{{columnFilter.columnData.possibleValues.length ? 'it\'ll used to filter if no values are checked' : ''}}" />
-			<ul class="list-group form-inline" ng-if="columnFilter.columnData.possibleValues">
+			<ul class="list-group form-inline add_top_padding" ng-if="columnFilter.columnData.possibleValues">
 				<li class="list-group-item" ng-if="!columnFilter.columnData.query">
 					<input type="checkbox" class="checkbox" ng-model="columnFilter.columnData.isSelectAll"
 						   ng-change="columnFilter.selectAll()"/>
@@ -276,17 +276,20 @@
 				</li>
 			</ul>
 		</div>
-		<div ng-if="columnFilter.columnData.dataTypeCode === 'D'">
+		<div ng-if="columnFilter.columnData.dataTypeCode === 'D'" class="add_top_padding">
 			<input class="form-control" ng-model='columnFilter.columnData.query'
 				   uib-datepicker-popup="yyyyMMdd"
 				   placeholder="Filter value"/>
+			<div class="add_top_padding"></div>
 			<div uib-datepicker="" ng-model="columnFilter.columnData.query" class="well well-sm uib-datepicker-style-trasformer"
 				 ng-click="$event.stopPropagation()"
 				 ng-if="columnFilter.columnData.dataTypeCode === 'D'"
 				 datepicker-options="datepickerOptions"></div>
 		</div>
-		<button class="btn btn-info" ng-click="filterByColumn()" title="Apply all selected filters">Apply</button>
-		<button class="btn btn-default" ng-click="resetFilterByColumn()" title="Reset this filter">Reset</button>
+		<div class="add_top_padding">
+			<button class="btn btn-info" ng-click="filterByColumn()" title="Apply all selected filters">Apply</button>
+			<button class="btn btn-default" ng-click="resetFilterByColumn()" title="Reset this filter">Reset</button>
+		</div>
 	</div>
 </script>
 

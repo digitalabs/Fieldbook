@@ -369,7 +369,7 @@
 
 	<ul class="nav nav-tabs row fb-tabs-headers" id="manage-trial-tab-headers">
 		<li ng-repeat="tab in trialTabs" ng-class="{active: tabSelected===tab.state}"
-			ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenStudy()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenStudy())">
+			ng-show="!tab.hidden">
 			<a ui-sref="{{tab.state}}" ng-click="performFunctionOnTabChange(tab.state)">{{tab.name}}</a>
 		</li>
 		<li ng-repeat="tab in subObservationTabs" ng-class="{active: tabSelected===tab.state}">
@@ -378,22 +378,19 @@
 			   ng-click="performFunctionOnTabChange(tab.state)">{{tab.datasetType.tabNamePrefix}}{{tab.name}}</a>
 		</li>
 		<li ng-repeat="tab in advanceTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
-			ng-click="listTabChange(tab.state)"
-			ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenStudy()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenStudy())">
+			ng-click="listTabChange(tab.state)">
 			<a tab-data='{{tab.id}}'>{{tab.displayName}}
 				<i class="glyphicon glyphicon-remove fbk-close-tab" id="id" ng-click="closeAdvanceListTab(tab.state)"></i>
 			</a>
 		</li>
 		<li ng-repeat="tab in sampleTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
-			ng-click="listTabChange(tab.state)"
-			ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenStudy()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenStudy())">
+			ng-click="listTabChange(tab.state)">
 			<a tab-data='{{tab.id}}' ng-click="initSampleTab(tab)">{{tab.displayName}}
 				<i class="glyphicon glyphicon-remove fbk-close-tab" id="sampleListId" ng-click="closeSampleListTab(tab.state)"></i>
 			</a>
 		</li>
 		<li ng-repeat="tab in crossesTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
-			ng-click="listTabChange(tab.state)"
-			ng-show="(tab.state != 'editMeasurements' &amp;&amp; !isOpenStudy()) || (tab.state != 'createMeasurements' &amp;&amp; isOpenStudy())">
+			ng-click="listTabChange(tab.state)">
 			<a tab-data='{{tab.id}}'>{{tab.displayName}}
 				<i class="glyphicon glyphicon-remove fbk-close-tab" id="crossesListId" ng-click="closeCrossesListTab(tab.state)"></i>
 			</a>
@@ -407,6 +404,7 @@
 			<div class="col-xs-12" ui-view="" ng-show="isSettingsTab"></div>
 			<div class="col-xs-12" ui-view="germplasm" ng-show="tabSelected==='germplasm'"></div>
 			<div class="col-xs-12" ui-view="environment" ng-show="tabSelected==='environment'"></div>
+			<div class="col-xs-12" ui-view="inventory" ng-show="tabSelected==='inventory'"></div>
 			<div class="col-xs-12" ui-view="subObservationTab" ng-show="tabSelected.indexOf('/subObservationTabs/') === 0"></div>
 			<div class="col-xs-12" ng-repeat="advancetab in advanceTabsData track by $index" id="{{advancetab.id}}"
 				 ng-show="tabSelected===advancetab.name">
@@ -553,6 +551,8 @@
 	<div th:include="DesignImport/changeDesign"></div>
 
 	<div th:include="importObservations/variateGroupImportMapHeaders"></div>
+
+	<div ng-include="'/Fieldbook/static/js/trialmanager/column-filters/column-filters.html'"></div>
 
 	<!-- MAIN jS -->
 	<script type="text/javascript" th:src="@{/static/js/lib/handlebars.js}"></script>
@@ -810,9 +810,11 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/visualization/visualization.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/subobservations/subObservationTab.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/subobservations/subObservationSet.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/inventory/inventory-tab.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/inventory/inventory.service.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/inventory/planting-preparation/planting-preparation-modal.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/inventory/planting-preparation/planting-preparation-service.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/column-filters/column-filters.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/auth/auth.module.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/auth/account.service.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/auth/principal.service.js}"></script>

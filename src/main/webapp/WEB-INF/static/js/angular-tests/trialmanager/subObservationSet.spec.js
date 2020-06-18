@@ -620,7 +620,7 @@ describe('SubObservationSetCtrl', function () {
 		],
 		serviceDataset = {
 			instances: [{
-				instanceDbId: 1
+				experimentId: 1
 			}],
 			"variables": [{
 				"termId": 8206,

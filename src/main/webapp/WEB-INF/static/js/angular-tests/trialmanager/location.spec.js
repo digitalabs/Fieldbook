@@ -4,8 +4,7 @@ describe('Location', function () {
     var controller;
     var trialDataManagerService = {
         settings: {
-            environments: [],
-            managementDetails: [23057]
+            environments: {},
         },
         currentData: {
             environments: {
@@ -43,6 +42,8 @@ describe('Location', function () {
             $provide.value("DATASET_TYPES", {});
             $provide.value("derivedVariableService", derivedVariableService);
             $provide.value("TrialManagerDataService", trialDataManagerService);
+            $provide.value("UNSPECIFIED_LOCATION_ID", 1);
+
 
         });
 
@@ -71,9 +72,10 @@ describe('Location', function () {
                 studyContext: studyContext,
                 derivedVariableService: derivedVariableService,
                 TrialManagerDataService: trialDataManagerService,
-                studyInstanceService: {},
+                studyInstanceService: { instanceInfo: { numberOfInstances: 1}},
                 LOCATION_ID: 1
             });
+
         });
     });
 
@@ -91,6 +93,27 @@ describe('Location', function () {
             expect(scope.checkVariableIsUsedInCalculatedVariable()).not.toBeNull();
         });
     });
+
+    function makeOrderedHash() {
+        var keys = [];
+        var vals = {};
+        return {
+            push: function(k,v) {
+                if (!vals[k]) keys.push(k);
+                vals[k] = v;
+            },
+            insert: function(pos,k,v) {
+                if (!vals[k]) {
+                    keys.splice(pos,0,k);
+                    vals[k] = v;
+                }
+            },
+            val: function(k) {return vals[k]},
+            length: function(){return keys.length},
+            keys: function(){return keys},
+            values: function(){return vals}
+        };
+    };
 
 
 });

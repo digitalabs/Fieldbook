@@ -124,7 +124,7 @@
 				// If some of the selected instances don't have fieldmap, show the confirm popup.
 				var someInstancesHaveNoFieldmap = $scope.instances.some(
 					function (item) {
-						return !item.hasFieldmap && instanceIds.indexOf(item.instanceDbId.toString()) > -1;
+						return !item.hasFieldmap && instanceIds.indexOf(item.instanceId.toString()) > -1;
 					});
 
 				if (someInstancesHaveNoFieldmap) {
@@ -157,10 +157,7 @@
 
 			ctrl.init = function () {
 				datasetService.getDatasetInstances(datasetId).then(function (instances) {
-
 					$scope.instances = instances;
-
-					var noOfEnvironments = parseInt(TrialManagerDataService.currentData.environments.noOfEnvironments);
 				});
 			};
 

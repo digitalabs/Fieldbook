@@ -15,11 +15,11 @@ import org.generationcp.middleware.domain.oms.TermId;
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.InstanceInfo;
 
 public interface DesignImportService {
 
-	List<MeasurementRow> generateDesign(Workbook workbook, DesignImportData designImportData, EnvironmentData environmentData,
+	List<MeasurementRow> generateDesign(Workbook workbook, DesignImportData designImportData, InstanceInfo instanceInfo,
 			boolean isPreview, Map<String, Integer> additionalParams) throws DesignValidationException;
 
 	Set<MeasurementVariable> getDesignMeasurementVariables(Workbook workbook, DesignImportData designImportData, boolean isPreview);

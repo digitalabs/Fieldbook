@@ -10,8 +10,8 @@
 			restrict: 'E',
 			scope: {
 				settings: '=',
-				targetkey: '@targetkey',
-				settingkey: '@',
+				targetkey: '=',
+				settingkey: '=',
 				valuecontainer: '=',
 				changefunction: '&',
 				blockInput: '='

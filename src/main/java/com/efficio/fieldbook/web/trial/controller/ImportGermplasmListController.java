@@ -209,7 +209,7 @@ public class ImportGermplasmListController extends SettingsController {
 	@RequestMapping(value = { "/next", "/submitAll" }, method = RequestMethod.POST)
 	@Transactional
 	public String nextScreen(@ModelAttribute("importGermplasmListForm") final ImportGermplasmListForm form,
-			final BindingResult result, final Model model, final HttpServletRequest req) throws BVDesignException {
+			final BindingResult result, final Model model, final HttpServletRequest req) {
 		// start: section for taking note of the check germplasm
 		boolean isDeleteObservations = false;
 
@@ -223,7 +223,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 		this.userSelection.setMeasurementRowList(null);
 		this.userSelection.getWorkbook().setOriginalObservations(null);
-		this.userSelection.getWorkbook().setObservations(null);
+		this.userSelection.getWorkbook().setObservations(new ArrayList<>());
 		this.fieldbookService.createIdCodeNameVariablePairs(this.userSelection.getWorkbook(),
 				AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
 		this.fieldbookService.createIdNameVariablePairs(this.userSelection.getWorkbook(),
@@ -460,7 +460,7 @@ public class ImportGermplasmListController extends SettingsController {
 	private String getGermplasmData(final String termId, final ImportedGermplasm germplasm) {
 		String val = "";
 		if (NumberUtils.isNumber(termId)) {
-			final Integer term = Integer.valueOf(termId);
+			final int term = Integer.parseInt(termId);
 			if (term == TermId.GID.getId()) {
 				val = germplasm.getGid();
 			} else if (term == TermId.ENTRY_CODE.getId()) {
@@ -1015,7 +1015,7 @@ public class ImportGermplasmListController extends SettingsController {
 			}
 
 			if (checkInterval != null && startCheckFrom != null) {
-				final Integer totalCount = (totalGermplasmCount - startCheckFrom) / checkInterval;
+				final int totalCount = (totalGermplasmCount - startCheckFrom) / checkInterval;
 				return totalCount + totalGermplasmCount + 1;
 			}
 		}

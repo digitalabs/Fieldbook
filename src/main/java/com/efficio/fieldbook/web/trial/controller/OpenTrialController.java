@@ -327,6 +327,7 @@ public class OpenTrialController extends BaseTrialController {
 		model.addAttribute("germplasmListSize", 0);
 		model.addAttribute("studyId", trialWorkbook.getStudyDetails().getId());
 		model.addAttribute("measurementDatasetId", trialWorkbook.getMeasurementDatesetId());
+		model.addAttribute("trialDatasetId", trialWorkbook.getTrialDatasetId());
 
 		this.setIsSuperAdminAttribute(model);
 	}
@@ -348,7 +349,7 @@ public class OpenTrialController extends BaseTrialController {
 	@RequestMapping(method = RequestMethod.POST)
 	@Transactional
 	public Map<String, Object> submit(@RequestParam("replace") final int replace, @RequestBody final TrialData data) {
-		this.processEnvironmentData(data.getEnvironments());
+		this.processEnvironmentData(data.getInstanceInfo());
 		// transfer over data from user input into the list of setting details
 		// stored in the session
 		this.populateSettingData(this.userSelection.getBasicDetails(), data.getBasicDetails().getBasicDetails());
@@ -383,18 +384,16 @@ public class OpenTrialController extends BaseTrialController {
 		final List<MeasurementVariable> variablesForEnvironment = new ArrayList<>(workbook.getTrialVariables());
 
 		final List<MeasurementRow> trialEnvironmentValues = WorkbookUtil
-			.createMeasurementRowsFromEnvironments(data.getEnvironments().getEnvironments(), variablesForEnvironment,
+			.createMeasurementRowsFromEnvironments(data.getInstanceInfo().getInstances(), variablesForEnvironment,
 				this.userSelection.getExpDesignParams());
 
-		final Map<Integer, List<Integer>> changedVariablesPerInstance =
-			this.detectValueChangesInVariables(workbook.getTrialObservations(), trialEnvironmentValues);
 		workbook.setTrialObservations(trialEnvironmentValues);
 
 		this.createStudyDetails(workbook, data.getBasicDetails());
 
 		this.userSelection.setWorkbook(workbook);
 
-		this.userSelection.setTrialEnvironmentValues(this.convertToValueReference(data.getEnvironments().getEnvironments()));
+		this.userSelection.setTrialEnvironmentValues(this.convertToValueReference(data.getInstanceInfo().getInstances()));
 
 		final Map<String, Object> returnVal = new HashMap<>();
 		returnVal.put(OpenTrialController.ENVIRONMENT_DATA_TAB, this.prepareEnvironmentsTabInfo(workbook, false));
@@ -421,12 +420,6 @@ public class OpenTrialController extends BaseTrialController {
 				this.fieldbookService
 					.saveStudyColumnOrdering(workbook.getStudyDetails().getId(), data.getColumnOrders(),
 						workbook);
-
-				// If the input variable at environment level is manually changed, the calculated variable at other levels
-				// should be tagged as out of sync.
-				for (final Map.Entry<Integer, List<Integer>> entry : changedVariablesPerInstance.entrySet()) {
-					this.datasetService.updateDependentPhenotypesStatusByGeolocation(entry.getKey(), entry.getValue());
-				}
 
 				return returnVal;
 			} catch (final MiddlewareQueryException e) {

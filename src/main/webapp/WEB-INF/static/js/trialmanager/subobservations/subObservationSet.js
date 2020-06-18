@@ -225,7 +225,7 @@
 								return {
 									itemIds: $scope.selectedItems.length ? $scope.selectedItems : null,
 									searchRequest: $scope.selectedItems.length  ? null : {
-										instanceId: $scope.nested.selectedEnvironment.instanceDbId,
+										instanceId: $scope.nested.selectedEnvironment.instanceId,
 										draftMode: $scope.isPendingView,
 										filter: getFilter()
 									}

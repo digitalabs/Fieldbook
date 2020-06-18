@@ -55,8 +55,15 @@
                 TrialManagerDataService.applicationData.germplasmListSelected = false;
             };
 
+            $scope.hasUnsavedGermplasmChanges = function () {
+                return TrialManagerDataService.applicationData.germplasmChangesUnsaved;
+            };
+
             $(document).on('germplasmListUpdated', function () {
                 TrialManagerDataService.applicationData.germplasmListSelected = true;
+                $scope.$apply(function () {
+                    TrialManagerDataService.applicationData.germplasmChangesUnsaved = true;
+                });
                 if (TrialManagerDataService.isOpenStudy()) {
                     studyStateService.updateOccurred();
                 }

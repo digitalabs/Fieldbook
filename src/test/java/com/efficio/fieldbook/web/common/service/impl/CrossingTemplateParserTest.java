@@ -301,7 +301,7 @@ public class CrossingTemplateParserTest {
 		final Set<Integer> malePlotNumbers = new HashSet<>(Arrays.asList(5, 4, 3, 2, 1));
 		final Map<String, Set<Integer>> maleNurseryMap = new HashMap<>();
 		maleNurseryMap.put(CrossingTemplateParserTest.MALE_STUDY_NAME, malePlotNumbers);
-		final Map<Integer, Triple<String, Integer, List<Integer>>> entryIdToCrossInfoMap = this.createEntryIdToCrossInfoMap();
+		final Map<Integer, Triple<String, Integer, List<Integer>>> entryNumberToCrossInfoMap = this.createEntryNumberToCrossInfoMap();
 
 
 		// setup mocks
@@ -318,7 +318,7 @@ public class CrossingTemplateParserTest {
 
 		try {
 			this.templateParser.lookupCrossParents(CrossingTemplateParserTest.FEMALE_STUDY_NAME, femalePlotNumbers, maleNurseryMap,
-				entryIdToCrossInfoMap);
+				entryNumberToCrossInfoMap);
 
 			// Verify Middleware call for looking up cross parents called twice
 			// - once for female plots, once for male nursery with its male plots
@@ -349,7 +349,7 @@ public class CrossingTemplateParserTest {
 		final Set<Integer> malePlotNumbers = new HashSet<>(Arrays.asList(5, 4, 3, 2, 1));
 		final Map<String, Set<Integer>> maleNurseryMap = new HashMap<>();
 		maleNurseryMap.put(CrossingTemplateParserTest.MALE_STUDY_NAME, malePlotNumbers);
-		final Map<Integer, Triple<String, Integer, List<Integer>>> entryIdToCrossInfoMap = this.createEntryIdToCrossInfoMap();
+		final Map<Integer, Triple<String, Integer, List<Integer>>> entryIdToCrossInfoMap = this.createEntryNumberToCrossInfoMap();
 
 
 		// setup mocks
@@ -389,7 +389,7 @@ public class CrossingTemplateParserTest {
 		final Set<Integer> malePlotNumbers = new HashSet<>(Arrays.asList(5, 4, 3, 2, 1));
 		final Map<String, Set<Integer>> maleNurseryMap = new HashMap<>();
 		maleNurseryMap.put(CrossingTemplateParserTest.MALE_STUDY_NAME, malePlotNumbers);
-		final Map<Integer, Triple<String, Integer, List<Integer>>> entryIdToCrossInfoMap = this.createEntryIdToCrossInfoMap();
+		final Map<Integer, Triple<String, Integer, List<Integer>>> entryIdToCrossInfoMap = this.createEntryNumberToCrossInfoMap();
 
 
 		// setup mocks
@@ -505,12 +505,12 @@ public class CrossingTemplateParserTest {
 		return list;
 	}
 
-	private Map<Integer, Triple<String, Integer, List<Integer>>> createEntryIdToCrossInfoMap() {
-		final Map<Integer, Triple<String, Integer, List<Integer>>> entryIdToCrossInfoMap = new HashMap<>();
+	private Map<Integer, Triple<String, Integer, List<Integer>>> createEntryNumberToCrossInfoMap() {
+		final Map<Integer, Triple<String, Integer, List<Integer>>> entryNumberToCrossInfoMap = new HashMap<>();
 		for(int i=0; i<5; i++) {
-			entryIdToCrossInfoMap.put(i+1, new ImmutableTriple<>(CrossingTemplateParserTest.MALE_STUDY_NAME, i+1, Collections.singletonList(i+1)));
+			entryNumberToCrossInfoMap.put(i+1, new ImmutableTriple<>(CrossingTemplateParserTest.MALE_STUDY_NAME, i+1, Collections.singletonList(i+1)));
 		}
-		return entryIdToCrossInfoMap;
+		return entryNumberToCrossInfoMap;
 	}
 
 }

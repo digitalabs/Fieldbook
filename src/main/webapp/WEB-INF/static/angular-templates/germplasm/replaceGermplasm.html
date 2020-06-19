@@ -1,0 +1,30 @@
+<div class="modal-body">
+	<div class="row form-group">
+		<div class="col-xs-11 col-md-11">
+			<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{replace.germplasm}">Replace Germplasm</label>
+		</div>
+		<div class="col-xs-1 col-md-1">
+			<button ng-click="cancel()" type="button" class="close pull-right glyphicon glyphicon-remove"></button>
+		</div>
+	</div>
+	<div class="separator"></div>
+	<br/>
+
+
+	<div>
+		<div class="col-xs-4 nopadding" align="right">
+			<label class="control-label label-bold" th:text="#{replace.germplasm.gid}">GID</label>
+		</div>
+		<div class="col-xs-8">
+			<div class="input-group">
+				<input id="replaceGermplasmGID" name="replaceGermplasmGID" type="text" class="form-control" ng-model="replaceGermplasmGID" maxlength="10"/>
+			</div>
+		</div>
+		<br/>
+		<br/>
+	</div>
+</div>
+<div class="modal-footer">
+	<button class="btn btn-default" ng-click="cancel()">Cancel</button>
+	<button class="btn btn-primary" ng-disabled="replaceGermplasmGID === undefined || replaceGermplasmGID.length === 0" ng-click="performGermplasmReplacement()" th:text="#{replace.germplasm.accept}">Accept</button>
+</div>

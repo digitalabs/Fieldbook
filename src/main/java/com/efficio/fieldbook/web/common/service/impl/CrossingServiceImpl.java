@@ -30,13 +30,7 @@ import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.PedigreeDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
-import org.generationcp.middleware.pojos.Attribute;
-import org.generationcp.middleware.pojos.Germplasm;
-import org.generationcp.middleware.pojos.Method;
-import org.generationcp.middleware.pojos.Methods;
-import org.generationcp.middleware.pojos.Name;
-import org.generationcp.middleware.pojos.Progenitor;
-import org.generationcp.middleware.pojos.UserDefinedField;
+import org.generationcp.middleware.pojos.*;
 import org.generationcp.middleware.pojos.germplasm.GermplasmNameSetting;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.PedigreeService;
@@ -51,13 +45,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import static org.generationcp.middleware.service.api.dataset.ObservationUnitUtils.fromMeasurementRow;
 
@@ -188,14 +176,14 @@ public class CrossingServiceImpl implements CrossingService {
 	public boolean applyCrossSettingWithNamingRules(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
 		final Integer userId, final Workbook workbook) {
 
-		int entryIdCounter = 1;
+		int entryNumber = 1;
 		final Map<String, CrossSourceStudy> maleStudyMap = new HashMap<>();
 		final CrossSourceStudy femaleStudyData = this.getCrossSourceStudyData(workbook);
 		for (final ImportedCross importedCross : importedCrossesList.getImportedCrosses()) {
 			this.populateSeedSource(importedCross, femaleStudyData, maleStudyMap);
-			importedCross.setEntryCode(String.valueOf(entryIdCounter));
-			importedCross.setEntryId(entryIdCounter);
-			entryIdCounter++;
+			importedCross.setEntryCode(String.valueOf(entryNumber));
+			importedCross.setEntryNumber(entryNumber);
+			entryNumber++;
 		}
 
 		final GermplasmListResult pairsResult =
@@ -405,13 +393,13 @@ public class CrossingServiceImpl implements CrossingService {
 
 	// for MANUAL naming of crosses
 	void applyCrossNameSettingToImportedCrosses(final CrossNameSetting crossNameSetting, final List<ImportedCross> importedCrosses) {
-		Integer entryIdCounter = 0;
+		Integer entryNumber = 0;
 		final String cropName = this.contextUtil.getProjectInContext().getCropType().getCropName();
 		synchronized (CrossingServiceImpl.class) {
 			for (final ImportedCross cross : importedCrosses) {
-				entryIdCounter++;
-				cross.setEntryId(entryIdCounter);
-				cross.setEntryCode(String.valueOf(entryIdCounter));
+				entryNumber++;
+				cross.setEntryNumber(entryNumber);
+				cross.setEntryCode(String.valueOf(entryNumber));
 				cross.setDesig(
 					this.germplasmNamingService.generateNextNameAndIncrementSequence(this.getGermplasmNameSetting(crossNameSetting)));
 

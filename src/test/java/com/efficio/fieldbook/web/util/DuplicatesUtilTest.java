@@ -150,7 +150,7 @@ public class DuplicatesUtilTest {
 	}
 
 	private String reviewImportedCrosses(ImportedCross importedCross) {
-		return "ENTRY=" + importedCross.getEntryId() + "\t" + "FEMALE_PLOTNO=" + importedCross.getFemalePlotNo() + "\t"
+		return "ENTRY=" + importedCross.getEntryNumber() + "\t" + "FEMALE_PLOTNO=" + importedCross.getFemalePlotNo() + "\t"
 				+ "MALE_PLOTNO=" + importedCross.getMalePlotNos().get(0) + "\t" + "FEMALE_GID=" + importedCross.getFemaleGid() + "\t"
 				+ "MALE_GID=" + importedCross.getMaleGids().get(0) + "\t" + "PARENTAGE=" + importedCross.getCross() + "\t" + "DUPLICATE="
 				+ importedCross.getDuplicate();
@@ -178,7 +178,7 @@ public class DuplicatesUtilTest {
 		final ImportedGermplasmParent maleParent = new ImportedGermplasmParent(maleGid, maleDesig, "");
 		maleParent.setPlotNo(malePlotNo);
 		importedCross.setMaleParents(Lists.newArrayList(maleParent));
-		importedCross.setEntryId(entryId);
+		importedCross.setEntryNumber(entryId);
 		importedCross.setCross(importedCross.getFemaleDesignation() + DuplicatesUtil.SEPARATOR + importedCross.getMaleDesignationsAsString());
 		importedCross.setSource(source);
 		importedCross.setEntryCode(String.valueOf(entryId));

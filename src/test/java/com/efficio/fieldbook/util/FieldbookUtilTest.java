@@ -50,7 +50,7 @@ public class FieldbookUtilTest {
 	public void testIsPlotDuplicateNonFirstInstanceIfNotFirstInstance() {
 		ImportedCross crosses = new ImportedCross();
 		crosses.setDuplicatePrefix(ImportedCross.PLOT_DUPE_PREFIX);
-		crosses.setEntryId(6);
+		crosses.setEntryNumber(6);
 		Set<Integer> dupeEntries = new TreeSet<Integer>();
 		dupeEntries.add(5);
 		dupeEntries.add(7);
@@ -62,7 +62,7 @@ public class FieldbookUtilTest {
 	public void testisPlotDuplicateNonFirstInstanceIfFirstInstance() {
 		ImportedCross crosses = new ImportedCross();
 		crosses.setDuplicatePrefix(ImportedCross.PLOT_DUPE_PREFIX);
-		crosses.setEntryId(2);
+		crosses.setEntryNumber(2);
 		Set<Integer> dupeEntries = new TreeSet<Integer>();
 		dupeEntries.add(5);
 		dupeEntries.add(7);
@@ -74,7 +74,7 @@ public class FieldbookUtilTest {
 	public void testisPlotDuplicateNonFirstInstanceIfPedigreeDupe() {
 		ImportedCross crosses = new ImportedCross();
 		crosses.setDuplicatePrefix(ImportedCross.PEDIGREE_DUPE_PREFIX);
-		crosses.setEntryId(2);
+		crosses.setEntryNumber(2);
 		Set<Integer> dupeEntries = new TreeSet<Integer>();
 		dupeEntries.add(5);
 		dupeEntries.add(7);
@@ -86,7 +86,7 @@ public class FieldbookUtilTest {
 	public void testisPlotDuplicateNonFirstInstanceIfPlotDupeButNoLitOfDuplicate() {
 		ImportedCross crosses = new ImportedCross();
 		crosses.setDuplicatePrefix(ImportedCross.PLOT_DUPE_PREFIX);
-		crosses.setEntryId(2);
+		crosses.setEntryNumber(2);
 		crosses.setDuplicateEntries(null);
 		Assert.assertFalse("Should return false since its it has no list of duplicate entries",
 				FieldbookUtil.isPlotDuplicateNonFirstInstance(crosses));
@@ -96,15 +96,15 @@ public class FieldbookUtilTest {
 	public void testMergeCrossesPlotDuplicateDataIfThereIsDuplicate() {
 		ImportedCross crosses1 = new ImportedCross();
 		crosses1.setDuplicatePrefix(ImportedCross.PLOT_DUPE_PREFIX);
-		crosses1.setEntryId(1);
+		crosses1.setEntryNumber(1);
 		ImportedCross crosses2 = new ImportedCross();
 		crosses2.setDuplicatePrefix(ImportedCross.PLOT_DUPE_PREFIX);
-		crosses2.setEntryId(2);
+		crosses2.setEntryNumber(2);
 		crosses2.setGid("11223");
 		crosses2.setCross("Cross 11223");
 		ImportedCross crosses3 = new ImportedCross();
 		crosses3.setDuplicatePrefix(ImportedCross.PLOT_DUPE_PREFIX);
-		crosses3.setEntryId(3);
+		crosses3.setEntryNumber(3);
 		Set<Integer> dupeEntries = new TreeSet<Integer>();
 		dupeEntries.add(2);
 		dupeEntries.add(7);
@@ -122,15 +122,15 @@ public class FieldbookUtilTest {
 	public void testMergeCrossesPlotDuplicateDataIfThereIsNoDuplicate() {
 		ImportedCross crosses1 = new ImportedCross();
 		crosses1.setDuplicatePrefix(ImportedCross.PLOT_DUPE_PREFIX);
-		crosses1.setEntryId(1);
+		crosses1.setEntryNumber(1);
 		ImportedCross crosses2 = new ImportedCross();
 		crosses2.setDuplicatePrefix(ImportedCross.PLOT_DUPE_PREFIX);
-		crosses2.setEntryId(2);
+		crosses2.setEntryNumber(2);
 		crosses2.setGid("11223");
 		crosses2.setCross("Cross 11223");
 		ImportedCross crosses3 = new ImportedCross();
 		crosses3.setDuplicatePrefix(ImportedCross.PLOT_DUPE_PREFIX);
-		crosses3.setEntryId(3);
+		crosses3.setEntryNumber(3);
 		crosses3.setGid("555");
 		crosses3.setDuplicateEntries(null);
 		List<ImportedCross> importedCrossList = new ArrayList<ImportedCross>();
@@ -145,7 +145,7 @@ public class FieldbookUtilTest {
 	public void testIsContinueCrossingMergeWhenMergeConditionIsFalse() {
 		ImportedCross crosses3 = new ImportedCross();
 		crosses3.setDuplicatePrefix(ImportedCross.PLOT_DUPE_PREFIX);
-		crosses3.setEntryId(3);
+		crosses3.setEntryNumber(3);
 		Set<Integer> dupeEntries = new TreeSet<Integer>();
 		dupeEntries.add(4);
 		dupeEntries.add(7);
@@ -162,7 +162,7 @@ public class FieldbookUtilTest {
 	public void testIsContinueCrossingMergeWhenMergeConditionIsTrue() {
 		ImportedCross crosses3 = new ImportedCross();
 		crosses3.setDuplicatePrefix(ImportedCross.PLOT_DUPE_PREFIX);
-		crosses3.setEntryId(3);
+		crosses3.setEntryNumber(3);
 		Set<Integer> dupeEntries = new TreeSet<Integer>();
 		dupeEntries.add(2);
 		dupeEntries.add(7);

@@ -30,17 +30,8 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.springframework.context.MessageSource;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 public class DesignImportServiceImpl implements DesignImportService {
 
@@ -89,7 +80,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 
 							@Override
 							public Integer apply(final ImportedGermplasm input) {
-								return input.getEntryId();
+								return input.getEntryNumber();
 							}
 
 						});
@@ -148,7 +139,6 @@ public class DesignImportServiceImpl implements DesignImportService {
 	 * @param measurements
 	 * @param measurementRowGenerator
 	 * @param trialInstanceNo
-	 * @param plotNoDelta
 	 */
 	void createMeasurementRowsPerInstance(final Map<Integer, List<String>> csvData, final List<MeasurementRow> measurements,
 			final DesignImportMeasurementRowGenerator measurementRowGenerator, final Integer trialInstanceNo) {

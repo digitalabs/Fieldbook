@@ -76,7 +76,7 @@ public class CrossesListUtilTest {
 
 		final Map<String, Object> dataMap = this.crossesListUtil.generateCrossesTableDataMap(this.importedCross);
 		// Verify that map keys are names of terms from Ontology
-		Assert.assertEquals(this.importedCross.getEntryId(), dataMap.get(this.headersMap.get(TermId.ENTRY_NO.getId())));
+		Assert.assertEquals(this.importedCross.getEntryNumber(), dataMap.get(this.headersMap.get(TermId.ENTRY_NO.getId())));
 		Assert.assertEquals(this.importedCross.getCross(), dataMap.get(this.headersMap.get(TermId.CROSS.getId())));
 		Assert.assertEquals(this.importedCross.getEntryCode(), dataMap.get(this.headersMap.get(TermId.ENTRY_CODE.getId())));
 		Assert.assertEquals(this.importedCross.getFemaleDesignation(), dataMap.get(this.headersMap.get(TermId.FEMALE_PARENT.getId())));
@@ -172,7 +172,7 @@ public class CrossesListUtilTest {
 
 		final ImportedCross
 			testImportedCross = this.crossesListUtil.convertGermplasmListDataToImportedCrosses(germplasmListData, RandomStringUtils.random(20));
-		Assert.assertEquals(Integer.valueOf(CrossesListUtilTest.TEST_ENTRY_ID_VALUE), testImportedCross.getEntryId());
+		Assert.assertEquals(Integer.valueOf(CrossesListUtilTest.TEST_ENTRY_ID_VALUE), testImportedCross.getEntryNumber());
 		Assert.assertEquals(CrossesListUtilTest.TEST_ENTRY_CODE_VALUE, testImportedCross.getEntryCode());
 		Assert.assertEquals(CrossesListUtilTest.TEST_FEMALE_PARENT_VALUE, testImportedCross.getFemaleDesignation());
 		Assert.assertEquals(String.valueOf(CrossesListUtilTest.TEST_FGID_VALUE), testImportedCross.getFemaleGid());
@@ -200,7 +200,7 @@ public class CrossesListUtilTest {
 
 		final String studyName = RandomStringUtils.random(20);
 		final ImportedCross testImportedCross = this.crossesListUtil.convertGermplasmListDataToImportedCrosses(germplasmListData, studyName);
-		Assert.assertEquals(Integer.valueOf(CrossesListUtilTest.TEST_ENTRY_ID_VALUE), testImportedCross.getEntryId());
+		Assert.assertEquals(Integer.valueOf(CrossesListUtilTest.TEST_ENTRY_ID_VALUE), testImportedCross.getEntryNumber());
 		Assert.assertEquals(CrossesListUtilTest.TEST_ENTRY_CODE_VALUE, testImportedCross.getEntryCode());
 		Assert.assertEquals(CrossesListUtilTest.TEST_FEMALE_PARENT_VALUE, testImportedCross.getFemaleDesignation());
 		Assert.assertEquals(String.valueOf(CrossesListUtilTest.TEST_FGID_VALUE), testImportedCross.getFemaleGid());

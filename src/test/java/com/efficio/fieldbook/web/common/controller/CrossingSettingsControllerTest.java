@@ -579,7 +579,7 @@ public class CrossingSettingsControllerTest {
 		final ImportedCrossesList list = new ImportedCrossesList();
 		final List<ImportedCross> importedCrossList = new ArrayList<>();
 		final ImportedCross importedCross = new ImportedCross();
-		importedCross.setEntryId(CrossingSettingsControllerTest.ENTRY_ID);
+		importedCross.setEntryNumber(CrossingSettingsControllerTest.ENTRY_ID);
 		importedCross.setCross(CrossingSettingsControllerTest.TEST_FEMALE_PARENT + "/" + CrossingSettingsControllerTest.TEST_MALE_PARENT1);
 		importedCross.setEntryCode(CrossingSettingsControllerTest.TEST_ENTRY_CODE);
 		

@@ -517,6 +517,10 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				return $scope.advanceTabsData.length !== 0;
 			};
 
+			$scope.hasCrossListCreated = function () {
+				return $scope.crossesTabsData.length !== 0;
+			};
+
 			$scope.performFunctionOnTabChange = function (targetState) {
 				if (isTabChangeDisabled()) {
 					showAlertMessage('', importSaveDataWarningMessage);

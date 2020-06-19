@@ -50,6 +50,9 @@
 						<li>
 							<a href="javascript: showManageCheckTypePopup()" th:text="#{germplasm.list.manage.check.types}" >Manage Checks</a>
 						</li>
+						<li>
+							<a href="javascript: void(0)" ng-show="isOpenStudy() &amp;&amp; hasGermplasmListSelected() &amp;&amp; !hasUnsavedGermplasmChanges()" ng-click="validateGermplasmForReplacement()" th:text="#{replace.germplasm}" >Replace Germplasm</a>
+						</li>
 					</ul>
 				</div>
 			</div>

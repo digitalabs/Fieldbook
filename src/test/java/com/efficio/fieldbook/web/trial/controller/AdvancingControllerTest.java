@@ -249,7 +249,7 @@ public class AdvancingControllerTest {
 		List<ImportedGermplasm> importedGermplasms = new ArrayList<ImportedGermplasm>();
 		for (int i = 0; i < 10; i++) {
 			final ImportedGermplasm germplasm = new ImportedGermplasm();
-			germplasm.setEntryId(i);
+			germplasm.setEntryNumber(i);
 			importedGermplasms.add(germplasm);
 		}
 		final String[] entries = {"1", "2", "3"};
@@ -261,7 +261,7 @@ public class AdvancingControllerTest {
 		final List<ImportedGermplasm> importedGermplasms = new ArrayList<ImportedGermplasm>();
 		for (int i = 0; i < 10; i++) {
 			final ImportedGermplasm germplasm = new ImportedGermplasm();
-			germplasm.setEntryId(i);
+			germplasm.setEntryNumber(i);
             germplasm.setDesig("Design"+i);
             germplasm.setGid(i+"");
             germplasm.setSource("Source"+i);

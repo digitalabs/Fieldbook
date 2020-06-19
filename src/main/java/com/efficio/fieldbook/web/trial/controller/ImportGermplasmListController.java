@@ -119,6 +119,7 @@ public class ImportGermplasmListController extends SettingsController {
 	private static final int NO_ID = -1;
 
 	static final String STARTING_PLOT_NO = "1";
+	static final String HAS_SAVED_GERMPLASM = "hasSavedGermplasm";
 
 	/** The germplasm list manager. */
 	@Resource
@@ -435,7 +436,7 @@ public class ImportGermplasmListController extends SettingsController {
 		model.addAttribute(ImportGermplasmListController.LIST_DATA_TABLE, dataTableDataList);
 		model.addAttribute(ImportGermplasmListController.TABLE_HEADER_LIST,
 				this.getGermplasmTableHeader(this.userSelection.getPlotsLevelList()));
-		model.addAttribute("hasSavedGermplasm", this.hasSavedGermplasm(isNewList));
+		model.addAttribute(ImportGermplasmListController.HAS_SAVED_GERMPLASM, this.hasSavedGermplasm(isNewList));
 	}
 
 

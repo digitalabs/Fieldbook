@@ -177,6 +177,23 @@ public class ImportGermplasmListControllerTest {
 	}
 
 	@Test
+	public void testHasSavedGermplasm() {
+		// If using a new list, saved germplasm saved flag is reset (thus, false)
+		Assert.assertFalse(this.importGermplasmListController.hasSavedGermplasm(true));
+
+		// If study is not yet saved, flag is false
+		Assert.assertFalse(this.importGermplasmListController.hasSavedGermplasm(false));
+
+		// If study is saved, but no germplasm saved
+		this.userSelection.setWorkbook(this.workbook);
+		Mockito.doReturn(this.createStudyDetails()).when(this.workbook).getStudyDetails();
+		Assert.assertFalse(this.importGermplasmListController.hasSavedGermplasm(false));
+
+		Mockito.doReturn(10L).when(this.studyGermplasmService).countStudyGermplasm(ImportGermplasmListControllerTest.STUDY_ID);
+		Assert.assertTrue(this.importGermplasmListController.hasSavedGermplasm(false));
+	}
+
+	@Test
 	public void testDisplayGermplasmDetailsOfSelectedListForNursery() throws MiddlewareException {
 
 		final List<GermplasmListData> list = this.createGermplasmListData();
@@ -210,6 +227,7 @@ public class ImportGermplasmListControllerTest {
 		}
 		Assert.assertEquals("The starting plot number should be 1.", form.getStartingPlotNo(),
 			ImportGermplasmListController.STARTING_PLOT_NO);
+		Assert.assertFalse((Boolean)model.get(ImportGermplasmListController.HAS_SAVED_GERMPLASM));
 	}
 
 	@Test
@@ -247,6 +265,7 @@ public class ImportGermplasmListControllerTest {
 
 		Assert.assertEquals("The starting plot number should be 1.", form.getStartingPlotNo(),
 			ImportGermplasmListController.STARTING_PLOT_NO);
+
 	}
 
 	@Test

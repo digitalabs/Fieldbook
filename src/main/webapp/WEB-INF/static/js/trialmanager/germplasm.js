@@ -239,7 +239,7 @@
 
             $scope.performGermplasmReplacement = function () {
                 var newGid = $('#replaceGermplasmGID').val();
-                var regex = new RegExp('^[0-9]+$');
+                var regex = new RegExp(/^[0-9]+$/);
                 if (!regex.test(newGid)) {
                     ctrl.showAlertMessage('', 'Please enter valid GID.');
                 } else {

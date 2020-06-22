@@ -13,6 +13,7 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
+import org.generationcp.middleware.enumeration.DatasetTypeEnum;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.util.Message;
@@ -85,6 +86,7 @@ public class AngularMapOntologyControllerTest {
 		Mockito.when(this.etlService.retrieveCurrentWorkbook(this.userSelection)).thenReturn(apacheWorkbook);
 		Mockito.when(this.etlService.convertToWorkbook(this.userSelection)).thenReturn(workbook);
 		Mockito.when(this.dataImportService.parseWorkbookDescriptionSheet(apacheWorkbook, CURRENT_IBDB_USER_ID)).thenReturn(workbook);
+		Mockito.when(this.userSelection.getDatasetType()).thenReturn(DatasetTypeEnum.MEANS_DATA.getId());
 
 		// Add Variable with no header mapping
 		final VariableDTO variableWithNoHeaderMapping = new VariableDTO();
@@ -96,13 +98,18 @@ public class AngularMapOntologyControllerTest {
 		final VariableDTO variableDuplicate2 = new VariableDTO();
 		variableDuplicate2.setHeaderName("SOME_VARIABLE");
 
+		// Add Entry_Type Variable
+		final VariableDTO entryTypeVariable = new VariableDTO();
+		entryTypeVariable.setHeaderName(TermId.ENTRY_TYPE.name());
+		entryTypeVariable.setId(TermId.ENTRY_TYPE.getId());
+
 		//
 		Mockito.when(this.dataImportService.findMeasurementVariableByTermId(Matchers.eq(TermId.LOCATION_ID.getId()), Mockito.anyListOf(
 				MeasurementVariable.class))).thenReturn(Optional.<MeasurementVariable>absent());
 		Mockito.when(this.dataImportService.findMeasurementVariableByTermId(Matchers.eq(TermId.TRIAL_LOCATION.getId()), Mockito.anyListOf(
 				MeasurementVariable.class))).thenReturn(Optional.of(new MeasurementVariable()));
 
-		final VariableDTO[] variables = { variableWithNoHeaderMapping, variableDuplicate1, variableDuplicate2 } ;
+		final VariableDTO[] variables = { variableWithNoHeaderMapping, variableDuplicate1, variableDuplicate2, entryTypeVariable } ;
 
 		this.controller.processImport(variables);
 
@@ -112,7 +119,7 @@ public class AngularMapOntologyControllerTest {
 		Mockito.verify(this.etlService).mergeVariableData(variables, this.userSelection, true);
 		Mockito.verify(this.etlService).validateProjectOntology(workbook);
 
-		Mockito.verify(this.etlService, Mockito.times(5)).convertMessageList(captor.capture());
+		Mockito.verify(this.etlService, Mockito.times(6)).convertMessageList(captor.capture());
 
 		final List<List> messages = captor.getAllValues();
 		final List<String> messageKeys = new ArrayList<>();
@@ -123,6 +130,7 @@ public class AngularMapOntologyControllerTest {
 		Assert.assertTrue(messageKeys.contains(AngularMapOntologyController.ERROR_HEADER_NO_MAPPING));
 		Assert.assertTrue(messageKeys.contains(AngularMapOntologyController.ERROR_DUPLICATE_LOCAL_VARIABLE));
 		Assert.assertTrue(messageKeys.contains(AngularMapOntologyController.ERROR_LOCATION_ID_DOESNT_EXISTS));
+		Assert.assertTrue(messageKeys.contains(AngularMapOntologyController.INVALID_MEANS_IMPORT_VARIABLE));
 
 	}
 

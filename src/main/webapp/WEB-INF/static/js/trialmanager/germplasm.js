@@ -135,54 +135,9 @@
 
             };
 
-            $scope.validateGermplasmForReplacement = function() {
-                // Check if study has advance or cross list
-                if ($scope.hasAdvanceListCreated() || $scope.hasCrossListCreated()) {
-                    showAlertMessage('', $.germplasmMessages.studyHasAdvanceOrCrossList);
-                    return;
-                }
-
-                // Validate entry for replacement
-                studyGermplasmService.resetSelectedEntries();
-                $.each($("input[name='entryId']:checked"), function(){
-                    studyGermplasmService.toggleSelect($(this).val());
-                });
-                var selectedEntries = studyGermplasmService.getSelectedEntries();
-                if (selectedEntries.length === 0) {
-                    showAlertMessage('', $.germplasmMessages.selectEntryForReplacement);
-                } else if (selectedEntries.length !== 1) {
-                    showAlertMessage('', $.germplasmMessages.selectOnlyOneEntryForReplacement);
-                } else {
-                    $scope.replaceGermplasm();
-                }
-            };
-
-            $scope.replaceGermplasm = function() {
-                if (studyStateService.hasGeneratedDesign()) {
-                    var modalConfirmReplacement = $scope.openConfirmModal($.germplasmMessages.replaceGermplasmWarning, 'Yes','No');
-                    modalConfirmReplacement.result.then(function (shouldContinue) {
-                        if (shouldContinue) {
-                            $scope.openReplaceGermplasmModal();
-                        }
-                    });
-                } else {
-                    $scope.openReplaceGermplasmModal();
-                }
-
-            };
-
-            $scope.openReplaceGermplasmModal = function() {
-                $uibModal.open({
-                    templateUrl: '/Fieldbook/static/angular-templates/germplasm/replaceGermplasm.html',
-                    controller: "replaceGermplasmCtrl",
-                    size: 'md'
-                });
-            };
-
-
         }]);
 
-    manageTrialAppModule.factory('studyGermplasmService', ['$http', 'serviceUtilities', 'studyContext', function ($http, serviceUtilities, studyContext) {
+    manageTrialAppModule.factory('studyGermplasmService', ['$http', 'serviceUtilities', '$uibModal', 'studyContext', function ($http, serviceUtilities, $uibModal, studyContext) {
 
         var BASE_STUDY_URL = '/bmsapi/crops/' + studyContext.cropName + '/programs/' + studyContext.programId + '/studies/';
 
@@ -218,13 +173,21 @@
             selectedEntries = [];
         };
 
+        studyGermplasmService.openReplaceGermplasmModal = function() {
+            $uibModal.open({
+                templateUrl: '/Fieldbook/static/angular-templates/germplasm/replaceGermplasm.html',
+                controller: "replaceGermplasmCtrl",
+                size: 'md'
+            });
+        };
+
         return studyGermplasmService;
 
     }
     ]);
 
-    manageTrialAppModule.controller('replaceGermplasmCtrl', ['$scope', '$uibModalInstance', 'studyContext', 'studyGermplasmService',
-        function ($scope, $uibModalInstance, studyContext, studyGermplasmService) {
+    manageTrialAppModule.controller('replaceGermplasmCtrl', ['$scope', '$uibModalInstance', 'studyContext', 'studyGermplasmService', 'studyStateService',
+        function ($scope, $uibModalInstance, studyContext, studyGermplasmService, studyStateService) {
             var ctrl = this;
 
             $scope.cancel = function () {
@@ -234,6 +197,42 @@
             // Wrap 'showAlertMessage' global function to a controller function so that we can mock it in unit test.
             ctrl.showAlertMessage = function (title, message) {
                 showAlertMessage(title, message);
+            };
+
+            $scope.validateGermplasmForReplacement = function() {
+                // Check if study has advance or cross list
+                if ($scope.hasAdvanceListCreated() || $scope.hasCrossListCreated()) {
+                    ctrl.showAlertMessage('', $.germplasmMessages.studyHasAdvanceOrCrossList);
+                    return;
+                }
+
+                // Validate entry for replacement
+                studyGermplasmService.resetSelectedEntries();
+                $.each($("input[name='entryId']:checked"), function(){
+                    studyGermplasmService.toggleSelect($(this).val());
+                });
+                var selectedEntries = studyGermplasmService.getSelectedEntries();
+                if (selectedEntries.length === 0) {
+                    ctrl.showAlertMessage('', $.germplasmMessages.selectEntryForReplacement);
+                } else if (selectedEntries.length !== 1) {
+                    ctrl.showAlertMessage('', $.germplasmMessages.selectOnlyOneEntryForReplacement);
+                } else {
+                    ctrl.replaceGermplasm();
+                }
+            };
+
+            ctrl.replaceGermplasm = function() {
+                if (studyStateService.hasGeneratedDesign()) {
+                    var modalConfirmReplacement = $scope.openConfirmModal($.germplasmMessages.replaceGermplasmWarning, 'Yes','No');
+                    modalConfirmReplacement.result.then(function (shouldContinue) {
+                        if (shouldContinue) {
+                            studyGermplasmService.openReplaceGermplasmModal();
+                        }
+                    });
+                } else {
+                    studyGermplasmService.openReplaceGermplasmModal();
+                }
+
             };
 
 

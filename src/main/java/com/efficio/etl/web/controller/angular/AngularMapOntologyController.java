@@ -56,7 +56,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 	static final String ERROR_DUPLICATE_LOCAL_VARIABLE = "error.duplicate.local.variable";
 	static final String ERROR_LOCATION_ID_DOESNT_EXISTS = "error.location.id.doesnt.exists";
 	static final String INVALID_MEANS_IMPORT_VARIABLE = "error.invalid.means.import.variable";
-	private final List<Integer> INVALID_VARIABLES_FOR_MEANS_IMPORT = Arrays.asList(TermId.ENTRY_TYPE.getId(),
+	private static final List<Integer> INVALID_VARIABLES_FOR_MEANS_IMPORT = Arrays.asList(TermId.ENTRY_TYPE.getId(),
 		TermId.REP_NO.getId(), TermId.PLOT_NO.getId());
 
 	@Resource
@@ -176,7 +176,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 					message.setMessageKey(ERROR_DUPLICATE_LOCAL_VARIABLE);
 					proxy.put(variable.getHeaderName() + ":" + variable.getId(), this.etlService.convertMessageList(messageList));
 				}
-				if(isMeansDataImport && this.INVALID_VARIABLES_FOR_MEANS_IMPORT.contains(variable.getId())) {
+				if(isMeansDataImport && INVALID_VARIABLES_FOR_MEANS_IMPORT.contains(variable.getId())) {
 					message.setMessageKey(INVALID_MEANS_IMPORT_VARIABLE);
 					proxy.put(variable.getHeaderName() + ":" + variable.getId(), this.etlService.convertMessageList(messageList));
 				}

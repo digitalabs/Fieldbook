@@ -38,36 +38,30 @@ describe('Replace Germplasm Controller', function () {
 			});
 
 			spyOn(replaceGermplasmCtrl, 'showAlertMessage');
-			studyGermplasmService.getSelectedEntries.and.returnValue([56]);
 		})
 	});
 
-	describe('Perform Germplasm Replacement', function () {
-		describe('performGermplasmReplacement', function () {
-			it('should not replace germplasm if non-numeric GID', function () {
-				spyOn($.fn, 'val').and.callFake(function() {
-					return 'test';
-				});
-				scope.performGermplasmReplacement();
-				expect(replaceGermplasmCtrl.showAlertMessage).toHaveBeenCalledWith('','Please enter valid GID.');
-				expect(studyGermplasmService.replaceStudyGermplasm).not.toHaveBeenCalled();
+	describe('performGermplasmReplacement', function () {
+		it('should replace germplasm for valid GID', function () {
+			studyGermplasmService.getSelectedEntries.and.returnValue([56]);
+			var response = {data: {}};
+			studyGermplasmService.replaceStudyGermplasm.and.returnValue($q.resolve(response));
+			spyOn($.fn, 'val').and.callFake(function() {
+				return '135';
 			});
+
+			scope.performGermplasmReplacement();
+			expect(replaceGermplasmCtrl.showAlertMessage).not.toHaveBeenCalled();
+			expect(studyGermplasmService.replaceStudyGermplasm).toHaveBeenCalledWith(56,'135');
 		});
 
-		describe('performGermplasmReplacement', function () {
-			it('should replace germplasm for valid GID', function () {
-				var response = {data: {}};
-				studyGermplasmService.replaceStudyGermplasm.and.returnValue($q.resolve(response));
-				spyOn($.fn, 'val').and.callFake(function() {
-					return '135';
-				});
-
-				scope.performGermplasmReplacement();
-				expect(replaceGermplasmCtrl.showAlertMessage).not.toHaveBeenCalled();
-				expect(studyGermplasmService.replaceStudyGermplasm).toHaveBeenCalledWith(56,'135');
+		it('should not replace germplasm if non-numeric GID', function () {
+			spyOn($.fn, 'val').and.callFake(function() {
+				return 'test';
 			});
+			scope.performGermplasmReplacement();
+			expect(replaceGermplasmCtrl.showAlertMessage).toHaveBeenCalledWith('','Please enter valid GID.');
 		});
-
 	});
 
 });

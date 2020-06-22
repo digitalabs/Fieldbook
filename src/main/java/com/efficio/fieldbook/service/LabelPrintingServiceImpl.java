@@ -4,16 +4,15 @@ import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.LabelPrintingService;
 import com.efficio.fieldbook.service.api.SettingsService;
 import com.efficio.fieldbook.util.labelprinting.LabelGeneratorFactory;
-import com.efficio.fieldbook.util.labelprinting.SeedPreparationLabelGenerator;
 import com.efficio.fieldbook.util.labelprinting.comparators.FieldMapLabelComparator;
 import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import com.efficio.fieldbook.web.label.printing.bean.LabelPrintingPresets;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
-import org.generationcp.commons.constant.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.pojos.labelprinting.LabelPrintingProcessingParams;
+import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.constant.ColumnLabels;
@@ -32,8 +31,6 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.PresetService;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
-import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.ToolName;
@@ -58,6 +55,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The Class LabelPrintingServiceImpl.
@@ -133,15 +131,6 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		super();
 	}
 
-
-
-	@Override
-	public String generateLabelsForGermplasmList(final String labelType, final List<GermplasmListData> germplasmListDataList,
-			final UserLabelPrinting userLabelPrinting) throws LabelPrintingException {
-		final SeedPreparationLabelGenerator seedPreparationLabelGenerator =
-				this.labelGeneratorFactory.retrieveSeedPreparationLabelGenerator(labelType);
-		return seedPreparationLabelGenerator.generateLabels(germplasmListDataList, userLabelPrinting);
-	}
 
 	@Override
 	public String generateLabels(final String labelType, final List<StudyTrialInstanceInfo> trialInstances,
@@ -277,32 +266,15 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 	}
 
 	private Map<Integer, InventoryDetails> retrieveInventoryDetailsMap(final Integer studyId) {
-		final Map<Integer, InventoryDetails> inventoryDetailsMap = new HashMap<>();
-
+		Map<Integer, InventoryDetails> inventoryDetailsMap = new HashMap<>();
 		try {
-			GermplasmList germplasmList = null;
-			final GermplasmListType listType = GermplasmListType.STUDY;
-			final List<GermplasmList> germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, listType);
-			if (!germplasmLists.isEmpty()) {
-				germplasmList = germplasmLists.get(0);
-			}
-
-			if (germplasmList != null) {
-				final Integer listId = germplasmList.getId();
-				final String germplasmListType = germplasmList.getType();
-				final List<InventoryDetails> inventoryDetailList =
-						this.inventoryMiddlewareService.getInventoryDetailsByGermplasmList(listId, germplasmListType);
-
-				for (final InventoryDetails inventoryDetails : inventoryDetailList) {
-					if (inventoryDetails.getLotId() != null) {
-						inventoryDetailsMap.put(inventoryDetails.getGid(), inventoryDetails);
-					}
-				}
-			}
+			inventoryDetailsMap = this.inventoryMiddlewareService.getInventoryDetails(studyId).stream()
+				.filter(inventoryDetails -> inventoryDetails.getLotId() != null)
+				.collect(Collectors.toMap(InventoryDetails::getGid, inventoryDetails -> inventoryDetails,
+					(inventoryDetails1, inventoryDetails2) -> inventoryDetails2));
 		} catch (final MiddlewareQueryException e) {
 			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
 		}
-
 		return inventoryDetailsMap;
 	}
 
@@ -723,36 +695,6 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		return labelFieldsList;
 	}
 
-	/**
-	 * Gets the available label fields for the inventory. The following options: {GID, Designation, Cross, Stock Id, Lot Id}
-	 *
-	 * @param locale the locale
-	 * @return the list of available label fields
-	 */
-	@Override
-	public List<LabelFields> getAvailableLabelFieldsForInventory(final Locale locale) {
-		final List<LabelFields> labelFieldsList = new ArrayList<>();
-
-		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.list.name", null, locale),
-				AppConstants.AVAILABLE_LABEL_FIELDS_LIST_NAME.getInt(), true));
-		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.entry.num", null, locale),
-				AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM.getInt(), true));
-		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.gid", null, locale),
-				AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt(), true));
-		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.designation", null, locale),
-				AppConstants.AVAILABLE_LABEL_FIELDS_DESIGNATION.getInt(), true));
-		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.cross", null, locale),
-				AppConstants.AVAILABLE_LABEL_FIELDS_CROSS.getInt(), true));
-		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.available.fields.stockid", null, locale),
-				AppConstants.AVAILABLE_LABEL_FIELDS_STOCK_ID.getInt(), true));
-		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.seed.inventory.lotid", null, locale),
-				AppConstants.AVAILABLE_LABEL_SEED_LOT_ID.getInt(), true));
-		labelFieldsList.add(new LabelFields(this.messageSource.getMessage("label.printing.seed.inventory.source", null, locale),
-				AppConstants.AVAILABLE_LABEL_SEED_SOURCE.getInt(), true));
-
-		return labelFieldsList;
-	}
-
 	@Override
 	public List<LabelFields> getAvailableLabelFieldsForStudy(final boolean hasFieldMap, final Locale locale,
 			final int studyID) {
@@ -794,7 +736,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 		this.addAvailableFieldsForFieldMap(hasFieldMap, locale, labelFieldsList);
 
 		// add inventory fields if any
-		if (this.hasInventoryValues(studyID)) {
+		if (this.inventoryMiddlewareService.hasInventoryDetails(studyID)) {
 			labelFieldsList.addAll(this.addInventoryRelatedLabelFields(locale));
 		}
 
@@ -880,40 +822,6 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 					LabelPrintingServiceImpl.LABEL_PRINTING_AVAILABLE_FIELDS_FIELD_NAME_KEY, null, locale),
 					AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt(), false));
 		}
-	}
-
-	/***
-	 * Returned true if the current study's germplasm list has inventory details
-	 *
-	 * @param studyID
-	 * @return
-	 */
-	protected boolean hasInventoryValues(final int studyID) {
-		try {
-			GermplasmList germplasmList = null;
-			final GermplasmListType listType = GermplasmListType.STUDY;
-			final List<GermplasmList> germplasmLists = this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyID, listType);
-			if (!germplasmLists.isEmpty()) {
-				germplasmList = germplasmLists.get(0);
-			}
-
-			if (germplasmList != null) {
-				final Integer listId = germplasmList.getId();
-				final String germplasmListType = germplasmList.getType();
-				final List<InventoryDetails> inventoryDetailList =
-						this.inventoryMiddlewareService.getInventoryDetailsByGermplasmList(listId, germplasmListType);
-
-				for (final InventoryDetails inventoryDetails : inventoryDetailList) {
-					if (inventoryDetails.getLotId() != null) {
-						return true;
-					}
-				}
-			}
-		} catch (final MiddlewareQueryException e) {
-			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
-		}
-
-		return false;
 	}
 
 	protected List<LabelFields> addInventoryRelatedLabelFields(final Locale locale) {

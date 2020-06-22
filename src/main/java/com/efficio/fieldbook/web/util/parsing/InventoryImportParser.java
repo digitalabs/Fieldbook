@@ -8,6 +8,7 @@ import org.generationcp.commons.parsing.WorkbookRowConverter;
 import org.generationcp.commons.parsing.pojo.ImportedInventoryList;
 import org.generationcp.commons.parsing.validation.BulkComplValidator;
 import org.generationcp.commons.parsing.validation.CommaDelimitedValueValidator;
+import org.generationcp.commons.parsing.validation.InventoryAmountUpdateValidator;
 import org.generationcp.commons.parsing.validation.NonEmptyValidator;
 import org.generationcp.commons.parsing.validation.ParseValidationMap;
 import org.generationcp.commons.parsing.validation.ValueRangeValidator;
@@ -100,7 +101,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 		return this.importedInventoryList;
 	}
 
-	void validateFileHeader() throws FileParsingException {
+	private void validateFileHeader() throws FileParsingException {
 		final int tempRowNo = this.currentParseIndex;
 		if (this.isHeaderInvalid(tempRowNo, InventoryImportParser.INVENTORY_SHEET, this.requiredHeaders) && this
 				.isHeaderInvalid(tempRowNo, InventoryImportParser.INVENTORY_SHEET, this.headers)) {
@@ -114,7 +115,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 		this.currentParseIndex++;
 	}
 
-	protected void parseInventoryDetails() throws FileParsingException {
+	private void parseInventoryDetails() throws FileParsingException {
 
 		final ParseValidationMap parseValidationMap = this.setupIndividualColumnValidation();
 		final InventoryRowConverter inventoryDetailsConverter =
@@ -128,7 +129,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 		this.importedInventoryList = new ImportedInventoryList(detailList, this.originalFilename);
 	}
 
-	public Map<String, Location> convertToLocationMap(final List<Location> locationList) {
+	Map<String, Location> convertToLocationMap(final List<Location> locationList) {
 		final Map<String, Location> locationMap = new HashMap<>();
 
 		for (final Location location : locationList) {
@@ -138,8 +139,9 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 		return locationMap;
 	}
 
-	protected ParseValidationMap setupIndividualColumnValidation() {
+	ParseValidationMap setupIndividualColumnValidation() {
 		final ParseValidationMap validationMap = new ParseValidationMap();
+		Integer amountHeaderIndex = 0;
 		for (int index = 0; index < this.headers.length; index++) {
 			final String header = this.headers[index];
 			if (InventoryHeaderLabels.ENTRY.getName().equals(header) || InventoryHeaderLabels.GID.getName().equals(header)) {
@@ -150,6 +152,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 				locationValidator.setValidationErrorMessage("error.import.location.invalid.value");
 				validationMap.addValidation(index, locationValidator);
 			} else if (InventoryHeaderLabels.AMOUNT.getName().equals(header)) {
+				amountHeaderIndex = index;
 				final ValueTypeValidator amountValidator = new ValueTypeValidator(Double.class);
 				amountValidator.setValidationErrorMessage("error.import.amount.must.be.numeric");
 				validationMap.addValidation(index, amountValidator);
@@ -159,13 +162,16 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 				validationMap.addValidation(index, bulkWithValidator);
 			} else if (InventoryHeaderLabels.BULK_COMPL.getName().equals(header)) {
 				validationMap.addValidation(index,
-						new BulkComplValidator(InventoryHeaderLabels.BULK_COMPL.ordinal(), InventoryHeaderLabels.BULK_WITH.ordinal()));
+						new BulkComplValidator(InventoryHeaderLabels.BULK_WITH.ordinal()));
+			} else if (InventoryHeaderLabels.STOCKID.getName().equals(header)) {
+				validationMap.addValidation(index,
+					new InventoryAmountUpdateValidator(amountHeaderIndex, this.inventoryDataManager.getStockIdsWithMultipleTransactions(this.listId)));
 			}
 		}
 		return validationMap;
 	}
 
-	public List<String> buildAllowedLocationsList() {
+	List<String> buildAllowedLocationsList() {
 		final List<String> locationList = new ArrayList<>();
 
 		try {
@@ -183,16 +189,8 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 		return locationList;
 	}
 
-	public List<String> buildAllowedStockList() {
-		List<String> stockIDList = new ArrayList<>();
-
-		try {
-			stockIDList = this.inventoryDataManager.getStockIdsByListDataProjectListId(this.listId);
-		} catch (final MiddlewareQueryException e) {
-			InventoryImportParser.LOG.error(e.getMessage(), e);
-		}
-
-		return stockIDList;
+	private List<String> buildAllowedStockList() {
+		return  this.inventoryDataManager.getStockIdsByListDataProjectListId(this.listId);
 	}
 
 	public static class InventoryRowConverter extends WorkbookRowConverter<InventoryDetails> {
@@ -266,7 +264,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 		for (int i = 0; i < headers.length; i++) {
 			if (headers[i].equalsIgnoreCase(InventoryHeaderLabels.AMOUNT.getName())) {
 				final String amountHeader = this.getCellStringValue(sheetNumber, headerNo, i);
-				isInvalid = this.isAmountHeaderValid(amountHeader) ? isInvalid : true;
+				isInvalid = !this.isAmountHeaderValid(amountHeader);
 			} else {
 				isInvalid = isInvalid || !headers[i].equalsIgnoreCase(this.getCellStringValue(sheetNumber, headerNo, i));
 			}
@@ -277,10 +275,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 
 	boolean isAmountHeaderValid(final String amountHeader) {
 		this.scale = this.ontologyService.getInventoryScaleByName(amountHeader);
-		if (scale == null || scale.getTerm() == null) {
-			return false;
-		}
-		return true;
+		return scale != null && scale.getTerm() != null;
 	}
 
 	public void setLocations(final List<Location> locations) {
@@ -291,7 +286,7 @@ public class InventoryImportParser extends AbstractExcelFileParser<ImportedInven
 		this.headers = headers;
 	}
 
-	public void setInventoryHeaderLabelsMap(final Map<InventoryHeaderLabels, Integer> inventoryHeaderLabelsMap) {
+	void setInventoryHeaderLabelsMap(final Map<InventoryHeaderLabels, Integer> inventoryHeaderLabelsMap) {
 		this.inventoryHeaderLabelsMap = inventoryHeaderLabelsMap;
 	}
 

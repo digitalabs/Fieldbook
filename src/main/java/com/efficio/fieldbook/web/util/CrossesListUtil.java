@@ -1,15 +1,10 @@
 
 package com.efficio.fieldbook.web.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import org.apache.commons.lang3.StringUtils;
-import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
 import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
@@ -19,8 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class CrossesListUtil {
@@ -51,18 +49,18 @@ public class CrossesListUtil {
 
 	public static final String DEFAULT_SEPARATOR = "/";
 
-	public Map<String, Object> generateCrossesTableDataMap(final ImportedCrosses importedCrosses) {
+	public Map<String, Object> generateCrossesTableDataMap(final ImportedCross importedCross) {
 
 		final Map<String, Object> dataMap = new HashMap<>();
 
-		dataMap.put(this.getTermNameFromOntology(ColumnLabels.ENTRY_ID), importedCrosses.getEntryId());
-		dataMap.put(this.getTermNameFromOntology(ColumnLabels.PARENTAGE), importedCrosses.getCross());
-		dataMap.put(this.getTermNameFromOntology(ColumnLabels.ENTRY_CODE), importedCrosses.getEntryCode());
-		dataMap.put(this.getTermNameFromOntology(ColumnLabels.FEMALE_PARENT), importedCrosses.getFemaleDesignation());
-		dataMap.put(this.getTermNameFromOntology(ColumnLabels.FGID), importedCrosses.getFemaleGid());
-		dataMap.put(this.getTermNameFromOntology(ColumnLabels.MALE_PARENT), importedCrosses.getMaleDesignations());
-		dataMap.put(this.getTermNameFromOntology(ColumnLabels.MGID), importedCrosses.getMaleGids());
-		dataMap.put(this.getTermNameFromOntology(ColumnLabels.SEED_SOURCE), importedCrosses.getSource());
+		dataMap.put(this.getTermNameFromOntology(ColumnLabels.ENTRY_ID), importedCross.getEntryNumber());
+		dataMap.put(this.getTermNameFromOntology(ColumnLabels.PARENTAGE), importedCross.getCross());
+		dataMap.put(this.getTermNameFromOntology(ColumnLabels.ENTRY_CODE), importedCross.getEntryCode());
+		dataMap.put(this.getTermNameFromOntology(ColumnLabels.FEMALE_PARENT), importedCross.getFemaleDesignation());
+		dataMap.put(this.getTermNameFromOntology(ColumnLabels.FGID), importedCross.getFemaleGid());
+		dataMap.put(this.getTermNameFromOntology(ColumnLabels.MALE_PARENT), importedCross.getMaleDesignations());
+		dataMap.put(this.getTermNameFromOntology(ColumnLabels.MGID), importedCross.getMaleGids());
+		dataMap.put(this.getTermNameFromOntology(ColumnLabels.SEED_SOURCE), importedCross.getSource());
 
 		return dataMap;
 	}
@@ -87,19 +85,19 @@ public class CrossesListUtil {
 		return dataMap;
 	}
 	
-	public ImportedCrosses convertGermplasmListDataToImportedCrosses(final GermplasmListData crossesData, final String studyName) {
-		final ImportedCrosses importedCrosses = new ImportedCrosses();
-		importedCrosses.setCrossListId(crossesData.getId());
-		importedCrosses.setEntryId(crossesData.getEntryId());
-		importedCrosses.setGid(crossesData.getGid() != null ? Integer.toString(crossesData.getGid()) : null);
-		importedCrosses.setEntryCode(crossesData.getEntryCode());
-		importedCrosses.setSource(crossesData.getSeedSource());
+	public ImportedCross convertGermplasmListDataToImportedCrosses(final GermplasmListData crossesData, final String studyName) {
+		final ImportedCross importedCross = new ImportedCross();
+		importedCross.setId(crossesData.getId());
+		importedCross.setEntryNumber(crossesData.getEntryId());
+		importedCross.setGid(crossesData.getGid() != null ? Integer.toString(crossesData.getGid()) : null);
+		importedCross.setEntryCode(crossesData.getEntryCode());
+		importedCross.setSource(crossesData.getSeedSource());
 		
 		final GermplasmParent femaleParentFromDB = crossesData.getFemaleParent();
 		final ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(femaleParentFromDB.getGid(), femaleParentFromDB.getDesignation(), femaleParentFromDB.getPedigree());
 		femaleParent.setCross(femaleParent.getDesignation());
 		femaleParent.setStudyName(studyName);
-		importedCrosses.setFemaleParent(femaleParent);
+		importedCross.setFemaleParent(femaleParent);
 		
 		final List<ImportedGermplasmParent> maleParents = new ArrayList<>();
 		for (final GermplasmParent maleParentFromDB : crossesData.getMaleParents()) {
@@ -108,28 +106,28 @@ public class CrossesListUtil {
 			maleParent.setStudyName(studyName);
 			maleParents.add(maleParent);
 		}
-		importedCrosses.setMaleParents(maleParents);
-		importedCrosses.setCross(femaleParent.getDesignation() + CrossesListUtil.DEFAULT_SEPARATOR + this.concatenateMaleParentsValue(this.getDesignationsList(crossesData.getMaleParents())));
+		importedCross.setMaleParents(maleParents);
+		importedCross.setCross(femaleParent.getDesignation() + CrossesListUtil.DEFAULT_SEPARATOR + this.concatenateMaleParentsValue(this.getDesignationsList(crossesData.getMaleParents())));
 		
-		return importedCrosses;
+		return importedCross;
 	}
 
-	public Map<String, Object> generateCrossesTableWithDuplicationNotes(final List<String> tableHeaderList, final ImportedCrosses importedCrosses) {
+	public Map<String, Object> generateCrossesTableWithDuplicationNotes(final List<String> tableHeaderList, final ImportedCross importedCross) {
 
 		final Map<String, Object> dataMap = new HashMap<>();
 
-		dataMap.put(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX), importedCrosses.getEntryId());
-		dataMap.put(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX), importedCrosses.getCross());
-		dataMap.put(ColumnLabels.DUPLICATE.name(), importedCrosses.getDuplicate());
-		dataMap.put(tableHeaderList.get(CrossesListUtil.FEMALE_PEDIGREE), importedCrosses.getFemalePedigree());
-		dataMap.put(ColumnLabels.FEMALE_PARENT.name(), importedCrosses.getFemaleCross());
-		dataMap.put(tableHeaderList.get(CrossesListUtil.MALE_PEDIGREE), this.concatenateMaleParentsValue(importedCrosses.getMalePedigree()));
-		dataMap.put(ColumnLabels.MALE_PARENT.name(), importedCrosses.getMaleCross());
+		dataMap.put(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX), importedCross.getEntryNumber());
+		dataMap.put(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX), importedCross.getCross());
+		dataMap.put(ColumnLabels.DUPLICATE.name(), importedCross.getDuplicate());
+		dataMap.put(tableHeaderList.get(CrossesListUtil.FEMALE_PEDIGREE), importedCross.getFemalePedigree());
+		dataMap.put(ColumnLabels.FEMALE_PARENT.name(), importedCross.getFemaleCross());
+		dataMap.put(tableHeaderList.get(CrossesListUtil.MALE_PEDIGREE), this.concatenateMaleParentsValue(importedCross.getMalePedigree()));
+		dataMap.put(ColumnLabels.MALE_PARENT.name(), importedCross.getMaleCross());
 
 		//shows BREEDING_METHOD as "Pending" if method is not defined in import crossing file
-		String breedingMethodName = importedCrosses.getBreedingMethodName();
+		String breedingMethodName = importedCross.getBreedingMethodName();
 		if (StringUtils.isBlank(breedingMethodName)) {
-			breedingMethodName = importedCrosses.getRawBreedingMethod();
+			breedingMethodName = importedCross.getRawBreedingMethod();
 		}
 		//shows BREEDING_METHOD as "Pending" if method is not defined in import crossing file
 		if (StringUtils.isBlank(breedingMethodName)) {
@@ -137,9 +135,9 @@ public class CrossesListUtil {
 		}
 
 		dataMap.put(tableHeaderList.get(CrossesListUtil.BREEDING_METHOD_INDEX), breedingMethodName);
-		dataMap.put(tableHeaderList.get(CrossesListUtil.SOURCE_INDEX), importedCrosses.getSource());
-		dataMap.put(ColumnLabels.FGID.name(), importedCrosses.getFemaleGid());
-		dataMap.put(ColumnLabels.MGID.name(), importedCrosses.getMaleGids());
+		dataMap.put(tableHeaderList.get(CrossesListUtil.SOURCE_INDEX), importedCross.getSource());
+		dataMap.put(ColumnLabels.FGID.name(), importedCross.getFemaleGid());
+		dataMap.put(ColumnLabels.MGID.name(), importedCross.getMaleGids());
 
 		return dataMap;
 

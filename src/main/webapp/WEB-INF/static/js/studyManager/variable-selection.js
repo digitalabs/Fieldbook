@@ -540,7 +540,6 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 			$.each(
 				['/bmsapi/crops/' + cropName + '/variable-cache/' + variableId + '?programUUID=' + currentProgramId,
-					'/BreedingManager/main/'    + 'variableCache/' + variableId + '?' + authParams,
 					'/ibpworkbench/controller/' + 'variableCache/' + variableId + '?' + authParams],
 				function (i, v) {
 					$.ajax({

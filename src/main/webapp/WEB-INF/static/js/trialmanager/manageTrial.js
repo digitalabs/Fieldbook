@@ -9,7 +9,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 	var manageTrialApp = angular.module('manageTrialApp', ['designImportApp', 'leafnode-utils', 'fieldbook-utils', 'subObservation',
 		'ui.router', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables', 'datatables.buttons', 'datatables.colreorder',
-		'showSettingFormElementNew', 'ngSanitize', 'ui.select', 'ngMessages', 'blockUI', 'datasets-api', 'bmsAuth','studyState',
+		'showSettingFormElementNew', 'ngSanitize', 'ui.select', 'ngMessages', 'blockUI', 'datasets-api', 'auth', 'bmsAuth' , 'studyState',
 		'export-study', 'import-study', 'create-sample', 'derived-variable', 'importObservationsApp']);
 
 	manageTrialApp.config(['$httpProvider', function($httpProvider) {
@@ -82,6 +82,17 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				},
 				deepStateRedirect: true, sticky: true
 			})
+
+			.state('inventory', {
+				url: '/inventory',
+				views: {
+					inventory: {
+						controller: 'InventoryTabCtrl',
+						templateUrl: '/Fieldbook/static/js/trialmanager/inventory/inventory-tab.html'
+					}
+				}
+			})
+
 			.state('subObservationTabs', {
 				url: '/subObservationTabs/:subObservationTabId',
 				views: {
@@ -176,13 +187,15 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 		]
 	);
 
+	let inventoryChangedDeRegister = () => {};
+
 	// THE parent controller for the manageTrial (create/edit) page
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'studyStateService', 'TrialManagerDataService', '$http',
-		'$timeout', '_', '$localStorage', '$state', '$location', 'derivedVariableService', 'exportStudyModalService',
-		'importStudyModalService', 'createSampleModalService', 'derivedVariableModalService', '$uibModal', '$q', 'datasetService', 'studyContext', 'LABEL_PRINTING_TYPE', 'HAS_LISTS_OR_SUB_OBS', 'HAS_GENERATED_DESIGN',
-		function ($scope, $rootScope, studyStateService, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $location,
-				  derivedVariableService, exportStudyModalService, importStudyModalService, createSampleModalService, derivedVariableModalService, $uibModal, $q, datasetService,
-				  studyContext, LABEL_PRINTING_TYPE, HAS_LISTS_OR_SUB_OBS, HAS_GENERATED_DESIGN) {
+		'$timeout', '_', '$localStorage', '$state', '$location', 'HasAnyAuthorityService', 'derivedVariableService', 'exportStudyModalService',
+		'importStudyModalService', 'createSampleModalService', 'derivedVariableModalService', '$uibModal', '$q', 'datasetService', 'InventoryService', 'studyContext', 'PERMISSIONS', 'LABEL_PRINTING_TYPE', 'HAS_LISTS_OR_SUB_OBS', 'HAS_GENERATED_DESIGN',
+		function ($scope, $rootScope, studyStateService, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $location, HasAnyAuthorityService,
+				  derivedVariableService, exportStudyModalService, importStudyModalService, createSampleModalService, derivedVariableModalService, $uibModal, $q, datasetService, InventoryService,
+				  studyContext, PERMISSIONS, LABEL_PRINTING_TYPE, HAS_LISTS_OR_SUB_OBS, HAS_GENERATED_DESIGN) {
 
 			$scope.trialTabs = [
 				{
@@ -192,12 +205,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				{
 					name: 'Germplasm & Checks',
 					state: 'germplasm'
-				},
-/*                {   name: 'Treatment Factors',
-                    state: 'treatment'
-                },*/
-				{   name: 'Environments',
-					state: 'environment'
 				}
 			];
 			$scope.subObservationTabs = [];
@@ -210,6 +217,12 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			$scope.sampleTabs = [];
 			$scope.crossesTabsData = [];
 			$scope.crossesTabs = [];
+			$scope.inventoryTab = {
+				name: 'Inventory',
+				state: 'inventory',
+				hidden: true
+			};
+
 			$scope.isOpenStudy = TrialManagerDataService.isOpenStudy;
 			$scope.isLockedStudy = TrialManagerDataService.isLockedStudy;
 			$scope.studyTypes = [];
@@ -217,22 +230,45 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			$scope.isChoosePreviousStudy = false;
 			$scope.hasUnsavedData = studyStateService.hasUnsavedData;
 
+			$scope.hasAnyAuthority = HasAnyAuthorityService.hasAnyAuthority;
+			$scope.PERMISSIONS = PERMISSIONS;
+
 			if ($scope.isOpenStudy()) {
-				var environment = $scope.trialTabs.pop();
 				$scope.trialTabs.push({
 					name: 'Treatment Factors',
 					state: 'treatment'
 				});
-				$scope.trialTabs.push(environment);
+				$scope.trialTabs.push(	{
+					name: 'Environments',
+					state: 'environment'
+				});
 				$scope.trialTabs.push({
 					name: 'Experimental Design',
 					state: 'experimentalDesign'
 				});
 
+				$scope.trialTabs.push($scope.inventoryTab);
+				loadInventoryTab();
+
 				studyStateService.updateHasListsOrSubObs(HAS_LISTS_OR_SUB_OBS);
 				studyStateService.updateGeneratedDesign(HAS_GENERATED_DESIGN);
 
 			};
+
+			inventoryChangedDeRegister();
+			inventoryChangedDeRegister = $rootScope.$on("inventoryChanged", function () {
+				loadInventoryTab();
+			});
+
+			function loadInventoryTab() {
+				InventoryService.searchStudyTransactions({
+					sortedPageRequest: {pageNumber: 1, pageSize: 1}
+				}).then((transactionsTable) => {
+					if (transactionsTable.data.length) {
+						$scope.inventoryTab.hidden = false;
+					}
+				});
+			}
 
 			$http.get('/bmsapi/crops/' + cropName + '/study-types/visible?programUUID=' + studyContext.programId).success(function (data) {
 				$scope.studyTypes = data;
@@ -343,12 +379,12 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 						createErrorNotification(errorMsgHeader, data.createTrialForm.errorMessage);
 					} else {
 						TrialManagerDataService.storeInitialValuesInServiceBackup();
-						var environmentData = TrialManagerDataService.extractData(data.environmentData);
+						var instanceInfo = TrialManagerDataService.extractData(data.environmentData);
 						var environmentSettings = TrialManagerDataService.extractSettings(data.environmentData);
 
-						if (environmentData.noOfEnvironments > 0 && environmentData.environments.length === 0) {
-							while (environmentData.environments.length !== environmentData.noOfEnvironments) {
-								environmentData.environments.push({
+						if (instanceInfo.numberOfInstances > 0 && instanceInfo.instances.length === 0) {
+							while (instanceInfo.instances.length !== instanceInfo.numberOfInstances) {
+								instanceInfo.instances.push({
 									managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
 										environmentSettings.managementDetails),
 									trialDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
@@ -369,7 +405,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 						TrialManagerDataService.updateCurrentData('trialSettings',
 							TrialManagerDataService.extractData(data.trialSettingsData));
-						TrialManagerDataService.updateCurrentData('environments', environmentData);
+						TrialManagerDataService.updateCurrentData('instanceInfo', instanceInfo);
 						TrialManagerDataService.updateCurrentData('treatmentFactors', TrialManagerDataService.extractData(
 							data.treatmentFactorsData));
 
@@ -415,7 +451,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					displayWarningMessage: showIndicateUnappliedChangesWarning, timestamp: new Date()
 				});
 
-				TrialManagerDataService.applicationData.hasNewEnvironmentAdded = true;
+				TrialManagerDataService.applicationData.hasNewInstanceAdded = true;
 
 				$state.go('environment', {addtlNumOfEnvironments: $scope.temp.noOfEnvironments, timestamp: new Date()});
 				$scope.performFunctionOnTabChange('environment');
@@ -452,7 +488,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			};
 
-			$rootScope.navigateToSubObsTab = function (datasetId, isPendingView) {
+			$rootScope.navigateToSubObsTab = function (datasetId, options) {
 				var subObsTab = undefined;
 				var subObsSet = undefined;
 				angular.forEach($scope.subObservationTabs, function (subObservationTab) {
@@ -466,19 +502,23 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 				$scope.isSettingsTab = false;
 				$scope.tabSelected = subObsTab.state;
-				$state.transitionTo('subObservationTabs.subObservationSets',  {
+				return $state.transitionTo('subObservationTabs.subObservationSets',  {
 					subObservationTabId: subObsTab.id,
 					subObservationTab: subObsTab,
 					subObservationSetId: subObsSet.id,
 					subObservationSet: subObsSet,
-					isPendingView: isPendingView
+					isPendingView: options && options.isPendingView
 				}, {
-					reload: true, inherit: false, notify: true
+					reload: options && options.reload, inherit: false, notify: true
 				});
 			};
 
 			$scope.hasAdvanceListCreated = function () {
 				return $scope.advanceTabsData.length !== 0;
+			};
+
+			$scope.hasCrossListCreated = function () {
+				return $scope.crossesTabsData.length !== 0;
 			};
 
 			$scope.performFunctionOnTabChange = function (targetState) {
@@ -897,8 +937,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				return $scope.tabSelected && ([
 					"trialSettings",
 					"germplasm",
-					"treatment",
-					"environment",
+					"treatment"
 				].indexOf($scope.tabSelected) >= 0 || enableSaveForStockList);
 
 
@@ -926,7 +965,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					templateUrl: '/Fieldbook/static/angular-templates/confirmModal.html',
 					controller: function ($scope, $uibModalInstance) {
 						$scope.text = message;
-						$scope.confirmButtonLabel = confirmButtonLabel || environmentConfirmLabel;
+						$scope.confirmButtonLabel = confirmButtonLabel || okLabel;
 						$scope.cancelButtonLabel = cancelButtonLabel || cancelLabel;
 
 						$scope.confirm = function () {
@@ -975,6 +1014,63 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					}]
 				});
 			};
+
+			$scope.showGeoJSONModal = function (isViewGeoJSON) {
+				datasetService.getDatasetInstances(studyContext.measurementDatasetId).then((datasetInstances) => {
+					let instances = datasetInstances.filter((instance) => instance.hasFieldLayout);
+					if (!instances || !instances.length) {
+						return showErrorMessage('', noLayoutError);
+					}
+
+					if (isViewGeoJSON) {
+						instances = instances.filter((instance) => instance.hasGeoJSON)
+						if (!instances.length) {
+							return showErrorMessage('', geoReferenceViewNotAvailableError);
+						}
+					} else {
+						instances = instances.filter((instance) => instance.hasFieldLayout && !instance.hasGeoJSON)
+						if (!instances.length) {
+							return showErrorMessage('', geoReferenceCreateNotAvailableError);
+						}
+					}
+
+					$uibModal.open({
+						template: '<single-instance-selector-modal instances="instances" ' +
+							' instance-id-property="instanceId" ' +
+							' selected="selected" ' +
+							' on-select-instance="onSelectInstance" ' +
+							' on-continue="onContinue" ' +
+							' ></single-instance-selector-modal>',
+						controller: function ($scope, $uibModalInstance) {
+							$scope.selected = {};
+							$scope.instances = instances;
+
+							$scope.onContinue = function () {
+								$uibModal.open({
+									templateUrl: '/Fieldbook/static/angular-templates/geojson/geojson-modal.html',
+									size: 'lg',
+									controller: 'GeoJSONModalCtrl',
+									resolve: {
+										isViewGeoJSON: function () {
+											return Boolean(isViewGeoJSON);
+										},
+										instanceId: function () {
+											return $scope.selected.instanceId;
+										}
+									}
+								});
+							};
+						}
+
+					});
+				});
+			};
+
+			$scope.preparePlanting = function () {
+				$scope.navigateToSubObsTab(studyContext.measurementDatasetId).then(function () {
+					$rootScope.$broadcast('startPlantingPreparation');
+				});
+			}
 
 			$scope.showCreateSampleListModal = function() {
 				createSampleModalService.openDatasetOptionModal();

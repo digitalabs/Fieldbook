@@ -164,6 +164,25 @@ table .even{
     border-bottom: none;
 }
 
+table.table-fit {
+    width: auto !important;
+    table-layout: auto !important;
+}
+table.table-fit thead th, table.table-fit tfoot th {
+    width: auto !important;
+}
+table.table-fit tbody td, table.table-fit tfoot td {
+    width: auto !important;
+}
+
+.table-no-wrap th {
+    white-space: nowrap;
+}
+
+.table-no-wrap td {
+    white-space: nowrap;
+}
+
 td.manually-edited-value {
     background-color: #c5c6de;
     color: black;
@@ -205,24 +224,25 @@ table.dataTable thead .sorting_desc {
     background-color: #c8c6c6;
 }
 
-#subObservationTableContainer table.dataTable thead th.sorting,
-#subObservationTableContainer table.dataTable thead th.sorting_asc,
-#subObservationTableContainer table.dataTable thead th.sorting_desc {
+/** Add sorting back, when needed */
+table.dataTable.table-sorted thead th.sorting,
+table.dataTable.table-sorted thead th.sorting_asc,
+table.dataTable.table-sorted thead th.sorting_desc {
     padding-right: 20px;
 }
-#subObservationTableContainer table.dataTable thead th.sorting {
+table.dataTable.table-sorted thead th.sorting {
     background: #c8c6c6 url('../img/datatable/sort_both.png') no-repeat center right;
 }
-#subObservationTableContainer table.dataTable thead th.sorting_asc {
+table.dataTable.table-sorted thead th.sorting_asc {
     background: #c8c6c6 url('../img/datatable/sort_asc.png') no-repeat center right;
 }
-#subObservationTableContainer table.dataTable thead th.sorting_desc {
+table.dataTable.table-sorted thead th.sorting_desc {
     background: #c8c6c6 url('../img/datatable/sort_desc.png') no-repeat center right;
 }
 
-#subObservationTableContainer table.dataTable thead th.factors.sorting,
-#subObservationTableContainer table.dataTable thead th.factors.sorting_asc,
-#subObservationTableContainer table.dataTable thead th.factors.sorting_desc {
+#subObservationTableContainer table.dataTable.table-sorted thead th.factors.sorting,
+#subObservationTableContainer table.dataTable.table-sorted thead th.factors.sorting_asc,
+#subObservationTableContainer table.dataTable.table-sorted thead th.factors.sorting_desc {
     background-color: #a4a4a4;
 }
 
@@ -1154,6 +1174,10 @@ div.sectionContainer {
 .control-label-italic{
     font-style: italic;
 }
+/* transition to bootstrap 4 left align style */
+.form-horizontal .control-label.control-label-left {
+    text-align: left;
+}
 .list-notes-display{
 	overflow:hidden;
 	text-overflow:ellipsis;	
@@ -2029,6 +2053,24 @@ input.select-all-margin{
     margin-bottom: 25px;
 }
 
+@media (min-width: 1135px) {
+    .modal-huge .modal-dialog {
+        width: 60%;
+    }
+}
+
+@media (min-width: 980px) {
+    .modal-huge .modal-dialog {
+        width: 75%;
+    }
+}
+
+@media (max-width: 980px) {
+    .modal-huge .modal-dialog {
+        width: 90%;
+    }
+}
+
 /* exp design remap css */
 .modal-very-huge .modal-dialog {
     width: 90%;
@@ -2401,10 +2443,6 @@ table.dataTable thead th.sorting_desc
 .column-filter {
     width: 200px;
 }
-.column-filter input {
-    margin-top: 10px;
-    margin-bottom: 20px;
-}
 .column-filter ul {
     max-height: 190px;
     overflow-y: auto;
@@ -2420,34 +2458,38 @@ table.dataTable thead th.sorting_desc
 }
 
 /* Make uib-datepicker look like native bootstrap datepicker */
-.uib-datepicker-style-trasformer { }
-.uib-datepicker-style-trasformer.well {
+.uib-datepicker-style-trasformer[uib-datepicker] .well,
+.uib-datepicker-style-trasformer [uib-datepicker] .well {
     background: none;
 }
-.uib-datepicker-style-trasformer table { }
-.uib-datepicker-style-trasformer table thead,
-.uib-datepicker-style-trasformer table thead th {
+.uib-datepicker-style-trasformer[uib-datepicker] table thead,
+.uib-datepicker-style-trasformer [uib-datepicker] table thead,
+.uib-datepicker-style-trasformer[uib-datepicker] table thead th,
+.uib-datepicker-style-trasformer [uib-datepicker] table thead th {
     background: none;
 }
-.uib-datepicker-style-trasformer table tbody { }
-.uib-datepicker-style-trasformer table tbody tr { }
-.uib-datepicker-style-trasformer table tbody tr td { }
-.uib-datepicker-style-trasformer button,
-.uib-datepicker-style-trasformer button.btn:hover {
+.uib-datepicker-style-trasformer .uib-button-bar button,
+.uib-datepicker-style-trasformer[uib-datepicker] button,
+.uib-datepicker-style-trasformer [uib-datepicker] button,
+.uib-datepicker-style-trasformer[uib-datepicker] button.btn:hover,
+.uib-datepicker-style-trasformer [uib-datepicker] button.btn:hover {
     background: none;
     border: none;
     padding: 2px;
     color: inherit;
 }
-.uib-datepicker-style-trasformer table button:hover {
+.uib-datepicker-style-trasformer[uib-datepicker] table button:hover,
+.uib-datepicker-style-trasformer [uib-datepicker] table button:hover {
     background: #eee;
 }
-.uib-datepicker-style-trasformer table button.active {
+.uib-datepicker-style-trasformer[uib-datepicker] table button.active,
+.uib-datepicker-style-trasformer [uib-datepicker] table button.active {
     background: #357ebd;
     color: #fff;
 }
 /* current date */
-.uib-datepicker-style-trasformer table button.active .text-info {
+.uib-datepicker-style-trasformer[uib-datepicker] table button.active .text-info,
+.uib-datepicker-style-trasformer [uib-datepicker] table button.active .text-info {
     color: #fff;
 }
 

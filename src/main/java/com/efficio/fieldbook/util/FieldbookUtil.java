@@ -4,7 +4,7 @@ import org.generationcp.commons.constant.AppConstants;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.util.FileUtils;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -85,20 +85,20 @@ public class FieldbookUtil {
 		return AppConstants.ENTRY_CODE_PREFIX.getString() + String.format("%04d", index);
 	}
 
-	public static boolean isPlotDuplicateNonFirstInstance(final ImportedCrosses crosses) {
-		if (crosses.isPlotDupe() && crosses.getDuplicateEntries() != null && crosses.getEntryId() > crosses.getDuplicateEntries().iterator()
+	public static boolean isPlotDuplicateNonFirstInstance(final ImportedCross crosses) {
+		if (crosses.isPlotDupe() && crosses.getDuplicateEntries() != null && crosses.getEntryNumber() > crosses.getDuplicateEntries().iterator()
 				.next()) {
 			return true;
 		}
 		return false;
 	}
 
-	public static void mergeCrossesPlotDuplicateData(final ImportedCrosses crosses, final List<ImportedCrosses> importedGermplasmList) {
+	public static void mergeCrossesPlotDuplicateData(final ImportedCross crosses, final List<ImportedCross> importedGermplasmList) {
 		if (FieldbookUtil.isPlotDuplicateNonFirstInstance(crosses)) {
 			// get the 1st instance of duplicate from the list
 			final Integer firstInstanceDuplicate = crosses.getDuplicateEntries().iterator().next();
 			// needed to minus 1 since a list is 0 based
-			final ImportedCrosses firstInstanceCrossGermplasm = importedGermplasmList.get(firstInstanceDuplicate - 1);
+			final ImportedCross firstInstanceCrossGermplasm = importedGermplasmList.get(firstInstanceDuplicate - 1);
 			crosses.setGid(firstInstanceCrossGermplasm.getGid());
 			crosses.setCross(firstInstanceCrossGermplasm.getCross());
 			crosses.setDesig(firstInstanceCrossGermplasm.getDesig());
@@ -106,14 +106,14 @@ public class FieldbookUtil {
 	}
 
 	public static boolean isContinueCrossingMerge(
-		final boolean hasPlotDuplicate, final boolean isPreservePlotDuplicate, final ImportedCrosses cross) {
+		final boolean hasPlotDuplicate, final boolean isPreservePlotDuplicate, final ImportedCross cross) {
 		if (hasPlotDuplicate && !isPreservePlotDuplicate && FieldbookUtil.isPlotDuplicateNonFirstInstance(cross)) {
 			return true;
 		}
 		return false;
 	}
 
-	public static void copyDupeNotesToListDataProject(final List<ListDataProject> dataProjectList, final List<ImportedCrosses> importedCrosses) {
+	public static void copyDupeNotesToListDataProject(final List<ListDataProject> dataProjectList, final List<ImportedCross> importedCrosses) {
 		if (dataProjectList != null && importedCrosses != null && dataProjectList.size() == importedCrosses.size()) {
 			for (int i = 0; i < dataProjectList.size(); i++) {
 				dataProjectList.get(i).setDuplicate(importedCrosses.get(i).getDuplicate());

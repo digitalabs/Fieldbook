@@ -134,8 +134,8 @@ var ImportDesign = (function() {
 
 		generateDesign: function() {
 			ImportDesign.getTrialManagerDataService().performDataCleanup();
-			var environmentData =
-				angular.copy(ImportDesign.studyManagerCurrentData().environments);
+			var instanceInfo =
+				angular.copy(ImportDesign.studyManagerCurrentData().instanceInfo);
 
 			var trialSettingsData =
 				angular.copy(ImportDesign.studyManagerCurrentData().trialSettings);
@@ -144,7 +144,7 @@ var ImportDesign = (function() {
 			// custom import design type id
 			var designTypeId = 3;
 			var data = service.retrieveGenerateDesignInput(designTypeId);
-			data.environmentData = environmentData;
+			data.instanceInfo = instanceInfo;
 			data.trialSettings = trialSettingsData;
 			$.ajax({
 				type: 'POST',
@@ -173,7 +173,7 @@ var ImportDesign = (function() {
 
 			ImportDesign.closeReviewModal();
 
-			var environmentData = resp.environmentData, environmentSettings = resp.environmentSettings, trialService = ImportDesign
+			var instanceInfo = resp.instanceInfo, environmentSettings = resp.environmentSettings, trialService = ImportDesign
 				.getTrialManagerDataService();
 
 			$.each(environmentSettings, function (key, value) {
@@ -184,7 +184,7 @@ var ImportDesign = (function() {
 
 			// Set the design type to Other Design Type
 			trialService.currentData.experimentalDesign.designType = 3;
-			trialService.updateCurrentData('environments', environmentData);
+			trialService.updateCurrentData('instanceInfo', instanceInfo);
 
 			angular.element('#mainApp').scope().$apply();
 
@@ -199,11 +199,11 @@ var ImportDesign = (function() {
 			setTimeout(
 					function() {
 
-						var environmentData =
+						var instanceInfo =
 							angular
 								.copy(ImportDesign
-									.studyManagerCurrentData().environments);
-						$.each(environmentData.environments,
+									.studyManagerCurrentData().instanceInfo);
+						$.each(instanceInfo.instances,
 							function(key, data) {
 								$.each(data.managementDetailValues,
 									function(key, value) {
@@ -217,7 +217,7 @@ var ImportDesign = (function() {
 						$.ajax({
 								url: '/Fieldbook/DesignImport/showDetails/data/',
 								type: 'POST',
-								data: JSON.stringify(environmentData),
+								data: JSON.stringify(instanceInfo),
 								dataType: 'json',
 								contentType: 'application/json; charset=utf-8',
 								cache: false,
@@ -243,12 +243,12 @@ var ImportDesign = (function() {
 			}
 
 			var TrialManagerDataService = angular.element('#mainApp').injector().get('TrialManagerDataService');
-			var hasNewEnvironmentAdded = TrialManagerDataService.applicationData.hasNewEnvironmentAdded;
-			var noOfEnvironments = parseInt(TrialManagerDataService.currentData.environments.noOfEnvironments);
+			var hasNewInstanceAdded = TrialManagerDataService.applicationData.hasNewInstanceAdded;
+			var numberOfInstances = parseInt(TrialManagerDataService.currentData.instanceInfo.numberOfInstances);
 
 			var actionURL = '/Fieldbook/DesignImport/import';
-			if (hasNewEnvironmentAdded) {
-				actionURL += '/' + noOfEnvironments;
+			if (hasNewInstanceAdded) {
+				actionURL += '/' + numberOfInstances;
 			}
 
 			$('#importDesignUploadForm').attr('action', actionURL);

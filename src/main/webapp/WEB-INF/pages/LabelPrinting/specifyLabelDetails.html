@@ -19,8 +19,7 @@
 </div>
 
 <form id="specifyLabelDetailsForm" role="form-horizontal" action="#" class="lblprnt-label-details"
-      th:classappend="${labelPrintingForm.germplasmListId != null} ? lblprnt-germplasm-list-inventory : lblprnt-study-inventory"
-      th:action="@{${labelPrintingForm.germplasmListId != null} ? '/LabelPrinting/specifyLabelDetails/inventory' : '/LabelPrinting/specifyLabelDetails'}"
+      th:classappend="lblprnt-study-inventory" th:action="@{'/LabelPrinting/specifyLabelDetails'}"
       method="post" th:object="${labelPrintingForm}" enctype="multipart/form-data">
     <input type="hidden" th:field="*{userLabelPrinting.leftSelectedLabelFields}"/>
     <input type="hidden" th:field="*{userLabelPrinting.rightSelectedLabelFields}"/>
@@ -30,7 +29,6 @@
     <input type="hidden" th:field="*{userLabelPrinting.fieldMapsExisting}"/>
     <input type="hidden" th:field="*{isStockList}"/>
     <input type="hidden" th:field="*{customReport}"/>
-    <input type="hidden" th:field="*{germplasmListId}"/>
 
 
     <div class="row">
@@ -303,7 +301,7 @@
                                                 <td><input class="includeTrial" type="checkbox"/></td>
                                                 <td>
                                                     <input class="trialOrder" type="hidden"
-                                                           th:value="${map.fieldbookId}+'|'+${dataset.datasetId}+'|'+${trial.geolocationId}"/>
+                                                           th:value="${map.fieldbookId}+'|'+${dataset.datasetId}+'|'+${trial.environmentId}"/>
                                                     <span class="orderNo"></span>
                                                 </td>
                                                 <td th:text="${map.fieldbookName}"></td>
@@ -658,9 +656,9 @@
                                         <span th:text="#{label.printing.do.you.need.bar.codes.no}">No</span>
                                     </label>
                                 </div>
-                                <div th:if="!*{isStockList} and (*{germplasmListId} == null or *{germplasmListId} == '')" class="col-xs-6 col-md-6"><label>&nbsp;</label></div>
+                                <div th:if="!*{isStockList}" class="col-xs-6 col-md-6"><label>&nbsp;</label></div>
                                 
-                                <div th:if="!*{isStockList} and (*{germplasmListId} == null or *{germplasmListId} == '')" class="col-xs-6 col-md-6 automatically-barcode-fields">
+                                <div th:if="!*{isStockList}" class="col-xs-6 col-md-6 automatically-barcode-fields">
                                     <label class="control-label label-bold" th:text="#{label.printing.do.you.want.automatically.unique.bar.codes}">Do you want 
                                     	to use automatically generated unique barcodes?</label>
                                     <label class="radio-inline" style="padding-left: 30px">
@@ -774,7 +772,7 @@
                                     </div>
                                     <div class="pull-left" style="width: 300px; padding-left: 10px">
                                         <input type="text" class="form-control" th:field="*{userLabelPrinting.settingsName}" maxlength="50" 
-                                               th:placeholder="${labelPrintingForm.germplasmListId != null} ? 'Seed Shipment Labels' : 'Settings Name'"/>
+                                               th:placeholder="'Settings Name'"/>
                                     </div>
                                 </div>
                             </div>

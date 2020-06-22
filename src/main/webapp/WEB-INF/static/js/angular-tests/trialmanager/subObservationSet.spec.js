@@ -620,7 +620,7 @@ describe('SubObservationSetCtrl', function () {
 		],
 		serviceDataset = {
 			instances: [{
-				instanceDbId: 1
+				experimentId: 1
 			}],
 			"variables": [{
 				"termId": 8206,
@@ -963,19 +963,21 @@ describe('SubObservationSetCtrl', function () {
 				expect(scope.traitVariables.m_keys[2]).toEqual(extractedSettings.m_keys[2]);
 				expect(scope.traitVariables.m_vals["8630"].variable.name).toEqual(extractedSettings.m_vals["8630"].variable.name);
 
-				expect(scope.columnsObj.columns[0].columnData.termId).toEqual(columns[0].termId);
+				expect(scope.columnsObj.columns[1].columnData.termId).toEqual(columns[0].termId);
 			});
 
 			it('should have datatables functionality', function () {
-				// AleuCol_E_1to5
-				expect(scope.columnsObj.columnsDef[10].render({value: scope.columnsObj.columns[10].columnData.possibleValues[1].name}))
-					.toContain(scope.columnsObj.columns[10].columnData.possibleValues[1].displayDescription);
+				// AleuCol_E_1to5 (+ 1 (checkbox))
+				const AleuCol_E_1to5_index = 10+1;
+				expect(scope.columnsObj.columnsDef[AleuCol_E_1to5_index].render({value: scope.columnsObj.columns[AleuCol_E_1to5_index].columnData.possibleValues[1].name}))
+					.toContain(scope.columnsObj.columns[AleuCol_E_1to5_index].columnData.possibleValues[1].displayDescription);
 
 				spyOn($.fn, 'addClass').and.callFake(function () {
 				});
 
-				// nah_expected_range
-				scope.columnsObj.columnsDef[8].createdCell({}, {value: 60}, {}, scope.columnsObj.columns[8].columnData);
+				// nah_expected_range (+ 1 (checkbox))
+				const nah_expected_range_index = 8+1;
+				scope.columnsObj.columnsDef[nah_expected_range_index].createdCell({}, {value: 60}, {}, scope.columnsObj.columns[nah_expected_range_index].columnData);
 				expect($.fn.addClass).toHaveBeenCalledWith('accepted-value')
 			});
 

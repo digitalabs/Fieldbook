@@ -44,7 +44,7 @@
 			handleReAuthentication: function() {
 				if (!hasBeenHandled) {
 					hasBeenHandled = true;
-					alert('Ontology manager needs to authenticate you again. Redirecting to login page.');
+					alert('Breeding Management System needs to authenticate you again. Redirecting to login page.');
 					window.top.location.href = '/ibpworkbench/logout';
 				}
 			}

@@ -1,98 +1,96 @@
 <div ng-cloak="">
 
-    <section-container heading="Define Environments" collapsible="true" >
-       <div name="content">
-            <div class="environments col-lg-12">
-                <div class="row">
-                    <div class="col-xs-6 col-md-6">
+	<section-container heading="Define Environments" collapsible="true">
+		<div name="content">
+			<div class="environments col-lg-12">
+				<div class="row">
+					<div class="col-xs-6 col-md-6">
 
-                        <section-container icon="bms-mgt-details"
-                                           th:attr="heading=#{study.managesettings.environment.management.details},help-tooltip=#{study.managesettings.environment.management.details.tooltip}"
-                                           add-variable="true" hide-variable="addVariable" model-data="settings.managementDetails"
-                                           variable-type="1806" callback="onAddVariable(result)">
-                            <display-settings hide-delete="isHideDelete" name="content" predelete-function="onRemoveVariable" settings="settings.managementDetails"
-                                              variable-type="1806"></display-settings>
-                        </section-container>
+						<section-container icon="bms-mgt-details"
+										   th:attr="heading=#{study.managesettings.environment.management.details},help-tooltip=#{study.managesettings.environment.management.details.tooltip}"
+										   add-variable="true" hide-variable="addVariable" model-data="settings.managementDetails"
+										   variable-type="1806" callback="onAddVariable(result, 1806)">
+							<display-settings hide-delete="isHideDelete" name="content" predelete-function="onRemoveVariable" settings="settings.managementDetails"
+											  variable-type="1806"></display-settings>
+						</section-container>
 
-                    </div>
-                    <div class="col-xs-6 col-md-6">
-                        <section-container
-                                th:attr="heading=#{study.managesettings.environment.condition.details},help-tooltip=#{study.managesettings.conditions.tooltip},icon-img=@{/static/svg/conditions.svg}"
-                                icon-size="22" add-variable="true" hide-variable="addVariable" model-data="settings.trialConditionDetails"
-                                variable-type="1802" callback="onAddVariable(result)">
-                            <display-settings hide-delete="isHideDelete" name="content" predelete-function="onRemoveVariable" settings="settings.trialConditionDetails"
-                                              variable-type="1802"></display-settings>
-                        </section-container>
-                    </div>
-                </div>
-                <div class="row">&nbsp;</div>
-               	<div class="row">
-                    <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12 add-bottom-padding">
+					</div>
+					<div class="col-xs-6 col-md-6">
+						<section-container
+							th:attr="heading=#{study.managesettings.environment.condition.details},help-tooltip=#{study.managesettings.conditions.tooltip},icon-img=@{/static/svg/conditions.svg}"
+							icon-size="22" add-variable="true" hide-variable="addVariable" model-data="settings.trialConditionDetails"
+							variable-type="1802" callback="onAddVariable(result, 1802)">
+							<display-settings hide-delete="isHideDelete" name="content" predelete-function="onRemoveVariable" settings="settings.trialConditionDetails"
+											  variable-type="1802"></display-settings>
+						</section-container>
+					</div>
+				</div>
+				<div class="row">&nbsp;</div>
+				<div class="row">
+					<div class="col-lg-6 col-md-8 col-sm-10 col-xs-12 add-bottom-padding">
 
-                        <div class="form-horizontal">
-                            <div class="form-group form-group-sm">
-                                <label class="control-label label-bold add_top_padding col-xs-7" style="text-align: left" th:text="#{study.managesettings.environment.specify.level.no}">Specify the number of environments for this study:</label>
-                                <div class="col-xs-4">
-                                    <div class="input-group">
-                                        <input maxlength="3" valid-number="" class="form-control input-sm" ng-model="temp.noOfEnvironments" ng-disabled="isDesignAlreadyGenerated()"/>
-                                        <span class="input-group-btn">
-                                              <input ng-click="updateEnvironmentCount()" ng-hide="isDesignAlreadyGenerated()" class="btn btn-info btn-sm"
-                                                     style="padding: 6px 10px 5px; font-size: 11px;" type="button" value="Ok"/>
+						<div class="form-horizontal">
+							<div class="form-group form-group-sm">
+								<label class="control-label label-bold add_top_padding col-xs-7" style="text-align: left" th:text="#{study.managesettings.environment.specify.level.no}">Specify the number of environments for this study:</label>
+								<div class="col-xs-4">
+									<div class="input-group">
+										<input maxlength="3" valid-number="" class="form-control input-sm" ng-model="temp.numberOfInstances" ng-disabled="isDesignAlreadyGenerated()"/>
+										<span class="input-group-btn">
+                                              <input ng-click="updateInstanceCount()" ng-hide="isDesignAlreadyGenerated()" class="btn btn-info btn-sm"
+													 style="padding: 6px 10px 5px; font-size: 11px;" type="button" value="Ok"/>
                                         </span>
-                                    </div><!-- /input-group -->
-                                </div>
-                                <div class="col-xs-offset-0">
-                                    <div class="input-group">
-                                        <span ng-show="isDesignAlreadyGenerated()" class="glyphicon glyphicon-plus-sign fbk-add-sign" ng-click="(isDisableAddEnvironment) || addEnvironment()"></span>
-                                    </div>
-                                </div>
-                            </div>
+									</div><!-- /input-group -->
+								</div>
+								<div class="col-xs-offset-0">
+									<div class="input-group">
+										<span ng-show="isDesignAlreadyGenerated()" class="glyphicon glyphicon-plus-sign fbk-add-sign" ng-click="(isDisableAddInstance) || addInstance()"></span>
+									</div>
+								</div>
+							</div>
 
-                        </div>
+						</div>
 
 
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section-container>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section-container>
 
-    <section-container th:attr="heading=#{study.managesettings.environment.specify.level}">
-        <div name="content">
+	<section-container th:attr="heading=#{study.managesettings.environment.specify.level}">
+		<div name="content">
 
-            <table id="environment-table" datatable="ng" dt-options="dtOptions" dt-instance="nested.dtInstance"
-                   class="table table-curved table-condensed fbk-table-with-check fbk-datatable-environments" width="100%">
-                <thead>
-                <tr>
-                    <th data-sortable="false" class="fbk-delete-link"></th>
-                    <th data-sortable="false" th:text="#{study.managesettings.environment.label}">Environment</th>
-                    <th data-sortable="false" ng-repeat="key in settings.managementDetails.keys() track by $index"
-                        ng-hide="settings.managementDetails.val(key).hidden">
-                        {{settings.managementDetails.val(key).variable.name}}</th>
-                    <th data-sortable="false" ng-repeat="key in settings.trialConditionDetails.keys()">
-                        {{settings.trialConditionDetails.val(key).variable.name}}</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr ng-repeat="environment in data.environments track by $index" ng-class="{even : $even, odd : $odd}">
-                    <td class="fbk-delete-link fbk-table-delete-link">
-                        <span ng-click="deleteEnvironment($index, environment.locationId)" ng-show="data.noOfEnvironments > 1"
-                              class="glyphicon glyphicon-minus-sign fbk-delete-sign" ng-model-options="{ debounce: 500 }">&nbsp;</span>
-                    </td>
-                    <td>{{environment.managementDetailValues[TRIAL_INSTANCE_NO_INDEX]}}</td>
-                    <td ng-repeat="key in settings.managementDetails.keys() track by $index"
-                        ng-hide="settings.managementDetails.val(key).hidden">
-                        <show-setting-form-element-new ng-if="isLocation" settings="settings.managementDetails" targetkey="{{key}}"
-                                                   valuecontainer="environment.managementDetailValues"
-                                                       changefunction="onLocationChange({key: environment.managementDetailValues[key]})"></show-setting-form-element-new>
-                        <show-setting-form-element-new ng-if="!isLocation" settings="settings.managementDetails" targetkey="{{key}}"
-                                                       valuecontainer="environment.managementDetailValues"></show-setting-form-element-new></td>
-                    <td ng-repeat="key in settings.trialConditionDetails.keys() track by $index">
-                        <show-setting-form-element settings="settings.trialConditionDetails" targetkey="{{key}}"
-                                                   valuecontainer="environment.trialDetailValues"></show-setting-form-element></td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </section-container>
+			<table id="environment-table" datatable="ng" dt-options="dtOptions" dt-instance="nested.dataTable"
+				   class="table table-curved table-condensed fbk-table-with-check fbk-datatable-environments" width="100%">
+				<thead>
+				<tr>
+					<th data-sortable="false" class="fbk-delete-link"></th>
+					<th data-sortable="false" th:text="#{study.managesettings.environment.label}">Environment</th>
+					<th data-sortable="false" ng-repeat="key in settings.managementDetails.keys() track by $index"
+						ng-hide="settings.managementDetails.val(key).hidden" data-termid="{{key}}">
+						{{settings.managementDetails.val(key).variable.name}}
+					</th>
+					<th data-sortable="false" ng-repeat="key in settings.trialConditionDetails.keys()" data-termid="{{key}}">
+						{{settings.trialConditionDetails.val(key).variable.name}}
+					</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr ng-repeat="instance in instanceInfo.instances track by $index" ng-class="{even : $even, odd : $odd}">
+					<td class="fbk-delete-link fbk-table-delete-link">
+                        <span ng-click="deleteInstance($index, instance.instanceId)" ng-show="instanceInfo.numberOfInstances > 1"
+							  class="glyphicon glyphicon-minus-sign fbk-delete-sign" ng-model-options="{ debounce: 500 }">&nbsp;</span>
+					</td>
+					<td>{{instance.managementDetailValues[TRIAL_INSTANCE_NO_INDEX]}}</td>
+					<td class="instance-editable-cell" ng-repeat="key in settings.managementDetails.keys() track by $index" ng-hide="settings.managementDetails.val(key).hidden">
+						{{renderDisplayValue(settings.managementDetails.val(key), instance.managementDetailValues[key])}}
+					</td>
+					<td class="instance-editable-cell" ng-repeat="key in settings.trialConditionDetails.keys() track by $index">
+						{{renderDisplayValue(settings.trialConditionDetails.val(key), instance.trialDetailValues[key])}}
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</section-container>
 </div>

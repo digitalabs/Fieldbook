@@ -1,6 +1,10 @@
 (function () {
 	'use strict';
 
+	var subObsTabSelectedDeRegister = () => {};
+	var sampleListCreatedDeRegister = () => {};
+	var startPlantingPreparationDeRegister = () => {};
+
 	var subObservationModule = angular.module('subObservation', ['visualization']);
 	var TRIAL_INSTANCE = 8170,
 		GID = 8240,
@@ -18,15 +22,17 @@
 				  studyInstanceService, datasetService, derivedVariableService, $timeout, $uibModal, visualizationModalService, studyContext
 		) {
 
-			// FIXME is there a better way?
-			// Only used in tests - to call $rootScope.$apply()
-			// for production, rely on $scope.dtColumns promise
-			// we cannot use dtColumns.then because we need to call $rootScope.$apply
-			// just after dtColumnsPromise.resolve()
+			// used also in tests - to call $rootScope.$apply()
 			var tableLoadedResolve;
 			$scope.tableLoadedPromise = new Promise(function (resolve) {
 				tableLoadedResolve = resolve;
 			});
+
+			var tableRenderedResolve;
+			$scope.tableRenderedPromise = new Promise(function (resolve) {
+				tableRenderedResolve = resolve;
+			});
+
 			$scope.hasInstances = false;
 
 			$scope.toggleSectionBatchAction = false;
@@ -56,6 +62,10 @@
 			$scope.dtColumns = dtColumnsPromise.promise;
 			$scope.dtColumnDefs = dtColumnDefsPromise.promise;
 			$scope.dtOptions = null;
+
+			$scope.totalItems = 0;
+			$scope.selectedItems = [];
+			$scope.isAllPagesSelected = false;
 
 			$scope.columnFilter = {
 				selectAll: function () {
@@ -190,12 +200,45 @@
 				loadTable();
 			}); // getDataset
 
-			$rootScope.$on('subObsTabSelected', function (event) {
+			subObsTabSelectedDeRegister();
+			subObsTabSelectedDeRegister = $rootScope.$on('subObsTabSelected', function (event) {
 				adjustColumns();
 			});
 
-			$rootScope.$on('sampleListCreated', function (event) {
+			sampleListCreatedDeRegister();
+			sampleListCreatedDeRegister = $rootScope.$on('sampleListCreated', function (event) {
 				loadTable();
+			});
+
+			startPlantingPreparationDeRegister();
+			startPlantingPreparationDeRegister = $rootScope.$on('startPlantingPreparation', function (event) {
+				$scope.tableRenderedPromise.then(function () {
+					if (!$scope.validateSelection()) {
+						return;
+					}
+					$uibModal.open({
+						templateUrl: '/Fieldbook/static/js/trialmanager/inventory/planting-preparation/planting-preparation-modal.html',
+						windowClass: 'modal-very-huge',
+						controller: 'PlantingPreparationModalCtrl',
+						resolve: {
+							searchComposite: function () {
+								return {
+									itemIds: $scope.selectedItems.length ? $scope.selectedItems : null,
+									searchRequest: $scope.selectedItems.length  ? null : {
+										instanceId: $scope.nested.selectedEnvironment.instanceId,
+										draftMode: $scope.isPendingView,
+										filter: getFilter()
+									}
+								};
+							},
+							datasetId: function () {
+								return $scope.subObservationSet.dataset.datasetId;
+							}
+						}
+					}).result.then(() => {
+						loadTable();
+					});
+				});
 			});
 
 			$scope.getVariables = function (variableType) {
@@ -354,6 +397,7 @@
 				$scope.isPendingView = isPendingView;
 				$scope.selectedStatusFilter = "1";
 				doPendingViewActions();
+				resetChecksStatus();
 				loadTable();
 			};
 
@@ -449,10 +493,12 @@
 
 			$scope.changeEnvironment = function () {
 				table().columns("TRIAL_INSTANCE:name").visible($scope.nested.selectedEnvironment === $scope.environments[0]);
+				resetChecksStatus();
 				table().ajax.reload();
 			};
 
 			$scope.changeStatusFilter = function () {
+				resetChecksStatus();
 				table().ajax.reload();
 			};
 
@@ -547,7 +593,7 @@
 				}
 
 				var param = JSON.stringify({
-					instanceId: $scope.nested.selectedEnvironment.instanceDbId,
+					instanceId: $scope.nested.selectedEnvironment.instanceId,
 					draftMode: $scope.isPendingView,
 					filter: getFilter()
 				});
@@ -570,7 +616,7 @@
 									newValue: newValue,
 									newCategoricalValueId: getCategoricalValueId($scope.nested.newValueBatchUpdate, $scope.nested.selectedVariableFilter),
 									observationUnitsSearchDTO: {
-										instanceId: $scope.nested.selectedEnvironment.instanceDbId,
+										instanceId: $scope.nested.selectedEnvironment.instanceId,
 										draftMode: $scope.isPendingView,
 										filter: getFilter()
 									}
@@ -595,7 +641,7 @@
 							case 2:
 								// acceptDraftDataByVariable
 								var param = JSON.stringify({
-									instanceId: $scope.nested.selectedEnvironment.instanceDbId,
+									instanceId: $scope.nested.selectedEnvironment.instanceId,
 									draftMode: $scope.isPendingView,
 									filter: getFilter()
 								});
@@ -623,6 +669,10 @@
 				return $scope.isVariableBatchActionSelected(index);
 			};
 
+			$scope.isCheckBoxColumn = function (index) {
+				return index === 0;
+			};
+
 			$scope.isVariableBatchActionSelected = function (index) {
 				return $scope.nested.selectedVariableFilter //
 					&& $scope.columnsObj //
@@ -633,6 +683,7 @@
 			};
 
 			$scope.filterByColumn = function () {
+				resetChecksStatus();
 				table().ajax.reload();
 			};
 
@@ -645,6 +696,7 @@
 					});
 					$scope.columnFilter.columnData.isSelectAll = false;
 				}
+				resetChecksStatus();
 				table().ajax.reload();
 			};
 
@@ -776,7 +828,7 @@
 									sortBy: sortedColTermId,
 									sortOrder: order.dir
 								},
-								instanceId: $scope.nested.selectedEnvironment.instanceDbId,
+								instanceId: $scope.nested.selectedEnvironment.instanceId,
 								draftMode: $scope.isPendingView,
 								filter: getFilter()
 							});
@@ -820,7 +872,7 @@
 								// We send all the data (with/without filter) to OpenCPU server,
 								// No pagination is needed.
 								sortedRequest: null,
-								instanceId: $scope.nested.selectedEnvironment.instanceDbId,
+								instanceId: $scope.nested.selectedEnvironment.instanceId,
 								draftMode: $scope.isPendingView,
 								filter: getFilter()
 							};
@@ -830,7 +882,8 @@
 					}, {
 						extend: 'colvis',
 						className: 'fbk-buttons-no-border fbk-colvis-button',
-						text: '<i class="glyphicon glyphicon-th"></i>'
+						text: '<i class="glyphicon glyphicon-th"></i>',
+						columns: ':gt(0)'
 					}])
 					.withColReorder()
 					.withPaginationType('full_numbers');
@@ -838,9 +891,10 @@
 
 			function initCompleteCallback() {
 				table().columns().every(function () {
-					$(this.header()).prepend($compile('<span class="glyphicon glyphicon-bookmark" style="margin-right: 10px; color:#1b95b2;"' +
-						' ng-if="isVariableBatchActionSelected(' + this.index() + ')"> </span>')($scope))
-						.append($compile('<span class="glyphicon glyphicon-filter" ' +
+					$(this.header())
+						.prepend($compile('<span class="glyphicon glyphicon-bookmark" style="margin-right: 10px; color:#1b95b2;"' +
+							' ng-if="isVariableBatchActionSelected(' + this.index() + ')"> </span>')($scope))
+						.append($compile('<span ng-if="!isCheckBoxColumn(' + this.index() + ')" class="glyphicon glyphicon-filter" ' +
 							' style="cursor:pointer; padding-left: 5px;"' +
 							' popover-placement="bottom"' +
 							' ng-class="getFilteringByClass(' + this.index() + ')"' +
@@ -850,10 +904,13 @@
 							// ' popover-is-open="columnFilter.isOpen"' +
 							' ng-if="isVariableFilter(' + this.index() + ')"' +
 							' ng-click="openColumnFilter(' + this.index() + ')"' +
-							' uib-popover-template="\'columnFilterPopoverTemplate.html\'">' +
-							'</span>')($scope));
+							' uib-popover-template="\'columnFilterPopoverTemplate.html\'"></span>')($scope))
+						.prepend($compile('<span ng-if="isCheckBoxColumn(' + this.index() + ')">'
+							+ '<input type="checkbox" title="select current page" ng-checked="isPageSelected()"  ng-click="onSelectPage()">'
+							+ '</span>')($scope));
 				});
 				adjustColumns();
+				tableRenderedResolve();
 			}
 
 			function headerCallback(thead, data, start, end, display) {
@@ -878,6 +935,13 @@
 				}
 			}
 
+			/* WARNING Complexity up ahead.
+			 * The following logic is probably one the most complex in the BMS system
+			 * The previous version was even more complex, spanning several files and thousand of lines.
+			 * A lot of effort was put to simplify that logic here.
+			 * We hope we can make even simpler and clearer in the future
+			 * TODO unit test
+			 */
 			function addCellClickHandler() {
 				var $table = angular.element(tableId);
 
@@ -1096,6 +1160,69 @@
 				} // clickHandler
 			}
 
+			$scope.allTableItems = function () {
+				return table().context[0].json && table().context[0].json['recordsFiltered'];
+			};
+
+			$scope.isPageSelected = function () {
+				var currentItems = getCurrentItems();
+				return $scope.selectedItems.length > 0 && !currentItems.some((item) => $scope.selectedItems.indexOf(item) === -1);
+			};
+
+			$scope.isSelected = function (itemId) {
+				return itemId && $scope.selectedItems.length > 0 && $scope.selectedItems.find((item) => item === itemId);
+			};
+
+			$scope.toggleSelect = function (observationUnitId) {
+				var idx = $scope.selectedItems.indexOf(observationUnitId);
+				if (idx > -1) {
+					$scope.selectedItems.splice(idx, 1)
+				} else {
+					$scope.selectedItems.push(observationUnitId);
+				}
+			};
+
+			$scope.onSelectAllPages = function () {
+				$scope.isAllPagesSelected = !$scope.isAllPagesSelected;
+				table().columns(0).visible(!$scope.isAllPagesSelected);
+				$scope.selectedItems = [];
+				table().ajax.reload();
+			};
+
+			$scope.onSelectPage = function () {
+				var currentItems = getCurrentItems();
+				if ($scope.isPageSelected()) {
+					$scope.selectedItems = $scope.selectedItems.filter((item) =>
+						currentItems.indexOf(item) === -1);
+				} else {
+					$scope.selectedItems = currentItems.filter((item) =>
+						$scope.selectedItems.indexOf(item) === -1
+					).concat($scope.selectedItems);
+				}
+			};
+
+			$scope.validateSelection = function () {
+				if (!$scope.isAllPagesSelected && !$scope.selectedItems.length) {
+					return showErrorMessage('', $.fieldbookMessages.errorPlantingSelectionInvalid);
+				}
+				return true;
+			};
+
+			function getCurrentItems() {
+				return table().data().toArray().map((data) => {
+					return data.observationUnitId
+				});
+			}
+
+			function resetChecksStatus() {
+				$scope.totalItems = 0;
+				$scope.selectedItems = [];
+				$scope.isAllPagesSelected = false;
+				try {
+					table().columns(0).visible(!$scope.isAllPagesSelected);
+				} catch (e) {}
+			}
+
 			function getCategoricalValueId(cellDataValue, columnData) {
 				if (columnData.possibleValues
 					&& cellDataValue !== 'missing') {
@@ -1132,7 +1259,7 @@
 			}
 
 			function reloadDataset() {
-				$rootScope.navigateToSubObsTab(subObservationSet.id);
+				$rootScope.navigateToSubObsTab(subObservationSet.id, {reload: true});
 			}
 
 			function loadTable() {
@@ -1170,19 +1297,30 @@
 					dtColumnsPromise.resolve(columnsObj.columns);
 					dtColumnDefsPromise.resolve(columnsObj.columnsDef);
 
-					// Only used in tests
 					tableLoadedResolve();
 					loadBatchActionCombo();
+					resetChecksStatus();
 				});
 			}
 
 			function loadColumns() {
 				return datasetService.getColumns(subObservationSet.id, $scope.isPendingView).then(function (columnsData) {
-					subObservationSet.columnsData = columnsData;
-					var columnsObj = $scope.columnsObj = subObservationSet.columnsObj = mapColumns(columnsData);
-
+					subObservationSet.columnsData = addCheckBoxColumn(columnsData);
+					var columnsObj = $scope.columnsObj = subObservationSet.columnsObj = mapColumns(subObservationSet.columnsData);
 					return columnsObj;
 				});
+			}
+
+			function addCheckBoxColumn(columnsData) {
+				// copy array to avoid modifying the parameter (unit test might reuse the same object)
+				var columns = columnsData.slice();
+				columns.unshift({
+					alias: "",
+					factor: true,
+					name: "CHECK",
+					termId: -3,
+				});
+				return columns;
 			}
 
 			function mapColumns(columnsData) {
@@ -1246,8 +1384,17 @@
 						columnData: columnData
 					});
 
-					// GID or DESIGNATION
-					if (columnData.termId === 8240 || columnData.termId === 8250) {
+					// CheckBox Column
+					if (columnData.index === 0) {
+						columnsDef.push({
+							targets: columns.length - 1,
+							orderable: false,
+							createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
+								$(td).append($compile('<span><input type="checkbox" ng-checked="isSelected(' + rowData.observationUnitId + ')" ng-click="toggleSelect(' + rowData.observationUnitId + ')"></span>')($scope));
+							}
+						});
+					} else if (columnData.termId === 8240 || columnData.termId === 8250) {
+						// GID or DESIGNATION
 						columnsDef.push({
 							targets: columns.length - 1,
 							orderable: false,

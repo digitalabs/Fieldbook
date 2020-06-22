@@ -16,7 +16,7 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.generationcp.commons.data.initializer.ImportedCrossesTestDataInitializer;
-import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
 import org.generationcp.commons.pojo.FileExportInfo;
@@ -427,14 +427,14 @@ public class CrossingSettingsControllerTest {
 
 	@Test
 	public void testCheckForHybridMethodsTrue() {
-		final List<ImportedCrosses> importedCrosses = this.importedCrossesTestDataInitializer.createImportedCrossesList(1, true);
+		final List<ImportedCross> importedCrosses = this.importedCrossesTestDataInitializer.createImportedCrossesList(1, true);
 		Assert.assertTrue("The imported crosses should have hybrid methods",
 				this.crossingSettingsController.checkForHybridMethods(importedCrosses));
 	}
 
 	@Test
 	public void testCheckForHybridMethodsFalse() {
-		final List<ImportedCrosses> importedCrosses = this.importedCrossesTestDataInitializer.createImportedCrossesList(1, false);
+		final List<ImportedCross> importedCrosses = this.importedCrossesTestDataInitializer.createImportedCrossesList(1, false);
 		Assert.assertFalse("The imported crosses should not have hybrid methods",
 				this.crossingSettingsController.checkForHybridMethods(importedCrosses));
 	}
@@ -546,7 +546,7 @@ public class CrossingSettingsControllerTest {
 	
 	@Test
 	public void testSetParentsInformation() {
-		final List<ImportedCrosses> crosses = this.createImportedCrossesList(true).getImportedCrosses();
+		final List<ImportedCross> crosses = this.createImportedCrossesList(true).getImportedCrosses();
 		final Map<Integer, String[]> parentsMap = new HashMap<>();
 		final String newFemalePedigree = RandomStringUtils.randomAlphabetic(20);
 		final String newFemaleCross = RandomStringUtils.randomAlphabetic(20);
@@ -561,7 +561,7 @@ public class CrossingSettingsControllerTest {
 				CrossingSettingsControllerTest.MGID2, CrossingSettingsControllerTest.FGID))).thenReturn(parentsMap);
 		
 		this.crossingSettingsController.setParentsInformation(crosses);
-		final ImportedCrosses cross = crosses.get(0);
+		final ImportedCross cross = crosses.get(0);
 		Assert.assertEquals(newFemalePedigree, cross.getFemalePedigree());
 		Assert.assertEquals(newFemaleCross, cross.getFemaleCross());
 		Assert.assertEquals(newMalePedigree1, cross.getMaleParents().get(0).getPedigree());
@@ -577,15 +577,15 @@ public class CrossingSettingsControllerTest {
 
 	private ImportedCrossesList createImportedCrossesList(boolean hasMultipleParents) {
 		final ImportedCrossesList list = new ImportedCrossesList();
-		final List<ImportedCrosses> importedCrossesList = new ArrayList<>();
-		final ImportedCrosses importedCrosses = new ImportedCrosses();
-		importedCrosses.setEntryId(CrossingSettingsControllerTest.ENTRY_ID);
-		importedCrosses.setCross(CrossingSettingsControllerTest.TEST_FEMALE_PARENT + "/" + CrossingSettingsControllerTest.TEST_MALE_PARENT1);
-		importedCrosses.setEntryCode(CrossingSettingsControllerTest.TEST_ENTRY_CODE);
+		final List<ImportedCross> importedCrossList = new ArrayList<>();
+		final ImportedCross importedCross = new ImportedCross();
+		importedCross.setEntryNumber(CrossingSettingsControllerTest.ENTRY_ID);
+		importedCross.setCross(CrossingSettingsControllerTest.TEST_FEMALE_PARENT + "/" + CrossingSettingsControllerTest.TEST_MALE_PARENT1);
+		importedCross.setEntryCode(CrossingSettingsControllerTest.TEST_ENTRY_CODE);
 		
 		final ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(CrossingSettingsControllerTest.FGID, CrossingSettingsControllerTest.TEST_FEMALE_PARENT, CrossingSettingsControllerTest.FEMALE_PLOT, ""); 
 		femaleParent.setPedigree(CrossingSettingsControllerTest.FEMALE_PEDIGREE);
-		importedCrosses.setFemaleParent(femaleParent);
+		importedCross.setFemaleParent(femaleParent);
 		femaleParent.setCross(CrossingSettingsControllerTest.FEMALE_CROSS);
 		
 		final ImportedGermplasmParent maleParent1 = new ImportedGermplasmParent(CrossingSettingsControllerTest.MGID1, CrossingSettingsControllerTest.TEST_MALE_PARENT1, CrossingSettingsControllerTest.MALE_PLOT1, CrossingSettingsControllerTest.MALE_STUDY_NAME);
@@ -595,18 +595,18 @@ public class CrossingSettingsControllerTest {
 		maleParent2.setPedigree(CrossingSettingsControllerTest.MALE_PEDIGREE2);
 		maleParent2.setCross(CrossingSettingsControllerTest.MALE_CROSS2);
 		if (!hasMultipleParents) {
-			importedCrosses.setMaleParents(Lists.newArrayList(maleParent1));
+			importedCross.setMaleParents(Lists.newArrayList(maleParent1));
 		} else {
-			importedCrosses.setMaleParents(Lists.newArrayList(maleParent1, maleParent2));
+			importedCross.setMaleParents(Lists.newArrayList(maleParent1, maleParent2));
 		}
 		
-		importedCrosses.setSource(CrossingSettingsControllerTest.TEST_SEED_SOURCE);
-		importedCrosses.setDuplicate(CrossingSettingsControllerTest.TEST_DUPLICATE);
-		importedCrosses.setRawBreedingMethod(CrossingSettingsControllerTest.BREEDING_METHOD);
-		importedCrosses.setCrossingDate(CrossingSettingsControllerTest.CROSSING_DATE);
-		importedCrosses.setNotes(CrossingSettingsControllerTest.NOTES);
-		importedCrossesList.add(importedCrosses);
-		list.setImportedGermplasms(importedCrossesList);
+		importedCross.setSource(CrossingSettingsControllerTest.TEST_SEED_SOURCE);
+		importedCross.setDuplicate(CrossingSettingsControllerTest.TEST_DUPLICATE);
+		importedCross.setRawBreedingMethod(CrossingSettingsControllerTest.BREEDING_METHOD);
+		importedCross.setCrossingDate(CrossingSettingsControllerTest.CROSSING_DATE);
+		importedCross.setNotes(CrossingSettingsControllerTest.NOTES);
+		importedCrossList.add(importedCross);
+		list.setImportedGermplasms(importedCrossList);
 		return list;
 	}
 

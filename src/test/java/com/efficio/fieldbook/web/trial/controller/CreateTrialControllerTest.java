@@ -33,8 +33,8 @@ import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -43,8 +43,8 @@ import org.springframework.ui.Model;
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.Instance;
+import com.efficio.fieldbook.web.trial.bean.InstanceInfo;
 import com.efficio.fieldbook.web.trial.bean.TabInfo;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import org.generationcp.commons.constant.AppConstants;
@@ -70,7 +70,7 @@ public class CreateTrialControllerTest {
 
 	@InjectMocks
 	private CreateTrialController controller;
-	
+
 	private Integer defaultLocationId;
 
 	@Mock
@@ -81,13 +81,13 @@ public class CreateTrialControllerTest {
 		MockitoAnnotations.initMocks(this);
 		Mockito.doReturn(CreateTrialControllerTest.PROGRAM_UUID).when(this.contextUtil).getCurrentProgramUUID();
 		this.defaultLocationId = Math.abs(new Random().nextInt());
-		Mockito.doReturn(Arrays.asList(new Location(defaultLocationId))).when(this.locationDataManager)
+		Mockito.doReturn(Arrays.asList(new Location(this.defaultLocationId))).when(this.locationDataManager)
 				.getLocationsByName(Location.UNSPECIFIED_LOCATION, Operation.EQUAL);
 
 	}
 
 	@Test
-	public void testUseExistingStudyWithError() throws Exception {
+	public void testUseExistingStudyWithError() {
 		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(1))
 				.thenThrow(new MiddlewareQueryException(ErrorCode.STUDY_FORMAT_INVALID.getCode(), "The term you entered is invalid"));
 
@@ -100,7 +100,7 @@ public class CreateTrialControllerTest {
 	}
 
 	@Test
-	public void testUseExistingStudyWithAnalysisAndAnalysisSummaryVariables() throws Exception {
+	public void testUseExistingStudyWithAnalysisAndAnalysisSummaryVariables() {
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(true);
 		WorkbookTestDataInitializer.setTrialObservations(workbook);
 		Mockito.doReturn(workbook).when(this.fieldbookMiddlewareService).getStudyDataSet(1);
@@ -214,12 +214,12 @@ public class CreateTrialControllerTest {
 		spy.show(form, model, session);
 
 		// Verify model attributes
-		Mockito.verify(model).addAttribute(Matchers.eq("basicDetailsData"), Matchers.any(TabInfo.class));
-		Mockito.verify(model).addAttribute(Matchers.eq("germplasmData"), Matchers.any(TabInfo.class));
-		Mockito.verify(model).addAttribute(Matchers.eq(CreateTrialController.ENVIRONMENT_DATA_TAB), Matchers.any(TabInfo.class));
-		Mockito.verify(model).addAttribute(Matchers.eq(CreateTrialController.TRIAL_SETTINGS_DATA_TAB), Matchers.any(TabInfo.class));
-		Mockito.verify(model).addAttribute(Matchers.eq("experimentalDesignSpecialData"), Matchers.any(TabInfo.class));
-		Mockito.verify(model).addAttribute(Matchers.eq("studyTypes"), Matchers.anyListOf(StudyType.class));
+		Mockito.verify(model).addAttribute(ArgumentMatchers.eq("basicDetailsData"), ArgumentMatchers.any(TabInfo.class));
+		Mockito.verify(model).addAttribute(ArgumentMatchers.eq("germplasmData"), ArgumentMatchers.any(TabInfo.class));
+		Mockito.verify(model).addAttribute(ArgumentMatchers.eq(CreateTrialController.ENVIRONMENT_DATA_TAB), ArgumentMatchers.any(TabInfo.class));
+		Mockito.verify(model).addAttribute(ArgumentMatchers.eq(CreateTrialController.TRIAL_SETTINGS_DATA_TAB), ArgumentMatchers.any(TabInfo.class));
+		Mockito.verify(model).addAttribute(ArgumentMatchers.eq("experimentalDesignSpecialData"), ArgumentMatchers.any(TabInfo.class));
+		Mockito.verify(model).addAttribute(ArgumentMatchers.eq("studyTypes"), ArgumentMatchers.anyListOf(StudyType.class));
 		Mockito.verify(model).addAttribute("createTrialForm", form);
 	}
 
@@ -227,17 +227,17 @@ public class CreateTrialControllerTest {
 	@Test
 	public void testPrepareEnvironmentsTabInfo() {
 		Mockito.doReturn(this.createStandardVariable(new Random().nextInt())).when(this.fieldbookMiddlewareService)
-				.getStandardVariable(Matchers.anyInt(), Matchers.eq(CreateTrialControllerTest.PROGRAM_UUID));
+				.getStandardVariable(ArgumentMatchers.anyInt(), ArgumentMatchers.eq(CreateTrialControllerTest.PROGRAM_UUID));
 
 		final TabInfo tabInfo = this.controller.prepareEnvironmentsTabInfo(true);
-		final EnvironmentData environmentData = (EnvironmentData) tabInfo.getData();
+		final InstanceInfo instanceInfo = (InstanceInfo) tabInfo.getData();
 		final int environmentCount = Integer.parseInt(AppConstants.DEFAULT_NO_OF_ENVIRONMENT_COUNT.getString());
-		Assert.assertEquals(environmentCount, environmentData.getNoOfEnvironments());
-		Assert.assertEquals(environmentCount, environmentData.getEnvironments().size());
-		for (final Environment environment : environmentData.getEnvironments()) {
-			Assert.assertNotNull(environment.getManagementDetailValues());
+		Assert.assertEquals(environmentCount, instanceInfo.getNumberOfInstances());
+		Assert.assertEquals(environmentCount, instanceInfo.getInstances().size());
+		for (final Instance instance : instanceInfo.getInstances()) {
+			Assert.assertNotNull(instance.getManagementDetailValues());
 			Assert.assertEquals(String.valueOf(this.defaultLocationId),
-					environment.getManagementDetailValues().get(String.valueOf(TermId.LOCATION_ID.getId())));
+					instance.getManagementDetailValues().get(String.valueOf(TermId.LOCATION_ID.getId())));
 		}
 		Assert.assertNotNull(tabInfo.getSettingMap());
 		Assert.assertNotNull(tabInfo.getSettingMap().get("trialConditionDetails"));
@@ -250,17 +250,17 @@ public class CreateTrialControllerTest {
 	@Test
 	public void testPrepareEnvironmentsTabInfoNoDefaultLocation() {
 		Mockito.doReturn(this.createStandardVariable(new Random().nextInt())).when(this.fieldbookMiddlewareService)
-			.getStandardVariable(Matchers.anyInt(), Matchers.eq(CreateTrialControllerTest.PROGRAM_UUID));
+			.getStandardVariable(ArgumentMatchers.anyInt(), ArgumentMatchers.eq(CreateTrialControllerTest.PROGRAM_UUID));
 		Mockito.doReturn(new ArrayList<>()).when(this.locationDataManager)
 			.getLocationsByName(Location.UNSPECIFIED_LOCATION, Operation.EQUAL);
 
 		final TabInfo tabInfo = this.controller.prepareEnvironmentsTabInfo(true);
-		final EnvironmentData environmentData = (EnvironmentData) tabInfo.getData();
+		final InstanceInfo instanceInfo = (InstanceInfo) tabInfo.getData();
 		final int environmentCount = Integer.parseInt(AppConstants.DEFAULT_NO_OF_ENVIRONMENT_COUNT.getString());
-		Assert.assertEquals(environmentCount, environmentData.getNoOfEnvironments());
-		Assert.assertEquals(environmentCount, environmentData.getEnvironments().size());
-		for (final Environment environment : environmentData.getEnvironments()) {
-			Assert.assertTrue(environment.getManagementDetailValues().isEmpty());
+		Assert.assertEquals(environmentCount, instanceInfo.getNumberOfInstances());
+		Assert.assertEquals(environmentCount, instanceInfo.getInstances().size());
+		for (final Instance instance : instanceInfo.getInstances()) {
+			Assert.assertTrue(instance.getManagementDetailValues().isEmpty());
 		}
 		Assert.assertNotNull(tabInfo.getSettingMap());
 		Assert.assertNotNull(tabInfo.getSettingMap().get("trialConditionDetails"));
@@ -269,21 +269,21 @@ public class CreateTrialControllerTest {
 		Assert.assertEquals(AppConstants.CREATE_STUDY_ENVIRONMENT_REQUIRED_FIELDS.getString().split(",").length, mgtDetailsList.size());
 		Mockito.verify(this.userSelection).setTrialLevelVariableList(mgtDetailsList);
 	}
-	
+
 	@Test
 	public void testPrepareEnvironmentsTabInfoFromExistingStudyWithNoEnvironment() {
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(false);
 		// Assert that there are no trial environments specified in test workbook. But still expect a default one to be created
 		Assert.assertEquals(0, workbook.getTrialObservations().size());
-		
+
 		final TabInfo tabInfo = this.controller.prepareEnvironmentsTabInfo(workbook, true);
-		final EnvironmentData environmentData = (EnvironmentData) tabInfo.getData();
-		Assert.assertEquals(1, environmentData.getNoOfEnvironments());
-		Assert.assertEquals(1, environmentData.getEnvironments().size());
-		final Environment environment = environmentData.getEnvironments().get(0);
-		Assert.assertNotNull(environment.getManagementDetailValues());
+		final InstanceInfo instanceInfo = (InstanceInfo) tabInfo.getData();
+		Assert.assertEquals(1, instanceInfo.getNumberOfInstances());
+		Assert.assertEquals(1, instanceInfo.getInstances().size());
+		final Instance instance = instanceInfo.getInstances().get(0);
+		Assert.assertNotNull(instance.getManagementDetailValues());
 		Assert.assertEquals(String.valueOf(this.defaultLocationId),
-				environment.getManagementDetailValues().get(String.valueOf(TermId.LOCATION_ID.getId())));
+				instance.getManagementDetailValues().get(String.valueOf(TermId.LOCATION_ID.getId())));
 	}
 
 	@Test
@@ -291,18 +291,19 @@ public class CreateTrialControllerTest {
 
 		final UserSelection userSelection = new UserSelection();
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
-		List<MeasurementVariable> conditions = getConditions(TermId.PI_ID.getId(), Operation.ADD, PhenotypicType.STUDY);
-		conditions.addAll(getConditions(TermId.PI_NAME.getId(), Operation.ADD, PhenotypicType.STUDY));
+		final List<MeasurementVariable> conditions = this.getConditions(TermId.PI_ID.getId(), Operation.ADD, PhenotypicType.STUDY);
+		conditions.addAll(this.getConditions(TermId.PI_NAME.getId(), Operation.ADD, PhenotypicType.STUDY));
 		workbook.setConditions(conditions);
 		userSelection.setWorkbook(workbook);
-		this.fieldbookServiceImpl.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<SettingDetail>(),
+		this.fieldbookServiceImpl.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<>(),
 				AppConstants.ID_NAME_COMBINATION.getString(), true);
 		final TabInfo tabInfo = this.controller.prepareEnvironmentsTabInfo(workbook, true);
-		List<SettingDetail> managementDetails = (List<SettingDetail>) tabInfo.getSettingMap().get("managementDetails");
+		final List<SettingDetail> managementDetails = (List<SettingDetail>) tabInfo.getSettingMap().get("managementDetails");
 		Assert.assertEquals(1, managementDetails.size());
 	}
 
-	private MeasurementVariable getMeasurementVariableForCategoricalVariable(int termId, Operation operation, PhenotypicType role) {
+	private MeasurementVariable getMeasurementVariableForCategoricalVariable(
+		final int termId, final Operation operation, final PhenotypicType role) {
 		final MeasurementVariable variable =
 				new MeasurementVariable(termId, "PI_ID", "TRIAL NUMBER", WorkbookDataUtil.NUMBER,
 						WorkbookDataUtil.ENUMERATED, WorkbookDataUtil.TRIAL_INSTANCE, WorkbookDataUtil.NUMERIC, "", WorkbookDataUtil.TRIAL);
@@ -324,9 +325,9 @@ public class CreateTrialControllerTest {
 		return possibleValues;
 	}
 
-	private List<MeasurementVariable> getConditions(int cvtermId, Operation operation, PhenotypicType roleId){
-		List<MeasurementVariable> conditionsList = new ArrayList<>();
-		conditionsList.add(getMeasurementVariableForCategoricalVariable(cvtermId, operation, roleId));
+	private List<MeasurementVariable> getConditions(final int cvtermId, final Operation operation, final PhenotypicType roleId){
+		final List<MeasurementVariable> conditionsList = new ArrayList<>();
+		conditionsList.add(this.getMeasurementVariableForCategoricalVariable(cvtermId, operation, roleId));
 		return  conditionsList;
 
 	}

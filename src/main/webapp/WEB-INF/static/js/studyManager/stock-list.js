@@ -340,23 +340,23 @@ if (typeof StockIDFunctions === 'undefined') {
 			}
 		},
 
-		getSelectedInventoryEntryIds: function() {
-            'use strict';
-            var ids = [],
-                listDivIdentifier  = getCurrentAdvanceTabTempIdentifier(),
-                inventoryTableId = '#inventory-table' + listDivIdentifier;
-                var oTable = $(inventoryTableId).dataTable({retrieve: true, searching: false});
-                var nodes = oTable.api().rows(':has(input.stockListEntryId:checked)').nodes();
-                $(nodes).each(function (i, node) {
-                    ids.push($('input.stockListEntryId:checked', node).data('entryid'));
-                });
-            return ids;
+		getSelectedStockIds: function() {
+			'use strict';
+			var ids = [],
+				listDivIdentifier  = getCurrentAdvanceTabTempIdentifier(),
+				inventoryTableId = '#inventory-table' + listDivIdentifier;
+			var oTable = $(inventoryTableId).dataTable({retrieve: true, searching: false});
+			var nodes = oTable.api().rows(':has(input.stockListEntryId:checked)').nodes();
+			$(nodes).each(function (i, node) {
+				ids.push($('input.stockListEntryId:checked', node).data('inventoryid'));
+			});
+			return ids;
 		},
 
 		showUpdateInventoryModal: function(listId) {
 			'use strict';
-			var entryIds = StockIDFunctions.getSelectedInventoryEntryIds();
-			if (entryIds.length === 0) {
+			var stockIds = StockIDFunctions.getSelectedStockIds();
+			if (stockIds.length === 0) {
 				showErrorMessage('page-message', germplasmSelectError);
 				moveToTopScreen();
 				return;
@@ -365,7 +365,7 @@ if (typeof StockIDFunctions === 'undefined') {
 			$.ajax({
 				url: '/Fieldbook/stock/ajax/' + getCurrentAdvanceTabTempIdentifier(),
 				type: 'POST',
-				data: JSON.stringify(entryIds),
+				data: JSON.stringify(stockIds),
 				cache: false,
 				contentType: "application/json; charset=utf-8",
 				success: function(data) {
@@ -386,8 +386,8 @@ if (typeof StockIDFunctions === 'undefined') {
 
 		updateInventory: function() {
 			'use strict';
-			var entryIds = StockIDFunctions.getSelectedInventoryEntryIds();
-			$('#entryIdList').val(entryIds);
+			var stockIds = StockIDFunctions.getSelectedStockIds();
+			$('#stockIdsForUpdate').val(stockIds);
 			if ($('#showFavoriteLocationInventory').is(':checked')) {
 				if ($('#showAllLocationInventory').is(':checked')) {
 					if ($('#inventoryLocationIdFavorite').select2('data')) {
@@ -434,7 +434,7 @@ if (typeof StockIDFunctions === 'undefined') {
 							$('#addLotsModal').modal('hide');
 							StockIDFunctions.displayStockList(data.listId);
 						} else {
-							showErrorMessage('page-message-lots', data.message);
+							showErrorMessage('page-message-lots', data.errorMessage);
 						}
 					}
 				});

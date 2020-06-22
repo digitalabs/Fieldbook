@@ -3,8 +3,8 @@ package com.efficio.fieldbook.web.data.initializer;
 
 import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.Instance;
+import com.efficio.fieldbook.web.trial.bean.InstanceInfo;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.google.common.collect.Lists;
 import org.generationcp.middleware.domain.dms.Enumeration;
@@ -262,27 +262,27 @@ public class DesignImportTestDataInitializer {
 		return stdVar;
 	}
 
-	public static EnvironmentData createEnvironmentData(final int numberOfIntances) {
-		final EnvironmentData environmentData = new EnvironmentData();
-		final List<Environment> environments = new ArrayList<>();
+	public static InstanceInfo createEnvironmentData(final int numberOfIntances) {
+		final InstanceInfo instanceInfo = new InstanceInfo();
+		final List<Instance> instances = new ArrayList<>();
 
 		for (int x = 0; x < numberOfIntances; x++) {
-			final Environment env = new Environment();
+			final Instance env = new Instance();
 			final Map<String, String> managementDetailValues = new HashMap<>();
 			managementDetailValues.put(Integer.toString(TermId.LOCATION_ID.getId()), Integer.toString(x));
-			env.setLocationId(x);
+			env.setInstanceId(x);
 			env.setManagementDetailValues(managementDetailValues);
-			environments.add(env);
+			instances.add(env);
 		}
 
-		environmentData.setEnvironments(environments);
-		environmentData.setNoOfEnvironments(numberOfIntances);
-		return environmentData;
+		instanceInfo.setInstances(instances);
+		instanceInfo.setNumberOfInstances(numberOfIntances);
+		return instanceInfo;
 	}
 
-	public static void processEnvironmentData(final EnvironmentData data) {
-		for (int i = 0; i < data.getEnvironments().size(); i++) {
-			final Map<String, String> values = data.getEnvironments().get(i).getManagementDetailValues();
+	public static void processEnvironmentData(final InstanceInfo data) {
+		for (int i = 0; i < data.getInstances().size(); i++) {
+			final Map<String, String> values = data.getInstances().get(i).getManagementDetailValues();
 			if (!values.containsKey(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()))) {
 				values.put(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId()), Integer.toString(i + 1));
 			} else if (values.get(Integer.toString(TermId.TRIAL_INSTANCE_FACTOR.getId())) == null

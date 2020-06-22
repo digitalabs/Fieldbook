@@ -23,15 +23,14 @@ import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.ErrorCode;
-import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.study.StudyGermplasmService;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -44,8 +43,8 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 
 public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTest {
@@ -68,6 +67,9 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 	@Mock
 	private AuthorizationService authorizationService;
 
+	@Mock
+	private StudyGermplasmService studyGermplasmService;
+
 	private Workbook workbook;
 
 	@Before
@@ -80,16 +82,14 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		this.reviewStudyDetailsController.setFieldbookMiddlewareService(this.fieldbookMWService);
 		this.reviewStudyDetailsController.setFieldbookService(this.fieldbookService);
 		this.reviewStudyDetailsController.setUserService(this.userService);
-		Mockito.doReturn(this.workbook).when(this.fieldbookMWService).getStudyVariableSettings(1);
+		this.reviewStudyDetailsController.setStudyGermplasmService(this.studyGermplasmService);
+		Mockito.doReturn(this.workbook).when(this.fieldbookMWService).getStudyVariableSettings(ArgumentMatchers.anyInt());
 		this.mockStandardVariables(this.workbook.getAllVariables(), this.fieldbookMWService, this.fieldbookService);
 
 		this.reviewStudyDetailsController.setContextUtil(this.contextUtil);
 		Mockito.doReturn(this.PROGRAM_UUID).when(this.contextUtil).getCurrentProgramUUID();
 		Mockito.doReturn(project).when(this.contextUtil).getProjectInContext();
 
-		final GermplasmList germplasmList = new GermplasmList(1);
-		Mockito.when(this.fieldbookMWService.getGermplasmListsByProjectId(1, GermplasmListType.STUDY)).thenReturn(Arrays.asList(germplasmList));
-		Mockito.when(this.fieldbookService.getGermplasmListChecksSize(germplasmList.getId())).thenReturn(2L);
 	}
 
 	@Test
@@ -134,10 +134,10 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 
 	@Test
 	public void testShowStudySummary() {
-		final int id = 1;
+		final int id = new Random().nextInt(100);
 		final CreateTrialForm form = new CreateTrialForm();
 		final Model model = new ExtendedModelMap();
-
+		Mockito.doReturn(2L).when(this.studyGermplasmService).countStudyGermplasmByEntryTypeIds(ArgumentMatchers.eq(id), ArgumentMatchers.anyList());
 		this.reviewStudyDetailsController.show(id, form, model);
 
 		final StudyDetails details = (StudyDetails) model.asMap().get("trialDetails");
@@ -177,13 +177,6 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 
 		this.reviewStudyDetailsController.setIsSuperAdminAttribute(model);
 		Assert.assertTrue((Boolean)model.asMap().get("isSuperAdmin"));
-	}
-
-	@Test
-	public void getNumberOfChecks() {
-		final long numberOfChecks = this.reviewStudyDetailsController.getNumberOfChecks(1);
-		Assert.assertEquals(2L, numberOfChecks);
-
 	}
 
 	private boolean hasAnalysisVariables(final List<MeasurementVariable> variables) {

@@ -15,7 +15,7 @@ import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.generationcp.commons.constant.ListTreeState;
-import org.generationcp.commons.parsing.pojo.ImportedCrosses;
+import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
@@ -771,12 +771,12 @@ public class GermplasmTreeControllerTest {
 						argumentCaptor4.capture());
 		Mockito.verify(userSelection).setImportedCrossesList(importedCrossesList);
 
-		final List<ImportedCrosses> importedCrossesArgument1 = argumentCaptor1.getValue();
+		final List<ImportedCross> importedCrossArgument1 = argumentCaptor1.getValue();
 		final AdvancingSourceList importedCrossesArgument2 = argumentCaptor2.getValue();
 		final AdvancingStudy importedCrossesArgument3 = argumentCaptor3.getValue();
 		final List<Integer> importedCrossesArgument4 = argumentCaptor4.getValue();
 
-		Assert.assertEquals(2, importedCrossesArgument1.size());
+		Assert.assertEquals(2, importedCrossArgument1.size());
 		Assert.assertEquals(2, importedCrossesArgument2.getRows().size());
 		Assert.assertEquals(2, importedCrossesArgument4.size());
 		Assert.assertTrue(importedCrossesArgument3.isCheckAdvanceLinesUnique());
@@ -786,30 +786,30 @@ public class GermplasmTreeControllerTest {
 	@Test
 	public void testAssignCrossNames() {
 
-		final List<ImportedCrosses> importedCrossesList = this.createImportedCrossesList().getImportedCrosses();
-		final ImportedCrosses importedCrosses = importedCrossesList.get(0);
+		final List<ImportedCross> importedCrossList = this.createImportedCrossesList().getImportedCrosses();
+		final ImportedCross importedCross = importedCrossList.get(0);
 
-		controller.assignCrossNames(importedCrosses);
+		controller.assignCrossNames(importedCross);
 
-		Assert.assertFalse(importedCrosses.getNames().isEmpty());
-		Assert.assertEquals(1, importedCrosses.getNames().get(0).getNstat().intValue());
-		Assert.assertEquals(importedCrosses.getCross(), importedCrosses.getNames().get(0).getNval());
+		Assert.assertFalse(importedCross.getNames().isEmpty());
+		Assert.assertEquals(1, importedCross.getNames().get(0).getNstat().intValue());
+		Assert.assertEquals(importedCross.getCross(), importedCross.getNames().get(0).getNval());
 
 	}
 
 	@Test
 	public void testCreateAdvancingSource() {
 
-		final List<ImportedCrosses> importedCrossesList = this.createImportedCrossesList().getImportedCrosses();
-		final ImportedCrosses importedCrosses = importedCrossesList.get(0);
+		final List<ImportedCross> importedCrossList = this.createImportedCrossesList().getImportedCrosses();
+		final ImportedCross importedCross = importedCrossList.get(0);
 		final Workbook workbook = this.userSelection.getWorkbook();
 
-		final AdvancingSource advancingSource = controller.createAdvancingSource(importedCrosses);
+		final AdvancingSource advancingSource = controller.createAdvancingSource(importedCross);
 
 		Assert.assertEquals(1, advancingSource.getStudyId().intValue());
 		Assert.assertEquals(workbook.getConditions(), advancingSource.getConditions());
 		Assert.assertEquals(workbook.getStudyDetails().getStudyType(), advancingSource.getStudyType());
-		Assert.assertEquals(importedCrosses.getBreedingMethodId(), advancingSource.getBreedingMethodId());
+		Assert.assertEquals(importedCross.getBreedingMethodId(), advancingSource.getBreedingMethodId());
 
 	}
 
@@ -988,8 +988,8 @@ public class GermplasmTreeControllerTest {
 
 	private ImportedCrossesList createImportedCrossesList() {
 		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();
-		final List<ImportedCrosses> importedCrosses = new ArrayList<>();
-		final ImportedCrosses cross = new ImportedCrosses();
+		final List<ImportedCross> importedCrosses = new ArrayList<>();
+		final ImportedCross cross = new ImportedCross();
 		final ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(12345, "FEMALE-12345", "");
 		cross.setFemaleParent(femaleParent);
 		final ImportedGermplasmParent maleParent = new ImportedGermplasmParent(54321, "MALE-54321", "");
@@ -997,7 +997,7 @@ public class GermplasmTreeControllerTest {
 		cross.setGid("10021");
 		cross.setDesig("Default name1");
 		importedCrosses.add(cross);
-		final ImportedCrosses cross2 = new ImportedCrosses();
+		final ImportedCross cross2 = new ImportedCross();
 		final ImportedGermplasmParent femaleParent2 = new ImportedGermplasmParent(9999, "FEMALE-9999", "");
 		cross2.setFemaleParent(femaleParent2);
 		final ImportedGermplasmParent maleParent2 = new ImportedGermplasmParent(8888, "MALE-8888", "");
@@ -1065,7 +1065,7 @@ public class GermplasmTreeControllerTest {
 
 		final ImportedGermplasm germplasm = new ImportedGermplasm();
 		germplasm.setGid(gidString);
-		germplasm.setEntryId(gid);
+		germplasm.setEntryNumber(gid);
 		germplasm.setEntryCode(gidString);
 		germplasm.setDesig(desig);
 		germplasm.setSource(GermplasmTreeControllerTest.LIST_NAME + ":" + gid);

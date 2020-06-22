@@ -11,27 +11,33 @@
 
 package com.efficio.fieldbook.web;
 
-import java.util.Iterator;
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.security.AuthorizationService;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.manager.api.LocationDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
+import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 
-import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
-import com.efficio.fieldbook.web.util.FieldbookProperties;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Base controller encapsulaitng common functionality between all the Fieldbook controllers.
@@ -44,6 +50,9 @@ public abstract class AbstractBaseFieldbookController {
 	public static final String ANGULAR_BASE_TEMPLATE_NAME = "/template/ng-base-template";
 	public static final String ERROR_TEMPLATE_NAME = "/template/error-template";
 	public static final String TEMPLATE_NAME_ATTRIBUTE = "templateName";
+
+	@Resource
+	protected LocationDataManager locationDataManager;
 
 	@Resource
 	protected ContextUtil contextUtil;
@@ -60,9 +69,11 @@ public abstract class AbstractBaseFieldbookController {
 	@Autowired
 	protected AuthorizationService authorizationService;
 
+	@Resource
+	protected FieldbookService fieldbookService;
+
 	/**
 	 * Implemented by the sub controllers to specify the html view that they render into the base template.
-	 * 
 	 */
 	public abstract String getContentName();
 
@@ -95,7 +106,7 @@ public abstract class AbstractBaseFieldbookController {
 
 	/**
 	 * Base functionality for displaying the page.
-	 * 
+	 *
 	 * @param model the model
 	 * @return the string
 	 */
@@ -119,7 +130,7 @@ public abstract class AbstractBaseFieldbookController {
 
 	/**
 	 * Base functionality for displaying the error page.
-	 * 
+	 *
 	 * @param model the model
 	 * @return the string
 	 */
@@ -130,8 +141,8 @@ public abstract class AbstractBaseFieldbookController {
 
 	/**
 	 * Base functionality for displaying the page.
-	 * 
-	 * @param model the model
+	 *
+	 * @param model    the model
 	 * @param ajaxPage the ajax page
 	 * @return the string
 	 */
@@ -142,7 +153,7 @@ public abstract class AbstractBaseFieldbookController {
 
 	/**
 	 * Convert favorite location to json.
-	 * 
+	 *
 	 * @param objectList list of objects
 	 * @return the string
 	 */
@@ -164,6 +175,26 @@ public abstract class AbstractBaseFieldbookController {
 
 	public void setPaginationListSelection(final PaginationListSelection paginationListSelection) {
 		this.paginationListSelection = paginationListSelection;
+	}
+
+	protected Integer getUnspecifiedLocationId() {
+		//FIXME Should return default breeding location id when it is implemented
+		final List<Location> locations = this.locationDataManager.getLocationsByName(Location.UNSPECIFIED_LOCATION, Operation.EQUAL);
+		if (!locations.isEmpty()) {
+			return locations.get(0).getLocid();
+		}
+		return 0;
+	}
+
+	protected List<String> getAllCheckEntryTypeIds() {
+		final List<ValueReference> entryTypes = this.fieldbookService.getAllPossibleValues(TermId.ENTRY_TYPE.getId(), true);
+		final List<String> checkEntryTypeIds = new ArrayList<>();
+		for (final ValueReference entryType : entryTypes) {
+			if (SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId() != entryType.getId()) {
+				checkEntryTypeIds.add(entryType.getId().toString());
+			}
+		}
+		return checkEntryTypeIds;
 	}
 
 	public void setContextUtil(final ContextUtil contextUtil) {
@@ -194,7 +225,7 @@ public abstract class AbstractBaseFieldbookController {
 	}
 	
 	public void setIsSuperAdminAttribute(final Model model) {
-		model.addAttribute("isSuperAdmin", authorizationService.isSuperAdminUser());
+		model.addAttribute("isSuperAdmin", this.authorizationService.isSuperAdminUser());
 	}
 
 	public void setVariableDataManager(final OntologyVariableDataManager variableDataManager) {

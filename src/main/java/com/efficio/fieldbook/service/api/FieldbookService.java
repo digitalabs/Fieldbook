@@ -235,10 +235,4 @@ public interface FieldbookService {
 
 	StandardVariable getStandardVariable(Integer termId);
 
-	/*
-	 *Returns the number of checks from the germplasm list
-	 *
-	 * @param germplasmListId
-	 */
-	long getGermplasmListChecksSize(int germplasmListId);
 }

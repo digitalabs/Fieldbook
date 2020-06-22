@@ -4,7 +4,7 @@ package com.efficio.fieldbook.web.common.bean;
 import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
 import org.generationcp.middleware.domain.dms.ExperimentDesignType;
 
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.InstanceInfo;
 
 /**
  * This class is use to contain all the variables needed in generating design for the following design types: Preset Design (e.g.
@@ -12,7 +12,7 @@ import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
  */
 public class GenerateDesignInput {
 
-	private EnvironmentData environmentData;
+	private InstanceInfo instanceInfo;
 	private ExperimentDesignType selectedExperimentDesignType;
 	private Integer startingEntryNo;
 	private Integer startingPlotNo;
@@ -20,29 +20,29 @@ public class GenerateDesignInput {
 	private TrialSettingsBean trialSettings;
 
 	public GenerateDesignInput() {
-		this.environmentData = new EnvironmentData();
+		this.instanceInfo = new InstanceInfo();
 		this.selectedExperimentDesignType = new ExperimentDesignType();
 		this.startingEntryNo = 1;
 		this.startingPlotNo = 1;
 		this.hasNewEnvironmentAdded = false;
 	}
 
-	public GenerateDesignInput(final EnvironmentData environmentData, final ExperimentDesignType selectedExperimentDesignType,
+	public GenerateDesignInput(final InstanceInfo instanceInfo, final ExperimentDesignType selectedExperimentDesignType,
 			final Integer startingEntryNo, final Integer startingPlotNo, final Boolean hasNewEnvironmentAdded) {
 		super();
-		this.environmentData = environmentData;
+		this.instanceInfo = instanceInfo;
 		this.selectedExperimentDesignType = selectedExperimentDesignType;
 		this.startingEntryNo = startingEntryNo;
 		this.startingPlotNo = startingPlotNo;
 		this.hasNewEnvironmentAdded = hasNewEnvironmentAdded;
 	}
 
-	public EnvironmentData getEnvironmentData() {
-		return this.environmentData;
+	public InstanceInfo getInstanceInfo() {
+		return this.instanceInfo;
 	}
 
-	public void setEnvironmentData(final EnvironmentData environmentData) {
-		this.environmentData = environmentData;
+	public void setInstanceInfo(final InstanceInfo instanceInfo) {
+		this.instanceInfo = instanceInfo;
 	}
 
 	public ExperimentDesignType getSelectedExperimentDesignType() {

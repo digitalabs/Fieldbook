@@ -10,11 +10,11 @@
 		<tbody>
 		<tr th:each="instance, row : ${trialInstances}">
 			<td th:class="${row.even}? 'even fbk-export-select-instance-check-box' : 'odd fbk-export-select-instance-check-box'">
-				<input type="checkbox" class="trial-instance-export" th:attr="data-instance-number=${instance.instanceNum}" th:attrappend="data-geolocation-id=${instance.environmentId}"/>
+				<input type="checkbox" class="trial-instance-export" th:attr="data-instance-number=${instance.instanceNum}" th:attrappend="data-geolocation-id=${instance.instanceId}"/>
 			</td>
 			<td th:class="${row.even}? 'even' : 'odd'" th:text="${instance.instanceNum}">.1</td>
 			<td th:class="${row.even}? 'even' : 'odd'" th:text="${instance.locationName}">.2</td>
-			<td style="display:none;" th:text="${instance.environmentId}">.3</td>
+			<td style="display:none;" th:text="${instance.instanceId}">.3</td>
 		</tr>
 	</tbody>
 	</table>

@@ -162,7 +162,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 			final Set<String> vars = new HashSet<>();
 			final boolean isMeansDataImport = this.userSelection.getDatasetType() != null &&
-				this.userSelection.getDatasetType().intValue() == DatasetTypeEnum.MEANS_DATA.getId();
+				this.userSelection.getDatasetType() == DatasetTypeEnum.MEANS_DATA.getId();
 			for (final VariableDTO variable : variables) {
 				final Message message = new Message("");
 				message.setMessageParams(new String[] {variable.getHeaderName()});
@@ -176,7 +176,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 					message.setMessageKey(ERROR_DUPLICATE_LOCAL_VARIABLE);
 					proxy.put(variable.getHeaderName() + ":" + variable.getId(), this.etlService.convertMessageList(messageList));
 				}
-				if(isMeansDataImport && INVALID_VARIABLES_FOR_MEANS_IMPORT.contains(variable.getId())) {
+				if(isMeansDataImport && this.INVALID_VARIABLES_FOR_MEANS_IMPORT.contains(variable.getId())) {
 					message.setMessageKey(INVALID_MEANS_IMPORT_VARIABLE);
 					proxy.put(variable.getHeaderName() + ":" + variable.getId(), this.etlService.convertMessageList(messageList));
 				}
@@ -287,7 +287,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 			return this.wrapFormResult(AngularOpenSheetController.URL, request);
 
-		} catch (WorkbookParserException e) {
+		} catch (final WorkbookParserException e) {
 			AngularMapOntologyController.LOG.error(e.getMessage(), e);
 			return this.wrapFormResult(Arrays.asList(e.getMessage()));
 		} catch (final Exception e) {
@@ -309,7 +309,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 				 exptDesignColumnIndex = headers.indexOf(measurementVariable.getName());
 			}
 		}
-		final String valueFromObsevations = this.etlService.getExperimentalDesignValueFromObservationSheet(workbook, userSelection, exptDesignColumnIndex);
+		final String valueFromObsevations = this.etlService.getExperimentalDesignValueFromObservationSheet(workbook, this.userSelection, exptDesignColumnIndex);
 		this.dataImportService.processExperimentalDesign(importData, this.contextUtil.getCurrentProgramUUID(), valueFromObsevations);
 	}
 

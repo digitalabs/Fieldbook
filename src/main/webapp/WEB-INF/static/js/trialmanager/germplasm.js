@@ -225,23 +225,16 @@
 
     manageTrialAppModule.controller('replaceGermplasmCtrl', ['$scope', '$uibModalInstance', 'studyContext', 'studyGermplasmService',
         function ($scope, $uibModalInstance, studyContext, studyGermplasmService) {
-            var ctrl = this;
 
             $scope.cancel = function () {
                 $uibModalInstance.dismiss();
             };
 
-            // Wrap 'showAlertMessage' global function to a controller function so that we can mock it in unit test.
-            ctrl.showAlertMessage = function (title, message) {
-                showAlertMessage(title, message);
-            };
-
-
             $scope.performGermplasmReplacement = function () {
                 var newGid = $('#replaceGermplasmGID').val();
                 var regex = new RegExp('^[0-9]+$');
                 if (!regex.test(newGid)) {
-                    ctrl.showAlertMessage('', 'Please enter valid GID.');
+                    showAlertMessage('', 'Please enter valid GID.');
                 } else {
                     var selectedEntries = studyGermplasmService.getSelectedEntries();
                     // if there are multiple entries selected, get only the first entry for replacement
@@ -249,6 +242,7 @@
                         showSuccessfulMessage('', $.germplasmMessages.replaceGermplasmSuccessful);
                         window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
                     }, function(errResponse) {
+                        // TODO use proper error messasge
                         showErrorMessage($.fieldbookMessages.errorServerError,  errResponse.errors[0].message);
                     });
                 }

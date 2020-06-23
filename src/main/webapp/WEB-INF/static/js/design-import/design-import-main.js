@@ -184,7 +184,8 @@
 				restrict: 'A',
 				scope: {
 					modeldata: '=',
-					callback: '&'
+					callback: '&',
+					mappedheader: '=mappedData'
 				},
 
 				link: function(scope, elem, attrs) {
@@ -227,6 +228,17 @@
 								variableSelectBtnName: Messages.SELECT_TEXT,
 								variableSelectBtnIco: 'glyphicon-chevron-right',
 								noAlias: true
+							},
+							retrieveMappedTraits: function () {
+								var mappedHeader = [];
+								var mapped = scope.mappedheader;
+								var object = {};
+								$.each(mapped, function(index, header) {
+									if(header.variable){
+										mappedHeader[header.variable.id] = header.variable.alias || header.variable.name;
+									}
+								});
+								return mappedHeader;
 							}
 						};
 

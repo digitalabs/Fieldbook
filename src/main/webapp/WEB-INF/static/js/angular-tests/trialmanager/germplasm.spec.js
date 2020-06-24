@@ -21,6 +21,7 @@ describe('Replace Germplasm Controller', function () {
 		module('manageTrialApp');
 		module(function ($provide) {
 			$provide.value("studyGermplasmService", studyGermplasmService);
+			$provide.value("$uibModalInstance", uibModalInstance);
 		});
 	});
 
@@ -29,6 +30,7 @@ describe('Replace Germplasm Controller', function () {
 			scope = $injector.get('$rootScope').$new();
 			var $controller = $injector.get('$controller');
 			$q = $injector.get('$q');
+			uibModalInstance = $injector.get('$uibModalInstance');
 			studyGermplasmService = $injector.get('studyGermplasmService');
 			replaceGermplasmCtrl = $controller('replaceGermplasmCtrl', {
 				$scope: scope,
@@ -62,6 +64,15 @@ describe('Replace Germplasm Controller', function () {
 			scope.performGermplasmReplacement();
 			expect(replaceGermplasmCtrl.showAlertMessage).toHaveBeenCalledWith('','Please enter valid GID.');
 		});
+	});
+
+	describe('cancel', function () {
+
+		it('it should close the modal instance', function () {
+			scope.cancel();
+			expect(uibModalInstance.dismiss).toHaveBeenCalled();
+		});
+
 	});
 
 });

@@ -186,6 +186,7 @@
     }
     ]);
 
+
     manageTrialAppModule.controller('replaceGermplasmCtrl', ['$scope', '$uibModalInstance', 'studyContext', 'studyGermplasmService', 'studyStateService',
         function ($scope, $uibModalInstance, studyContext, studyGermplasmService, studyStateService) {
             var ctrl = this;
@@ -234,13 +235,12 @@
                 }
 
             };
-
-
+            
             $scope.performGermplasmReplacement = function () {
                 var newGid = $('#replaceGermplasmGID').val();
                 var regex = new RegExp('^[0-9]+$');
                 if (!regex.test(newGid)) {
-                    ctrl.showAlertMessage('', 'Please enter valid GID.');
+                    showAlertMessage('', 'Please enter valid GID.');
                 } else {
                     var selectedEntries = studyGermplasmService.getSelectedEntries();
                     // if there are multiple entries selected, get only the first entry for replacement
@@ -248,6 +248,7 @@
                         showSuccessfulMessage('', $.germplasmMessages.replaceGermplasmSuccessful);
                         window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
                     }, function(errResponse) {
+                        // TODO use proper error messasge
                         showErrorMessage($.fieldbookMessages.errorServerError,  errResponse.errors[0].message);
                     });
                 }

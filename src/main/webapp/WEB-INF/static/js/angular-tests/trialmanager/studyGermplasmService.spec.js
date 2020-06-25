@@ -38,7 +38,6 @@ describe('Study Germplasm Service', function () {
 				.respond(200, {data: getMockStudyGermplasm()});
 
 			studyGermplasmService.replaceStudyGermplasm(entryId, newGid).then(function (response) {
-				console.log(response);
 				expect(response.data).toEqual(mockData);
 			});
 

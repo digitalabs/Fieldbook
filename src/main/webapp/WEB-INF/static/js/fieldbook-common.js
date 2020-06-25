@@ -3356,3 +3356,20 @@ EscapeUtilityConstructor.prototype.escape = function(string)
 
 /* make a global instance of EscapeUtility usable to all Fieldbook modules */
 var EscapeHTML = new EscapeUtilityConstructor();
+
+function getDatasetInstances(cropName, currentProgramId, studyId, datasetId) {
+	var BASE_URL = '/bmsapi/crops/' + cropName + '/programs/' + currentProgramId + '/studies/';
+	// Validate if there is something to advance
+	var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
+	var dataSets;
+	return $.ajax({
+		url: BASE_URL + studyId + '/datasets/' + datasetId + '/instances',
+		type: 'GET',
+		cache: false,
+		beforeSend: function(xhr) {
+			xhr.setRequestHeader('X-Auth-Token', xAuthToken);
+		},
+		success: function (data) {
+		}
+	});
+}

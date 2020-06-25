@@ -97,6 +97,33 @@
 			</div>
 		</div>
 	</div>
+	<div class="modal fade" id="exportStudyConfirmationModal" role="dialog"  aria-hidden="true">
+		<div class="modal-dialog modal-small">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="row form-group">
+						<div class="col-xs-11 col-md-11">
+							<label class="modal-title fbk-modal-title">Confirmation</label>
+							<p>Some of the environments you selected do not have field plans and so must be exported in plot order. Do you want to proceed?</p>
+						</div>
+						<div class="col-xs-1 col-md-1">
+							<button class="close pull-right glyphicon glyphicon-remove" data-dismiss="modal"/>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12 col-md-12">
+							<label class="control-label" ng-bind-html="text"></label>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-default" data-dismiss="modal">Cancel</button>
+					<button class="btn btn-primary" onclick="javascript:continueExport();">OK</button>
+
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <form id="exportStudyDownloadForm" role="form-horizontal" action="#" th:action="@{/ExportManager/download/file}" method="GET">
@@ -148,6 +175,9 @@
 
 		function checkBeforeExport() {
 			'use strict';
+			var PLOT_ORDER = '1';
+			var SERPENTINE_ALONG_ROWS_ORDER = '2';
+			var SERPENTINE_ALONG_COLUMNS_ORDER = '3';
 
 			var fileFormat = $('#exportType').val();
 			var collectionOrderId = $('#exportWayType').val();
@@ -163,19 +193,22 @@
 				showErrorMessage('', 'Please select at least 1 instance');
 				return false;
 			}
-
-			var singleFile = fileFormat === 'csv' ? $('#singleFile').prop('checked') : false;
-
-			var exportParameters = {
-				cropName: $('#cropName').val(),
-				fileFormat: fileFormat,
-				studyId: $('.info.tab-pane.active #studyId').val(),
-				plotData: $('.info.tab-pane.active #plotDataset').val(),
-				instanceIds: checkedInstance.join(","),
-				collectionOrderId: collectionOrderId,
-				singleFile: singleFile
-			};
-			doFinalExport(exportParameters);
+			var isContinueExport = false;
+			if(collectionOrderId !== PLOT_ORDER) {
+				var currentProgramId = $('#currentProgramId').val();
+				getDatasetInstances($('#cropName').val(),currentProgramId, $('.info.tab-pane.active #studyId').val(), $('.info.tab-pane.active #plotDataset').val()).done(function (data) {
+					var someInstancesHaveNoFieldmap = data.some(function(item) {
+						return !item.hasFieldmap && checkedInstance.indexOf(item.instanceId) > -1;
+					});
+					if(someInstancesHaveNoFieldmap) {
+						$('#exportStudyConfirmationModal').modal('show');
+					} else {
+						continueExport();
+					}
+				});
+			} else {
+				continueExport();
+			}
 		}
 
 function doConfirmGoBack() {
@@ -229,6 +262,30 @@ function showExportResponse(responseText, statusText, xhr, $form) {
 	}
 
 	$('#exportStudyModal').modal('hide');
+}
+
+function continueExport() {
+
+	if($('#exportStudyConfirmationModal').is(':visible')) {
+		$('#exportStudyConfirmationModal').modal('hide');
+	}
+
+	var fileFormat = $('#exportType').val();
+	var collectionOrderId = $('#exportWayType').val();
+	var checkedInstance = getExportCheckedInstances();
+
+	var singleFile = fileFormat === 'csv' ? $('#singleFile').prop('checked') : false;
+
+	var exportParameters = {
+		cropName: $('#cropName').val(),
+		fileFormat: fileFormat,
+		studyId: $('.info.tab-pane.active #studyId').val(),
+		plotData: $('.info.tab-pane.active #plotDataset').val(),
+		instanceIds: checkedInstance.join(","),
+		collectionOrderId: collectionOrderId,
+		singleFile: singleFile
+	};
+	doFinalExport(exportParameters);
 }
 
 //]]>

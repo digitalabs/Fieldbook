@@ -6,7 +6,7 @@
     var manageTrialAppModule = angular.module('manageTrialApp');
 
     manageTrialAppModule.controller('GermplasmCtrl',
-        ['$scope', 'TrialManagerDataService', 'studyStateService', 'studyGermplasmService', '$uibModal', function ($scope, TrialManagerDataService, studyStateService, studyGermplasmService, $uibModal) {
+        ['$scope', 'TrialManagerDataService', 'studyStateService', 'studyGermplasmService', function ($scope, TrialManagerDataService, studyStateService, studyGermplasmService) {
 
             $scope.settings = TrialManagerDataService.settings.germplasm;
             $scope.isOpenStudy = TrialManagerDataService.isOpenStudy;
@@ -135,6 +135,7 @@
 
             };
 
+
             $scope.validateGermplasmForReplacement = function() {
                 // Check if study has advance or cross list
                 if ($scope.hasAdvanceListCreated() || $scope.hasCrossListCreated()) {
@@ -162,79 +163,36 @@
                     var modalConfirmReplacement = $scope.openConfirmModal($.germplasmMessages.replaceGermplasmWarning, 'Yes','No');
                     modalConfirmReplacement.result.then(function (shouldContinue) {
                         if (shouldContinue) {
-                            $scope.openReplaceGermplasmModal();
+                            studyGermplasmService.openReplaceGermplasmModal();
                         }
                     });
                 } else {
-                    $scope.openReplaceGermplasmModal();
+                    studyGermplasmService.openReplaceGermplasmModal();
                 }
 
             };
 
-            $scope.openReplaceGermplasmModal = function() {
-                $uibModal.open({
-                    templateUrl: '/Fieldbook/static/angular-templates/germplasm/replaceGermplasm.html',
-                    controller: "replaceGermplasmCtrl",
-                    size: 'md'
-                });
-            };
-
-
         }]);
-
-    manageTrialAppModule.factory('studyGermplasmService', ['$http', 'serviceUtilities', 'studyContext', function ($http, serviceUtilities, studyContext) {
-
-        var BASE_STUDY_URL = '/bmsapi/crops/' + studyContext.cropName + '/programs/' + studyContext.programId + '/studies/';
-
-        var selectedEntries = [];
-        var studyGermplasmService = {};
-
-        var successHandler = serviceUtilities.restSuccessHandler,
-            failureHandler = serviceUtilities.restFailureHandler;
-
-        studyGermplasmService.replaceStudyGermplasm = function (entryId, newGid) {
-            var request = $http.put(BASE_STUDY_URL + studyContext.studyId + '/germplasm/' + entryId,
-                {
-                    germplasmId: newGid
-                });
-            return request.then(successHandler, failureHandler);
-        };
-
-
-        studyGermplasmService.toggleSelect = function (entryId) {
-            var idx = selectedEntries.indexOf(entryId);
-            if (idx > -1) {
-                selectedEntries.splice(idx, 1)
-            } else {
-                selectedEntries.push(entryId);
-            }
-        };
-
-        studyGermplasmService.getSelectedEntries = function() {
-            return selectedEntries;
-        };
-
-        studyGermplasmService.resetSelectedEntries = function() {
-            selectedEntries = [];
-        };
-
-        return studyGermplasmService;
-
-    }
-    ]);
 
     manageTrialAppModule.controller('replaceGermplasmCtrl', ['$scope', '$uibModalInstance', 'studyContext', 'studyGermplasmService',
         function ($scope, $uibModalInstance, studyContext, studyGermplasmService) {
+            var ctrl = this;
 
             $scope.cancel = function () {
                 $uibModalInstance.dismiss();
             };
 
+            // Wrap 'showAlertMessage' global function to a controller function so that we can mock it in unit test.
+            ctrl.showAlertMessage = function (title, message) {
+                showAlertMessage(title, message);
+            };
+
+
             $scope.performGermplasmReplacement = function () {
                 var newGid = $('#replaceGermplasmGID').val();
                 var regex = new RegExp('^[0-9]+$');
                 if (!regex.test(newGid)) {
-                    showAlertMessage('', 'Please enter valid GID.');
+                    ctrl.showAlertMessage('', 'Please enter valid GID.');
                 } else {
                     var selectedEntries = studyGermplasmService.getSelectedEntries();
                     // if there are multiple entries selected, get only the first entry for replacement
@@ -242,7 +200,6 @@
                         showSuccessfulMessage('', $.germplasmMessages.replaceGermplasmSuccessful);
                         window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
                     }, function(errResponse) {
-                        // TODO use proper error messasge
                         showErrorMessage($.fieldbookMessages.errorServerError,  errResponse.errors[0].message);
                     });
                 }

@@ -214,6 +214,7 @@
 					advanceType: 'study',
 					hasNewInstanceAdded: false,
 					germplasmListSelected: GERMPLASM_LIST_SIZE > 0,
+					germplasmChangesUnsaved: false,
 					designTypes: [],
 					deleteEnvironmentCallback: function() {}
 				},

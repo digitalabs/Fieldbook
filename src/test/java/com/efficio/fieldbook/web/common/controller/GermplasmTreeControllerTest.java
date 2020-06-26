@@ -1065,7 +1065,7 @@ public class GermplasmTreeControllerTest {
 
 		final ImportedGermplasm germplasm = new ImportedGermplasm();
 		germplasm.setGid(gidString);
-		germplasm.setEntryId(gid);
+		germplasm.setEntryNumber(gid);
 		germplasm.setEntryCode(gidString);
 		germplasm.setDesig(desig);
 		germplasm.setSource(GermplasmTreeControllerTest.LIST_NAME + ":" + gid);

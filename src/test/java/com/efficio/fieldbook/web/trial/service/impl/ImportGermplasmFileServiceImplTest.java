@@ -1,10 +1,10 @@
 
 package com.efficio.fieldbook.web.trial.service.impl;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.efficio.fieldbook.AbstractBaseIntegrationTest;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.trial.service.ImportGermplasmFileService;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
@@ -21,17 +21,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Matchers;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.efficio.fieldbook.AbstractBaseIntegrationTest;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.trial.service.ImportGermplasmFileService;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationTest {
 
@@ -122,10 +117,10 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 		Assert.assertFalse(mainInfo.isAdvanceImportType());
 		Assert.assertTrue(mainInfo.getFileIsValid());
 		// we check the parse data here
-		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryId(), Integer.valueOf(1));
+		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryNumber(), Integer.valueOf(1));
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getDesig(), "IR 68835-58-1-1-B");
 
-		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(19).getEntryId(), Integer.valueOf(20));
+		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(19).getEntryNumber(), Integer.valueOf(20));
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(19).getDesig(), "IR 67632-14-2-5-1-2-B");
 	}
 
@@ -157,14 +152,14 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 		Assert.assertTrue(mainInfo.isAdvanceImportType());
 		Assert.assertTrue(mainInfo.getFileIsValid());
 		// test the parsing
-		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryId(), Integer.valueOf(1));
+		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryNumber(), Integer.valueOf(1));
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getDesig(), "IR 68201-21-2-B-4-B-B");
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getGid(), "1");
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getCross(), "1");
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getSource(), "1");
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryCode(), "1");
 
-		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getEntryId(), Integer.valueOf(2));
+		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getEntryNumber(), Integer.valueOf(2));
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getDesig(), "IR 67632-14-2-5-1-2-B");
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getGid(), "2");
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getCross(), "2");
@@ -196,10 +191,10 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 		Assert.assertFalse(mainInfo.isAdvanceImportType());
 		Assert.assertTrue(mainInfo.getFileIsValid());
 		// we check the parse data here
-		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryId(), Integer.valueOf(1));
+		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryNumber(), Integer.valueOf(1));
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getDesig(), "IR 68835-58-1-1-B");
 
-		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(19).getEntryId(), Integer.valueOf(20));
+		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(19).getEntryNumber(), Integer.valueOf(20));
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(19).getDesig(), "IR 67632-14-2-5-1-2-B");
 	}
 
@@ -229,14 +224,14 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 		Assert.assertTrue(mainInfo.isAdvanceImportType());
 		Assert.assertTrue(mainInfo.getFileIsValid());
 		// test the parsing
-		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryId(), Integer.valueOf(1));
+		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryNumber(), Integer.valueOf(1));
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getDesig(), "IR 68201-21-2-B-4-B-B");
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getGid(), "1");
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getCross(), "1");
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getSource(), "1");
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryCode(), "1");
 
-		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getEntryId(), Integer.valueOf(2));
+		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getEntryNumber(), Integer.valueOf(2));
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getDesig(), "IR 67632-14-2-5-1-2-B");
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getGid(), "2");
 		Assert.assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getCross(), "2");
@@ -261,7 +256,7 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 			Assert.fail();
 		}
 		form.changePage(1);
-		Assert.assertEquals(form.getPaginatedImportedGermplasm().get(0).getEntryId(), Integer.valueOf(1));
+		Assert.assertEquals(form.getPaginatedImportedGermplasm().get(0).getEntryNumber(), Integer.valueOf(1));
 		Assert.assertEquals(form.getPaginatedImportedGermplasm().get(0).getDesig(), "IR 68835-58-1-1-B"); // we check the parse data here
 	}
 
@@ -282,7 +277,7 @@ public class ImportGermplasmFileServiceImplTest extends AbstractBaseIntegrationT
 			Assert.fail();
 		}
 		form.changePage(1);
-		Assert.assertEquals(form.getPaginatedImportedGermplasm().get(0).getEntryId(), Integer.valueOf(1));
+		Assert.assertEquals(form.getPaginatedImportedGermplasm().get(0).getEntryNumber(), Integer.valueOf(1));
 		Assert.assertEquals(form.getPaginatedImportedGermplasm().get(0).getDesig(), "IR 68201-21-2-B-4-B-B"); // we check the parse data
 		// here
 	}

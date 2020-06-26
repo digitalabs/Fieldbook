@@ -1,18 +1,13 @@
 
 package com.efficio.fieldbook.web.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.TreeSet;
-
+import com.google.common.collect.Lists;
 import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
+import java.util.*;
 
 public class DuplicatesUtil {
 
@@ -60,11 +55,11 @@ public class DuplicatesUtil {
 		if (importedCross.getDuplicateEntries() == null) {
 			importedCross.setDuplicateEntries(new TreeSet<>());
 		}
-		for (Integer entryId : entries) {
-			if (importedCross.getEntryId().equals(entryId)) {
+		for (Integer entryNumber : entries) {
+			if (importedCross.getEntryNumber().equals(entryNumber)) {
 				continue;
 			}
-			importedCross.getDuplicateEntries().add(entryId);
+			importedCross.getDuplicateEntries().add(entryNumber);
 		}
 	}
 
@@ -78,7 +73,7 @@ public class DuplicatesUtil {
 
 	private static void getAllEntries(Collection<ImportedCross> importedCrossList, List<Integer> entries) {
 		for (ImportedCross importedCross : importedCrossList) {
-			entries.add(importedCross.getEntryId());
+			entries.add(importedCross.getEntryNumber());
 		}
 	}
 
@@ -105,7 +100,7 @@ public class DuplicatesUtil {
 			final StringBuilder pedigreeRecipPrefix = new StringBuilder(ImportedCross.PEDIGREE_RECIP_PREFIX);
 
 			for (ImportedCross possibleDuplicatesAndReciprocals : importedCrossesList.getImportedCrosses()) {
-				if (!Objects.equals(importedCrossMain.getEntryId(), possibleDuplicatesAndReciprocals.getEntryId())) {
+				if (!Objects.equals(importedCrossMain.getEntryNumber(), possibleDuplicatesAndReciprocals.getEntryNumber())) {
 
 					final Integer femaleGidExcludingMain = Integer.parseInt(possibleDuplicatesAndReciprocals.getFemaleGid());
 					final Integer femalePlotNoExcludingMain = possibleDuplicatesAndReciprocals.getFemalePlotNo();
@@ -128,18 +123,18 @@ public class DuplicatesUtil {
 							DuplicatesUtil.setDuplicatePrefixAndEntriesForDuplicates(
 								Lists.newArrayList(possibleDuplicatesAndReciprocals),
 								ImportedCross.PLOT_DUPE_PREFIX);
-							plotDupePrefix.append(possibleDuplicatesAndReciprocals.getEntryId() + ", ");
+							plotDupePrefix.append(possibleDuplicatesAndReciprocals.getEntryNumber() + ", ");
 						} else {
 							// Pedigree Dupe
 							DuplicatesUtil.setDuplicatePrefixAndEntriesForDuplicates(
 								Lists.newArrayList(possibleDuplicatesAndReciprocals),
 								ImportedCross.PEDIGREE_DUPE_PREFIX);
-							pedigreeDupePrefix.append(possibleDuplicatesAndReciprocals.getEntryId() + ", ");
+							pedigreeDupePrefix.append(possibleDuplicatesAndReciprocals.getEntryNumber() + ", ");
 						}
 						if (importedCrossMain.getDuplicateEntries() == null) {
 							importedCrossMain.setDuplicateEntries(new TreeSet<>());
 						}
-						importedCrossMain.getDuplicateEntries().add(possibleDuplicatesAndReciprocals.getEntryId());
+						importedCrossMain.getDuplicateEntries().add(possibleDuplicatesAndReciprocals.getEntryNumber());
 						DuplicatesUtil.setDuplicateNotesBasedOnPrefixandEntries(importedCrossMain);
 					}
 
@@ -155,19 +150,19 @@ public class DuplicatesUtil {
 							DuplicatesUtil.getAllEntries(Lists.newArrayList(possibleDuplicatesAndReciprocals), plotReciprocalEntries);
 							importedCrossMain.setDuplicatePrefix(ImportedCross.PLOT_RECIP_PREFIX);
 							DuplicatesUtil.setDuplicateEntries(possibleDuplicatesAndReciprocals, plotReciprocalEntries);
-							plotRecipPrefix.append(possibleDuplicatesAndReciprocals.getEntryId() + ", ");
+							plotRecipPrefix.append(possibleDuplicatesAndReciprocals.getEntryNumber() + ", ");
 						} else {
 							// Pedigree Reciprocal
 							List<Integer> pedigreeReciprocalEntries = new ArrayList<>();
 							DuplicatesUtil.getAllEntries(Lists.newArrayList(possibleDuplicatesAndReciprocals), pedigreeReciprocalEntries);
 							importedCrossMain.setDuplicatePrefix(ImportedCross.PEDIGREE_RECIP_PREFIX);
 							DuplicatesUtil.setDuplicateEntries(possibleDuplicatesAndReciprocals, pedigreeReciprocalEntries);
-							pedigreeRecipPrefix.append(possibleDuplicatesAndReciprocals.getEntryId() + ", ");
+							pedigreeRecipPrefix.append(possibleDuplicatesAndReciprocals.getEntryNumber() + ", ");
 						}
 						if (importedCrossMain.getDuplicateEntries() == null) {
 							importedCrossMain.setDuplicateEntries(new TreeSet<>());
 						}
-						importedCrossMain.getDuplicateEntries().add(possibleDuplicatesAndReciprocals.getEntryId());
+						importedCrossMain.getDuplicateEntries().add(possibleDuplicatesAndReciprocals.getEntryNumber());
 						DuplicatesUtil.setDuplicateNotesBasedOnPrefixandEntries(importedCrossMain);
 					}
 				}
@@ -190,7 +185,7 @@ public class DuplicatesUtil {
 
 			duplicateString = DuplicatesUtil.removeCommaAndPipeFromEnd(duplicateString);
 			
-			LOG.info("EntryID : " + importedCrossMain.getEntryId() + " : " + duplicateString);
+			LOG.info("EntryID : " + importedCrossMain.getEntryNumber() + " : " + duplicateString);
 
 			importedCrossMain.setDuplicate(duplicateString);
 		}

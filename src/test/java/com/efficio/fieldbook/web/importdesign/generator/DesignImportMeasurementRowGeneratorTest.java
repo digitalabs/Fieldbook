@@ -108,7 +108,7 @@ public class DesignImportMeasurementRowGeneratorTest {
 
 					@Override
 					public Integer apply(final ImportedGermplasm input) {
-						return input.getEntryId();
+						return input.getEntryNumber();
 					}
 				});
 
@@ -141,7 +141,7 @@ public class DesignImportMeasurementRowGeneratorTest {
 
 							@Override
 							public Integer apply(final ImportedGermplasm input) {
-								return input.getEntryId();
+								return input.getEntryNumber();
 							}
 						});
 
@@ -165,7 +165,7 @@ public class DesignImportMeasurementRowGeneratorTest {
 			if (TermId.ENTRY_NO.getId() == measurementData.getMeasurementVariable().getTermId()) {
 				Assert.assertEquals(
 						"The value of MeasurementData should match the germplasm value for " + TermId.ENTRY_NO.toString() + " variable",
-						measurementData.getValue().toString(), germplasmEntry.getEntryId().toString());
+						measurementData.getValue().toString(), germplasmEntry.getEntryNumber().toString());
 			} else if (TermId.GID.getId() == measurementData.getMeasurementVariable().getTermId()) {
 				Assert.assertEquals(
 						"The value of MeasurementData should match the germplasm value for " + TermId.GID.toString() + " variable.",

@@ -383,7 +383,7 @@ public class ExportStudyGermplasmServiceTest {
 		importedGermplasm.setIndex(0);
 		importedGermplasm.setGid(ExportStudyGermplasmServiceTest.GID_VALUE);
 		importedGermplasm.setEntryCode(ExportStudyGermplasmServiceTest.ENTRY_CODE_VALUE);
-		importedGermplasm.setEntryId(Integer.valueOf(ExportStudyGermplasmServiceTest.ENTRY_NO_VALUE));
+		importedGermplasm.setEntryNumber(Integer.valueOf(ExportStudyGermplasmServiceTest.ENTRY_NO_VALUE));
 		importedGermplasm.setSource(ExportStudyGermplasmServiceTest.SOURCE_VALUE);
 		importedGermplasm.setCross(ExportStudyGermplasmServiceTest.CROSS_VALUE);
 		importedGermplasm.setDesig(ExportStudyGermplasmServiceTest.DESIG_VALUE);
@@ -502,7 +502,7 @@ public class ExportStudyGermplasmServiceTest {
 
 		importedGermplasm.setGid(ExportStudyGermplasmServiceTest.GID_VALUE);
 		importedGermplasm.setEntryCode(ExportStudyGermplasmServiceTest.ENTRY_CODE_VALUE);
-		importedGermplasm.setEntryId(1);
+		importedGermplasm.setEntryNumber(1);
 		importedGermplasm.setSource(ExportStudyGermplasmServiceTest.SOURCE_VALUE);
 		importedGermplasm.setCross(ExportStudyGermplasmServiceTest.CROSS_VALUE);
 		importedGermplasm.setDesig(ExportStudyGermplasmServiceTest.DESIG_VALUE);

@@ -86,7 +86,7 @@ public class FieldbookUtil {
 	}
 
 	public static boolean isPlotDuplicateNonFirstInstance(final ImportedCross crosses) {
-		if (crosses.isPlotDupe() && crosses.getDuplicateEntries() != null && crosses.getEntryId() > crosses.getDuplicateEntries().iterator()
+		if (crosses.isPlotDupe() && crosses.getDuplicateEntries() != null && crosses.getEntryNumber() > crosses.getDuplicateEntries().iterator()
 				.next()) {
 			return true;
 		}

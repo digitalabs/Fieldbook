@@ -44,6 +44,7 @@ function updateCheck(event) {
 						.$apply(
 							function () {
 								angular.element('#mainApp').injector().get('studyStateService').updateOccurred();
+								angular.element('#mainApp').injector().get('TrialManagerDataService').applicationData.germplasmChangesUnsaved = true;
 							});
 				}
 			} else {

@@ -11,27 +11,15 @@
 
 package com.efficio.fieldbook.web.trial.service.impl;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.ParseException;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.service.ImportGermplasmFileService;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.generationcp.commons.parsing.pojo.ImportedCondition;
-import org.generationcp.commons.parsing.pojo.ImportedFactor;
-import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
-import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
-import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
+import org.generationcp.commons.constant.AppConstants;
+import org.generationcp.commons.parsing.pojo.*;
 import org.generationcp.commons.service.FileService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
@@ -46,9 +34,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.service.ImportGermplasmFileService;
-import org.generationcp.commons.constant.AppConstants;
+import javax.annotation.Resource;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The Class ImportGermplasmFileServiceImpl.
@@ -268,7 +262,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 					if (this.importedGermplasmList.getImportedFactors().get(col).getFactor()
 							.equalsIgnoreCase(AppConstants.ENTRY.getString())) {
 						importedGermplasm
-								.setEntryId(Integer.valueOf(this.getCellStringValue(this.currentSheet, this.currentRow, col, true)));
+								.setEntryNumber(Integer.valueOf(this.getCellStringValue(this.currentSheet, this.currentRow, col, true)));
 					} else if (this.importedGermplasmList.getImportedFactors().get(col).getFactor()
 							.equalsIgnoreCase(AppConstants.DESIGNATION.getString())) {
 						importedGermplasm.setDesig(this.getCellStringValue(this.currentSheet, this.currentRow, col, true));

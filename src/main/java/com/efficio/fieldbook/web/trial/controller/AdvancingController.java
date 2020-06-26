@@ -14,12 +14,7 @@ package com.efficio.fieldbook.web.trial.controller;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.AdvanceResult;
-import com.efficio.fieldbook.web.common.bean.ChoiceKeyVal;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.TableHeader;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.bean.*;
 import com.efficio.fieldbook.web.trial.bean.AdvanceType;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
 import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
@@ -61,12 +56,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -74,16 +64,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 @RequestMapping(AdvancingController.URL)
@@ -345,14 +326,14 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		ObjectMapper objectMapper = new ObjectMapper();
 		AdvanceGermplasmChangeDetail[] responseDetails = objectMapper.readValue(userResponses, AdvanceGermplasmChangeDetail[].class);
 		List<ImportedGermplasm> importedGermplasmListTemp = this.userSelection.getImportedAdvancedGermplasmList();
-		List<Integer> deletedEntryIds = new ArrayList<>();
+		List<Integer> deletedEntryNumbers = new ArrayList<>();
 		for (AdvanceGermplasmChangeDetail responseDetail : responseDetails) {
 			if (responseDetail.getIndex() < importedGermplasmListTemp.size()) {
 				ImportedGermplasm importedGermplasm = importedGermplasmListTemp.get(responseDetail.getIndex());
 				if (responseDetail.getStatus() == 1) {
 					// add germplasm name to gid
 					// we need to delete
-					deletedEntryIds.add(importedGermplasm.getEntryId());
+					deletedEntryNumbers.add(importedGermplasm.getEntryNumber());
 				} else if (responseDetail.getStatus() == 3) {
 					// choose gids
 					importedGermplasm.setDesig(responseDetail.getNewAdvanceName());
@@ -369,10 +350,10 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		int index = 1;
 		for (Iterator<ImportedGermplasm> iterator = importedGermplasmListTemp.iterator(); iterator.hasNext();) {
 			ImportedGermplasm germplasm = iterator.next();
-			if (deletedEntryIds.contains(germplasm.getEntryId())) {
+			if (deletedEntryNumbers.contains(germplasm.getEntryNumber())) {
 				iterator.remove();
 			} else {
-				germplasm.setEntryId(index++);
+				germplasm.setEntryNumber(index++);
 			}
 		}
 		this.userSelection.setImportedAdvancedGermplasmList(importedGermplasmListTemp);
@@ -450,7 +431,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			int i = 0;
 			for (i = 0; i < importedGermplasmList.size(); i++) {
 				ImportedGermplasm germplasm = importedGermplasmList.get(i);
-				if (germplasm.getEntryId().toString().equalsIgnoreCase(entryNumber)) {
+				if (germplasm.getEntryNumber().toString().equalsIgnoreCase(entryNumber)) {
 					isFound = true;
 					break;
 				}
@@ -461,9 +442,9 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		}
 		// now we need to set the entry id again
 		for (int i = 0; i < importedGermplasmList.size(); i++) {
-			Integer newEntryId = i + 1;
-			importedGermplasmList.get(i).setEntryId(newEntryId);
-			importedGermplasmList.get(i).setEntryCode(FieldbookUtil.generateEntryCode(newEntryId));
+			Integer newEntryNumber = i + 1;
+			importedGermplasmList.get(i).setEntryNumber(newEntryNumber);
+			importedGermplasmList.get(i).setEntryCode(FieldbookUtil.generateEntryCode(newEntryNumber));
 
 		}
 
@@ -476,7 +457,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			Map<String, Object> dataMap = new HashMap<>();
 			dataMap.put("desig", germplasm.getDesig());
 			dataMap.put("gid", ImportedGermplasm.GID_PENDING);
-			dataMap.put("entry", germplasm.getEntryId());
+			dataMap.put("entry", germplasm.getEntryNumber());
 			dataMap.put("source", germplasm.getSource());
 			dataMap.put("parentage", germplasm.getCross());
 

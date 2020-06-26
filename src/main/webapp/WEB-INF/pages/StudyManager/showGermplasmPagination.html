@@ -16,6 +16,8 @@
 					   class="table-curved table-condensed germplasm-list-items check-table-popover">
 					<thead>
 					<tr>
+						<!-- First column is for checkbox for Study Germplasm if study list is saved-->
+						<th th:attr="data-col-name=entry-checkbox" th:if="${hasSavedGermplasm}"></th>
 						<th nowrap="nowrap" th:each="tableHeader : ${tableHeaderList}" th:text="${tableHeader.columnName}"
 							th:attr="data-col-name=${tableHeader.dataCol}"></th>
 					</tr>

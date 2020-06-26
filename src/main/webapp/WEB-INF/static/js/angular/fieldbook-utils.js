@@ -375,7 +375,7 @@
 						var oldFunction = $scope.changefunction;
 						$scope.changefunction = function () {
 							studyStateService.updateOccurred();
-							oldFunction;
+							oldFunction();
 						}
 					}
 

@@ -24,7 +24,7 @@ import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
-import org.generationcp.middleware.service.api.study.StudyService;
+import org.generationcp.middleware.service.api.study.StudyGermplasmService;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +75,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	private CrossingService crossingService;
 
 	@Resource
-	private StudyService studyService;
+	private StudyGermplasmService studyGermplasmService;
 
 	@Resource
 	private UserService userService;
@@ -276,7 +276,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 		}
 		// 2. Retrieve study germplasm list for given plot number/s
 		final List<StudyGermplasmDto> studyList =
-			this.studyService.getStudyGermplasmListWithPlotInformation(studyId, plotNos);
+			this.studyGermplasmService.getGermplasmFromPlots(studyId, plotNos);
 		return studyList.stream().collect(Collectors.toMap(e -> Integer.valueOf(e.getPosition()), Function.identity(), (existing, replacement) -> replacement));
 	}
 

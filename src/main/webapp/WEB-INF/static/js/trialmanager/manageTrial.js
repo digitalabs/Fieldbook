@@ -242,10 +242,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			$scope.hasAnyAuthority = HasAnyAuthorityService.hasAnyAuthority;
 			$scope.PERMISSIONS = PERMISSIONS;
-			$scope.trialTabs.push({
-				name: 'Experimental Design',
-				state: 'experimentalDesign'
-			});
+
 			if ($scope.isOpenStudy()) {
 				$scope.trialTabs.push({
 					name: 'Treatment Factors',

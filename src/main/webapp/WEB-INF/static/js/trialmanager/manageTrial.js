@@ -9,19 +9,19 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 	var manageTrialApp = angular.module('manageTrialApp', ['designImportApp', 'leafnode-utils', 'fieldbook-utils', 'subObservation',
 		'ui.router', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables', 'datatables.buttons', 'datatables.colreorder',
-		'showSettingFormElementNew', 'ngSanitize', 'ui.select', 'ngMessages', 'blockUI', 'datasets-api', 'auth', 'bmsAuth' , 'studyState',
+		'showSettingFormElementNew', 'ngSanitize', 'ui.select', 'ngMessages', 'blockUI', 'datasets-api', 'auth', 'bmsAuth', 'studyState',
 		'export-study', 'import-study', 'create-sample', 'derived-variable', 'importObservationsApp']);
 
-	manageTrialApp.config(['$httpProvider', function($httpProvider) {
+	manageTrialApp.config(['$httpProvider', function ($httpProvider) {
 		$httpProvider.interceptors.push('authInterceptor');
 		$httpProvider.interceptors.push('authExpiredInterceptor');
 	}]);
 
-	manageTrialApp.config(['localStorageServiceProvider', function(localStorageServiceProvider){
+	manageTrialApp.config(['localStorageServiceProvider', function (localStorageServiceProvider) {
 		localStorageServiceProvider.setPrefix('bms');
 	}]);
 
-	manageTrialApp.config(['blockUIConfig', function(blockUIConfig) {
+	manageTrialApp.config(['blockUIConfig', function (blockUIConfig) {
 		blockUIConfig.templateUrl = '/Fieldbook/static/angular-templates/blockUiTemplate.html';
 	}]);
 
@@ -81,6 +81,16 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					}
 				},
 				deepStateRedirect: true, sticky: true
+			})
+
+			.state('studyGermplasmSource', {
+				url: '/studyGermplasmSource',
+				views: {
+					studyGermplasmSource: {
+						controller: 'StudyGermplasmSourceCtrl',
+						templateUrl: '/Fieldbook/static/js/trialmanager/study-germplasm-source/study-germplasm-source-tab.html'
+					}
+				}
 			})
 
 			.state('inventory', {
@@ -187,7 +197,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 		]
 	);
 
-	let inventoryChangedDeRegister = () => {};
+	let inventoryChangedDeRegister = () => {
+	};
 
 	// THE parent controller for the manageTrial (create/edit) page
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'studyStateService', 'TrialManagerDataService', '$http',
@@ -222,7 +233,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				state: 'inventory',
 				hidden: true
 			};
-
 			$scope.isOpenStudy = TrialManagerDataService.isOpenStudy;
 			$scope.isLockedStudy = TrialManagerDataService.isLockedStudy;
 			$scope.studyTypes = [];
@@ -232,13 +242,16 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 			$scope.hasAnyAuthority = HasAnyAuthorityService.hasAnyAuthority;
 			$scope.PERMISSIONS = PERMISSIONS;
-
+			$scope.trialTabs.push({
+				name: 'Experimental Design',
+				state: 'experimentalDesign'
+			});
 			if ($scope.isOpenStudy()) {
 				$scope.trialTabs.push({
 					name: 'Treatment Factors',
 					state: 'treatment'
 				});
-				$scope.trialTabs.push(	{
+				$scope.trialTabs.push({
 					name: 'Environments',
 					state: 'environment'
 				});
@@ -246,14 +259,18 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					name: 'Experimental Design',
 					state: 'experimentalDesign'
 				});
-
+				$scope.trialTabs.push({
+					name: 'Crosses and Selections',
+					state: 'studyGermplasmSource'
+				});
 				$scope.trialTabs.push($scope.inventoryTab);
 				loadInventoryTab();
 
 				studyStateService.updateHasListsOrSubObs(HAS_LISTS_OR_SUB_OBS);
 				studyStateService.updateGeneratedDesign(HAS_GENERATED_DESIGN);
 
-			};
+			}
+			;
 
 			inventoryChangedDeRegister();
 			inventoryChangedDeRegister = $rootScope.$on("inventoryChanged", function () {
@@ -329,7 +346,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			$scope.safeApply = function (fn) {
 				var phase = this.$root.$$phase;
 				if (phase === '$apply' || phase === '$digest') {
-					if (fn && (typeof(fn) === 'function')) {
+					if (fn && (typeof (fn) === 'function')) {
 						fn();
 					}
 				} else {
@@ -502,7 +519,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 
 				$scope.isSettingsTab = false;
 				$scope.tabSelected = subObsTab.state;
-				return $state.transitionTo('subObservationTabs.subObservationSets',  {
+				return $state.transitionTo('subObservationTabs.subObservationSets', {
 					subObservationTabId: subObsTab.id,
 					subObservationTab: subObsTab,
 					subObservationSetId: subObsSet.id,
@@ -799,7 +816,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				 *
 				 */
 
-				// utility maps to easily get what we want
+					// utility maps to easily get what we want
 				var datasetByParent = {};
 				var datasetById = {};
 				angular.forEach(data, function (dataset) {
@@ -932,7 +949,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			$scope.isSaveEnabled = function () {
 
 				// Enable save button when Stock List tab is selected and only if there is an imported inventory.
-				var enableSaveForStockList = $scope.tabSelected.indexOf('stock-list') >=0 && stockListImportNotSaved;
+				var enableSaveForStockList = $scope.tabSelected.indexOf('stock-list') >= 0 && stockListImportNotSaved;
 
 				return $scope.tabSelected && ([
 					"trialSettings",
@@ -980,18 +997,18 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				return modalInstance;
 			};
 
-			$scope.showExportStudyModal = function() {
+			$scope.showExportStudyModal = function () {
 				exportStudyModalService.openDatasetOptionModal();
 			}
 
-			$scope.showImportStudyModal = function() {
+			$scope.showImportStudyModal = function () {
 				importStudyModalService.openDatasetOptionModal();
 			}
 
 			$scope.printLabels = function () {
 				$uibModal.open({
 					template: '<dataset-option-modal modal-title="modalTitle" message="message"' +
-					' selected="selected" on-continue="forkPrintLabelFlows()"></dataset-option-modal>',
+						' selected="selected" on-continue="forkPrintLabelFlows()"></dataset-option-modal>',
 					size: 'md',
 					controller: ['$scope', 'studyContext', function (scope, studyContext) {
 
@@ -1072,7 +1089,7 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				});
 			}
 
-			$scope.showCreateSampleListModal = function() {
+			$scope.showCreateSampleListModal = function () {
 				createSampleModalService.openDatasetOptionModal();
 			}
 

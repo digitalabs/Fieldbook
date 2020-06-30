@@ -593,6 +593,11 @@
 		<aop:scoped-proxy proxy-target-class="false" />
 	</bean>
 
+	<bean id="studyGermplasmSourceService" factory-bean="managerFactory"
+		  factory-method="getStudyGermplasmSourceService" scope="request">
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
+
 	<bean id="studyGermplasmTransformer" class="com.efficio.fieldbook.web.study.germplasm.StudyGermplasmTransformer" scope="request">
 		<aop:scoped-proxy/>
 	</bean>

@@ -417,8 +417,7 @@ public class GermplasmTreeControllerTest {
 
 		final AdvancingStudyForm advancingForm = this.createAdvancingStudyForm(true);
 
-		this.controller.populateGermplasmListDataFromAdvanced(new GermplasmList(), advancingForm, germplasmNames, listDataItems,
-				GermplasmTreeControllerTest.TEST_USER_ID, germplasmAttributes);
+		this.controller.populateGermplasmListDataFromAdvanced(new GermplasmList(), advancingForm, germplasmNames, listDataItems, germplasmAttributes, new ArrayList<>());
 
 		// Called 3x - for REP, TRIAL_INSTANCE and PLOT FieldNos - and not
 		// inside germplasm list loop
@@ -498,8 +497,7 @@ public class GermplasmTreeControllerTest {
 
 		final AdvancingStudyForm advancingForm = this.createAdvancingStudyForm(false);
 
-		this.controller.populateGermplasmListDataFromAdvanced(new GermplasmList(), advancingForm, germplasmNames, listDataItems,
-				GermplasmTreeControllerTest.TEST_USER_ID, germplasmAttributes);
+		this.controller.populateGermplasmListDataFromAdvanced(new GermplasmList(), advancingForm, germplasmNames, listDataItems, germplasmAttributes, new ArrayList<>());
 
 		// Called 3x - for REP, TRIAL_INSTANCE and PLOT FieldNos - and not
 		// inside germplasm list loop
@@ -569,7 +567,7 @@ public class GermplasmTreeControllerTest {
 		advancingForm.setHarvestLocationId("0");
 
 		this.controller.populateGermplasmListDataFromAdvanced(new GermplasmList(), advancingForm, germplasmNames, listDataItems,
-			GermplasmTreeControllerTest.TEST_USER_ID, germplasmAttributes);
+			germplasmAttributes, new ArrayList<>());
 
 		final List<ImportedGermplasm> inputGermplasmList = advancingForm.getGermplasmList();
 		for (int i = 0; i < inputGermplasmList.size(); i++) {

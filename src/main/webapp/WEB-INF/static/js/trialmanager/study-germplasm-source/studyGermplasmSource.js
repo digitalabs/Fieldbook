@@ -7,126 +7,347 @@
 		['$scope', '$q', '$compile', 'studyContext', 'DTOptionsBuilder', 'studyGermplasmSourceService',
 			function ($scope, $q, $compile, studyContext, DTOptionsBuilder, studyGermplasmSourceService) {
 
-				var dtColumnsPromise = $q.defer();
-				var dtColumnDefsPromise = $q.defer();
-
 				$scope.nested = {};
 				$scope.nested.dtInstance = null;
-				$scope.dtColumns = dtColumnsPromise.promise;
-				$scope.dtColumnDefs = dtColumnDefsPromise.promise;
-				$scope.dtOptions = null;
-				$scope.selectedItems = [];
 
-				$scope.loadTable = function () {
+				const dtOptionsDeferred = $q.defer();
+				$scope.dtOptions = dtOptionsDeferred.promise;
 
-					$scope.dtOptions = getDtOptions();
+				const dtOptions = DTOptionsBuilder.newOptions()
+					.withOption('ajax', {
+						url: studyGermplasmSourceService.getStudyGermplasmSourceTableUrl(),
+						type: 'POST',
+						contentType: 'application/json',
+						beforeSend: function (xhr) {
+							xhr.setRequestHeader('X-Auth-Token', JSON.parse(localStorage['bms.xAuthToken']).token);
+						},
+						data: function (d) {
+							var order = d.order && d.order[0];
 
-					var columns = [
-						{data: null, className: 'checkboxCol', title: '', defaultContent: ''},
-						{data: 'gid', className: 'gidCol', title: 'GID'},
-						{data: 'groupId', className: 'groupIdCol', title: 'GROUP ID'},
-						{data: 'designation', className: 'designationCol', title: 'DESIGNATION'},
-						{data: 'cross', className: 'crossCol', title: 'CROSS'},
-						{data: 'lots', className: 'lotsCol', title: 'LOTS'},
-						{data: 'breedingMethodAbbrevation', className: 'breedingMethodAbbrevationCol', title: 'BREEDING METHOD ABBR'},
-						{data: 'breedingMethodName', className: 'breedingMethodNameCol', title: 'BREEDING METHOD NAME'},
-						{data: 'breedingMethodType', className: 'breedingMethodTypeCol', title: 'BREEDING METHOD TYPE'},
-						{data: 'location', className: 'locationCol', title: 'LOCATION'},
-						{data: 'trialInstance', className: 'trialInstanceCol', title: 'TRIAL INSTANCE'},
-						{data: 'plotNumber', className: 'plotNumberCol', title: 'PLOT_NO'},
-						{data: 'replicationNumber', className: 'replicationNumberCol', title: 'REP_NO'},
-						{data: 'germplasmDate', className: 'germplasmDateCol', title: 'GERMPLASM DATE'}
-					];
-					var columnsDef = [];
-					columnsDef.push({
-						targets: 0,
-						orderable: false,
-						createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
-							$(td).append($compile('<span><input type="checkbox" ng-checked="isSelected(' + rowData.gid + ')" ng-click="toggleSelect(' + rowData.gid + ')"></span>')($scope));
+							return JSON.stringify(addFilters({
+								studyId: studyContext.studyId,
+								sortedRequest: {
+									pageSize: d.length,
+									pageNumber: d.length === 0 ? 1 : d.start / d.length + 1,
+									sortBy: $scope.dtColumns[order.column].name,
+									sortOrder: order.dir
+								}
+							}));
+						}
+					})
+					.withDataProp('data')
+					.withOption('serverSide', true)
+					.withOption('processing', true)
+					.withOption('lengthMenu', [[50, 75, 100], [50, 75, 100]])
+					.withOption('scrollY', '500px')
+					.withOption('scrollCollapse', true)
+					.withOption('scrollX', '100%')
+					.withOption('order', [[2, 'asc']]) // transactionId
+					.withOption('language', {
+						processing: '<span class="throbber throbber-2x"></span>',
+						lengthMenu: 'Records per page: _MENU_',
+						paginate: {
+							next: '>',
+							previous: '<',
+							first: '<<',
+							last: '>>'
+						}
+					})
+					.withDOM('<"pull-left fbk-left-padding"r>' + //
+						'<"pull-right"B>' + //
+						'<"clearfix">' + //
+						'<"row add-top-padding-small"<"col-sm-12"t>>' + //
+						'<"row"<"col-sm-12 paginate-float-center"<"pull-left"i><"pull-right"l>p>>')
+					.withButtons([{
+						extend: 'colvis',
+						className: 'fbk-buttons-no-border fbk-colvis-button',
+						text: '<i class="glyphicon glyphicon-th"></i>',
+						columns: ':gt(0)'
+					}])
+					.withPaginationType('full_numbers');
+
+				function addFilters(request) {
+					request.studyGermplasmSourceSearchDto = {};
+					Object.entries($scope.columns).forEach(([name, column]) => {
+						if (column.filter && column.filter.transform) {
+							column.filter.isFiltered = false;
+							column.filter.transform(request);
 						}
 					});
-					dtColumnsPromise.resolve(columns);
-					dtColumnDefsPromise.resolve(columnsDef);
-
+					return request;
 				}
 
-				$scope.isSelected = function (id) {
-					return id && $scope.selectedItems.length > 0 && $scope.selectedItems.find((item) => item === id);
-				};
-
-				$scope.toggleSelect = function (id) {
-					var idx = $scope.selectedItems.indexOf(id);
-					if (idx > -1) {
-						$scope.selectedItems.splice(idx, 1)
-					} else {
-						$scope.selectedItems.push(id);
+				$scope.columns = {
+					checkbox: {
+						data: function () {
+							return "";
+						}
+					},
+					gid: {
+						data: 'gid',
+						filter: {
+							transform(request) {
+								if (this.value) {
+									request.studyGermplasmSourceSearchDto.gid = this.value;
+									this.isFiltered = true;
+								}
+							}
+						}
+					},
+					groupId: {
+						data: 'groupId',
+						filter: {
+							transform(request) {
+								if (this.value) {
+									request.studyGermplasmSourceSearchDto.groupId = this.value;
+									this.isFiltered = true;
+								}
+							}
+						}
+					},
+					designation: {
+						data: 'designation',
+						filter: {
+							transform(request) {
+								if (this.value) {
+									request.studyGermplasmSourceSearchDto.designation = this.value;
+									this.isFiltered = true;
+								}
+							}
+						}
+					},
+					cross: {
+						data: 'cross',
+						filter: {
+							transform(request) {
+								if (this.value) {
+									request.studyGermplasmSourceSearchDto.cross = this.value;
+									this.isFiltered = true;
+								}
+							}
+						}
+					},
+					lots: {
+						data: 'lots',
+						filter: {
+							transform(request) {
+								if (this.value) {
+									request.studyGermplasmSourceSearchDto.lots = this.value;
+									this.isFiltered = true;
+								}
+							}
+						}
+					},
+					breedingMethodAbbrevation: {
+						data: 'breedingMethodAbbrevation',
+						filter: {
+							transform(request) {
+								if (this.value) {
+									request.breedingMethodAbbrevation = this.value;
+									this.isFiltered = true;
+								}
+							}
+						}
+					},
+					breedingMethodName: {
+						data: 'breedingMethodName',
+						filter: {
+							transform(request) {
+								if (this.value) {
+									request.studyGermplasmSourceSearchDto.breedingMethodName = this.value;
+									this.isFiltered = true;
+								}
+							}
+						}
+					},
+					breedingMethodType: {
+						data: 'breedingMethodType',
+						filter: {
+							transform(request) {
+								if (this.value) {
+									request.studyGermplasmSourceSearchDto.breedingMethodType = this.value;
+									this.isFiltered = true;
+								}
+							}
+						}
+					},
+					location: {
+						data: 'location',
+						filter: {
+							transform(request) {
+								if (this.value) {
+									request.studyGermplasmSourceSearchDto.location = this.value;
+									this.isFiltered = true;
+								}
+							}
+						}
+					},
+					trialInstance: {
+						data: 'trialInstance',
+						filter: {
+							transform(request) {
+								if (this.value) {
+									request.studyGermplasmSourceSearchDto.trialInstance = this.value;
+									this.isFiltered = true;
+								}
+							}
+						}
+					},
+					plotNumber: {
+						data: 'plotNumber',
+						filter: {
+							transform(request) {
+								if (this.value) {
+									request.studyGermplasmSourceSearchDto.plotNumber = this.value;
+									this.isFiltered = true;
+								}
+							}
+						}
+					},
+					replicationNumber: {
+						data: 'replicationNumber',
+						filter: {
+							transform(request) {
+								if (this.value) {
+									request.studyGermplasmSourceSearchDto.replicationNumber = this.value;
+									this.isFiltered = true;
+								}
+							}
+						}
+					},
+					germplasmDate: {
+						data: 'germplasmDate',
+						filter: {
+							transform(request) {
+								if (this.value) {
+									request.studyGermplasmSourceSearchDto.germplasmDate = this.value;
+									this.isFiltered = true;
+								}
+							}
+						}
 					}
 				};
 
-				function getDtOptions() {
-					return addCommonOptions(DTOptionsBuilder.newOptions()
-						.withOption('ajax', {
-							url: studyGermplasmSourceService.getStudyGermplasmSourceTableUrl(),
-							type: 'POST',
-							contentType: 'application/json',
-							beforeSend: function (xhr) {
-								xhr.setRequestHeader('X-Auth-Token', JSON.parse(localStorage['bms.xAuthToken']).token);
-							},
-							data: function (d) {
-								var order = d.order && d.order[0];
-								return JSON.stringify({
-									studyId: studyContext.studyId,
-									sortedRequest: {
-										pageSize: d.length,
-										pageNumber: d.length === 0 ? 1 : d.start / d.length + 1
-										// TODO: Implent sort
-										//sortBy: null,
-										//sortOrder: order.dir
-									},
-									// TODO: Implement filter
-									//filter: getFilter()
-								});
-							}
-						})
-						.withDataProp('data')
-						.withOption('serverSide', true));
-					// TODO: Implement filter
-					//.withOption('initComplete', initCompleteCallback);
+				$scope.filterHelper = {
+					filterByColumn(filter) {
+						table().ajax.reload();
+					},
+					resetFilterByColumn(filter) {
+						filter.value = null;
+						if (filter.reset) {
+							filter.reset();
+						}
+						table().ajax.reload();
+					},
+					sortColumn(columnName, asc) {
+						table().order([$scope.dtColumns.findIndex((column) => column.name === columnName), asc ? 'asc' : 'desc']).draw();
+					},
+					isSortingAsc(columnName) {
+						const index = $scope.dtColumns.findIndex((column) => column.name === columnName);
+						const order = table().order().find((order) => order[0] === index);
+						if (order) {
+							return order[1] === 'asc';
+						}
+						return null;
+					},
+					getFilteringByClass(filter) {
+						if (filter.isFiltered) {
+							return 'filtering-by';
+						}
+					}
+				};
+
+				/**
+				 * - column.name used for sorting
+				 */
+				$scope.dtColumns = Object.entries($scope.columns).map(([name, column]) => {
+					return {
+						name: name,
+						data: column.data,
+						visible: column.visible
+					}
+				});
+
+				$scope.dtColumnDefs = [
+					{
+						targets: 0,
+						createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
+							$(td).append($compile('<span><input type="checkbox" ng-checked="isSelected(' + rowData.transactionId + ')" ng-click="toggleSelect(' + rowData.transactionId + ')"></span>')($scope));
+							$scope.$apply();
+						}
+					},
+					{
+						targets: "germplasm-link-column",
+						render: function (data, type, rowData, meta) {
+							return '<a class="gid-link" href="javascript: void(0)"'
+								+ ` onclick="openGermplasmDetailsPopopWithGidAndDesig('${rowData.gid}','${rowData.designation}')">`
+								+ EscapeHTML.escape(data) + '</a>';
+						}
+					}
+				];
+
+				$scope.totalItems = 0;
+				$scope.selectedItems = {};
+				$scope.isAllPagesSelected = false;
+
+				$scope.isPageSelected = function () {
+					var pageItemIds = getPageItemIds();
+					return $scope.size($scope.selectedItems) > 0 && pageItemIds.every((item) => $scope.selectedItems[item]);
+				};
+
+				$scope.onSelectPage = function () {
+					var pageItemIds = getPageItemIds();
+					if ($scope.isPageSelected()) {
+						// remove all items
+						pageItemIds.forEach((item) => delete $scope.selectedItems[item]);
+					} else {
+						// check remaining items
+						pageItemIds.forEach((item) => $scope.selectedItems[item] = true);
+					}
+				};
+
+				$scope.onSelectAllPages = function () {
+					$scope.isAllPagesSelected = !$scope.isAllPagesSelected;
+					table().columns(0).visible(!$scope.isAllPagesSelected);
+					$scope.selectedItems = {};
+				};
+
+				$scope.getRecordsFiltered = function () {
+					return table().context[0].json && table().context[0].json['recordsFiltered'];
+				};
+
+				$scope.isSelected = function (itemId) {
+					return $scope.selectedItems[itemId];
+				};
+
+				$scope.toggleSelect = function (itemId) {
+					if ($scope.selectedItems[itemId]) {
+						delete $scope.selectedItems[itemId];
+					} else {
+						$scope.selectedItems[itemId] = true;
+					}
+				};
+
+				$scope.size = function (obj) {
+					return Object.keys(obj).length;
+				};
+
+				function getPageItemIds() {
+					const dataTable = table();
+					if (!dataTable) {
+						return [];
+					}
+					return dataTable.data().toArray().map((data) => {
+						return data.transactionId;
+					});
 				}
 
-				function addCommonOptions(options) {
-					return options
-						.withOption('processing', true)
-						.withOption('lengthMenu', [[50, 75, 100], [50, 75, 100]])
-						.withOption('scrollY', '500px')
-						.withOption('scrollCollapse', true)
-						.withOption('scrollX', '100%')
-						.withOption('language', {
-							processing: '<span class="throbber throbber-2x"></span>',
-							lengthMenu: 'Records per page: _MENU_',
-							paginate: {
-								next: '>',
-								previous: '<',
-								first: '<<',
-								last: '>>'
-							}
-						})
-						.withDOM('<"pull-left fbk-left-padding"r>' + //
-							'<"pull-right"B>' + //
-							'<"clearfix">' + //
-							'<"row add-top-padding-small"<"col-sm-12"t>>' + //
-							'<"row"<"col-sm-12 paginate-float-center"<"pull-left"i><"pull-right"l>p>>')
-						.withButtons([{
-							extend: 'colvis',
-							className: 'fbk-buttons-no-border fbk-colvis-button',
-							text: '<i class="glyphicon glyphicon-th"></i>',
-							columns: ':gt(0)'
-						}])
-						.withColReorder()
-						.withPaginationType('full_numbers');
+				function table() {
+					return $scope.nested.dtInstance.DataTable;
 				}
 
-				$scope.loadTable();
+				dtOptionsDeferred.resolve(dtOptions);
+
 
 			}]);
 

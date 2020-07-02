@@ -42,7 +42,7 @@
 					.withOption('scrollY', '500px')
 					.withOption('scrollCollapse', true)
 					.withOption('scrollX', '100%')
-					.withOption('order', [[2, 'asc']]) // transactionId
+					.withOption('order', [[2, 'asc']]) //gid
 					.withOption('language', {
 						processing: '<span class="throbber throbber-2x"></span>',
 						lengthMenu: 'Records per page: _MENU_',
@@ -79,6 +79,11 @@
 
 				$scope.columns = {
 					checkbox: {
+						data: function () {
+							return "";
+						}
+					},
+					sourceId: {
 						data: function () {
 							return "";
 						}
@@ -272,8 +277,14 @@
 					{
 						targets: 0,
 						createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
-							$(td).append($compile('<span><input type="checkbox" ng-checked="isSelected(' + rowData.transactionId + ')" ng-click="toggleSelect(' + rowData.transactionId + ')"></span>')($scope));
+							$(td).append($compile('<span><input type="checkbox" ng-checked="isSelected(' + rowData.sourceId + ')" ng-click="toggleSelect(' + rowData.sourceId + ')"></span>')($scope));
 							$scope.$apply();
+						}
+					},
+					{
+						targets: 1,
+						createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
+							$(td).append('<span>' + rowData.sourceId + '</span>');
 						}
 					},
 					{
@@ -338,7 +349,7 @@
 						return [];
 					}
 					return dataTable.data().toArray().map((data) => {
-						return data.transactionId;
+						return data.sourceId;
 					});
 				}
 

@@ -42,7 +42,7 @@
 					.withOption('scrollY', '500px')
 					.withOption('scrollCollapse', true)
 					.withOption('scrollX', '100%')
-					.withOption('order', [[2, 'asc']]) //gid
+					.withOption('order', [[1, 'asc']]) //sourceId
 					.withOption('language', {
 						processing: '<span class="throbber throbber-2x"></span>',
 						lengthMenu: 'Records per page: _MENU_',
@@ -81,12 +81,14 @@
 					checkbox: {
 						data: function () {
 							return "";
-						}
+						},
+						orderable: false
 					},
 					sourceId: {
 						data: function () {
 							return "";
-						}
+						},
+						orderable: true
 					},
 					gid: {
 						data: 'gid',
@@ -97,7 +99,8 @@
 									this.isFiltered = true;
 								}
 							}
-						}
+						},
+						orderable: true
 					},
 					groupId: {
 						data: 'groupId',
@@ -108,7 +111,8 @@
 									this.isFiltered = true;
 								}
 							}
-						}
+						},
+						orderable: true
 					},
 					designation: {
 						data: 'designation',
@@ -119,18 +123,12 @@
 									this.isFiltered = true;
 								}
 							}
-						}
+						},
+						orderable: true
 					},
 					cross: {
 						data: 'cross',
-						filter: {
-							transform(request) {
-								if (this.value) {
-									request.studyGermplasmSourceSearchDto.cross = this.value;
-									this.isFiltered = true;
-								}
-							}
-						}
+						orderable: false
 					},
 					lots: {
 						data: 'lots',
@@ -141,7 +139,8 @@
 									this.isFiltered = true;
 								}
 							}
-						}
+						},
+						orderable: true
 					},
 					breedingMethodAbbrevation: {
 						data: 'breedingMethodAbbrevation',
@@ -152,7 +151,8 @@
 									this.isFiltered = true;
 								}
 							}
-						}
+						},
+						orderable: true
 					},
 					breedingMethodName: {
 						data: 'breedingMethodName',
@@ -163,7 +163,8 @@
 									this.isFiltered = true;
 								}
 							}
-						}
+						},
+						orderable: true
 					},
 					breedingMethodType: {
 						data: 'breedingMethodType',
@@ -174,7 +175,8 @@
 									this.isFiltered = true;
 								}
 							}
-						}
+						},
+						orderable: true
 					},
 					location: {
 						data: 'location',
@@ -185,7 +187,8 @@
 									this.isFiltered = true;
 								}
 							}
-						}
+						},
+						orderable: true
 					},
 					trialInstance: {
 						data: 'trialInstance',
@@ -196,7 +199,8 @@
 									this.isFiltered = true;
 								}
 							}
-						}
+						},
+						orderable: true
 					},
 					plotNumber: {
 						data: 'plotNumber',
@@ -207,7 +211,8 @@
 									this.isFiltered = true;
 								}
 							}
-						}
+						},
+						orderable: true
 					},
 					replicationNumber: {
 						data: 'replicationNumber',
@@ -229,7 +234,8 @@
 									this.isFiltered = true;
 								}
 							}
-						}
+						},
+						orderable: true
 					}
 				};
 
@@ -269,7 +275,8 @@
 					return {
 						name: name,
 						data: column.data,
-						visible: column.visible
+						visible: column.visible,
+						orderable: column.orderable
 					}
 				});
 

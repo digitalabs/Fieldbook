@@ -81,8 +81,7 @@
 					checkbox: {
 						data: function () {
 							return "";
-						},
-						orderable: false
+						}
 					},
 					sourceId: {
 						data: function () {
@@ -99,8 +98,7 @@
 									this.isFiltered = true;
 								}
 							}
-						},
-						orderable: true
+						}
 					},
 					groupId: {
 						data: 'groupId',
@@ -111,8 +109,7 @@
 									this.isFiltered = true;
 								}
 							}
-						},
-						orderable: true
+						}
 					},
 					designation: {
 						data: 'designation',
@@ -123,12 +120,10 @@
 									this.isFiltered = true;
 								}
 							}
-						},
-						orderable: true
+						}
 					},
 					cross: {
-						data: 'cross',
-						orderable: false
+						data: 'cross'
 					},
 					lots: {
 						data: 'lots',
@@ -139,8 +134,7 @@
 									this.isFiltered = true;
 								}
 							}
-						},
-						orderable: true
+						}
 					},
 					breedingMethodAbbrevation: {
 						data: 'breedingMethodAbbrevation',
@@ -151,8 +145,7 @@
 									this.isFiltered = true;
 								}
 							}
-						},
-						orderable: true
+						}
 					},
 					breedingMethodName: {
 						data: 'breedingMethodName',
@@ -163,8 +156,7 @@
 									this.isFiltered = true;
 								}
 							}
-						},
-						orderable: true
+						}
 					},
 					breedingMethodType: {
 						data: 'breedingMethodType',
@@ -187,8 +179,7 @@
 									this.isFiltered = true;
 								}
 							}
-						},
-						orderable: true
+						}
 					},
 					trialInstance: {
 						data: 'trialInstance',
@@ -199,8 +190,7 @@
 									this.isFiltered = true;
 								}
 							}
-						},
-						orderable: true
+						}
 					},
 					plotNumber: {
 						data: 'plotNumber',
@@ -211,8 +201,7 @@
 									this.isFiltered = true;
 								}
 							}
-						},
-						orderable: true
+						}
 					},
 					replicationNumber: {
 						data: 'replicationNumber',
@@ -234,8 +223,7 @@
 									this.isFiltered = true;
 								}
 							}
-						},
-						orderable: true
+						}
 					}
 				};
 
@@ -301,7 +289,12 @@
 								+ ` onclick="openGermplasmDetailsPopopWithGidAndDesig('${rowData.gid}','${rowData.designation}')">`
 								+ EscapeHTML.escape(data) + '</a>';
 						}
+					},
+					{
+						targets: "_all",
+						orderable: false
 					}
+
 				];
 
 				$scope.totalItems = 0;

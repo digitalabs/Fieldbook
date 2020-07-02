@@ -39,6 +39,8 @@ import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.pojos.workbench.WorkbenchUser;
+import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
+import org.generationcp.middleware.service.api.study.StudyGermplasmService;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.slf4j.Logger;
@@ -64,13 +66,7 @@ import javax.xml.bind.JAXBException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormatSymbols;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 @RequestMapping(CrossingSettingsController.URL)
@@ -129,6 +125,9 @@ public class CrossingSettingsController extends SettingsController {
 	 */
 	@Resource
 	private GermplasmListManager germplasmListManager;
+
+	@Resource
+	private StudyGermplasmService studyGermplasmService;
 
 	@Override
 	public String getContentName() {
@@ -485,12 +484,13 @@ public class CrossingSettingsController extends SettingsController {
 
 		final Integer crossesListId = Integer.parseInt(createdCrossesListId);
 		final List<GermplasmListData> germplasmListDataList = this.germplasmListManager.retrieveGermplasmListDataWithParents(crossesListId);
-
+		final Integer studyId = this.studySelection.getWorkbook().getStudyDetails().getId();
+		final List<StudyGermplasmDto> studyGermplasmList = this.studyGermplasmService.getGermplasmFromPlots(studyId, Collections.emptySet());
 		final String studyName = this.studySelection.getWorkbook().getStudyDetails().getStudyName();
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
 		for (final GermplasmListData listData : germplasmListDataList) {
 			masterList.add(this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, listData));
-			final ImportedCross importedCross = this.crossesListUtil.convertGermplasmListDataToImportedCrosses(listData, studyName);
+			final ImportedCross importedCross = this.crossesListUtil.convertGermplasmListDataToImportedCrosses(listData, studyName, studyGermplasmList);
 			if (importedCross.getGid() == null) {
 				responseMap.put(CrossingSettingsController.IS_SUCCESS, 0);
 				final String localisedErrorMessage = this.messageSource.getMessage("error.germplasm.record.already.exists", new String[] {},

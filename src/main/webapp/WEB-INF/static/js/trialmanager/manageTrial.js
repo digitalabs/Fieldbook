@@ -203,10 +203,11 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 	// THE parent controller for the manageTrial (create/edit) page
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'studyStateService', 'TrialManagerDataService', '$http',
 		'$timeout', '_', '$localStorage', '$state', '$location', 'HasAnyAuthorityService', 'derivedVariableService', 'exportStudyModalService',
-		'importStudyModalService', 'createSampleModalService', 'derivedVariableModalService', '$uibModal', '$q', 'datasetService', 'InventoryService', 'studyContext', 'PERMISSIONS', 'LABEL_PRINTING_TYPE', 'HAS_LISTS_OR_SUB_OBS', 'HAS_GENERATED_DESIGN',
+		'importStudyModalService', 'createSampleModalService', 'derivedVariableModalService', '$uibModal', '$q', 'datasetService', 'InventoryService',
+		'studyContext', 'PERMISSIONS', 'LABEL_PRINTING_TYPE', 'HAS_LISTS_OR_SUB_OBS', 'HAS_GENERATED_DESIGN', 'studyGermplasmSourceService',
 		function ($scope, $rootScope, studyStateService, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $location, HasAnyAuthorityService,
 				  derivedVariableService, exportStudyModalService, importStudyModalService, createSampleModalService, derivedVariableModalService, $uibModal, $q, datasetService, InventoryService,
-				  studyContext, PERMISSIONS, LABEL_PRINTING_TYPE, HAS_LISTS_OR_SUB_OBS, HAS_GENERATED_DESIGN) {
+				  studyContext, PERMISSIONS, LABEL_PRINTING_TYPE, HAS_LISTS_OR_SUB_OBS, HAS_GENERATED_DESIGN, studyGermplasmSourceService) {
 
 			$scope.trialTabs = [
 				{
@@ -228,6 +229,11 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			$scope.sampleTabs = [];
 			$scope.crossesTabsData = [];
 			$scope.crossesTabs = [];
+			$scope.crossesAndSelectionsTab = {
+				name: 'Crosses and Selections',
+				state: 'studyGermplasmSource',
+				hidden: true
+			}
 			$scope.inventoryTab = {
 				name: 'Inventory',
 				state: 'inventory',
@@ -256,11 +262,10 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 					name: 'Experimental Design',
 					state: 'experimentalDesign'
 				});
-				$scope.trialTabs.push({
-					name: 'Crosses and Selections',
-					state: 'studyGermplasmSource'
-				});
+				$scope.trialTabs.push($scope.crossesAndSelectionsTab);
 				$scope.trialTabs.push($scope.inventoryTab);
+
+				loadCrossesAndSelectionsTab();
 				loadInventoryTab();
 
 				studyStateService.updateHasListsOrSubObs(HAS_LISTS_OR_SUB_OBS);
@@ -273,6 +278,16 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			inventoryChangedDeRegister = $rootScope.$on("inventoryChanged", function () {
 				loadInventoryTab();
 			});
+
+			function loadCrossesAndSelectionsTab() {
+				studyGermplasmSourceService.searchStudyGermplasmSources({
+					sortedRequest: {pageNumber: 1, pageSize: 1}
+				}).then((studyGermplasmSourceTable) => {
+					if (studyGermplasmSourceTable.data.length) {
+						$scope.crossesAndSelectionsTab.hidden = false;
+					}
+				});
+			}
 
 			function loadInventoryTab() {
 				InventoryService.searchStudyTransactions({

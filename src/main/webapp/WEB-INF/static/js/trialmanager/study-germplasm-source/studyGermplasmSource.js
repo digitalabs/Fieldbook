@@ -67,7 +67,7 @@
 					.withPaginationType('full_numbers');
 
 				function addFilters(request) {
-					request.studyGermplasmSourceSearchDto = {};
+					request.filter = {};
 					Object.entries($scope.columns).forEach(([name, column]) => {
 						if (column.filter && column.filter.transform) {
 							column.filter.isFiltered = false;
@@ -94,7 +94,7 @@
 						filter: {
 							transform(request) {
 								if (this.value) {
-									request.studyGermplasmSourceSearchDto.gid = this.value;
+									request.filter.gid = this.value;
 									this.isFiltered = true;
 								}
 							}
@@ -105,7 +105,7 @@
 						filter: {
 							transform(request) {
 								if (this.value) {
-									request.studyGermplasmSourceSearchDto.groupId = this.value;
+									request.filter.groupId = this.value;
 									this.isFiltered = true;
 								}
 							}
@@ -116,7 +116,7 @@
 						filter: {
 							transform(request) {
 								if (this.value) {
-									request.studyGermplasmSourceSearchDto.designation = this.value;
+									request.filter.designation = this.value;
 									this.isFiltered = true;
 								}
 							}
@@ -136,12 +136,12 @@
 							}
 						}
 					},
-					breedingMethodAbbrevation: {
-						data: 'breedingMethodAbbrevation',
+					breedingMethodAbbreviation: {
+						data: 'breedingMethodAbbreviation',
 						filter: {
 							transform(request) {
 								if (this.value) {
-									request.breedingMethodAbbrevation = this.value;
+									request.filter.breedingMethodAbbreviation = this.value;
 									this.isFiltered = true;
 								}
 							}
@@ -152,7 +152,7 @@
 						filter: {
 							transform(request) {
 								if (this.value) {
-									request.studyGermplasmSourceSearchDto.breedingMethodName = this.value;
+									request.filter.breedingMethodName = this.value;
 									this.isFiltered = true;
 								}
 							}
@@ -163,19 +163,18 @@
 						filter: {
 							transform(request) {
 								if (this.value) {
-									request.studyGermplasmSourceSearchDto.breedingMethodType = this.value;
+									request.filter.breedingMethodType = this.value;
 									this.isFiltered = true;
 								}
 							}
-						},
-						orderable: true
+						}
 					},
 					location: {
 						data: 'location',
 						filter: {
 							transform(request) {
 								if (this.value) {
-									request.studyGermplasmSourceSearchDto.location = this.value;
+									request.filter.location = this.value;
 									this.isFiltered = true;
 								}
 							}
@@ -186,7 +185,7 @@
 						filter: {
 							transform(request) {
 								if (this.value) {
-									request.studyGermplasmSourceSearchDto.trialInstance = this.value;
+									request.filter.trialInstance = this.value;
 									this.isFiltered = true;
 								}
 							}
@@ -197,7 +196,7 @@
 						filter: {
 							transform(request) {
 								if (this.value) {
-									request.studyGermplasmSourceSearchDto.plotNumber = this.value;
+									request.filter.plotNumber = this.value;
 									this.isFiltered = true;
 								}
 							}
@@ -208,7 +207,7 @@
 						filter: {
 							transform(request) {
 								if (this.value) {
-									request.studyGermplasmSourceSearchDto.replicationNumber = this.value;
+									request.filter.replicationNumber = this.value;
 									this.isFiltered = true;
 								}
 							}
@@ -219,7 +218,7 @@
 						filter: {
 							transform(request) {
 								if (this.value) {
-									request.studyGermplasmSourceSearchDto.germplasmDate = this.value;
+									request.filter.germplasmDate = this.value;
 									this.isFiltered = true;
 								}
 							}

@@ -301,14 +301,14 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		final ListIterator<Pair<Germplasm, GermplasmListData>> listDataIterator = savedListDataItems.listIterator();
 		final ListIterator<ImportedGermplasm> listEntriesIterator = listEntries.listIterator();
 		final Set<Integer> sourcePlotNumbers = listEntries.stream().map(g -> Integer.valueOf(g.getPlotNumber())).collect(Collectors.toSet());
-		final Set<Integer> trialInstances = listEntries.stream().map(g -> Integer.valueOf(g.getPlotNumber())).collect(Collectors.toSet());
+		final Set<Integer> trialInstances = listEntries.stream().map(g -> Integer.valueOf(g.getTrialInstanceNumber())).collect(Collectors.toSet());
 		final Table<Integer, Integer, Integer> observationUnitIdsTable = this.datasetService.getTrialNumberPlotNumberObservationUnitIdTable(this.userSelection.getWorkbook().getMeasurementDatesetId(), trialInstances, sourcePlotNumbers);
 		while (listEntriesIterator.hasNext()) {
 			final ImportedGermplasm advanceEntry = listEntriesIterator.next();
 			final GermplasmListData listData = listDataIterator.next().getRight();
 			final Integer plotNumber = Integer.valueOf(advanceEntry.getPlotNumber());
 			final Integer trialInstance = Integer.valueOf(advanceEntry.getTrialInstanceNumber());
-			germplasmStudySourceList.add(new StudyGermplasmSourceInput(listData.getGid(), studyId, observationUnitIdsTable.get(trialInstance, plotNumber), GermplasmStudySourceType.CROSS));
+			germplasmStudySourceList.add(new StudyGermplasmSourceInput(listData.getGid(), studyId, observationUnitIdsTable.get(trialInstance, plotNumber), GermplasmStudySourceType.ADVANCE));
 		}
 
 	}

@@ -1470,8 +1470,6 @@ function displayAdvanceList(germplasmListId, listName, isDefault, advancedGermpl
 			element.safeApply(function () {
 				element.addAdvanceTabData(id, html, listName, isPageLoading);
 			});
-			// Display Stock List if it is generated
-			StockIDFunctions.generateStockListTabIfNecessary(id, isPageLoading);
 		}
 	});
 }
@@ -1496,8 +1494,6 @@ function displayCrossesList(germplasmListId, listName, crossesType, isDefault, c
 			element.safeApply(function () {
 				element.addCrossesTabData(id, html, listName, crossesType, isPageLoading);
 			});
-			// Display Stock List if it is generated
-			StockIDFunctions.generateStockListTabIfNecessary(id, isPageLoading);
 		}
 	});
 }

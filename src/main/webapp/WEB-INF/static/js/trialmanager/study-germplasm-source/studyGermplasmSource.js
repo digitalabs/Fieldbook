@@ -84,10 +84,18 @@
 						}
 					},
 					sourceId: {
+
 						data: function () {
 							return "";
 						},
-						orderable: true
+						filter: {
+							transform(request) {
+								if (this.value) {
+									request.filter.sourceId = this.value;
+									this.isFiltered = true;
+								}
+							}
+						}
 					},
 					gid: {
 						data: 'gid',
@@ -129,8 +137,8 @@
 						data: 'lots',
 						filter: {
 							transform(request) {
-								if (this.value) {
-									request.studyGermplasmSourceSearchDto.lots = this.value;
+								if (this.value || this.value === 0) {
+									request.filter.lots = this.value;
 									this.isFiltered = true;
 								}
 							}

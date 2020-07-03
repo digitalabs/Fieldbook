@@ -21,6 +21,7 @@ import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
 import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Table;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.StringUtils;
@@ -267,9 +268,10 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final AdvancingStudyForm advancingStudyForm = this.getPaginationListSelection().getAdvanceDetails(form.getListIdentifier());
 			final List<Pair<Germplasm, List<Name>>> germplasms = new ArrayList<>();
 			final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes = new ArrayList<>();
-			this.populateGermplasmListDataFromAdvanced(germplasmList, advancingStudyForm, germplasms, listDataItems, germplasmAttributes, germplasmStudySourceList);
+			this.populateGermplasmListDataFromAdvanced(germplasmList, advancingStudyForm, germplasms, listDataItems, germplasmAttributes);
 			final Integer germplasmListId = this.fieldbookMiddlewareService
 					.saveNurseryAdvanceGermplasmList(germplasms, listDataItems, germplasmList, germplasmAttributes);
+			this.createGermplasmStudySourcesFromSavedAdvanceListEntries(advancingStudyForm.getGermplasmList(), listDataItems, germplasmStudySourceList);
 			return new GermplasmListResult(germplasmListId, false);
 
 		} else if (GermplasmListType.isCrosses(form.getGermplasmListType())) {
@@ -290,6 +292,23 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 		} else {
 			throw new IllegalArgumentException("Unknown germplasm list type supplied when saving germplasm list");
+		}
+
+	}
+
+	void createGermplasmStudySourcesFromSavedAdvanceListEntries(final List<ImportedGermplasm> listEntries , final List<Pair<Germplasm, GermplasmListData>> savedListDataItems, final List<StudyGermplasmSourceInput> germplasmStudySourceList){
+		final Integer studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
+		final ListIterator<Pair<Germplasm, GermplasmListData>> listDataIterator = savedListDataItems.listIterator();
+		final ListIterator<ImportedGermplasm> listEntriesIterator = listEntries.listIterator();
+		final Set<Integer> sourcePlotNumbers = listEntries.stream().map(g -> Integer.valueOf(g.getPlotNumber())).collect(Collectors.toSet());
+		final Set<Integer> trialInstances = listEntries.stream().map(g -> Integer.valueOf(g.getPlotNumber())).collect(Collectors.toSet());
+		final Table<Integer, Integer, Integer> observationUnitIdsTable = this.datasetService.getTrialNumberPlotNumberObservationUnitIdTable(this.userSelection.getWorkbook().getMeasurementDatesetId(), trialInstances, sourcePlotNumbers);
+		while (listEntriesIterator.hasNext()) {
+			final ImportedGermplasm advanceEntry = listEntriesIterator.next();
+			final GermplasmListData listData = listDataIterator.next().getRight();
+			final Integer plotNumber = Integer.valueOf(advanceEntry.getPlotNumber());
+			final Integer trialInstance = Integer.valueOf(advanceEntry.getTrialInstanceNumber());
+			germplasmStudySourceList.add(new StudyGermplasmSourceInput(listData.getGid(), studyId, observationUnitIdsTable.get(trialInstance, plotNumber), GermplasmStudySourceType.CROSS));
 		}
 
 	}
@@ -543,10 +562,10 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 		Boolean isTrimed = false;
 		final Integer studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
-		// Take the plot of the female parent as the source observation unit
-		final List<Integer> sourcePlotNumbers = importedGermplasmList.stream().map(g -> Integer.valueOf(g.getFemalePlotNo())).collect(Collectors.toList());
-		final Map<Integer, Integer> observationUnitIdsPlotNumberMap = this.datasetService.getPlotNumberObservationUnitIdsMap(this.userSelection.getWorkbook().getMeasurementDatesetId(), sourcePlotNumbers);
-
+		// Take the plot of the female parent as the source observation unit. Take the observation units from the first trial instance
+		final Set<Integer> sourcePlotNumbers = importedGermplasmList.stream().map(g -> Integer.valueOf(g.getFemalePlotNo())).collect(Collectors.toSet());
+		final Table<Integer, Integer, Integer> observationUnitIdsTable = this.datasetService.getTrialNumberPlotNumberObservationUnitIdTable(this.userSelection.getWorkbook().getMeasurementDatesetId(),
+				Collections.singleton(1), sourcePlotNumbers);
 		for (final ImportedCross importedCross : importedGermplasmList) {
 
 			final Integer gid = importedCross.getGid() != null ? Integer.valueOf(importedCross.getGid()) : null;
@@ -587,7 +606,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 							groupName, listDataId, listDataStatus, localRecordId);
 
 			listDataItems.add(new ImmutablePair<>(germplasm, listData));
-			germplasmStudySourceList.add(new StudyGermplasmSourceInput(gid, studyId, observationUnitIdsPlotNumberMap.get(importedCross.getFemalePlotNo()), GermplasmStudySourceType.CROSS));
+			// Observation Units, by female plot number, are from the first trial instance
+			germplasmStudySourceList.add(new StudyGermplasmSourceInput(gid, studyId, observationUnitIdsTable.get(1, importedCross.getFemalePlotNo()), GermplasmStudySourceType.CROSS));
 		}
 		return isTrimed;
 	}
@@ -610,11 +630,10 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	void populateGermplasmListDataFromAdvanced(final GermplasmList germplasmList, final AdvancingStudyForm form,
 			final List<Pair<Germplasm, List<Name>>> germplasms, final List<Pair<Germplasm, GermplasmListData>> listDataItems,
-			final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes, final List<StudyGermplasmSourceInput> germplasmStudySourceList) {
+			final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes) {
 
 		final String harvestDate = form.getHarvestYear() + form.getHarvestMonth() + "00";
 		final Integer currentUserID = this.getCurrentIbdbUserId();
-		final Integer studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
 
 		// Common germplasm fields
 		final Integer lgid = 0;
@@ -639,9 +658,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		plantNumberFldNo = this.getPassportAttributeForCode("PLANT_NUMBER");
 
 		final List<ImportedGermplasm> advanceItems = form.getGermplasmList();
-		final List<Integer> sourcePlotNumbers = advanceItems.stream().map(g -> Integer.valueOf(g.getPlotNumber())).collect(Collectors.toList());
-		final Map<Integer, Integer> observationUnitIdsPlotNumberMap = this.datasetService.getPlotNumberObservationUnitIdsMap(this.userSelection.getWorkbook().getMeasurementDatesetId(), sourcePlotNumbers);
-
 		// Create germplasms to save - Map<Germplasm, List<Name>>
 		for (final ImportedGermplasm importedGermplasm : advanceItems) {
 			Integer gid = null;
@@ -742,7 +758,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			}
 
 			germplasmAttributes.add(new ImmutablePair<>(germplasm, Lists.newArrayList(attributesPerGermplasm)));
-			germplasmStudySourceList.add(new StudyGermplasmSourceInput(gid, studyId, observationUnitIdsPlotNumberMap.get(Integer.valueOf(plotNumberString)), GermplasmStudySourceType.ADVANCE));
 		}
 	}
 

@@ -81,11 +81,6 @@
 										<a ng-click="printLabels()" id="label-printing-url-link"
 										   th:text="#{study.studydetails.action.printLabels}">Print Labels</a>
 									</li>
-									<!--Export advance list-->
-									<li ng-show="hasAdvanceListCreated()">
-									  <a href="javascript: showExportAdvanceOptions();" id="export-advance-list-url-link"
-										 th:text="#{study.studydetails.action.export.advance}">Export advance list</a>
-									</li>
 								</ul>
 							</li>
 
@@ -377,22 +372,10 @@
 			   ng-class="{'pendingData': tab.hasPendingData}"
 			   ng-click="performFunctionOnTabChange(tab.state)">{{tab.datasetType.tabNamePrefix}}{{tab.name}}</a>
 		</li>
-		<li ng-repeat="tab in advanceTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
-			ng-click="listTabChange(tab.state)">
-			<a tab-data='{{tab.id}}'>{{tab.displayName}}
-				<i class="glyphicon glyphicon-remove fbk-close-tab" id="id" ng-click="closeAdvanceListTab(tab.state)"></i>
-			</a>
-		</li>
 		<li ng-repeat="tab in sampleTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
 			ng-click="listTabChange(tab.state)">
 			<a tab-data='{{tab.id}}' ng-click="initSampleTab(tab)">{{tab.displayName}}
 				<i class="glyphicon glyphicon-remove fbk-close-tab" id="sampleListId" ng-click="closeSampleListTab(tab.state)"></i>
-			</a>
-		</li>
-		<li ng-repeat="tab in crossesTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
-			ng-click="listTabChange(tab.state)">
-			<a tab-data='{{tab.id}}'>{{tab.displayName}}
-				<i class="glyphicon glyphicon-remove fbk-close-tab" id="crossesListId" ng-click="closeCrossesListTab(tab.state)"></i>
 			</a>
 		</li>
 	</ul>
@@ -704,9 +687,7 @@
 			).constant('BREEDING_METHOD_CODE', /*[[${T(org.generationcp.commons.constant.AppConstants).BREEDING_METHOD_CODE.getString()}]]*/ ''
 			).constant('BREEDING_METHOD_ID', /*[[${T(org.generationcp.commons.constant.AppConstants).BREEDING_METHOD_ID.getString()}]]*/ ''
 			).constant('TRIAL_SETTINGS_INITIAL_DATA', /*[[${trialSettingsData}]]*/ ''
-			).constant('ADVANCE_LIST_DATA', /*[[${advancedList}]]*/ ''
 			).constant('SAMPLE_LIST_DATA', /*[[${sampleList}]]*/ ''
-			).constant('CROSSES_LIST_DATA', /*[[${crossesList}]]*/ ''
 			).constant('ENVIRONMENTS_INITIAL_DATA', /*[[${environmentData}]]*/ ''
 			).constant('GERMPLASM_INITIAL_DATA', /*[[${germplasmData}]]*/ ''
 			).constant('GERMPLASM_LIST_SIZE', /*[[${germplasmListSize}]]*/ ''

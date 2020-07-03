@@ -142,7 +142,9 @@ var SaveAdvanceList = {};
 						} else {
 							crossType = "Designed Crosses";
 						}
-						displayCrossesList(data.germplasmListId, $.trim(data.listName), crossType, false, data.crossesListId, false);
+
+						// TODO: IBP-3798 Refresh the Crosses and Selections table
+
 						$('#saveListTreeModal').data('is-save-crosses', '0');
 						if (data.isTrimed === 1) {
 							showAlertMessage('page-save-list-message-modal', crossesWarningMessage, 10000);
@@ -151,9 +153,7 @@ var SaveAdvanceList = {};
 						$('#saveListTreeModal').data('is-save-stock', '0');
 					} else {
 						var id = data.advancedGermplasmListId ? data.advancedGermplasmListId : data.germplasmListId;
-
-						$('a#advanceHref' + id).tab('show');
-						displayAdvanceList(data.germplasmListId, $.trim(data.listName), false, data.advancedGermplasmListId, false);
+						// TODO: IBP-3798 Refresh the Crosses and Selections table
 					}
 					showSuccessfulMessage('', saveListSuccessfullyMessage);
 				} else {

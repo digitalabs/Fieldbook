@@ -4,9 +4,7 @@ package com.efficio.fieldbook.web.trial.controller;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.exception.FieldbookRequestException;
-import com.efficio.fieldbook.web.trial.bean.AdvanceList;
 import com.efficio.fieldbook.web.trial.bean.BasicDetails;
-import com.efficio.fieldbook.web.trial.bean.CrossesList;
 import com.efficio.fieldbook.web.trial.bean.Instance;
 import com.efficio.fieldbook.web.trial.bean.InstanceInfo;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignData;
@@ -44,7 +42,6 @@ import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.StudyDataManager;
-import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.generationcp.middleware.util.Util;
@@ -528,35 +525,6 @@ public abstract class BaseTrialController extends SettingsController {
 		managementDetails.put(String.valueOf(TermId.LOCATION_ID.getId()), String.valueOf(defaultLocationId));
 		defaultInstance.setManagementDetailValues(managementDetails);
 		return defaultInstance;
-	}
-
-	List<AdvanceList> getAdvancedList(final Integer trialId) {
-		final List<GermplasmList> germplasmList =
-			this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.ADVANCED);
-		final List<AdvanceList> advanceList = new ArrayList<>();
-
-		for (final GermplasmList g : germplasmList) {
-			advanceList.add(new AdvanceList(g.getId(), g.getName()));
-		}
-
-		return advanceList;
-	}
-
-	List<CrossesList> getCrossesList(final Integer trialId) {
-		final List<GermplasmList> crossList =
-			this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.CROSSES);
-
-		crossList.addAll(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.IMP_CROSS));
-		crossList.addAll(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.CRT_CROSS));
-
-		final List<CrossesList> crossesList = new ArrayList<>();
-
-		for (final GermplasmList g : crossList) {
-			crossesList.add(new CrossesList(g.getId(), g.getName(), g.getType().equalsIgnoreCase(GermplasmListType.IMP_CROSS.toString())
-				? GermplasmList.IMP_CROSS : GermplasmList.CRT_CROSS));
-		}
-
-		return crossesList;
 	}
 
 	public List<SettingDetail> retrieveVariablePairs(final int cvTermId) {

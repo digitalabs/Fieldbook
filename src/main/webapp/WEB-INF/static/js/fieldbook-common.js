@@ -1449,55 +1449,6 @@ function callAdvanceStudy() {
 	}
 }
 
-
-function displayAdvanceList(germplasmListId, listName, isDefault, advancedGermplasmListId, isPageLoading) {
-	'use script';
-	var id = advancedGermplasmListId ? advancedGermplasmListId : germplasmListId;
-	var url = '/Fieldbook/germplasm/list/advance/' + id;
-	if (!isDefault) {
-		$('#advanceHref' + id + ' .fbk-close-tab').before(': [' + listName + ']');
-		url += '?isSnapshot=0';
-	} else {
-		url += '?isSnapshot=1';
-	}
-	$.ajax({
-		url: url,
-		type: 'GET',
-		cache: false,
-		success: function (html) {
-			var element = angular.element(document.getElementById("mainApp")).scope();
-			// To apply scope safely
-			element.safeApply(function () {
-				element.addAdvanceTabData(id, html, listName, isPageLoading);
-			});
-		}
-	});
-}
-
-function displayCrossesList(germplasmListId, listName, crossesType, isDefault, crossesListId, isPageLoading) {
-	'use script';
-	var id = crossesListId ? crossesListId : germplasmListId;
-	var url = '/Fieldbook/germplasm/list/crosses/' + id;
-	if (!isDefault) {
-		$('#advanceHref' + id + ' .fbk-close-tab').before(': [' + listName + ']');
-		url += '?isSnapshot=0';
-	} else {
-		url += '?isSnapshot=1';
-	}
-	$.ajax({
-		url: url,
-		type: 'GET',
-		cache: false,
-		success: function (html) {
-			var element = angular.element(document.getElementById("mainApp")).scope();
-			// To apply scope safely
-			element.safeApply(function () {
-				element.addCrossesTabData(id, html, listName, crossesType, isPageLoading);
-			});
-		}
-	});
-}
-
 function displaySampleList(id, listName, isPageLoading) {
 	'use script';
 

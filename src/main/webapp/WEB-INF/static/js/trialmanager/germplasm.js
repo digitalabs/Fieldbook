@@ -137,11 +137,7 @@
 
 
             $scope.validateGermplasmForReplacement = function() {
-                // Check if study has advance or cross list
-                if ($scope.hasAdvanceListCreated() || $scope.hasCrossListCreated()) {
-                    showAlertMessage('', $.germplasmMessages.studyHasAdvanceOrCrossList);
-                    return;
-                }
+                // TODO: IBP-3798 Check if study has advance or cross list
 
                 // Validate entry for replacement
                 studyGermplasmService.resetSelectedEntries();

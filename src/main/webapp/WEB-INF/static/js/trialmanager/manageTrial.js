@@ -1,6 +1,6 @@
 /*global angular, openStudyTree, showErrorMessage, operationMode, resetGermplasmList,
 showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
-stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, InventoryPage, ImportCrosses*/
+stockListImportNotSaved, ImportDesign, isOpenStudy, InventoryPage*/
 //TODO move this messages under a namespace
 /* global addEnvironmentsImportDesignMessage, importSaveDataWarningMessage*/
 
@@ -223,12 +223,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 			$scope.tabSelected = 'trialSettings';
 			$scope.isSettingsTab = true;
 			$location.path('/trialSettings');
-			$scope.advanceTabsData = [];
-			$scope.advanceTabs = [];
 			$scope.sampleTabsData = [];
 			$scope.sampleTabs = [];
-			$scope.crossesTabsData = [];
-			$scope.crossesTabs = [];
 			$scope.crossesAndSelectionsTab = {
 				name: 'Crosses and Selections',
 				state: 'studyGermplasmSource',
@@ -542,14 +538,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				});
 			};
 
-			$scope.hasAdvanceListCreated = function () {
-				return $scope.advanceTabsData.length !== 0;
-			};
-
-			$scope.hasCrossListCreated = function () {
-				return $scope.crossesTabsData.length !== 0;
-			};
-
 			$scope.performFunctionOnTabChange = function (targetState) {
 				if (isTabChangeDisabled()) {
 					showAlertMessage('', importSaveDataWarningMessage);
@@ -576,129 +564,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				} else if (targetState.indexOf('/subObservationTabs/') === 0) {
 					$rootScope.$broadcast('subObsTabSelected');
 				}
-			};
-
-			$scope.addStockTabData = function (tabId, tabData, listName, isPageLoading) {
-				var isAdvanceStock = false;
-				var isCrossesStock = false;
-				var isAdvance = false;
-
-				if (isPageLoading === undefined) {
-					isPageLoading = false;
-				}
-
-				if ($scope.stockListTabs === undefined) {
-					$scope.stockListTabs = [];
-				}
-
-				angular.forEach($scope.advanceTabs, function (value, index) {
-					if (!isAdvance && value.id === parseInt(tabId)) {
-						isAdvance = true;
-					}
-
-					if (!isAdvanceStock && value.state === 'stock-list' + tabId + '-li') {
-						isAdvanceStock = true;
-					}
-
-					if (isAdvance && isAdvanceStock) {
-						$scope.advanceTabsData[index].data = tabData;
-					}
-				});
-
-				angular.forEach($scope.crossesTabs, function (value, index) {
-					if (!isCrossesStock && value.state === 'stock-list' + tabId + '-li') {
-						$scope.crossesTabsData[index].data = tabData;
-						isCrossesStock = true;
-					}
-				});
-
-				if (!isAdvanceStock && isAdvance) {
-					angular.forEach($scope.advanceTabs, function (value, index) {
-						if (!isAdvanceStock) {
-							if (parseInt(value.id) === parseInt(tabId)) {
-								$scope.advanceTabs.splice(index + 1, 0, {
-									name: listName,
-									state: 'stock-list' + tabId + '-li',
-									id: tabId,
-									displayName: 'Stock List:[' + $scope.advanceTabs[index].name + ']'
-								});
-
-								$scope.advanceTabsData.splice(index + 1, 0, {
-									name: 'stock-list' + tabId + '-li',
-									data: tabData,
-									id: 'stock-content-pane' + tabId
-								});
-								isAdvanceStock = true;
-							}
-						}
-					});
-
-				} else if (!isCrossesStock && !isAdvance) {
-					angular.forEach($scope.crossesTabs, function (value, index) {
-						if (!isCrossesStock) {
-							if (parseInt(value.id) === parseInt(tabId)) {
-								$scope.crossesTabs.splice(index + 1, 0, {
-									name: listName,
-									state: 'stock-list' + tabId + '-li',
-									id: tabId,
-									displayName: 'Stock List:[' + $scope.crossesTabs[index].name + ']'
-								});
-
-								$scope.crossesTabsData.splice(index + 1, 0, {
-									name: 'stock-list' + tabId + '-li',
-									data: tabData,
-									id: 'stock-content-pane' + tabId
-								});
-								isCrossesStock = true;
-							}
-						}
-					});
-				}
-
-				if (isPageLoading !== true) {
-					$scope.tabSelected = 'stock-list' + tabId + '-li';
-				}
-
-				$('#listActionButton' + tabId).addClass('disabled');
-			};
-
-			$scope.addAdvanceTabData = function (tabId, tabData, listName, isPageLoading) {
-				studyStateService.updateHasListsOrSubObs(true);
-
-				var isUpdate = false;
-				if (isPageLoading === undefined) {
-					isPageLoading = false;
-				}
-
-				angular.forEach($scope.advanceTabs, function (value, index) {
-						if (!isUpdate && value.name === listName && parseInt(value.id) === parseInt(tabId)) {
-							isUpdate = true;
-							$scope.advanceTabsData[index].data = tabData;
-
-						}
-					}
-				);
-
-				if (!isUpdate) {
-					$scope.advanceTabs.push({
-						name: listName,
-						state: 'advance-list' + tabId + '-li',
-						id: tabId,
-						displayName: 'Advance List: [' + listName + ']'
-					});
-
-					$scope.advanceTabsData.push({
-						name: 'advance-list' + tabId + '-li',
-						data: tabData,
-						id: 'advance-list' + tabId + '-li'
-					});
-
-					if (isPageLoading !== true) {
-						$scope.tabSelected = 'advance-list' + tabId + '-li';
-						$scope.isSettingsTab = false;
-					}
-				}
-
 			};
 
 			$scope.addSampleTabData = function (tabId, tabData, listName, isPageLoading) {
@@ -734,41 +599,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 						$scope.tabSelected = 'sample-list' + tabId + '-li';
 						$scope.isSettingsTab = false;
 						$rootScope.$broadcast('sampleListCreated');
-					}
-				}
-			};
-
-			$scope.addCrossesTabData = function (tabId, tabData, listName, crossesType, isPageLoading) {
-				studyStateService.updateHasListsOrSubObs(true);
-
-				var isUpdate = false;
-				if (isPageLoading === undefined) {
-					isPageLoading = false;
-				}
-				angular.forEach($scope.crossesTabs, function (value, index) {
-						if (!isUpdate && value.name === listName && parseInt(value.id) === parseInt(tabId)) {
-							isUpdate = true;
-							$scope.crossesTabsData[index].data = tabData;
-
-						}
-					}
-				);
-
-				if (!isUpdate) {
-					$scope.crossesTabs.push({
-						name: listName,
-						state: 'crosses-list' + tabId + '-li',
-						id: tabId,
-						displayName: crossesType + ': [' + listName + ']'
-					});
-					$scope.crossesTabsData.push({
-						name: 'crosses-list' + tabId + '-li',
-						data: tabData,
-						id: 'crosses-list' + tabId + '-li'
-					});
-					if (isPageLoading !== true) {
-						$scope.tabSelected = 'crosses-list' + tabId + '-li';
-						$scope.isSettingsTab = false;
 					}
 				}
 			};
@@ -880,22 +710,10 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				}
 			});
 
-			$scope.advancedTrialList = TrialManagerDataService.settings.advancedList;
-
-			angular.forEach($scope.advancedTrialList, function (value) {
-				displayAdvanceList(value.id, value.name, false, '', true);
-			});
-
 			$scope.sampleList = TrialManagerDataService.settings.sampleList;
 
 			angular.forEach($scope.sampleList, function (value) {
 				displaySampleList(value.listId, value.listName, true);
-			});
-
-			$scope.crossesList = TrialManagerDataService.settings.crossesList;
-
-			angular.forEach($scope.crossesList, function (value) {
-				displayCrossesList(value.id, value.name, value.crossesType, true, '', true);
 			});
 
 			$scope.listTabChange = function (selectedTab) {
@@ -916,26 +734,10 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, displayAdvanceList, Inventor
 				}
 			};
 
-			$scope.closeAdvanceListTab = function (tab) {
-				var index = $scope.findIndexByKeyValue($scope.advanceTabs, 'state', tab);
-				$scope.advanceTabs.splice(index, 1);
-				$scope.advanceTabsData.splice(index, 1);
-				$scope.tabSelected = 'trialSettings';
-				$scope.isSettingsTab = true;
-			};
-
 			$scope.closeSampleListTab = function (tab) {
 				var index = $scope.findIndexByKeyValue($scope.sampleTabs, 'state', tab);
 				$scope.sampleTabs.splice(index, 1);
 				$scope.sampleTabsData.splice(index, 1);
-				$scope.tabSelected = 'trialSettings';
-				$scope.isSettingsTab = true;
-			};
-
-			$scope.closeCrossesListTab = function (tab) {
-				var index = $scope.findIndexByKeyValue($scope.crossesTabs, 'state', tab);
-				$scope.crossesTabs.splice(index, 1);
-				$scope.crossesTabsData.splice(index, 1);
 				$scope.tabSelected = 'trialSettings';
 				$scope.isSettingsTab = true;
 			};

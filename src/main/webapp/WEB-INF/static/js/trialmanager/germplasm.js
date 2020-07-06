@@ -6,7 +6,8 @@
     var manageTrialAppModule = angular.module('manageTrialApp');
 
     manageTrialAppModule.controller('GermplasmCtrl',
-        ['$scope', 'TrialManagerDataService', 'studyStateService', 'studyGermplasmService', function ($scope, TrialManagerDataService, studyStateService, studyGermplasmService) {
+        ['$scope', '$q', 'TrialManagerDataService', 'studyStateService', 'studyGermplasmService', 'studyGermplasmSourceService',
+            function ($scope, $q, TrialManagerDataService, studyStateService, studyGermplasmService, studyGermplasmSourceService) {
 
             $scope.settings = TrialManagerDataService.settings.germplasm;
             $scope.isOpenStudy = TrialManagerDataService.isOpenStudy;
@@ -135,23 +136,30 @@
 
             };
 
-
             $scope.validateGermplasmForReplacement = function() {
-                // TODO: IBP-3798 Check if study has advance or cross list
+                studyGermplasmSourceService.searchStudyGermplasmSources({
+                    sortedRequest: {pageNumber: 1, pageSize: 1}
+                }).then((studyGermplasmSourceTable) => {
 
-                // Validate entry for replacement
-                studyGermplasmService.resetSelectedEntries();
-                $.each($("input[name='entryId']:checked"), function(){
-                    studyGermplasmService.toggleSelect($(this).val());
+                    // Check if study has advance or cross list
+                    if (studyGermplasmSourceTable.data.length > 0) {
+                        showAlertMessage('', $.germplasmMessages.studyHasAdvanceOrCrossList);
+                    } else {
+                        // Validate entry for replacement
+                        studyGermplasmService.resetSelectedEntries();
+                        $.each($("input[name='entryId']:checked"), function(){
+                            studyGermplasmService.toggleSelect($(this).val());
+                        });
+                        var selectedEntries = studyGermplasmService.getSelectedEntries();
+                        if (selectedEntries.length === 0) {
+                            showAlertMessage('', $.germplasmMessages.selectEntryForReplacement);
+                        } else if (selectedEntries.length !== 1) {
+                            showAlertMessage('', $.germplasmMessages.selectOnlyOneEntryForReplacement);
+                        } else {
+                            $scope.replaceGermplasm();
+                        }
+                    }
                 });
-                var selectedEntries = studyGermplasmService.getSelectedEntries();
-                if (selectedEntries.length === 0) {
-                    showAlertMessage('', $.germplasmMessages.selectEntryForReplacement);
-                } else if (selectedEntries.length !== 1) {
-                    showAlertMessage('', $.germplasmMessages.selectOnlyOneEntryForReplacement);
-                } else {
-                    $scope.replaceGermplasm();
-                }
             };
 
             $scope.replaceGermplasm = function() {

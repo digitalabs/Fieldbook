@@ -42,7 +42,7 @@
 					.withOption('scrollY', '500px')
 					.withOption('scrollCollapse', true)
 					.withOption('scrollX', '100%')
-					.withOption('order', [[1, 'asc']]) //sourceId
+					.withOption('order', [[1, 'desc']]) //sourceId
 					.withOption('language', {
 						processing: '<span class="throbber throbber-2x"></span>',
 						lengthMenu: 'Records per page: _MENU_',

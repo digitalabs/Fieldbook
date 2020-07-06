@@ -199,6 +199,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, InventoryPage*/
 
 	let inventoryChangedDeRegister = () => {
 	};
+	let germplasmListSavedRegister = () => {
+	};
 
 	// THE parent controller for the manageTrial (create/edit) page
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'studyStateService', 'TrialManagerDataService', '$http',
@@ -273,6 +275,11 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, InventoryPage*/
 			inventoryChangedDeRegister();
 			inventoryChangedDeRegister = $rootScope.$on("inventoryChanged", function () {
 				loadInventoryTab();
+			});
+
+			germplasmListSavedRegister();
+			germplasmListSavedRegister = $rootScope.$on("germplasmListSaved", function () {
+				loadCrossesAndSelectionsTab();
 			});
 
 			function loadCrossesAndSelectionsTab() {

@@ -92,7 +92,7 @@
 							$rootScope.$broadcast('germplasmListSaved');
 
 							// Refresh and show the 'Crosses and Selections' tab after saving the germplasm list
-							$rootScope.navigateToTab('studyGermplasmSource');
+							$rootScope.navigateToTab('studyGermplasmSource', {reload: true});
 
 
 						} else {

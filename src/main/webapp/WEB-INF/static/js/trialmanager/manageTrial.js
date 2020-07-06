@@ -514,8 +514,8 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, InventoryPage*/
 			};
 
 			// Programatically navigate to specified tab state
-			$rootScope.navigateToTab = function (targetState) {
-				$state.go(targetState);
+			$rootScope.navigateToTab = function (targetState, options) {
+				$state.go(targetState, {}, {reload: options && options.reload});
 				$scope.performFunctionOnTabChange(targetState);
 
 			};

@@ -376,9 +376,6 @@
 					} else if (service.applicationData.unsavedTreatmentFactorsAvailable) {
 							showErrorMessage('', 'TREATMENT FACTORS will be saved automatically when generating the design.');
 					} else if (service.isCurrentTrialDataValid(service.isOpenStudy())) {
-                        // Hide Discard Imported Data button when the user presses Save button
-                        $('.fbk-discard-imported-stocklist-data').addClass('fbk-hide');
-                        stockListImportNotSaved = false;
 						service.performDataCleanup();
 						var columnsOrder =  ($('#measurement-table') && $('#measurement-table').length !== 0 && service.isOpenStudy()) ?
 							BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table') : [];

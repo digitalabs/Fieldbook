@@ -1,6 +1,0 @@
-<li class="advance-germplasm-items stock-list" th:attr="data-advance-germplasm-list-id=*{listId}" th:id="*{'stock-list' + listId + '-li'}">
-    <a th:id="*{'stock-list-anchor' + listId}" th:attr="data-list-id=*{listId}" th:href="*{'#stock-tab-pane' + listId}" role="tab" class="advanceList crossesList stockList" data-toggle="tab">
-        <span th:text="*{'Stock List: [' + listName + ']'}"></span>
-        <i class="glyphicon glyphicon-remove fbk-close-tab" th:id="*{listId}" th:onclick="'javascript:StockIDFunctions.closeStockList(\'' + *{listId} + '\');'"></i>
-    </a>
-</li>

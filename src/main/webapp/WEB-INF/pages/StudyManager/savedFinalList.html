@@ -4,7 +4,6 @@
 			<input type="hidden" id="listTypeLabel" th:value="*{listTypeLabel}"></input>
 			<strong th:if="*{(listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS')}" class="sub-content-heading" th:text="#{crosses.list.header}">Crosses List</strong>
 			<strong th:if="*{listType =='ADVANCED'}" class="sub-content-heading" th:text="#{advancing.list.header}">Advance List</strong>
-			<strong th:if="*{listType =='STOCK'}" class="sub-content-heading" th:text="#{stock.list.header}">Stock List</strong>
 			<strong th:if="*{listType =='SAMPLE_LIST'}" class="sub-content-heading" th:text="#{sample.list.header}">Sample List</strong>
 			<span
 				class="sub-content-heading control-label-bold control-label-italic"
@@ -55,7 +54,6 @@
 						data-toggle="dropdown">
 						<span th:text="#{advance.list.actions}" th:if="*{listType == 'ADVANCED'}">Advance List Actions</span>
 						<span th:text="#{crosses.list.actions}" th:if="*{(listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS')}">Cross List Actions</span>
-						<span th:text="#{stock.list.actions}" th:if="*{listType == 'STOCK'}">Stock List Actions</span>
 						<span th:text="#{sample.list.actions}" th:if="*{listType == 'SAMPLE_LIST'}">Sample List Actions</span>
 					</button>
 					<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
@@ -69,81 +67,9 @@
 							<a href=""
 								style="display: none" id="open-study-url"></a>
 							<a  th:if="*{(listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS')}" href="javascript: void(0)"
-								th:onclick="'javascript: StockIDFunctions.openGenerateStockIDModal(getCurrentAdvanceTabListIdentifier(), ' +
-									*{hasPedigreeDupe} + ',' + *{hasPlotRecip} + ',' + *{hasPedigreeRecip} + ',' + *{hasPlotDupe} + ');'"
-								th:text="#{common.stock.list.generate}">
-									Generate Stock List
-							</a>
-							
-							<a  th:if="*{(listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS')}" href="javascript: void(0)"
 								th:onclick="'javascript: ImportCrosses.saveParentList(\'' + ${listId} + '\');'"
 								th:text="#{study.save.crosses.parent.list}">
 									Save Parent List
-							</a>
-
-							<a th:if="*{listType == 'ADVANCED'}" href="javascript: void(0)"
-							   onclick="javascript: StockIDFunctions.openGenerateStockIDModal(getCurrentAdvanceTabListIdentifier());"
-							   th:text="#{common.stock.list.generate}">
-								Generate Stock List
-							</a>
-						</li>
-						<li class="withMeasurementsOnly"
-							th:if="*{listType == 'STOCK' and sourceListType != 'ADVANCED' and hasCompletedBulking and !inventoryViewToggled}">
-							<a href="" style="display: none"></a>
-							<a href="javascript: void(0)"
-							   th:onclick="'javascript: StockIDFunctions.displayStockListInventoryView(\'' + ${listId} + '\');'"
-							   th:text="#{stock.list.toggle.inventory.on}">
-							Show Completed Merges
-						</a>
-						</li>
-						<li class="withMeasurementsOnly"
-							th:if="*{listType == 'STOCK' and sourceListType != 'ADVANCED' and hasCompletedBulking and inventoryViewToggled}">
-							<a href="" style="display: none"></a>
-							<a href="javascript: void(0)"
-							   th:onclick="'javascript: StockIDFunctions.displayStockList(\'' + ${listId} + '\');'"
-							   th:text="#{stock.list.toggle.inventory.off}">
-								Hide Completed Merges
-							</a>
-						</li>
-						<li class="withMeasurementsOnly" th:if="*{listType == 'STOCK' and sourceListType != 'ADVANCED' and !hasCompletedBulking}">
-							<a href=""
-								style="display: none" id="import-stock-list-url"></a> <a href="javascript: void(0)"
-								th:onclick="'javascript: StockIDFunctions.executeBulkingInstructions(\'' + ${listId} + '\');'"
-								id="import-stock-list" th:text="#{bulk.duplicates.and.reciprocals}">
-									Bulk Duplicates and Reciprocals
-							</a>
-						</li>
-						<li class="withMeasurementsOnly" th:if="*{listType == 'STOCK' and !inventoryViewToggled}">
-							<a  href="" style="display: none" id="label-printing-url"
-								th:href="@{/LabelPrinting/specifyLabelDetails/stock}"></a>	
-							<a href="javascript: void(0)"
-								th:onclick="'javascript: StockIDFunctions.createLabels(\'' + ${listId} + '\');'"
-								id="label-printing-url-link" th:text="#{tools.create.label.printing}">
-								Create Labels
-							</a>
-						</li>
-						<li class="withMeasurementsOnly" th:if="*{listType == 'STOCK' and !inventoryViewToggled}">
-							<a href=""
-								style="display: none" id="export-stock-list-url"></a> <a href="javascript: void(0)"
-								th:onclick="'javascript: StockIDFunctions.exportList(\'' + ${listId} + '\');'"
-								id="export-stock-template" th:text="#{common.export.inventory.file}">
-									Export Inventory File
-							</a>
-						</li>
-						<li class="withMeasurementsOnly" th:if="*{listType == 'STOCK' and !hasCompletedBulking}">
-							<a href=""
-								style="display: none" id="import-stock-list-url"></a> <a href="javascript: void(0)"
-								th:onclick="'javascript: StockIDFunctions.showImportPopup(\'' + ${listId} + '\');'"
-								id="import-stock-list" th:text="#{common.import.inventory.file}">
-									Import Inventory File
-							</a>
-						</li>
-						<li class="withMeasurementsOnly" th:if="*{listType == 'STOCK' and !hasCompletedBulking}">
-							<a href=""
-								style="display: none" id="import-stock-list-url"></a> <a href="javascript: void(0)"
-								th:onclick="'javascript: StockIDFunctions.showUpdateInventoryModal(\'' + ${listId} + '\');'"
-								id="update-inventory-stock-list" th:text="#{seed.inventory.update.inventory}">
-									Update Inventory
 							</a>
 						</li>
 					</ul>
@@ -153,12 +79,10 @@
 	</div>
 </div>
 
-<script type="text/javascript" th:src="@{/static/js/studyManager/stock-list.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/trialmanager/exportSampleList.js}"></script>
 
 <div class="row">&nbsp;</div>
 <div class="row col-xs-12 col-md-12" id="inventory-germplasm-list">
 	<div th:if="*{(listType == 'CROSSES' || listType == 'CRT_CROSS' || listType == 'IMP_CROSS') || listType == 'ADVANCED'}" th:include="/Common/includes/listPagination"></div>
-	<div th:if="*{listType == 'STOCK'}" th:include="/Inventory/seedInventoryPagination"></div>
 	<div th:if="*{listType == 'SAMPLE_LIST'}" th:include="/Common/includes/listSampleList"></div>
 </div>

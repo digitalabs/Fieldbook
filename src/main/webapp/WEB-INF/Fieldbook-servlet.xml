@@ -202,11 +202,6 @@
 		<aop:scoped-proxy />
 	</bean>
 
-	<bean id="seedSelection" class="com.efficio.fieldbook.web.inventory.bean.SeedSelection"
-		scope="session">
-		<aop:scoped-proxy />
-	</bean>
-
 	<bean id="userFieldmap" class="com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap"
 		scope="session">
 		<aop:scoped-proxy />

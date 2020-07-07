@@ -1,6 +1,5 @@
 /*global angular, openStudyTree, showErrorMessage, operationMode, resetGermplasmList,
-showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
-stockListImportNotSaved, ImportDesign, isOpenStudy, InventoryPage*/
+showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader, ImportDesign, isOpenStudy, InventoryPage*/
 //TODO move this messages under a namespace
 /* global addEnvironmentsImportDesignMessage, importSaveDataWarningMessage*/
 
@@ -166,9 +165,9 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, InventoryPage*/
 		};
 	});
 
-	// do not switch tab if we have newly imported measurements or stock list is not saved
+	// do not switch tab if we have newly imported measurements
 	function isTabChangeDisabled() {
-		return stockListImportNotSaved || $('.import-study-data').data('data-import') === '1';
+		return  $('.import-study-data').data('data-import') === '1';
 	}
 
 	manageTrialApp.run(
@@ -731,14 +730,6 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, InventoryPage*/
 				$scope.tabSelected = selectedTab;
 				$scope.isSettingsTab = false;
 
-				// Load selected stock list inventory page setup function single time
-				if ($scope.stockListTabs && $scope.stockListTabs.indexOf(selectedTab) === -1) {
-					var isStock = selectedTab.split('-');
-					if (isStock[0] === 'stock') {
-						$scope.stockListTabs.push(selectedTab);
-						setTimeout(InventoryPage.setupPage, 100);
-					}
-				}
 			};
 
 			$scope.closeSampleListTab = function (tab) {
@@ -769,14 +760,11 @@ stockListImportNotSaved, ImportDesign, isOpenStudy, InventoryPage*/
 
 			$scope.isSaveEnabled = function () {
 
-				// Enable save button when Stock List tab is selected and only if there is an imported inventory.
-				var enableSaveForStockList = $scope.tabSelected.indexOf('stock-list') >= 0 && stockListImportNotSaved;
-
 				return $scope.tabSelected && ([
 					"trialSettings",
 					"germplasm",
 					"treatment"
-				].indexOf($scope.tabSelected) >= 0 || enableSaveForStockList);
+				].indexOf($scope.tabSelected) >= 0);
 
 
 			};

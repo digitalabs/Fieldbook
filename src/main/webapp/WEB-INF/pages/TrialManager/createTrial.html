@@ -30,8 +30,6 @@
 								   ng-attr-title="{{isSaveDisabled() ? 'This tab is saved automatically' : ''}}" />
 							<input type="button" value="Save" class="btn btn-info fbk-discard-imported-data fbk-hide"
 								   onclick="discardImportedData();" th:value="#{import.discard.data}"/>
-							<input type="button" value="Save" class="btn btn-info fbk-discard-imported-stocklist-data fbk-hide"
-								   onclick="discardImportedStockList();" th:value="#{import.discard.data}"/>
 						</div>
 					</div>
 
@@ -487,14 +485,6 @@
 	</div>
 
 	<div class="row">
-		<div th:include="Stock/generateStockIDModal"></div>
-	</div>
-
-	<div class="row">
-		<div th:include="/Common/includes/exportStockList"></div>
-	</div>
-
-	<div class="row">
 		<div id="import-germplasm" th:include="/StudyManager/includes/importGermplasmListDetailsModal"></div>
 	</div>
 
@@ -502,7 +492,6 @@
 		<div id="export-advance" th:include="/Common/includes/exportAdvanceList"></div>
 	</div>
 
-	<div id="import-study" th:include="/Common/includes/importStockList"></div>
 
 	<div class="row" id="addLotsModalDiv"></div>
 

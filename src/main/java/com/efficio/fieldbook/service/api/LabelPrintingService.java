@@ -35,30 +35,28 @@ public interface LabelPrintingService {
 	/**
 	 * Generate pdf labels.
 	 *
-	 * @param trialInstances the trial instances
+	 * @param trialInstances    the trial instances
 	 * @param userLabelPrinting the user label printing
 	 * @return the string
 	 * @throws LabelPrintingException the label printing exception
 	 */
 	String generateLabels(String labelType, List<StudyTrialInstanceInfo> trialInstances, UserLabelPrinting userLabelPrinting)
-			throws LabelPrintingException;
-
+		throws LabelPrintingException;
 
 	/**
 	 * Gets the available label fields for FieldMap.
 	 *
 	 * @param hasFieldMap the has field map
-	 * @param locale the locale
+	 * @param locale      the locale
 	 * @return the available label fields
 	 */
 	List<LabelFields> getAvailableLabelFieldsForFieldMap(boolean hasFieldMap, Locale locale);
-
 
 	/**
 	 * Gets the available label fields for Nursery, Trial.
 	 *
 	 * @param hasFieldMap the has field map
-	 * @param locale the locale
+	 * @param locale      the locale
 	 * @return the available label fields
 	 */
 	List<LabelFields> getAvailableLabelFieldsForStudy(boolean hasFieldMap, Locale locale, int studyID);
@@ -77,14 +75,13 @@ public interface LabelPrintingService {
 	/**
 	 * Check and set fieldmap properties.
 	 *
-	 * @param userLabelPrinting the user label printing
+	 * @param userLabelPrinting  the user label printing
 	 * @param fieldMapInfoDetail the field map info detail
 	 * @return true, if successful
 	 */
 	boolean checkAndSetFieldmapProperties(UserLabelPrinting userLabelPrinting, FieldMapInfo fieldMapInfoDetail);
 
 	/**
-	 *
 	 * @param presetId
 	 * @param presetType
 	 * @return
@@ -93,7 +90,6 @@ public interface LabelPrintingService {
 	LabelPrintingPresets getLabelPrintingPreset(Integer presetId, Integer presetType);
 
 	/**
-	 *
 	 * @param programPresetId
 	 * @return
 	 * @throws MiddlewareQueryException
@@ -101,7 +97,6 @@ public interface LabelPrintingService {
 	ProgramPreset getLabelPrintingProgramPreset(Integer programPresetId);
 
 	/**
-	 *
 	 * @param presetName
 	 * @param programId
 	 * @param presetType
@@ -109,10 +104,9 @@ public interface LabelPrintingService {
 	 * @throws MiddlewareQueryException
 	 */
 	List<LabelPrintingPresets> getAllLabelPrintingPresetsByName(String presetName, Integer programId)
-					throws MiddlewareQueryException;
+		throws MiddlewareQueryException;
 
 	/**
-	 *
 	 * @param programId
 	 * @return
 	 * @throws LabelPrintingException
@@ -120,7 +114,6 @@ public interface LabelPrintingService {
 	List<LabelPrintingPresets> getAllLabelPrintingPresets(Integer programId) throws LabelPrintingException;
 
 	/**
-	 *
 	 * @param presetType
 	 * @param presetId
 	 * @return
@@ -129,7 +122,6 @@ public interface LabelPrintingService {
 	String getLabelPrintingPresetConfig(int presetType, int presetId) throws LabelPrintingException;
 
 	/**
-	 *
 	 * @param settingsName
 	 * @param xmlConfig
 	 * @param programId
@@ -138,23 +130,22 @@ public interface LabelPrintingService {
 	void saveOrUpdateLabelPrintingPresetConfig(String settingsName, String xmlConfig, Integer programId);
 
 	void populateUserSpecifiedLabelFields(List<FieldMapTrialInstanceInfo> trialFieldMap, Workbook workbook, String selectedFields,
-		boolean isStockList, UserLabelPrinting userLabelPrinting);
+		UserLabelPrinting userLabelPrinting);
 
 	void deleteProgramPreset(Integer programPresetId);
 
 	/**
 	 * Returns if the list is either ADVANCED list of CROSSES list
-	 * 
+	 *
 	 * @param type
 	 * @return
 	 */
 	GermplasmListType getStockListType(String type);
 
 	/**
-	 * 
 	 * @param stockListId
 	 * @return
 	 * @throws MiddlewareQueryException
 	 */
-    List<InventoryDetails> getInventoryDetails(int stockListId);
+	List<InventoryDetails> getInventoryDetails(int stockListId);
 }

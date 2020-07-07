@@ -23,9 +23,6 @@ public class LabelPrintingForm {
 	/** The user label printing. */
 	private UserLabelPrinting userLabelPrinting;
 
-	/** Determine if it is a stock list */
-	private boolean isStockList;
-
 	private Integer germplasmListId;
 
 	/**
@@ -44,24 +41,6 @@ public class LabelPrintingForm {
 	 */
 	public void setUserLabelPrinting(final UserLabelPrinting userLabelPrinting) {
 		this.userLabelPrinting = userLabelPrinting;
-	}
-
-	/**
-	 * Get the checks if it is a stock list
-	 * 
-	 * @return isStockList
-	 */
-	public boolean getIsStockList() {
-		return this.isStockList;
-	}
-
-	/**
-	 * Sets if it is a stock list
-	 * 
-	 * @param isStockList
-	 */
-	public void setIsStockList(final boolean isStockList) {
-		this.isStockList = isStockList;
 	}
 
 	public boolean isCustomReport() {

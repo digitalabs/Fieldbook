@@ -222,27 +222,6 @@ public class ExportStudyControllerTest {
 	}
 
 
-	@Test
-	public void testDoStockExport() throws JsonParseException, JsonMappingException, IOException {
-		Mockito.when(this.exportAdvanceListService.exportStockList(1, this.germplasmExportService))
-				.thenReturn(new FileExportInfo("temp.xls", "temp.xls"));
-
-		final Workbook workbook = new Workbook();
-		final StudyDetails studyDetails = new StudyDetails();
-		studyDetails.setStudyName("TempName");
-		workbook.setStudyDetails(studyDetails);
-		this.userSelection.setWorkbook(workbook);
-		Mockito.when(this.req.getParameter("exportStockListId")).thenReturn("1");
-
-		final String ret = this.exportStudyController.doExportStockList(this.resp, this.req);
-		final ObjectMapper mapper = new ObjectMapper();
-		final Map<String, Object> mapObject = mapper.readValue(ret, new TypeReference<Map<String, Object>>() {
-		});
-		final String contentType = (String) mapObject.get(ExportStudyController.CONTENT_TYPE);
-		Assert.assertTrue("Should have a content type of application/vnd.ms-excel since its just 1 stock list",
-				FileUtils.MIME_MS_EXCEL.equalsIgnoreCase(contentType));
-	}
-
 	private String getTrialInstanceString(final List<Integer> instances) {
 		String trialInstances = "";
 

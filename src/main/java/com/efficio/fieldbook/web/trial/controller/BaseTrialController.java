@@ -465,6 +465,7 @@ public abstract class BaseTrialController extends SettingsController {
 			if (!isUsePrevious) {
 				instance.setInstanceId(row.getLocationId());
 				instance.setStockId(row.getStockId());
+				instance.setExperimentId(row.getExperimentId());
 			}
 
 			final Map<String, String> managementDetailValues = new HashMap<>();

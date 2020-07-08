@@ -14,6 +14,7 @@ import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.etl.Constants;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.enumeration.DatasetTypeEnum;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.util.Message;
@@ -54,6 +55,9 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 	static final String ERROR_HEADER_NO_MAPPING = "error.header.no.mapping";
 	static final String ERROR_DUPLICATE_LOCAL_VARIABLE = "error.duplicate.local.variable";
 	static final String ERROR_LOCATION_ID_DOESNT_EXISTS = "error.location.id.doesnt.exists";
+	static final String INVALID_MEANS_IMPORT_VARIABLE = "error.invalid.means.import.variable";
+	private static final List<Integer> INVALID_VARIABLES_FOR_MEANS_IMPORT = Arrays.asList(TermId.ENTRY_TYPE.getId(),
+		TermId.REP_NO.getId(), TermId.PLOT_NO.getId());
 
 	@Resource
 	private FieldbookService fieldbookService;
@@ -157,19 +161,23 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 			final Map<String, List<String>> proxy = new HashMap<>();
 
 			final Set<String> vars = new HashSet<>();
+			final boolean isMeansDataImport = this.userSelection.getDatasetType() != null &&
+				this.userSelection.getDatasetType() == DatasetTypeEnum.MEANS_DATA.getId();
 			for (final VariableDTO variable : variables) {
+				final Message message = new Message("");
+				message.setMessageParams(new String[] {variable.getHeaderName()});
+				final List<Message> messageList = new ArrayList<>();
+				messageList.add(message);
 				if (variable.getId() == null) {
-					final Message message = new Message(ERROR_HEADER_NO_MAPPING);
-					message.setMessageParams(new String[] {variable.getHeaderName()});
-					final List<Message> messageList = new ArrayList<>();
-					messageList.add(message);
+					message.setMessageKey(ERROR_HEADER_NO_MAPPING);
 					proxy.put(variable.getHeaderName(), this.etlService.convertMessageList(messageList));
 				}
 				if (!vars.add(variable.getHeaderName())) {// duplicate
-					final Message message = new Message(ERROR_DUPLICATE_LOCAL_VARIABLE);
-					message.setMessageParams(new String[] {variable.getHeaderName()});
-					final List<Message> messageList = new ArrayList<>();
-					messageList.add(message);
+					message.setMessageKey(ERROR_DUPLICATE_LOCAL_VARIABLE);
+					proxy.put(variable.getHeaderName() + ":" + variable.getId(), this.etlService.convertMessageList(messageList));
+				}
+				if(isMeansDataImport && INVALID_VARIABLES_FOR_MEANS_IMPORT.contains(variable.getId())) {
+					message.setMessageKey(INVALID_MEANS_IMPORT_VARIABLE);
 					proxy.put(variable.getHeaderName() + ":" + variable.getId(), this.etlService.convertMessageList(messageList));
 				}
 			}
@@ -279,7 +287,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 			return this.wrapFormResult(AngularOpenSheetController.URL, request);
 
-		} catch (WorkbookParserException e) {
+		} catch (final WorkbookParserException e) {
 			AngularMapOntologyController.LOG.error(e.getMessage(), e);
 			return this.wrapFormResult(Arrays.asList(e.getMessage()));
 		} catch (final Exception e) {
@@ -301,7 +309,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 				 exptDesignColumnIndex = headers.indexOf(measurementVariable.getName());
 			}
 		}
-		final String valueFromObsevations = this.etlService.getExperimentalDesignValueFromObservationSheet(workbook, userSelection, exptDesignColumnIndex);
+		final String valueFromObsevations = this.etlService.getExperimentalDesignValueFromObservationSheet(workbook, this.userSelection, exptDesignColumnIndex);
 		this.dataImportService.processExperimentalDesign(importData, this.contextUtil.getCurrentProgramUUID(), valueFromObsevations);
 	}
 

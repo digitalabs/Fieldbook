@@ -300,7 +300,9 @@ window.TrialSettingsManager = (function() {
 
 		selectedVariables = params.retrieveSelectedVariableFunction();
 		selectedVariables = thisInstance._updateSelectedVariableList(selectedVariables);
-
+		if(params.retrieveMappedTraits) {
+			selectedVariables = thisInstance._updateSelectedVariableList(params.retrieveMappedTraits());
+		}
 		// If we haven't loaded data for this group before, then load it
 		if (!group.data) {
 			$.getJSON(apiUrl, function(data) {
@@ -316,7 +318,7 @@ window.TrialSettingsManager = (function() {
 					selectedVariables: selectedVariables,
 					callback: params.callback,
                     onHideCallback: params.onHideCallback,
-                    options: params.options
+                    options: params.options,
 				});
 			});
 
@@ -332,7 +334,7 @@ window.TrialSettingsManager = (function() {
 				selectedVariables: selectedVariables,
 				callback: params.callback,
                 onHideCallback: params.onHideCallback,
-                options: params.options
+                options: params.options,
 			});
 		}
 	};

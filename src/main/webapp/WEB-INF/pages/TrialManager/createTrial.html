@@ -366,9 +366,13 @@
 			<a ui-sref="{{tab.state}}" ng-click="performFunctionOnTabChange(tab.state)">{{tab.name}}</a>
 		</li>
 		<li ng-repeat="tab in subObservationTabs" ng-class="{active: tabSelected===tab.state}">
-			<a ui-sref="subObservationTabs({ subObservationTabId: tab.id, subObservationTab: tab, isPendingView: null })"
+			<a ng-if="tab.state != 'studyGermplasmSource'" ui-sref="subObservationTabs({ subObservationTabId: tab.id, subObservationTab: tab, isPendingView: null })"
 			   ng-class="{'pendingData': tab.hasPendingData}"
 			   ng-click="performFunctionOnTabChange(tab.state)">{{tab.datasetType.tabNamePrefix}}{{tab.name}}</a>
+			<!--For Crosses and Selections tab  -->
+			<a ng-if="tab.state === 'studyGermplasmSource'" ui-sref="{{tab.state}}"
+			   ng-class="{active: tabSelected===tab.state}"
+			   ng-click="performFunctionOnTabChange(tab.state)">{{tab.name}}</a>
 		</li>
 		<li ng-repeat="tab in sampleTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
 			ng-click="listTabChange(tab.state)">

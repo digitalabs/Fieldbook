@@ -518,11 +518,11 @@ public class WorkbookUtilTest {
 		final MeasurementVariable variable =
 			MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.PLOT_CODE.getId(), TermId.PLOT_CODE.name(), null);
 		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
-			final Instance instance = new Instance();
+		final Instance instance = new Instance();
 		instance.setStockId(1);
 		instance.setExperimentId(12);
 		instance.setInstanceId(1);
-		List<MeasurementRow> row = WorkbookUtil.createMeasurementRowsFromEnvironments(Arrays.asList(instance), Arrays.asList(variable), new ExpDesignParameterUi());
+		final List<MeasurementRow> row = WorkbookUtil.createMeasurementRowsFromEnvironments(Arrays.asList(instance), Arrays.asList(variable), new ExpDesignParameterUi());
 		Assert.assertNotNull(row);
 		Assert.assertEquals(instance.getExperimentId(), row.get(0).getExperimentId());
 		Assert.assertEquals(instance.getStockId(), row.get(0).getStockId());

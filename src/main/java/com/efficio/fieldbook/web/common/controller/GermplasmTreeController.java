@@ -55,8 +55,8 @@ import org.generationcp.middleware.pojos.*;
 import org.generationcp.middleware.pojos.germplasm.GermplasmParent;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.dataset.DatasetService;
-import org.generationcp.middleware.service.api.study.germplasm.source.StudyGermplasmSourceInput;
-import org.generationcp.middleware.service.api.study.germplasm.source.StudyGermplasmSourceService;
+import org.generationcp.middleware.service.api.study.germplasm.source.GermplasmStudySourceInput;
+import org.generationcp.middleware.service.api.study.germplasm.source.GermplasmStudySourceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -131,7 +131,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	private NamingConventionService namingConventionService;
 
 	@Resource
-	private StudyGermplasmSourceService studyGermplasmSourceService;
+	private GermplasmStudySourceService germplasmStudySourceService;
 
 	@Resource
 	private DatasetService datasetService;
@@ -219,14 +219,14 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final String trimmedListName = form.getListName().trim();
 			final GermplasmList germplasmListIsNew =
 					this.fieldbookMiddlewareService.getGermplasmListByName(trimmedListName, this.getCurrentProgramUUID());
-			final List<StudyGermplasmSourceInput> germplasmStudySourceList = new ArrayList<>();
+			final List<GermplasmStudySourceInput> germplasmStudySourceList = new ArrayList<>();
 			if (germplasmListIsNew == null && !this.isSimilarToRootFolderName(trimmedListName)) {
 				final GermplasmListResult result = this.saveGermplasmList(form, germplasmStudySourceList);
 				final Integer germplasmListId = result.getGermplasmListId();
 
 				final List<GermplasmListData> data = new ArrayList<>();
 				data.addAll(this.germplasmListManager.getGermplasmListDataByListId(germplasmListId));
-				this.studyGermplasmSourceService.saveStudyGermplasmSource(germplasmStudySourceList);
+				this.germplasmStudySourceService.saveGermplasmStudySource(germplasmStudySourceList);
 				results.put(GermplasmTreeController.IS_SUCCESS, 1);
 				results.put("germplasmListId", germplasmListId);
 				results.put("uniqueId", form.getListIdentifier().isEmpty() ? "0" : form.getListIdentifier());
@@ -256,7 +256,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		return results;
 	}
 
-	protected GermplasmListResult saveGermplasmList(final SaveListForm form, final List<StudyGermplasmSourceInput> germplasmStudySourceList)
+	protected GermplasmListResult saveGermplasmList(final SaveListForm form, final List<GermplasmStudySourceInput> germplasmStudySourceList)
 			throws RuleException {
 
 		Boolean isTrimed = false;
@@ -296,7 +296,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	}
 
-	void createGermplasmStudySourcesFromSavedAdvanceListEntries(final List<ImportedGermplasm> listEntries , final List<Pair<Germplasm, GermplasmListData>> savedListDataItems, final List<StudyGermplasmSourceInput> germplasmStudySourceList){
+	void createGermplasmStudySourcesFromSavedAdvanceListEntries(final List<ImportedGermplasm> listEntries , final List<Pair<Germplasm, GermplasmListData>> savedListDataItems, final List<GermplasmStudySourceInput> germplasmStudySourceList){
 		final Integer studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
 		final ListIterator<Pair<Germplasm, GermplasmListData>> listDataIterator = savedListDataItems.listIterator();
 		final ListIterator<ImportedGermplasm> listEntriesIterator = listEntries.listIterator();
@@ -308,7 +308,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final GermplasmListData listData = listDataIterator.next().getRight();
 			final Integer plotNumber = Integer.valueOf(advanceEntry.getPlotNumber());
 			final Integer trialInstance = Integer.valueOf(advanceEntry.getTrialInstanceNumber());
-			germplasmStudySourceList.add(new StudyGermplasmSourceInput(listData.getGid(), studyId, observationUnitIdsTable.get(trialInstance, plotNumber), GermplasmStudySourceType.ADVANCE));
+			germplasmStudySourceList.add(new GermplasmStudySourceInput(listData.getGid(), studyId, observationUnitIdsTable.get(trialInstance, plotNumber), GermplasmStudySourceType.ADVANCE));
 		}
 
 	}
@@ -401,7 +401,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	 * @throws RuleException
 	 */
 	private Boolean applyNamingSettingToCrosses(final List<Pair<Germplasm, GermplasmListData>> listDataItems,
-			final GermplasmList germplasmList, final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList, final List<StudyGermplasmSourceInput> germplasmStudySourceList)
+			final GermplasmList germplasmList, final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList, final List<GermplasmStudySourceInput> germplasmStudySourceList)
 			throws RuleException {
 
 		Boolean isTrimed;
@@ -558,7 +558,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	}
 
 	private boolean createGermplasmListDataAndGermplasmStudySource(final GermplasmList germplasmList,
-			final List<Pair<Germplasm, GermplasmListData>> listDataItems, final List<ImportedCross> importedGermplasmList, final List<StudyGermplasmSourceInput> germplasmStudySourceList) {
+			final List<Pair<Germplasm, GermplasmListData>> listDataItems, final List<ImportedCross> importedGermplasmList, final List<GermplasmStudySourceInput> germplasmStudySourceList) {
 
 		Boolean isTrimed = false;
 		final Integer studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
@@ -607,7 +607,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 			listDataItems.add(new ImmutablePair<>(germplasm, listData));
 			// Observation Units, by female plot number, are from the first trial instance
-			germplasmStudySourceList.add(new StudyGermplasmSourceInput(gid, studyId, observationUnitIdsTable.get(1, importedCross.getFemalePlotNo()), GermplasmStudySourceType.CROSS));
+			germplasmStudySourceList.add(new GermplasmStudySourceInput(gid, studyId, observationUnitIdsTable.get(1, importedCross.getFemalePlotNo()), GermplasmStudySourceType.CROSS));
 		}
 		return isTrimed;
 	}

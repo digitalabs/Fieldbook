@@ -1,11 +1,11 @@
 (function () {
 	'use strict';
 
-	var studyGermplasmSourceModule = angular.module('study-germplasmm-source', []);
+	var germplasmStudySourceModule = angular.module('germplasm-study-source', []);
 
-	studyGermplasmSourceModule.controller('StudyGermplasmSourceCtrl',
-		['$scope', '$q', '$compile', 'studyContext', 'DTOptionsBuilder', 'studyGermplasmSourceService',
-			function ($scope, $q, $compile, studyContext, DTOptionsBuilder, studyGermplasmSourceService) {
+	germplasmStudySourceModule.controller('GermplasmStudySourceCtrl',
+		['$scope', '$q', '$compile', 'studyContext', 'DTOptionsBuilder', 'germplasmStudySourceService',
+			function ($scope, $q, $compile, studyContext, DTOptionsBuilder, germplasmStudySourceService) {
 
 				$scope.nested = {};
 				$scope.nested.dtInstance = null;
@@ -15,7 +15,7 @@
 
 				const dtOptions = DTOptionsBuilder.newOptions()
 					.withOption('ajax', {
-						url: studyGermplasmSourceService.getStudyGermplasmSourceTableUrl(),
+						url: germplasmStudySourceService.getGermplasmStudySourceTableUrl(),
 						type: 'POST',
 						contentType: 'application/json',
 						beforeSend: function (xhr) {

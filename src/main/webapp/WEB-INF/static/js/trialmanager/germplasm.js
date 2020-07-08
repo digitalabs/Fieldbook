@@ -6,8 +6,8 @@
     var manageTrialAppModule = angular.module('manageTrialApp');
 
     manageTrialAppModule.controller('GermplasmCtrl',
-        ['$scope', '$q', 'TrialManagerDataService', 'studyStateService', 'studyGermplasmService', 'studyGermplasmSourceService',
-            function ($scope, $q, TrialManagerDataService, studyStateService, studyGermplasmService, studyGermplasmSourceService) {
+        ['$scope', '$q', 'TrialManagerDataService', 'studyStateService', 'studyGermplasmService', 'germplasmStudySourceService',
+            function ($scope, $q, TrialManagerDataService, studyStateService, studyGermplasmService, germplasmStudySourceService) {
 
             $scope.settings = TrialManagerDataService.settings.germplasm;
             $scope.isOpenStudy = TrialManagerDataService.isOpenStudy;
@@ -137,12 +137,12 @@
             };
 
             $scope.validateGermplasmForReplacement = function() {
-                studyGermplasmSourceService.searchStudyGermplasmSources({
+                GermplasmSourceService.searchGermplasmStudySources({
                     sortedRequest: {pageNumber: 1, pageSize: 1}
-                }).then((studyGermplasmSourceTable) => {
+                }).then((germplasmStudySourceTable) => {
 
                     // Check if study has advance or cross list
-                    if (studyGermplasmSourceTable.data.length > 0) {
+                    if (germplasmStudySourceTable.data.length > 0) {
                         showAlertMessage('', $.germplasmMessages.studyHasAdvanceOrCrossList);
                     } else {
                         // Validate entry for replacement

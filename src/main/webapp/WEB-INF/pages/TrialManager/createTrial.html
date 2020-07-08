@@ -366,11 +366,11 @@
 			<a ui-sref="{{tab.state}}" ng-click="performFunctionOnTabChange(tab.state)">{{tab.name}}</a>
 		</li>
 		<li ng-repeat="tab in subObservationTabs" ng-class="{active: tabSelected===tab.state}">
-			<a ng-if="tab.state != 'studyGermplasmSource'" ui-sref="subObservationTabs({ subObservationTabId: tab.id, subObservationTab: tab, isPendingView: null })"
+			<a ng-if="tab.state != 'germplasmStudySource'" ui-sref="subObservationTabs({ subObservationTabId: tab.id, subObservationTab: tab, isPendingView: null })"
 			   ng-class="{'pendingData': tab.hasPendingData}"
 			   ng-click="performFunctionOnTabChange(tab.state)">{{tab.datasetType.tabNamePrefix}}{{tab.name}}</a>
 			<!--For Crosses and Selections tab  -->
-			<a ng-if="tab.state === 'studyGermplasmSource'" ui-sref="{{tab.state}}"
+			<a ng-if="tab.state === 'germplasmStudySource'" ui-sref="{{tab.state}}"
 			   ng-class="{active: tabSelected===tab.state}"
 			   ng-click="performFunctionOnTabChange(tab.state)">{{tab.name}}</a>
 		</li>
@@ -389,7 +389,7 @@
 			<div class="col-xs-12" ui-view="" ng-show="isSettingsTab"></div>
 			<div class="col-xs-12" ui-view="germplasm" ng-show="tabSelected==='germplasm'"></div>
 			<div class="col-xs-12" ui-view="environment" ng-show="tabSelected==='environment'"></div>
-			<div class="col-xs-12" ui-view="studyGermplasmSource" ng-show="tabSelected==='studyGermplasmSource'"></div>
+			<div class="col-xs-12" ui-view="germplasmStudySource" ng-show="tabSelected==='germplasmStudySource'"></div>
 			<div class="col-xs-12" ui-view="inventory" ng-show="tabSelected==='inventory'"></div>
 			<div class="col-xs-12" ui-view="subObservationTab" ng-show="tabSelected.indexOf('/subObservationTabs/') === 0"></div>
 			<div class="col-xs-12" ng-repeat="advancetab in advanceTabsData track by $index" id="{{advancetab.id}}"
@@ -785,8 +785,8 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/saveList.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/r-package/r-package.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/visualization/visualization.js}"></script>
-	<script type="text/javascript" th:src="@{/static/js/trialmanager/study-germplasm-source/studyGermplasmSource.js}"></script>
-	<script type="text/javascript" th:src="@{/static/js/trialmanager/study-germplasm-source/studyGermplasmSourceService.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/germplasm-study-source/GermplasmStudySource.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/germplasm-study-source/GermplasmStudySourceService.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/visualization/visualization.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/subobservations/subObservationTab.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/subobservations/subObservationSet.js}"></script>

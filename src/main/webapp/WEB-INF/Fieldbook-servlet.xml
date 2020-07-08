@@ -588,8 +588,8 @@
 		<aop:scoped-proxy proxy-target-class="false" />
 	</bean>
 
-	<bean id="studyGermplasmSourceService" factory-bean="managerFactory"
-		  factory-method="getStudyGermplasmSourceService" scope="request">
+	<bean id="germplasmStudySourceService" factory-bean="managerFactory"
+		  factory-method="getGermplasmStudySourceService" scope="request">
 		<aop:scoped-proxy proxy-target-class="false" />
 	</bean>
 

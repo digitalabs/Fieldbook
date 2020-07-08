@@ -9,7 +9,7 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 	var manageTrialApp = angular.module('manageTrialApp', ['designImportApp', 'leafnode-utils', 'fieldbook-utils', 'subObservation',
 		'ui.router', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables', 'datatables.buttons', 'datatables.colreorder',
 		'showSettingFormElementNew', 'ngSanitize', 'ui.select', 'ngMessages', 'blockUI', 'datasets-api', 'auth', 'bmsAuth', 'studyState',
-		'export-study', 'import-study', 'create-sample', 'derived-variable', 'importObservationsApp', 'study-germplasmm-source']);
+		'export-study', 'import-study', 'create-sample', 'derived-variable', 'importObservationsApp', 'germplasm-study-source']);
 
 	manageTrialApp.config(['$httpProvider', function ($httpProvider) {
 		$httpProvider.interceptors.push('authInterceptor');
@@ -82,12 +82,12 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 				deepStateRedirect: true, sticky: true
 			})
 
-			.state('studyGermplasmSource', {
-				url: '/studyGermplasmSource',
+			.state('germplasmStudySource', {
+				url: '/germplasmStudySource',
 				views: {
-					studyGermplasmSource: {
-						controller: 'StudyGermplasmSourceCtrl',
-						templateUrl: '/Fieldbook/static/js/trialmanager/study-germplasm-source/study-germplasm-source-tab.html'
+					germplasmStudySource: {
+						controller: 'GermplasmStudySourceCtrl',
+						templateUrl: '/Fieldbook/static/js/trialmanager/germplasm-study-source/germplasm-study-source-tab.html'
 					}
 				}
 			})
@@ -205,10 +205,10 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'studyStateService', 'TrialManagerDataService', '$http',
 		'$timeout', '_', '$localStorage', '$state', '$location', 'HasAnyAuthorityService', 'derivedVariableService', 'exportStudyModalService',
 		'importStudyModalService', 'createSampleModalService', 'derivedVariableModalService', '$uibModal', '$q', 'datasetService', 'InventoryService',
-		'studyContext', 'PERMISSIONS', 'LABEL_PRINTING_TYPE', 'HAS_LISTS_OR_SUB_OBS', 'HAS_GENERATED_DESIGN', 'studyGermplasmSourceService',
+		'studyContext', 'PERMISSIONS', 'LABEL_PRINTING_TYPE', 'HAS_LISTS_OR_SUB_OBS', 'HAS_GENERATED_DESIGN', 'germplasmStudySourceService',
 		function ($scope, $rootScope, studyStateService, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $location, HasAnyAuthorityService,
 				  derivedVariableService, exportStudyModalService, importStudyModalService, createSampleModalService, derivedVariableModalService, $uibModal, $q, datasetService, InventoryService,
-				  studyContext, PERMISSIONS, LABEL_PRINTING_TYPE, HAS_LISTS_OR_SUB_OBS, HAS_GENERATED_DESIGN, studyGermplasmSourceService) {
+				  studyContext, PERMISSIONS, LABEL_PRINTING_TYPE, HAS_LISTS_OR_SUB_OBS, HAS_GENERATED_DESIGN, germplasmStudySourceService) {
 
 			$scope.trialTabs = [
 				{
@@ -228,7 +228,7 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 			$scope.sampleTabs = [];
 			$scope.crossesAndSelectionsTab = {
 				name: 'Crosses and Selections',
-				state: 'studyGermplasmSource',
+				state: 'germplasmStudySource',
 				hidden: true
 			}
 			$scope.inventoryTab = {
@@ -282,10 +282,10 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 			});
 
 			function loadCrossesAndSelectionsTab() {
-				studyGermplasmSourceService.searchStudyGermplasmSources({
+				germplasmStudySourceService.searchGermplasmStudySources({
 					sortedRequest: {pageNumber: 1, pageSize: 1}
-				}).then((studyGermplasmSourceTable) => {
-					if (studyGermplasmSourceTable.data.length) {
+				}).then((germplasmStudySourceTable) => {
+					if (germplasmStudySourceTable.data.length) {
 						$scope.crossesAndSelectionsTab.hidden = false;
 					}
 				});

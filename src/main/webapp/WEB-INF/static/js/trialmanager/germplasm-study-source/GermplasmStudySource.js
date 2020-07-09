@@ -109,7 +109,9 @@
 						}
 					},
 					groupId: {
-						data: 'groupId',
+						data: function () {
+							return '';
+						},
 						filter: {
 							transform(request) {
 								if (this.value) {
@@ -134,7 +136,9 @@
 						data: 'cross'
 					},
 					lots: {
-						data: 'lots',
+						data: function () {
+							return '';
+						},
 						filter: {
 							transform(request) {
 								if (this.value || this.value === 0) {
@@ -287,6 +291,20 @@
 						targets: 1,
 						createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
 							$(td).append('<span>' + rowData.sourceId + '</span>');
+						}
+					},
+					{
+						// GROUP ID
+						targets: 3,
+						createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
+							$(td).append('<span>' + (rowData.groupId != 0 ? rowData.groupId : '-') + '</span>');
+						}
+					},
+					{
+						// LOTS
+						targets: 6,
+						createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
+							$(td).append('<span>' + (rowData.lots != 0 ? rowData.lots : '-') + '</span>');
 						}
 					},
 					{

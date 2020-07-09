@@ -42,7 +42,7 @@
 					.withOption('scrollY', '500px')
 					.withOption('scrollCollapse', true)
 					.withOption('scrollX', '100%')
-					.withOption('order', [[1, 'desc']]) //sourceId
+					.withOption('order', [[2, 'desc']]) //gid
 					.withOption('language', {
 						processing: '<span class="throbber throbber-2x"></span>',
 						lengthMenu: 'Records per page: _MENU_',
@@ -83,18 +83,9 @@
 							return "";
 						}
 					},
-					sourceId: {
-
+					rowNumber: {
 						data: function () {
 							return "";
-						},
-						filter: {
-							transform(request) {
-								if (this.value) {
-									request.filter.sourceId = this.value;
-									this.isFiltered = true;
-								}
-							}
 						}
 					},
 					gid: {
@@ -281,6 +272,7 @@
 
 				$scope.dtColumnDefs = [
 					{
+						// Checkbox
 						targets: 0,
 						createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
 							$(td).append($compile('<span><input type="checkbox" ng-checked="isSelected(' + rowData.sourceId + ')" ng-click="toggleSelect(' + rowData.sourceId + ')"></span>')($scope));
@@ -288,9 +280,10 @@
 						}
 					},
 					{
+						// Row Number
 						targets: 1,
-						createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
-							$(td).append('<span>' + rowData.sourceId + '</span>');
+						render: function (data, type, rowData, meta) {
+							return meta.row + 1 + table().page.info().start;
 						}
 					},
 					{

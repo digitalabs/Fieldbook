@@ -61,16 +61,6 @@ public interface LabelPrintingService {
 	 */
 	List<LabelFields> getAvailableLabelFieldsForStudy(boolean hasFieldMap, Locale locale, int studyID);
 
-	/***
-	 * Get available label fields for Stock List
-	 *
-	 * @param listType
-	 * @param locale
-	 * @param studyID
-	 * @return
-	 */
-
-	List<LabelFields> getAvailableLabelFieldsForStockList(GermplasmListType listType, Locale locale, int studyID);
 
 	/**
 	 * Check and set fieldmap properties.
@@ -134,13 +124,6 @@ public interface LabelPrintingService {
 
 	void deleteProgramPreset(Integer programPresetId);
 
-	/**
-	 * Returns if the list is either ADVANCED list of CROSSES list
-	 *
-	 * @param type
-	 * @return
-	 */
-	GermplasmListType getStockListType(String type);
 
 	/**
 	 * @param stockListId

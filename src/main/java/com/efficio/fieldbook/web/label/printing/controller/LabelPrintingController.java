@@ -46,13 +46,11 @@ import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
-import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
-import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.presets.StandardPreset;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.reports.BuildReportException;
@@ -155,16 +153,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	private ReportService reportService;
 
 	@Resource
-	private GermplasmListManager germplasmListManager;
-
-	@Resource
-	private InventoryDataManager inventoryDataManager;
-
-	@Resource
 	private WorkbenchDataManager workbenchDataManager;
-
-	@Resource
-	private LabelPrintingUtil labelPrintingUtil;
 
 	private final InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
@@ -261,43 +250,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 
 		model.addAttribute(LabelPrintingController.AVAILABLE_FIELDS,
 			this.labelPrintingService.getAvailableLabelFieldsForFieldMap(true, locale));
-
-		return super.show(model);
-	}
-
-	@RequestMapping(value = "/stock/{id}", method = RequestMethod.GET)
-	public String showStockListLabelDetails(@ModelAttribute("labelPrintingForm") final LabelPrintingForm form, final Model model,
-		final HttpSession session, @PathVariable final int id, final Locale locale) {
-
-		SessionUtility.clearSessionData(session, new String[] {
-			SessionUtility.FIELDMAP_SESSION_NAME,
-			SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
-
-		// retrieve the stock list
-		final GermplasmList stockList = this.germplasmListManager.getGermplasmListById(id);
-
-		final Study study = this.fieldbookMiddlewareService.getStudy(stockList.getProjectId());
-		final List<Integer> ids = new ArrayList<>();
-		ids.add(stockList.getProjectId());
-
-		final List<FieldMapInfo> fieldMapInfoList;
-
-		fieldMapInfoList = this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids, this.crossExpansionProperties);
-
-		for (final FieldMapInfo fieldMapInfoDetail : fieldMapInfoList) {
-			this.userLabelPrinting.setFieldMapInfo(fieldMapInfoDetail);
-			this.labelPrintingService.checkAndSetFieldmapProperties(this.userLabelPrinting, fieldMapInfoDetail);
-		}
-
-		this.userLabelPrinting.setStudy(study);
-		this.userLabelPrinting.setBarcodeNeeded("0");
-		this.userLabelPrinting.setBarcodeGeneratedAutomatically("1");
-		this.userLabelPrinting.setIncludeColumnHeadinginNonPdf("1");
-		this.userLabelPrinting.setNumberOfLabelPerRow("3");
-		this.userLabelPrinting.setFilename(this.generateDefaultFilename(this.userLabelPrinting));
-		form.setUserLabelPrinting(this.userLabelPrinting);
-		model.addAttribute(LabelPrintingController.AVAILABLE_FIELDS, this.labelPrintingService.getAvailableLabelFieldsForStockList(
-			this.labelPrintingService.getStockListType(stockList.getType()), locale, stockList.getProjectId()));
 
 		return super.show(model);
 	}
@@ -832,10 +784,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 		this.contextUtil = contextUtil;
 	}
 
-	public CrossExpansionProperties getCrossExpansionProperties() {
-		return this.crossExpansionProperties;
-	}
-
 	public void setCrossExpansionProperties(final CrossExpansionProperties crossExpansionProperties) {
 		this.crossExpansionProperties = crossExpansionProperties;
 	}
@@ -847,10 +795,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController {
 	 */
 	void setReportService(final ReportService reportService) {
 		this.reportService = reportService;
-	}
-
-	void setUserFieldMap(final UserFieldmap userFieldmap) {
-		this.userFieldmap = userFieldmap;
 	}
 
 	void setWorkbenchDataManager(final WorkbenchDataManager workbenchDataManager) {

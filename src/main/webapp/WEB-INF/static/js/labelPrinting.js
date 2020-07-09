@@ -407,6 +407,8 @@ LabelPrinting = {
 		var barcodeNeeded = $safeId('input[name=userLabelPrinting.barcodeNeeded]:checked').val();
 		// isPlotCodePrefix
 		if (barcodeNeeded === '1') {
+			$('.automatically-barcode-fields').show();
+			LabelPrinting.showOrHideBarcodeGeneratedAutomaticallyFields();
 			$('.barcode-fields').show();
     	} else {
 			$('.automatically-barcode-fields').hide();

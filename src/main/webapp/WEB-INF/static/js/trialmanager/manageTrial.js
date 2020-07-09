@@ -707,11 +707,6 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 							}
 						})
 					});
-					// Add crosses and selections tab after Observations tab.
-					// datasetType id 4 is plot type.
-					if (datasetType.id === 4) {
-						$scope.subObservationTabs.push($scope.crossesAndSelectionsTab);
-					}
 				});
 			}, function (response) {
 				if (response.errors[0] && response.errors[0].message) {

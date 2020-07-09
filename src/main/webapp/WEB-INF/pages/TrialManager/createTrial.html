@@ -366,13 +366,14 @@
 			<a ui-sref="{{tab.state}}" ng-click="performFunctionOnTabChange(tab.state)">{{tab.name}}</a>
 		</li>
 		<li ng-repeat="tab in subObservationTabs" ng-class="{active: tabSelected===tab.state}">
-			<a ng-if="tab.state != 'germplasmStudySource'" ui-sref="subObservationTabs({ subObservationTabId: tab.id, subObservationTab: tab, isPendingView: null })"
+			<a ui-sref="subObservationTabs({ subObservationTabId: tab.id, subObservationTab: tab, isPendingView: null })"
 			   ng-class="{'pendingData': tab.hasPendingData}"
 			   ng-click="performFunctionOnTabChange(tab.state)">{{tab.datasetType.tabNamePrefix}}{{tab.name}}</a>
-			<!--For Crosses and Selections tab  -->
-			<a ng-if="tab.state === 'germplasmStudySource'" ui-sref="{{tab.state}}"
-			   ng-class="{active: tabSelected===tab.state}"
-			   ng-click="performFunctionOnTabChange(tab.state)">{{tab.name}}</a>
+		</li>
+		<li ng-class="{active: tabSelected===crossesAndSelectionsTab.state}" ng-show="!crossesAndSelectionsTab.hidden">
+			<a ui-sref="{{crossesAndSelectionsTab.state}}"
+			   ng-class="{active: tabSelected===crossesAndSelectionsTab.state}"
+			   ng-click="performFunctionOnTabChange(crossesAndSelectionsTab.state)">{{crossesAndSelectionsTab.name}}</a>
 		</li>
 		<li ng-repeat="tab in sampleTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
 			ng-click="listTabChange(tab.state)">

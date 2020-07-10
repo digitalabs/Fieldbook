@@ -160,7 +160,6 @@ public class OpenTrialControllerTest {
 
 	@Before
 	public void setUp() {
-		final Project project = this.createProject();
 		final DmsProject dmsProject = this.createDmsProject();
 		final StudyType studyType = new StudyType();
 		studyType.setName(StudyTypeDto.TRIAL_NAME);
@@ -931,7 +930,7 @@ public class OpenTrialControllerTest {
 		Mockito.doReturn(standardVariable2).when(this.fieldbookMiddlewareService).getStandardVariable(OpenTrialControllerTest.N_EARS_SEL,
 			OpenTrialControllerTest.PROGRAM_UUID);
 
-		this.openTrialController.getTraitsAndSelectionVariates(new ArrayList<MeasurementVariable>(), newVariables, idList);
+		this.openTrialController.getTraitsAndSelectionVariates(new ArrayList<>(), newVariables, idList);
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(2)).getStandardVariable(ArgumentMatchers.anyInt(), ArgumentMatchers.anyString());
 		// Getting of trait and selection methods called twice because of null checking
 		Mockito.verify(this.userSelection, Mockito.times(2)).getBaselineTraitsList();
@@ -1107,7 +1106,7 @@ public class OpenTrialControllerTest {
 
 		Assert.assertNotNull("The environment data tab should not be null", returnVal.get(OpenTrialController.ENVIRONMENT_DATA_TAB));
 		Mockito.verify(this.fieldbookMiddlewareService)
-			.saveWorkbookVariablesAndObservations(ArgumentMatchers.any(Workbook.class), ArgumentMatchers.anyString());
+			.saveWorkbookVariablesAndObservations(ArgumentMatchers.any(Workbook.class));
 		Mockito.verify(this.fieldbookService).createIdNameVariablePairs(ArgumentMatchers.any(Workbook.class), ArgumentMatchers.anyListOf(
 			SettingDetail.class),
 			ArgumentMatchers.anyString(), ArgumentMatchers.anyBoolean());
@@ -1119,14 +1118,14 @@ public class OpenTrialControllerTest {
 		final TrialData data = Mockito.mock(TrialData.class);
 		Mockito.when(data.getInstanceInfo()).thenReturn(DesignImportTestDataInitializer.createEnvironmentData(1));
 		final BasicDetails basicDetails = Mockito.mock(BasicDetails.class);
-		Mockito.when(basicDetails.getBasicDetails()).thenReturn(new HashMap<String, String>());
+		Mockito.when(basicDetails.getBasicDetails()).thenReturn(new HashMap<>());
 		Mockito.when(data.getBasicDetails()).thenReturn(basicDetails);
 		Mockito.when(data.getBasicDetails().getStudyType()).thenReturn(StudyTypeDto.getTrialDto());
 		final TrialSettingsBean trialSettings = Mockito.mock(TrialSettingsBean.class);
-		Mockito.when(trialSettings.getUserInput()).thenReturn(new HashMap<String, String>());
+		Mockito.when(trialSettings.getUserInput()).thenReturn(new HashMap<>());
 		Mockito.when(data.getTrialSettings()).thenReturn(trialSettings);
 		final TreatmentFactorTabBean treatmentFactor = Mockito.mock(TreatmentFactorTabBean.class);
-		Mockito.when(treatmentFactor.getCurrentData()).thenReturn(new HashMap<String, TreatmentFactorData>());
+		Mockito.when(treatmentFactor.getCurrentData()).thenReturn(new HashMap<>());
 		Mockito.when(data.getTreatmentFactors()).thenReturn(treatmentFactor);
 		return data;
 	}

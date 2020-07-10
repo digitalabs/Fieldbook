@@ -193,7 +193,7 @@ public class OpenTrialControllerTest {
 
 	@Test
 	public void testOpenStudyNoRedirect() {
-		List<Integer> datasetTypes = new ArrayList<>();
+		final List<Integer> datasetTypes = new ArrayList<>();
 		datasetTypes.add(4);
 		Mockito.doReturn(datasetTypes).when(this.datasetTypeService).getObservationDatasetTypeIds();
 		final Workbook workbook =
@@ -508,13 +508,6 @@ public class OpenTrialControllerTest {
 		dmsProject.setName(OpenTrialControllerTest.TEST_STUDY_NAME);
 		dmsProject.setProgramUUID(OpenTrialControllerTest.PROGRAM_UUID);
 		return dmsProject;
-	}
-
-	private Project createProject() {
-		final Project project = new Project();
-		project.setProjectId(OpenTrialControllerTest.WORKBENCH_PROJECT_ID);
-		project.setProjectName(OpenTrialControllerTest.WORKBENCH_PROJECT_NAME);
-		return project;
 	}
 
 	private void initializeOntology() {

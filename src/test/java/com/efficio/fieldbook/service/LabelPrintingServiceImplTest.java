@@ -344,32 +344,6 @@ public class LabelPrintingServiceImplTest {
 			params.getInstanceInfo().getFieldMapLabels().size());
 	}
 
-	@Test
-	public void testCheckAndSetFieldMapInstanceInfoForStudyEnvironmentDataOnly() {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(2, 2);
-
-		final List<FieldMapTrialInstanceInfo> fieldMapList = FieldMapTrialInstanceInfoTestDataInitializer.createTrialFieldMapList();
-		fieldMapList.get(0).setTrialInstanceNo("1");
-
-		final LabelPrintingProcessingParams params =
-			LabelPrintingProcessingParamsTestDataInitializer.createLabelPrintingProcessingParamsWithAllFieldIDs();
-
-		final List<InventoryDetails> inventoryDetailList = this.inventoryDetailsInitializer.createInventoryDetailList(1);
-		Mockito.when(this.inventoryMiddlewareService.getInventoryListByListDataProjectListId(Matchers.isA(Integer.class))).thenReturn(
-			inventoryDetailList);
-
-		final Term term = new Term();
-		term.setName("termName");
-		Mockito.when(this.ontologyDataManager.getTermById(Matchers.isA(Integer.class))).thenReturn(term);
-
-		this.labelPrintingServiceImpl.checkAndSetFieldMapInstanceInfo(fieldMapList, workbook, params,
-			this.measurementData, this.environmentData);
-		try {
-		} catch (final NeverWantedButInvoked e) {
-			Assert.fail("Expecting that the method processInventorySpecificLabelsForInstance is never invoked.");
-		}
-	}
-
 	private int getRandomNumber(final int minValue, final int maxValue) {
 		final Random rn = new Random();
 		final int range = maxValue - minValue + 1;

@@ -11,6 +11,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -44,11 +46,14 @@ import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.germplasm.GermplasmParent;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.dataset.DatasetService;
+import org.generationcp.middleware.service.api.study.germplasm.source.GermplasmStudySourceService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatcher;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
@@ -143,21 +148,31 @@ public class GermplasmTreeControllerTest {
 	@Mock
 	private AbstractBaseFieldbookController abstractFieldbookController;
 
+	@Mock
+	private DatasetService datasetService;
+
+	@Mock
+	private GermplasmStudySourceService germplasmStudySourceService;
+
 	@InjectMocks
 	private GermplasmTreeController controller;
 
 	@Before
 	public void setUp() throws MiddlewareQueryException {
+		final Workbook workbook = this.createWorkBook();
+
 		Mockito.doReturn(this.createCrossSetting()).when(this.userSelection).getCrossSettings();
 		Mockito.doReturn(this.createImportedCrossesList()).when(this.userSelection).getImportedCrossesList();
-		Mockito.doReturn(this.createWorkBook()).when(this.userSelection).getWorkbook();
+		Mockito.doReturn(workbook).when(this.userSelection).getWorkbook();
 		Mockito.doReturn(GermplasmTreeControllerTest.SAVED_GERMPLASM_ID).when(this.fieldbookMiddlewareService)
 				.saveGermplasmList(ArgumentMatchers.<List<Pair<Germplasm, GermplasmListData>>>any(), ArgumentMatchers.any(GermplasmList.class), ArgumentMatchers.eq(false));
-		Mockito.doReturn(GermplasmTreeControllerTest.SAVED_LISTPROJECT_ID).when(this.fieldbookMiddlewareService)
-				.saveOrUpdateListDataProject(ArgumentMatchers.anyInt(), ArgumentMatchers.any(GermplasmListType.class), ArgumentMatchers.anyInt(),
-						ArgumentMatchers.<List<ListDataProject>>any(), ArgumentMatchers.anyInt());
 
 		Mockito.doReturn(this.createGermplasmListData()).when(this.germplasmListManager).getGermplasmListDataByListId(ArgumentMatchers.anyInt());
+		final Table<Integer, Integer, Integer> observationUnitIdsTable = HashBasedTable.create();
+		observationUnitIdsTable.put(1, 1, 100);
+		observationUnitIdsTable.put(1, 3, 101);
+		Mockito.doReturn(observationUnitIdsTable).when(this.datasetService).getTrialNumberPlotNumberObservationUnitIdTable(ArgumentMatchers.eq(workbook.getMeasurementDatesetId()),
+			ArgumentMatchers.anySet(), ArgumentMatchers.anySet());
 
 		try {
 			Mockito.doReturn(GermplasmTreeControllerTest.LIST_NAME_SHOULD_BE_UNIQUE).when(this.messageSource)
@@ -195,9 +210,9 @@ public class GermplasmTreeControllerTest {
 		final Map<String, Object> result = this.controller.savePost(form, Mockito.mock(Model.class));
 
 		Assert.assertEquals("isSuccess Value should be 1", 1, result.get("isSuccess"));
-		Assert.assertEquals("advancedGermplasmListId should be 2", 2, result.get("advancedGermplasmListId"));
 		Assert.assertEquals("Unique ID should be LIST IDENTIFIER", form.getListIdentifier(), result.get("uniqueId"));
 		Assert.assertEquals("List Name should be LIST 1", form.getListName(), result.get("listName"));
+		Mockito.verify(this.germplasmStudySourceService).saveGermplasmStudySource(ArgumentMatchers.anyList());
 	}
 
 	@Test
@@ -254,9 +269,9 @@ public class GermplasmTreeControllerTest {
 
 		Assert.assertEquals("isSuccess Value should be 1", 1, result.get("isSuccess"));
 		Assert.assertEquals("germplasmListId should be 1", 1, result.get("germplasmListId"));
-		Assert.assertEquals("crossesListId should be 2", 2, result.get("crossesListId"));
 		Assert.assertEquals("Unique ID should be LIST IDENTIFIER", form.getListIdentifier(), result.get("uniqueId"));
 		Assert.assertEquals("List Name should be LIST 1", form.getListName(), result.get("listName"));
+		Mockito.verify(this.germplasmStudySourceService).saveGermplasmStudySource(ArgumentMatchers.anyList());
 	}
 
 	@Test
@@ -594,6 +609,7 @@ public class GermplasmTreeControllerTest {
 		Assert.assertEquals("germplasmListId should be 1", 1, result.get("germplasmListId"));
 		Assert.assertEquals("Unique ID should be LIST IDENTIFIER", form.getListIdentifier(), result.get("uniqueId"));
 		Assert.assertEquals("List Name should be LIST 1", form.getListName(), result.get("listName"));
+		Mockito.verify(this.germplasmStudySourceService).saveGermplasmStudySource(ArgumentMatchers.anyList());
 	}
 
 	@Test
@@ -988,17 +1004,17 @@ public class GermplasmTreeControllerTest {
 		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();
 		final List<ImportedCross> importedCrosses = new ArrayList<>();
 		final ImportedCross cross = new ImportedCross();
-		final ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(12345, "FEMALE-12345", "");
+		final ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(12345, "FEMALE-12345", 1, "");
 		cross.setFemaleParent(femaleParent);
-		final ImportedGermplasmParent maleParent = new ImportedGermplasmParent(54321, "MALE-54321", "");
+		final ImportedGermplasmParent maleParent = new ImportedGermplasmParent(54321, "MALE-54321", 2,"");
 		cross.setMaleParents(Lists.newArrayList(maleParent));
 		cross.setGid("10021");
 		cross.setDesig("Default name1");
 		importedCrosses.add(cross);
 		final ImportedCross cross2 = new ImportedCross();
-		final ImportedGermplasmParent femaleParent2 = new ImportedGermplasmParent(9999, "FEMALE-9999", "");
+		final ImportedGermplasmParent femaleParent2 = new ImportedGermplasmParent(9999, "FEMALE-9999", 3,"");
 		cross2.setFemaleParent(femaleParent2);
-		final ImportedGermplasmParent maleParent2 = new ImportedGermplasmParent(8888, "MALE-8888", "");
+		final ImportedGermplasmParent maleParent2 = new ImportedGermplasmParent(8888, "MALE-8888", 4,"");
 		cross2.setMaleParents(Lists.newArrayList(maleParent2));
 		cross2.setGid("10022");
 		cross2.setDesig("Default name2");

@@ -16,6 +16,7 @@ public class Instance {
 
 	private long stockId;
 	private long instanceId;
+	private int experimentId;
 
 	private Map<String, String> managementDetailValues;
 	private Map<String, String> trialDetailValues;
@@ -77,4 +78,11 @@ public class Instance {
 		this.managementDetailDataIdMap = managementDetailDataIdMap;
 	}
 
+	public int getExperimentId() {
+		return this.experimentId;
+	}
+
+	public void setExperimentId(final int experimentId) {
+		this.experimentId = experimentId;
+	}
 }

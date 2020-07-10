@@ -194,7 +194,7 @@ public abstract class BaseTrialController extends SettingsController {
 
 	private void setStartingPlotNoFromObservations(final Workbook trialWorkbook, final ExpDesignParameterUi data) {
 		// Set starting entry and plot number from observations
-		Integer startingPlotNo = 0;
+		int startingPlotNo = 0;
 		if (trialWorkbook.getObservations() != null && !trialWorkbook.getObservations().isEmpty()) {
 
 			final List<MeasurementRow> measurementRows = trialWorkbook.getObservations();
@@ -209,7 +209,7 @@ public abstract class BaseTrialController extends SettingsController {
 						}
 					});
 
-				final Integer currentPlotNo = Integer.valueOf(dataMap.get(TermId.PLOT_NO.getId()).getValue());
+				final int currentPlotNo = Integer.parseInt(dataMap.get(TermId.PLOT_NO.getId()).getValue());
 				if (currentPlotNo < startingPlotNo || startingPlotNo == 0) {
 					startingPlotNo = currentPlotNo;
 				}
@@ -465,6 +465,7 @@ public abstract class BaseTrialController extends SettingsController {
 			if (!isUsePrevious) {
 				instance.setInstanceId(row.getLocationId());
 				instance.setStockId(row.getStockId());
+				instance.setExperimentId(row.getExperimentId());
 			}
 
 			final Map<String, String> managementDetailValues = new HashMap<>();

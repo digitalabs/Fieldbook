@@ -25,7 +25,6 @@
 							var order = d.order && d.order[0];
 
 							return JSON.stringify(addFilters({
-								studyId: studyContext.studyId,
 								sortedRequest: {
 									pageSize: d.length,
 									pageNumber: d.length === 0 ? 1 : d.start / d.length + 1,

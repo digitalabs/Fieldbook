@@ -416,7 +416,7 @@ public class OpenTrialController extends BaseTrialController {
 
 				// Set the flag that indicates whether the variates will be save
 				// or not to false since it's already save after inline edit
-				this.fieldbookMiddlewareService.saveWorkbookVariablesAndObservations(workbook, this.contextUtil.getCurrentProgramUUID());
+				this.fieldbookMiddlewareService.saveWorkbookVariablesAndObservations(workbook);
 				this.fieldbookService
 					.saveStudyColumnOrdering(workbook.getStudyDetails().getId(), data.getColumnOrders(),
 						workbook);

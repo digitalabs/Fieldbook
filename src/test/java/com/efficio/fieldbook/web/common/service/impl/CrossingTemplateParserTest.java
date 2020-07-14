@@ -15,7 +15,7 @@ import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
-import org.generationcp.middleware.service.api.study.StudyService;
+import org.generationcp.middleware.service.api.study.StudyGermplasmService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,7 +61,7 @@ public class CrossingTemplateParserTest {
 	private ContextUtil contextUtil;
 
 	@Mock
-	private StudyService studyService;
+	private StudyGermplasmService studyGermplasmService;
 
 	@InjectMocks
 	private CrossingTemplateParser templateParser;
@@ -270,7 +270,7 @@ public class CrossingTemplateParserTest {
 	@Test
 	public void getPlotNoToStudyGermplasmDtoMapForStudyWithValidStudyAndPlotNumbers() {
 		Mockito.when(this.studyDataManager.getStudyIdByNameAndProgramUUID(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn(1);
-		Mockito.when(this.studyService.getStudyGermplasmListWithPlotInformation(ArgumentMatchers.anyInt(), ArgumentMatchers.anySetOf(Integer.class))).thenReturn(new ArrayList<>());
+		Mockito.when(this.studyGermplasmService.getGermplasmFromPlots(ArgumentMatchers.anyInt(), ArgumentMatchers.anySetOf(Integer.class))).thenReturn(new ArrayList<>());
 
 		try {
 			final Set<Integer> plotNumbers = new HashSet<>(Arrays.asList(5, 4, 3, 2, 1));
@@ -284,7 +284,7 @@ public class CrossingTemplateParserTest {
 			Assert.assertEquals(CrossingTemplateParserTest.PROGRAM_UUID, programUUIDCaptor.getValue());
 
 			final  ArgumentCaptor<Set<Integer>> plotNosCaptor = ArgumentCaptor.forClass(Set.class);
-			Mockito.verify(this.studyService, Mockito.times(1)).getStudyGermplasmListWithPlotInformation(ArgumentMatchers.anyInt(), plotNosCaptor.capture());
+			Mockito.verify(this.studyGermplasmService, Mockito.times(1)).getGermplasmFromPlots(ArgumentMatchers.anyInt(), plotNosCaptor.capture());
 			Assert.assertEquals(plotNumbers, plotNosCaptor.getValue());
 
 		} catch (final FileParsingException e) {
@@ -309,9 +309,9 @@ public class CrossingTemplateParserTest {
 			CrossingTemplateParserTest.PROGRAM_UUID)).thenReturn(1);
 		Mockito.when(this.studyDataManager.getStudyIdByNameAndProgramUUID(CrossingTemplateParserTest.MALE_STUDY_NAME,
 			CrossingTemplateParserTest.PROGRAM_UUID)).thenReturn(2);
-		Mockito.when(this.studyService.getStudyGermplasmListWithPlotInformation(1, femalePlotNumbers))
+		Mockito.when(this.studyGermplasmService.getGermplasmFromPlots(1, femalePlotNumbers))
 			.thenReturn(this.createImportedCrossParents(femalePlotNumbers, CrossingTemplateParserTest.FEMALE_STUDY_NAME));
-		Mockito.when(this.studyService.getStudyGermplasmListWithPlotInformation(2, malePlotNumbers))
+		Mockito.when(this.studyGermplasmService.getGermplasmFromPlots(2, malePlotNumbers))
 			.thenReturn(this.createImportedCrossParents(malePlotNumbers, CrossingTemplateParserTest.MALE_STUDY_NAME));
 		Mockito.when(this.crossingService.getCross(ArgumentMatchers.any(Germplasm.class), ArgumentMatchers.any(ImportedCross.class),
 			ArgumentMatchers.eq("/"), ArgumentMatchers.eq("scmaize"))).thenReturn("cross");
@@ -322,7 +322,7 @@ public class CrossingTemplateParserTest {
 
 			// Verify Middleware call for looking up cross parents called twice
 			// - once for female plots, once for male nursery with its male plots
-			Mockito.verify(this.studyService, Mockito.times(2)).getStudyGermplasmListWithPlotInformation(
+			Mockito.verify(this.studyGermplasmService, Mockito.times(2)).getGermplasmFromPlots(
 				ArgumentMatchers.anyInt(), ArgumentMatchers.anySetOf(Integer.class));
 
 			// Verify that GID and Designation from parent crosses were set properly to crosses
@@ -362,9 +362,9 @@ public class CrossingTemplateParserTest {
 			CrossingTemplateParserTest.PROGRAM_UUID)).thenReturn(1);
 		Mockito.when(this.studyDataManager.getStudyIdByNameAndProgramUUID(CrossingTemplateParserTest.MALE_STUDY_NAME,
 			CrossingTemplateParserTest.PROGRAM_UUID)).thenReturn(2);
-		Mockito.when(this.studyService.getStudyGermplasmListWithPlotInformation(1, femalePlotNumbers))
+		Mockito.when(this.studyGermplasmService.getGermplasmFromPlots(1, femalePlotNumbers))
 			.thenReturn(this.createImportedCrossParents(new HashSet<>(Arrays.asList(1, 2, 3, 5)), CrossingTemplateParserTest.FEMALE_STUDY_NAME));
-		Mockito.when(this.studyService.getStudyGermplasmListWithPlotInformation(2, malePlotNumbers))
+		Mockito.when(this.studyGermplasmService.getGermplasmFromPlots(2, malePlotNumbers))
 			.thenReturn(this.createImportedCrossParents(malePlotNumbers, CrossingTemplateParserTest.MALE_STUDY_NAME));
 		Mockito.when(this.crossingService.getCross(ArgumentMatchers.any(Germplasm.class), ArgumentMatchers.any(ImportedCross.class),
 			ArgumentMatchers.eq("/"), ArgumentMatchers.eq("scmaize"))).thenReturn("cross");
@@ -402,9 +402,9 @@ public class CrossingTemplateParserTest {
 			CrossingTemplateParserTest.PROGRAM_UUID)).thenReturn(1);
 		Mockito.when(this.studyDataManager.getStudyIdByNameAndProgramUUID(CrossingTemplateParserTest.MALE_STUDY_NAME,
 			CrossingTemplateParserTest.PROGRAM_UUID)).thenReturn(2);
-		Mockito.when(this.studyService.getStudyGermplasmListWithPlotInformation(1, femalePlotNumbers))
+		Mockito.when(this.studyGermplasmService.getGermplasmFromPlots(1, femalePlotNumbers))
 			.thenReturn(this.createImportedCrossParents(femalePlotNumbers, CrossingTemplateParserTest.FEMALE_STUDY_NAME));
-		Mockito.when(this.studyService.getStudyGermplasmListWithPlotInformation(2, malePlotNumbers))
+		Mockito.when(this.studyGermplasmService.getGermplasmFromPlots(2, malePlotNumbers))
 			.thenReturn(this.createImportedCrossParents(new HashSet<>(Arrays.asList(1, 2, 3, 4)), CrossingTemplateParserTest.MALE_STUDY_NAME));
 		Mockito.when(this.crossingService.getCross(ArgumentMatchers.any(Germplasm.class), ArgumentMatchers.any(ImportedCross.class),
 			ArgumentMatchers.eq("/"), ArgumentMatchers.eq("scmaize"))).thenReturn("cross");

@@ -828,64 +828,6 @@ var ImportCrosses = {
 			}
 		});
 	},
-
-	displayCrossesList: function(uniqueId, germplasmListId, listName, isDefault, crossesListId) {
-		'use strict';
-		var url = '/Fieldbook/germplasm/list/crosses/' + germplasmListId;
-		if (!isDefault) {
-			$('#advanceHref' + uniqueId + ' .fbk-close-tab').before(': [' + listName + ']');
-			url += '?isSnapshot=0';
-		} else {
-			url += '?isSnapshot=1';
-		}
-		$.ajax({
-			url: url,
-			type: 'GET',
-			cache: false,
-			success: function(html) {
-				$('.crosses-list' + uniqueId).html(html);
-				$('.crosses-list' + uniqueId + '-li').addClass('crosses-germplasm-items');
-				$('.crosses-list' + uniqueId + '-li').data('crosses-germplasm-list-id', crossesListId);
-			},
-			error: function() {
-				//TODO process errors
-			}
-		});
-	},
-
-	displayTabCrossesList: function(germplasmListId, crossesListId, listName) {
-		'use strict';
-		var url = '/Fieldbook/germplasm/list/crosses/' + crossesListId;
-		url += '?isSnapshot=0';
-		$.ajax({
-			url: url,
-			type: 'GET',
-			cache: false,
-			success: function(html) {
-				$('#saveListTreeModal').modal('hide');
-				$('#saveListTreeModal').data('is-save-crosses', '0');
-				var uniqueId,
-					close,
-					aHtml;
-				uniqueId = crossesListId;
-				close = '<i class="glyphicon glyphicon-remove fbk-close-tab" id="' + uniqueId + '" onclick="javascript: closeAdvanceListTab(' + uniqueId + ')"></i>';
-				aHtml = '<a id="advance-list' + uniqueId + '" role="tab" ' +
-					'class="advanceList crossesList crossesList' + uniqueId + '" data-toggle="tab" href="#advance-list' + uniqueId + '"' +
-					' data-list-id="' + uniqueId + '">' + $(html).find("#listTypeLabel").val() + ': [' + listName + ']' + close + '</a>';
-				var stockHtml = '<div id="stock-content-pane' + uniqueId + '" class="stock-list' + uniqueId + '"></div>';
-				$('a#advance-list' + uniqueId).tab('show');
-				$('#advance-list' + uniqueId + '.tab-pane.info').addClass('active');
-				$('.nav-tabs').tabdrop('layout');
-				$('a#advance-list' + uniqueId).on('click', function() {
-					$('#advance-list' + uniqueId + '.tab-pane.info').addClass('active');
-				});
-			},
-			error: function() {
-				//TODO Process errors
-			}
-		});
-	},
-
 	openSaveListModal: function() {
 		'use strict';
 		var  germplasmTreeNode = $('#germplasmFolderTree').dynatree('getTree');

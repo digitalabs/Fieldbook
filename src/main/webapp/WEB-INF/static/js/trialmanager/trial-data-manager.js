@@ -4,10 +4,10 @@
 (function() {
 	'use strict';
 	angular.module('manageTrialApp').service('TrialManagerDataService', ['GERMPLASM_LIST_SIZE','GERMPLASM_CHECKS_SIZE', 'TRIAL_SETTINGS_INITIAL_DATA',
-		'ADVANCE_LIST_DATA', 'SAMPLE_LIST_DATA','CROSSES_LIST_DATA','ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
+		'SAMPLE_LIST_DATA','ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
 		'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA', 'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_MANAGEMENT_MODE', 'UNSPECIFIED_LOCATION_ID', '$q',
 		'TrialSettingsManager','studyStateService', '_', '$localStorage','$rootScope', 'studyContext', 'derivedVariableService', 'experimentDesignService',
-		function(GERMPLASM_LIST_SIZE, GERMPLASM_CHECKS_SIZE, TRIAL_SETTINGS_INITIAL_DATA, ADVANCE_LIST_DATA, SAMPLE_LIST_DATA, CROSSES_LIST_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
+		function(GERMPLASM_LIST_SIZE, GERMPLASM_CHECKS_SIZE, TRIAL_SETTINGS_INITIAL_DATA, SAMPLE_LIST_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
 					EXPERIMENTAL_DESIGN_INITIAL_DATA, EXPERIMENTAL_DESIGN_SPECIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
 					TRIAL_MANAGEMENT_MODE, UNSPECIFIED_LOCATION_ID, $q, TrialSettingsManager, studyStateService, _, $localStorage, $rootScope, studyContext, derivedVariableService, experimentDesignService) {
 
@@ -203,9 +203,7 @@
 					germplasm: extractSettings(GERMPLASM_INITIAL_DATA),
 					treatmentFactors: extractTreatmentFactorSettings(TREATMENT_FACTORS_INITIAL_DATA),
 					basicDetails: extractSettings(BASIC_DETAILS_DATA),
-					advancedList: ADVANCE_LIST_DATA,
-					sampleList: SAMPLE_LIST_DATA,
-					crossesList: CROSSES_LIST_DATA
+					sampleList: SAMPLE_LIST_DATA
 				},
 				applicationData: {
 					unsavedTreatmentFactorsAvailable: false,
@@ -378,9 +376,6 @@
 					} else if (service.applicationData.unsavedTreatmentFactorsAvailable) {
 							showErrorMessage('', 'TREATMENT FACTORS will be saved automatically when generating the design.');
 					} else if (service.isCurrentTrialDataValid(service.isOpenStudy())) {
-                        // Hide Discard Imported Data button when the user presses Save button
-                        $('.fbk-discard-imported-stocklist-data').addClass('fbk-hide');
-                        stockListImportNotSaved = false;
 						service.performDataCleanup();
 						var columnsOrder =  ($('#measurement-table') && $('#measurement-table').length !== 0 && service.isOpenStudy()) ?
 							BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table') : [];
@@ -577,7 +572,7 @@
 								return true;
 							} else if (key === 'treatmentFactors') {
 								settingsArray.push(value.details);
-							} else if (key === 'advancedList' || key === 'sampleList' || key === 'crossesList' ) {
+							} else if (key === 'sampleList') {
 								return true;
 							} else {
 								if (value) {

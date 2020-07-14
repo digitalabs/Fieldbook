@@ -10,6 +10,7 @@ import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.germplasm.GermplasmParent;
+import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
@@ -85,7 +86,7 @@ public class CrossesListUtil {
 		return dataMap;
 	}
 	
-	public ImportedCross convertGermplasmListDataToImportedCrosses(final GermplasmListData crossesData, final String studyName) {
+	public ImportedCross convertGermplasmListDataToImportedCrosses(final GermplasmListData crossesData, final String studyName, final List<StudyGermplasmDto> studyGermplasmList) {
 		final ImportedCross importedCross = new ImportedCross();
 		importedCross.setId(crossesData.getId());
 		importedCross.setEntryNumber(crossesData.getEntryId());
@@ -94,22 +95,42 @@ public class CrossesListUtil {
 		importedCross.setSource(crossesData.getSeedSource());
 		
 		final GermplasmParent femaleParentFromDB = crossesData.getFemaleParent();
-		final ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(femaleParentFromDB.getGid(), femaleParentFromDB.getDesignation(), femaleParentFromDB.getPedigree());
+		final Integer femaleParentGid = femaleParentFromDB.getGid();
+		final ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(femaleParentGid, femaleParentFromDB.getDesignation(), femaleParentFromDB.getPedigree());
 		femaleParent.setCross(femaleParent.getDesignation());
 		femaleParent.setStudyName(studyName);
+		femaleParent.setPlotNo(this.getParentPlotNo(femaleParentGid, studyGermplasmList));
 		importedCross.setFemaleParent(femaleParent);
 		
 		final List<ImportedGermplasmParent> maleParents = new ArrayList<>();
 		for (final GermplasmParent maleParentFromDB : crossesData.getMaleParents()) {
-			final ImportedGermplasmParent maleParent = new ImportedGermplasmParent(maleParentFromDB.getGid(), maleParentFromDB.getDesignation(), maleParentFromDB.getPedigree());
+			final Integer maleParentGid = maleParentFromDB.getGid();
+			final ImportedGermplasmParent maleParent = new ImportedGermplasmParent(maleParentGid, maleParentFromDB.getDesignation(), maleParentFromDB.getPedigree());
 			maleParent.setCross(maleParent.getDesignation());
 			maleParent.setStudyName(studyName);
+			maleParent.setPlotNo(this.getParentPlotNo(maleParentGid, studyGermplasmList));
 			maleParents.add(maleParent);
 		}
 		importedCross.setMaleParents(maleParents);
 		importedCross.setCross(femaleParent.getDesignation() + CrossesListUtil.DEFAULT_SEPARATOR + this.concatenateMaleParentsValue(this.getDesignationsList(crossesData.getMaleParents())));
 		
 		return importedCross;
+	}
+
+	// Look at the study germplasm list with plot to find plot number assigned to the male/female parent germplasm of the cross.
+	private Integer getParentPlotNo(final Integer parentGid, final List<StudyGermplasmDto> studyGermplasmList) {
+		// Use "0" for unknown parent
+		Integer parentPlotNo = parentGid;
+		if (!parentGid.equals(0)) {
+			for (final StudyGermplasmDto row : studyGermplasmList) {
+				final String plotNumber = row.getPosition();
+				final Integer gid = row.getGermplasmId();
+				if (gid != null && gid.equals(parentGid) && plotNumber != null) {
+					parentPlotNo = Integer.valueOf(plotNumber);
+				}
+			}
+		}
+		return parentPlotNo;
 	}
 
 	public Map<String, Object> generateCrossesTableWithDuplicationNotes(final List<String> tableHeaderList, final ImportedCross importedCross) {

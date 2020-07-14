@@ -30,8 +30,6 @@
 								   ng-attr-title="{{isSaveDisabled() ? 'This tab is saved automatically' : ''}}" />
 							<input type="button" value="Save" class="btn btn-info fbk-discard-imported-data fbk-hide"
 								   onclick="discardImportedData();" th:value="#{import.discard.data}"/>
-							<input type="button" value="Save" class="btn btn-info fbk-discard-imported-stocklist-data fbk-hide"
-								   onclick="discardImportedStockList();" th:value="#{import.discard.data}"/>
 						</div>
 					</div>
 
@@ -80,11 +78,6 @@
 										   th:href="@{/LabelPrinting/specifyLabelDetails/trial}"></a>
 										<a ng-click="printLabels()" id="label-printing-url-link"
 										   th:text="#{study.studydetails.action.printLabels}">Print Labels</a>
-									</li>
-									<!--Export advance list-->
-									<li ng-show="hasAdvanceListCreated()">
-									  <a href="javascript: showExportAdvanceOptions();" id="export-advance-list-url-link"
-										 th:text="#{study.studydetails.action.export.advance}">Export advance list</a>
 									</li>
 								</ul>
 							</li>
@@ -377,22 +370,15 @@
 			   ng-class="{'pendingData': tab.hasPendingData}"
 			   ng-click="performFunctionOnTabChange(tab.state)">{{tab.datasetType.tabNamePrefix}}{{tab.name}}</a>
 		</li>
-		<li ng-repeat="tab in advanceTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
-			ng-click="listTabChange(tab.state)">
-			<a tab-data='{{tab.id}}'>{{tab.displayName}}
-				<i class="glyphicon glyphicon-remove fbk-close-tab" id="id" ng-click="closeAdvanceListTab(tab.state)"></i>
-			</a>
+		<li ng-class="{active: tabSelected===crossesAndSelectionsTab.state}" ng-show="!crossesAndSelectionsTab.hidden">
+			<a ui-sref="{{crossesAndSelectionsTab.state}}"
+			   ng-class="{active: tabSelected===crossesAndSelectionsTab.state}"
+			   ng-click="performFunctionOnTabChange(crossesAndSelectionsTab.state)">{{crossesAndSelectionsTab.name}}</a>
 		</li>
 		<li ng-repeat="tab in sampleTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
 			ng-click="listTabChange(tab.state)">
 			<a tab-data='{{tab.id}}' ng-click="initSampleTab(tab)">{{tab.displayName}}
 				<i class="glyphicon glyphicon-remove fbk-close-tab" id="sampleListId" ng-click="closeSampleListTab(tab.state)"></i>
-			</a>
-		</li>
-		<li ng-repeat="tab in crossesTabs | orderObjectBy : 'id'  track by $index" ng-class="{active: tabSelected===tab.state}"
-			ng-click="listTabChange(tab.state)">
-			<a tab-data='{{tab.id}}'>{{tab.displayName}}
-				<i class="glyphicon glyphicon-remove fbk-close-tab" id="crossesListId" ng-click="closeCrossesListTab(tab.state)"></i>
 			</a>
 		</li>
 	</ul>
@@ -404,6 +390,7 @@
 			<div class="col-xs-12" ui-view="" ng-show="isSettingsTab"></div>
 			<div class="col-xs-12" ui-view="germplasm" ng-show="tabSelected==='germplasm'"></div>
 			<div class="col-xs-12" ui-view="environment" ng-show="tabSelected==='environment'"></div>
+			<div class="col-xs-12" ui-view="germplasmStudySource" ng-show="tabSelected==='germplasmStudySource'"></div>
 			<div class="col-xs-12" ui-view="inventory" ng-show="tabSelected==='inventory'"></div>
 			<div class="col-xs-12" ui-view="subObservationTab" ng-show="tabSelected.indexOf('/subObservationTabs/') === 0"></div>
 			<div class="col-xs-12" ng-repeat="advancetab in advanceTabsData track by $index" id="{{advancetab.id}}"
@@ -503,14 +490,6 @@
 	</div>
 
 	<div class="row">
-		<div th:include="Stock/generateStockIDModal"></div>
-	</div>
-
-	<div class="row">
-		<div th:include="/Common/includes/exportStockList"></div>
-	</div>
-
-	<div class="row">
 		<div id="import-germplasm" th:include="/StudyManager/includes/importGermplasmListDetailsModal"></div>
 	</div>
 
@@ -518,7 +497,6 @@
 		<div id="export-advance" th:include="/Common/includes/exportAdvanceList"></div>
 	</div>
 
-	<div id="import-study" th:include="/Common/includes/importStockList"></div>
 
 	<div class="row" id="addLotsModalDiv"></div>
 
@@ -703,9 +681,7 @@
 			).constant('BREEDING_METHOD_CODE', /*[[${T(org.generationcp.commons.constant.AppConstants).BREEDING_METHOD_CODE.getString()}]]*/ ''
 			).constant('BREEDING_METHOD_ID', /*[[${T(org.generationcp.commons.constant.AppConstants).BREEDING_METHOD_ID.getString()}]]*/ ''
 			).constant('TRIAL_SETTINGS_INITIAL_DATA', /*[[${trialSettingsData}]]*/ ''
-			).constant('ADVANCE_LIST_DATA', /*[[${advancedList}]]*/ ''
 			).constant('SAMPLE_LIST_DATA', /*[[${sampleList}]]*/ ''
-			).constant('CROSSES_LIST_DATA', /*[[${crossesList}]]*/ ''
 			).constant('ENVIRONMENTS_INITIAL_DATA', /*[[${environmentData}]]*/ ''
 			).constant('GERMPLASM_INITIAL_DATA', /*[[${germplasmData}]]*/ ''
 			).constant('GERMPLASM_LIST_SIZE', /*[[${germplasmListSize}]]*/ ''
@@ -807,8 +783,11 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/studyInstanceService.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/environments.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/experimentalDesign.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/saveList.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/r-package/r-package.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/visualization/visualization.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/germplasm-study-source/germplasmStudySource.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/germplasm-study-source/germplasmStudySourceService.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/subobservations/subObservationTab.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/subobservations/subObservationSet.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/inventory/inventory-tab.js}"></script>

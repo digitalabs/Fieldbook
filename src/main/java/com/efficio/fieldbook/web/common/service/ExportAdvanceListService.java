@@ -10,5 +10,4 @@ public interface ExportAdvanceListService {
 	public FileExportInfo exportAdvanceGermplasmList(String delimitedAdvanceGermplasmListIds, String studyName, GermplasmExportService germplasmExportServiceImpl,
 			String formatType);
 
-	FileExportInfo exportStockList(Integer stockListId, GermplasmExportService germplasmExportServiceImpl);
 }

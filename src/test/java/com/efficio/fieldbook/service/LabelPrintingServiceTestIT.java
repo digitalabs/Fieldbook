@@ -36,9 +36,9 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 
 	private static final Logger LOG = LoggerFactory.getLogger(LabelPrintingServiceTestIT.class);
 
-	private static final int[] FIELD_MAP_LABELS = {AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt(),
-			AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt(), AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()};
-
+	private static final int[] FIELD_MAP_LABELS = {
+		AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt(),
+		AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt(), AppConstants.AVAILABLE_LABEL_FIELDS_FIELD_NAME.getInt()};
 
 	@Resource
 	private LabelPrintingService labelPrintingService;
@@ -63,21 +63,21 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 	@Test
 	public void testGetAvailableLabelFieldsFromNurseryWithoutFieldMap() {
 		final Locale locale = new Locale("en", "US");
-		final List<LabelFields> labels = this.labelPrintingService.getAvailableLabelFieldsForFieldMap( false, locale);
+		final List<LabelFields> labels = this.labelPrintingService.getAvailableLabelFieldsForFieldMap(false, locale);
 		Assert.assertFalse(this.areFieldsInLabelList(labels));
 	}
 
 	@Test
 	public void testGetAvailableLabelFieldsFromNurseryWithFieldMap() {
 		final Locale locale = new Locale("en", "US");
-		final List<LabelFields> labels = this.labelPrintingService.getAvailableLabelFieldsForFieldMap( true, locale);
+		final List<LabelFields> labels = this.labelPrintingService.getAvailableLabelFieldsForFieldMap(true, locale);
 		Assert.assertTrue(this.areFieldsInLabelList(labels));
 	}
 
 	@Test
 	public void testGetAvailableLabelFieldsFromFieldMap() {
 		final Locale locale = new Locale("en", "US");
-		final List<LabelFields> labels = this.labelPrintingService.getAvailableLabelFieldsForFieldMap( true, locale);
+		final List<LabelFields> labels = this.labelPrintingService.getAvailableLabelFieldsForFieldMap(true, locale);
 		Assert.assertTrue(this.areFieldsInLabelList(labels));
 	}
 
@@ -157,7 +157,8 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 		Assert.assertTrue(userLabelPrinting.isFieldMapsExisting());
 	}
 
-	private void setFieldmapProperties(final FieldMapInfo fieldMapInfoDetail, final boolean hasFieldMap, final boolean hasOneTrialInstanceWithFieldMap) {
+	private void setFieldmapProperties(final FieldMapInfo fieldMapInfoDetail, final boolean hasFieldMap,
+		final boolean hasOneTrialInstanceWithFieldMap) {
 		// set column to null and hasFieldMap to false if study has no fieldmap at all
 		// else, don't change the values
 		for (final FieldMapDatasetInfo dataset : fieldMapInfoDetail.getDatasetsWithFieldMap()) {
@@ -186,47 +187,47 @@ public class LabelPrintingServiceTestIT extends AbstractBaseIntegrationTest {
 		final List<FieldMapTrialInstanceInfo> input = new ArrayList<>();
 		input.add(LabelPrintingDataUtil.createFieldMapTrialInstanceInfo());
 
-		this.labelPrintingService.populateUserSpecifiedLabelFields(input, this.setupTestWorkbook(), testSelectedFields, false, null);
+		this.labelPrintingService.populateUserSpecifiedLabelFields(input, this.setupTestWorkbook(), testSelectedFields, null);
 
 		Assert.assertEquals(testDesigValue,
-				input.get(0).getFieldMapLabel(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO).getUserFields().get(TermId.DESIG.getId()));
+			input.get(0).getFieldMapLabel(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO).getUserFields().get(TermId.DESIG.getId()));
 		Assert.assertEquals("1",
-				input.get(0).getFieldMapLabel(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO).getUserFields().get(TermId.ENTRY_NO.getId()));
+			input.get(0).getFieldMapLabel(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO).getUserFields().get(TermId.ENTRY_NO.getId()));
 	}
 
 	protected Workbook setupTestWorkbook() {
-        final Workbook workbook = Mockito.mock(Workbook.class);
-        Mockito.doReturn(new ArrayList<MeasurementVariable>()).when(workbook).getStudyConditions();
-        Mockito.doReturn(new ArrayList<MeasurementVariable>()).when(workbook).getFactors();
+		final Workbook workbook = Mockito.mock(Workbook.class);
+		Mockito.doReturn(new ArrayList<MeasurementVariable>()).when(workbook).getStudyConditions();
+		Mockito.doReturn(new ArrayList<MeasurementVariable>()).when(workbook).getFactors();
 
-        // prepare measurement rows simulating experiment data
-        final List<MeasurementRow> sampleData = new ArrayList<>();
+		// prepare measurement rows simulating experiment data
+		final List<MeasurementRow> sampleData = new ArrayList<>();
 
-        // add a row with measurement data for the DESIG and ENTRY_NO terms
-        final MeasurementRow row = new MeasurementRow();
-        // experiment ID here is set to be the same as the one used when creating the sample instance data, since they need to correlate.
-        row.setExperimentId(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO);
+		// add a row with measurement data for the DESIG and ENTRY_NO terms
+		final MeasurementRow row = new MeasurementRow();
+		// experiment ID here is set to be the same as the one used when creating the sample instance data, since they need to correlate.
+		row.setExperimentId(LabelPrintingDataUtil.SAMPLE_EXPERIMENT_NO);
 
-        final List<MeasurementData> dataList = new ArrayList<>();
-        MeasurementData data = new MeasurementData();
-        MeasurementVariable var = new MeasurementVariable();
-        var.setTermId(TermId.DESIG.getId());
-        data.setMeasurementVariable(var);
-        data.setValue("123");
-        dataList.add(data);
+		final List<MeasurementData> dataList = new ArrayList<>();
+		MeasurementData data = new MeasurementData();
+		MeasurementVariable var = new MeasurementVariable();
+		var.setTermId(TermId.DESIG.getId());
+		data.setMeasurementVariable(var);
+		data.setValue("123");
+		dataList.add(data);
 
-        data = new MeasurementData();
-        var = new MeasurementVariable();
-        var.setTermId(TermId.ENTRY_NO.getId());
-        data.setMeasurementVariable(var);
-        data.setValue("1");
-        dataList.add(data);
+		data = new MeasurementData();
+		var = new MeasurementVariable();
+		var.setTermId(TermId.ENTRY_NO.getId());
+		data.setMeasurementVariable(var);
+		data.setValue("1");
+		dataList.add(data);
 
-        row.setDataList(dataList);
-        sampleData.add(row);
-        Mockito.doReturn(sampleData).when(workbook).getObservations();
+		row.setDataList(dataList);
+		sampleData.add(row);
+		Mockito.doReturn(sampleData).when(workbook).getObservations();
 
-        return workbook;
-    }
+		return workbook;
+	}
 
 }

@@ -1014,24 +1014,6 @@ public class OpenTrialControllerTest {
 		return settingDetail;
 	}
 
-	@Test
-	public void testGetAdvancedList() {
-		final GermplasmList germplasm = new GermplasmList();
-		germplasm.setId(501);
-		germplasm.setName("Advance Study List");
-
-		final List<GermplasmList> germplasmList = new ArrayList<>();
-		germplasmList.add(germplasm);
-
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(ArgumentMatchers.anyInt(), ArgumentMatchers.any(GermplasmListType.class)))
-			.thenReturn(germplasmList);
-
-		final List<AdvanceList> advancedList = this.openTrialController.getAdvancedList(germplasm.getId());
-
-		Assert.assertEquals("Advance List size", 1, advancedList.size());
-		Assert.assertEquals("Advance List Id: ", germplasm.getId(), advancedList.get(0).getId());
-		Assert.assertEquals("Advance List Name: ", germplasm.getName(), advancedList.get(0).getName());
-	}
 
 	@Test
 	public void testUpdateSavedTrial() throws ParseException {
@@ -1179,9 +1161,7 @@ public class OpenTrialControllerTest {
 		Mockito.verify(this.model).addAttribute(ArgumentMatchers.eq("experimentalDesignSpecialData"), ArgumentMatchers.any(TabInfo.class));
 		Mockito.verify(this.model).addAttribute("studyName", testWorkbook.getStudyDetails().getLabel());
 		Mockito.verify(this.model).addAttribute("description", testWorkbook.getStudyDetails().getDescription());
-		Mockito.verify(this.model).addAttribute(ArgumentMatchers.eq("advancedList"), ArgumentMatchers.anyListOf(AdvanceList.class));
 		Mockito.verify(this.model).addAttribute(ArgumentMatchers.eq("sampleList"), ArgumentMatchers.anyListOf(SampleListDTO.class));
-		Mockito.verify(this.model).addAttribute(ArgumentMatchers.eq("crossesList"), ArgumentMatchers.anyListOf(CrossesList.class));
 		Mockito.verify(this.model).addAttribute("germplasmListSize", 0);
 		Mockito.verify(this.model).addAttribute(ArgumentMatchers.eq("isSuperAdmin"), ArgumentMatchers.anyBoolean());
 	}

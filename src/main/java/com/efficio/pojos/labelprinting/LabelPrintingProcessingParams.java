@@ -22,7 +22,6 @@ public class LabelPrintingProcessingParams {
 	private FieldMapTrialInstanceInfo instanceInfo;
 	private List<MeasurementRow> instanceMeasurements;
 	private Map<Integer, String> userSpecifiedLabels;
-	private boolean isStockList;
 	private Map<String, InventoryDetails> inventoryDetailsMap;
 
 	public LabelPrintingProcessingParams() {
@@ -91,14 +90,6 @@ public class LabelPrintingProcessingParams {
 
 	public void setAllFieldIDs(List<Integer> allFieldIds) {
 		this.allFieldIDs = allFieldIds;
-	}
-
-	public boolean isStockList() {
-		return this.isStockList;
-	}
-
-	public void setIsStockList(boolean isStockList) {
-		this.isStockList = isStockList;
 	}
 
 	public Map<String, InventoryDetails> getInventoryDetailsMap() {

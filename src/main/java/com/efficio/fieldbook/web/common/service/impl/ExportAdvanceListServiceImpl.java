@@ -103,35 +103,6 @@ public class ExportAdvanceListServiceImpl implements ExportAdvanceListService {
 		return new FileExportInfo(outputFilename, downloadFilename);
 	}
 
-	@Override
-	public FileExportInfo exportStockList(final Integer stockListId, final GermplasmExportService germplasmExportServiceImpl) {
-
-		String downloadFilename = null;
-		String outputFilename = ExportAdvanceListServiceImpl.NO_FILE;
-		final String suffix = AppConstants.EXPORT_XLS_SUFFIX.getString();
-
-		try {
-			final GermplasmList germplasmList = this.fieldbookMiddlewareService.getGermplasmListById(stockListId);
-			final GermplasmListType germplasmListType = GermplasmListType.valueOf(germplasmList.getType());
-			final List<InventoryDetails> inventoryDetailList =
-					this.inventoryMiddlewareService.getInventoryListByListDataProjectListId(stockListId);
-
-			final FileExportInfo exportInfo = this.getFileNamePath(germplasmList.getName()+suffix);
-			outputFilename = exportInfo.getFilePath();
-			downloadFilename = exportInfo.getDownloadFileName();
-
-			final String sheetName =
-					org.apache.poi.ss.util.WorkbookUtil.createSafeSheetName(ExportAdvanceListServiceImpl.STOCK_LIST_EXPORT_SHEET_NAME);
-			this.exportList(inventoryDetailList, outputFilename, sheetName, germplasmExportServiceImpl,
-					AppConstants.EXPORT_ADVANCE_STUDY_EXCEL.getString(), GermplasmListType.isCrosses(germplasmListType));
-
-		} catch (final IOException | MiddlewareQueryException e) {
-			ExportAdvanceListServiceImpl.LOG.error(e.getMessage(), e);
-		}
-
-		return new FileExportInfo(outputFilename, downloadFilename);
-	}
-
 	protected FileExportInfo getFileNamePath(final String name) throws IOException {
 		final String cleanFilename = SettingsUtil.cleanSheetAndFileName(name);
 		final String outputFilepath = this.installationDirectoryUtil.getFileInTemporaryDirectoryForProjectAndTool(cleanFilename, this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);

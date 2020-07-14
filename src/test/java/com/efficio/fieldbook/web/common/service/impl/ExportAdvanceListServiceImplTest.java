@@ -436,33 +436,6 @@ public class ExportAdvanceListServiceImplTest {
 		Assert.assertEquals(expectedFilename, exportInfo.getDownloadFileName());
 
 	}
-	
-	@Test
-	public void testExportStockList() throws IOException {
-		final int stockListId = 1;
-		Mockito.doReturn(this.inventoryDetailsList).when(this.inventoryMiddlewareService).getInventoryListByListDataProjectListId(Matchers.anyInt());
-		final FileExportInfo exportInfo = this.exportAdvanceListServiceImpl.exportStockList(stockListId, this.germplasmExportServiceImpl);
-		
-		final List<File> outputDirectories = this.getTempOutputDirectoriesGenerated();
-		Assert.assertEquals(1, outputDirectories.size());
-		final String filePath = exportInfo.getFilePath();
-		final File outputDirectory = new File(filePath.substring(0, filePath.lastIndexOf(File.separator)));
-		Assert.assertTrue(outputDirectories.contains(outputDirectory));
-		final String expectedFilename = LIST_NAME_PREFIX + stockListId + AppConstants.EXPORT_XLS_SUFFIX.getString();
-		Assert.assertTrue(filePath.endsWith(expectedFilename));
-		Assert.assertEquals(expectedFilename, exportInfo.getDownloadFileName());
-		
-	}
-	
-	@Test
-	public void testExportStockListThrowsMiddlewareException() throws IOException {
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListById(Matchers.anyInt()))
-				.thenThrow(new MiddlewareQueryException("error"));
-
-		final FileExportInfo exportInfo = this.exportAdvanceListServiceImpl.exportStockList(1, this.germplasmExportServiceImpl);
-		Assert.assertEquals("Should return noFile since there was an error", ExportAdvanceListServiceImpl.NO_FILE, exportInfo.getFilePath());
-		Assert.assertNull(exportInfo.getDownloadFileName());
-	}
 
 	@Test
 	public void testGetInventoryDetailValueInfo() {

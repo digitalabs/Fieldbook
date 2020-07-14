@@ -46,6 +46,7 @@ import org.generationcp.middleware.pojos.germplasm.GermplasmParent;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.generationcp.middleware.pojos.workbench.ToolName;
+import org.generationcp.middleware.service.api.study.StudyGermplasmService;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.junit.Assert;
 import org.junit.Before;
@@ -145,6 +146,9 @@ public class CrossingSettingsControllerTest {
 
 	@Mock
 	private WorkbenchDataManager workbenchDataManager;
+
+	@Mock
+	private StudyGermplasmService studyGermplasmService;
 
 	private CrossesListUtil crossesListUtil;
 

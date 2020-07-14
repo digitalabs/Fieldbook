@@ -266,30 +266,6 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 		return new FileExportInfo();
 	}
 
-	/**
-	 * Do export.
-	 *
-	 * @param response the response
-	 * @return the string
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/export/stock/lists", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
-	public String doExportStockList(final HttpServletResponse response, final HttpServletRequest req) {
-
-		final String stockIds = req.getParameter("exportStockListId");
-
-		final FileExportInfo exportInfo = this.exportAdvanceListService.exportStockList(Integer.valueOf(stockIds), this.germplasmExportService);
-		final String outputFilename = exportInfo.getFilePath();
-		final String contentType = FileUtils.MIME_MS_EXCEL;
-		response.setContentType(contentType);
-		final Map<String, Object> results = new HashMap<>();
-		results.put(ExportStudyController.OUTPUT_FILENAME, outputFilename);
-		results.put(ExportStudyController.FILENAME, SettingsUtil.cleanSheetAndFileName(exportInfo.getDownloadFileName()));
-		results.put(ExportStudyController.CONTENT_TYPE, contentType);
-
-		return super.convertObjectToJson(results);
-	}
-
 	void setExportAdvanceListService(final ExportAdvanceListService exportAdvanceListService) {
 		this.exportAdvanceListService = exportAdvanceListService;
 	}

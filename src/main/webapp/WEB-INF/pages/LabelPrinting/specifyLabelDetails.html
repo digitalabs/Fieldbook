@@ -27,7 +27,6 @@
     <input type="hidden" th:field="*{userLabelPrinting.numberOfLabelPerRow}" value="3"/>
     <input type="hidden" th:field="*{userLabelPrinting.generateType}"/>
     <input type="hidden" th:field="*{userLabelPrinting.fieldMapsExisting}"/>
-    <input type="hidden" th:field="*{isStockList}"/>
     <input type="hidden" th:field="*{customReport}"/>
 
 
@@ -100,36 +99,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-6 col-md-6" th:if="(*{userLabelPrinting.isStockList()})">
-                        <div class="col-xs-12 col-md-12">
-                            <label class="control-label">
-                                <strong class="sub-content-heading" th:text="#{label.printing.summary.of.labels.needed}">
-                                    SUMMARY OF LABELS NEEDED
-                                </strong>
-                            </label>
-                        </div>
-                        <div class="col-xs-12 col-md-12">
-                            <table class="table table-curved table-condensed">
-                                <thead>
-                                <th th:text="#{fieldmap.trial.instance}">Instance</th>
-                                <th th:text="#{label.printing.study.entries.labels.count}"># of Entries / Labels Needed
-                                </th>
-                                </thead>
-                                <tr>
-                                    <td th:class="odd" th:text="*{userLabelPrinting.numberOfInstances}">1</td>
-                                    <td th:class="odd"
-                                        th:text="${#lists.size(labelPrintingForm.userLabelPrinting.inventoryDetailsList)}"></td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="col-xs-12 col-md-12" align="right" >
-                            <label class="control-label label-bold" th:text="#{label.printing.total.number.of.labels} + ':'"> Total # of
-                                Labels to Print: </label> &nbsp;
-                            <span th:text="*{userLabelPrinting.totalNumberOfLabelToPrint}"></span>
-                        </div>
-                    </div>
                     <div class="col-xs-6 col-md-6"
-                         th:if="(*{!userLabelPrinting.isStockList()}) and *{!#lists.isEmpty(userLabelPrinting.fieldMapInfo)}">
+                         th:if="*{!#lists.isEmpty(userLabelPrinting.fieldMapInfo)}">
                         <div class="col-xs-12 col-md-12">
                             <label class="control-label"><strong class="sub-content-heading"
                                                                  th:text="#{label.printing.summary.of.labels.needed}">SUMMARY OF LABELS
@@ -150,11 +121,7 @@
                                     <td th:class="${row.even}? 'even' : 'odd'" 
                                         th:text="${trialRow.repCount}"></td>
                                     <td th:class="${row.even}? 'even' : 'odd'"
-                                        th:if="!(*{userLabelPrinting.isStockList()})"
                                         th:text="${trialRow.plotCount}"></td>
-                                    <td th:class="${row.even}? 'even' : 'odd'"
-                                        th:if="(*{userLabelPrinting.isStockList()})"
-                                        th:text="${trialRow.labelsNeeded}"></td>
                                 </tr>
                             </table>
                         </div>
@@ -487,8 +454,7 @@
                                         <ul class="list-group field-group">
                                             <li class="list-group-item">
                                                 <label class="control-label label-bold lblprnt-study-list-details-label"
-                                                       th:text="(*{isStockList})? #{label.printing.stock.list.details} :
-												#{label.printing.study.list.details}">
+                                                       th:text="#{label.printing.study.list.details}">
                                                     Study List Details
                                                 </label>
                                                 <label class="control-label label-bold lblprnt-germplasm-list-details-label"
@@ -565,9 +531,7 @@
                         <div class="col-xs-12 col-md-12 lblprnt-study-choose-fields-label">
                             <div class="form-group">
                                 <div class="col-xs-6 col-md-6">
-                                    <label class="control-label" th:utext="*{isStockList} ?
-																(#{label.printing.choose.option.fields.csv.xls.study.stock})
-																	: (#{label.printing.choose.option.fields.csv.xls.study}) ">.</label>
+                                    <label class="control-label" th:utext="#{label.printing.choose.option.fields.csv.xls.study}">.</label>
                                 </div>
                             </div>
                         </div>
@@ -597,8 +561,7 @@
                                         <ul class="list-group field-group">
                                             <li class="list-group-item">
                                                 <label class="control-label label-bold lblprnt-study-list-details-label"
-                                                       th:text="(*{isStockList})? #{label.printing.stock.list.details} :
-												#{label.printing.study.list.details}">
+                                                       th:text="#{label.printing.study.list.details}">
                                                     Study List Details
                                                 </label>
                                                 <label class="control-label label-bold lblprnt-germplasm-list-details-label"
@@ -656,9 +619,9 @@
                                         <span th:text="#{label.printing.do.you.need.bar.codes.no}">No</span>
                                     </label>
                                 </div>
-                                <div th:if="!*{isStockList}" class="col-xs-6 col-md-6"><label>&nbsp;</label></div>
+                                <div class="col-xs-6 col-md-6"><label>&nbsp;</label></div>
                                 
-                                <div th:if="!*{isStockList}" class="col-xs-6 col-md-6 automatically-barcode-fields">
+                                <div class="col-xs-6 col-md-6 automatically-barcode-fields">
                                     <label class="control-label label-bold" th:text="#{label.printing.do.you.want.automatically.unique.bar.codes}">Do you want 
                                     	to use automatically generated unique barcodes?</label>
                                     <label class="radio-inline" style="padding-left: 30px">

@@ -405,15 +405,11 @@ LabelPrinting = {
 	 */
 	LabelPrinting.showOrHideBarcodeFields = function() {
 		var barcodeNeeded = $safeId('input[name=userLabelPrinting.barcodeNeeded]:checked').val();
-		var isStockList = $safeId('input[name=isStockList]').val().toString();
 		// isPlotCodePrefix
 		if (barcodeNeeded === '1') {
-			if (isStockList === 'false') {
-				$('.automatically-barcode-fields').show();
-				LabelPrinting.showOrHideBarcodeGeneratedAutomaticallyFields();
-			}else{
-		    	$('.barcode-fields').show();
-			}
+			$('.automatically-barcode-fields').show();
+			LabelPrinting.showOrHideBarcodeGeneratedAutomaticallyFields();
+			$('.barcode-fields').show();
     	} else {
 			$('.automatically-barcode-fields').hide();
 			$('.barcode-fields').hide();
@@ -523,7 +519,6 @@ LabelPrinting = {
 		$safeId('#userLabelPrinting.rightSelectedLabelFields').val(rightSelectedFields);
 		$safeId('#userLabelPrinting.mainSelectedLabelFields').val(mainSelectedFields);
 
-    	var isStockList = $safeId('input[name=isStockList]').val().toString();
 		var barcodeNeeded = $('input[type="radio"]:checked').length;
 		if (barcodeNeeded == 0) {
 			showInvalidInputMessage(barcodeNeededError);
@@ -533,7 +528,7 @@ LabelPrinting = {
 
 		//we checked if something was checked
 		if ($safeId('#userLabelPrinting.barcodeNeeded1').is(':checked') &&
-			($safeId('#userLabelPrinting.barcodeGeneratedAutomatically2').is(':checked') || isStockList === 'true')) {
+			($safeId('#userLabelPrinting.barcodeGeneratedAutomatically2').is(':checked'))) {
 			//we need to check if either one is chosen in the drop downs
 			if ($safeId('#userLabelPrinting.firstBarcodeField').val() == ''
 				&& $safeId('#userLabelPrinting.secondBarcodeField').val() == ''
@@ -901,8 +896,7 @@ LabelPrinting = {
 		$('input[name="userLabelPrinting.barcodeNeeded"][value="' + selectedValue + '"]').prop('checked', true).change();
 		
 
-		var isStockList = $safeId('input[name=isStockList]').val().toString();
-		var isPlotCodePrefix = (barcodeSetting.plotCodePrefix) && isStockList === 'false' ? '1' : '0';
+		var isPlotCodePrefix = (barcodeSetting.plotCodePrefix) ? '1' : '0';
 		$('input[name="userLabelPrinting.barcodeGeneratedAutomatically"][value="' + isPlotCodePrefix + '"]').
 					prop('checked', true).change();
 		

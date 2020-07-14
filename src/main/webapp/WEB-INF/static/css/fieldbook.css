@@ -2515,3 +2515,7 @@ th.dt-head-nowrap {
     width: auto;
     float: none;
 }
+
+div.dt-button-collection {
+    width: 180px !important;
+}

@@ -142,24 +142,6 @@ public class LabelPrintingServiceTest {
 		this.verifyFieldMapLabelsPresent(retrieved);
 	}
 
-	@Test
-	public void testGetAvailableFieldsForCrossStockList() {
-		final List<LabelFields> germplasmLabels = this.createDummyGermplasmLabels();
-
-		Mockito.when(this.settingsService.retrieveGermplasmDescriptorsAsLabels(this.workbook)).thenReturn(germplasmLabels);
-
-		final List<LabelFields> retrieved =
-				this.unitUnderTest.getAvailableLabelFieldsForStockList(GermplasmListType.CROSSES, Locale.getDefault(), LabelPrintingServiceTest.DUMMY_STUDY_ID);
-
-		this.verifyLabelListContainsList(retrieved, germplasmLabels,
-				"Retrieved available label list does not contain all germplasm related labels");
-
-		this.verifyLabelByTermID(TermId.DUPLICATE.getId(), retrieved);
-		this.verifyLabelByTermID(TermId.BULK_WITH.getId(), retrieved);
-		this.verifyLabelByTermID(TermId.BULK_COMPL.getId(), retrieved);
-		this.verifyLabelByTermID(TermId.PLOT_NO.getId(), retrieved);
-	}
-
 	protected void verifyFieldMapLabelsPresent(final List<LabelFields> forVerification) {
 		boolean found = false;
 		for (final Integer baseLabelPrintingFieldMapLabelId : LabelPrintingServiceImpl.BASE_LABEL_PRINTING_FIELD_MAP_LABEL_IDS) {

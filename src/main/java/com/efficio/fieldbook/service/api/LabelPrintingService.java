@@ -93,8 +93,7 @@ public interface LabelPrintingService {
 	 * @return
 	 * @throws MiddlewareQueryException
 	 */
-	List<LabelPrintingPresets> getAllLabelPrintingPresetsByName(String presetName, Integer programId)
-		throws MiddlewareQueryException;
+	List<LabelPrintingPresets> getAllLabelPrintingPresetsByName(String presetName, Integer programId);
 
 	/**
 	 * @param programId
@@ -124,11 +123,4 @@ public interface LabelPrintingService {
 
 	void deleteProgramPreset(Integer programPresetId);
 
-
-	/**
-	 * @param stockListId
-	 * @return
-	 * @throws MiddlewareQueryException
-	 */
-	List<InventoryDetails> getInventoryDetails(int stockListId);
 }

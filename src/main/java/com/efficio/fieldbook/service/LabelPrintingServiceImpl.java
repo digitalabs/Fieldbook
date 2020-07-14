@@ -252,23 +252,6 @@ public class LabelPrintingServiceImpl implements LabelPrintingService {
 
 	}
 
-	@Override
-	public List<InventoryDetails> getInventoryDetails(final int stockListId) {
-
-		List<InventoryDetails> listDataProjects = null;
-		try {
-			listDataProjects = this.inventoryMiddlewareService.getInventoryListByListDataProjectListId(stockListId);
-
-			for (final InventoryDetails entry : listDataProjects) {
-				this.setCross(entry);
-			}
-		} catch (final MiddlewareQueryException e) {
-			LabelPrintingServiceImpl.LOG.error(e.getMessage(), e);
-		}
-
-		return listDataProjects;
-	}
-
 	private void setCross(final InventoryDetails entry) {
 		// get the original gid as when the inventory is bulked and is a bulking donor, the gid becomes null
 		final Integer gid = entry.getOriginalGid();

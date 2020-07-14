@@ -53,7 +53,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.ArgumentMatcher;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
@@ -212,7 +211,7 @@ public class GermplasmTreeControllerTest {
 		Assert.assertEquals("isSuccess Value should be 1", 1, result.get("isSuccess"));
 		Assert.assertEquals("Unique ID should be LIST IDENTIFIER", form.getListIdentifier(), result.get("uniqueId"));
 		Assert.assertEquals("List Name should be LIST 1", form.getListName(), result.get("listName"));
-		Mockito.verify(this.germplasmStudySourceService).saveGermplasmStudySource(ArgumentMatchers.anyList());
+		Mockito.verify(this.germplasmStudySourceService).saveGermplasmStudySources(ArgumentMatchers.anyList());
 	}
 
 	@Test
@@ -271,7 +270,7 @@ public class GermplasmTreeControllerTest {
 		Assert.assertEquals("germplasmListId should be 1", 1, result.get("germplasmListId"));
 		Assert.assertEquals("Unique ID should be LIST IDENTIFIER", form.getListIdentifier(), result.get("uniqueId"));
 		Assert.assertEquals("List Name should be LIST 1", form.getListName(), result.get("listName"));
-		Mockito.verify(this.germplasmStudySourceService).saveGermplasmStudySource(ArgumentMatchers.anyList());
+		Mockito.verify(this.germplasmStudySourceService).saveGermplasmStudySources(ArgumentMatchers.anyList());
 	}
 
 	@Test
@@ -609,7 +608,7 @@ public class GermplasmTreeControllerTest {
 		Assert.assertEquals("germplasmListId should be 1", 1, result.get("germplasmListId"));
 		Assert.assertEquals("Unique ID should be LIST IDENTIFIER", form.getListIdentifier(), result.get("uniqueId"));
 		Assert.assertEquals("List Name should be LIST 1", form.getListName(), result.get("listName"));
-		Mockito.verify(this.germplasmStudySourceService).saveGermplasmStudySource(ArgumentMatchers.anyList());
+		Mockito.verify(this.germplasmStudySourceService).saveGermplasmStudySources(ArgumentMatchers.anyList());
 	}
 
 	@Test

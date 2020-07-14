@@ -125,14 +125,14 @@
 					cross: {
 						data: 'cross'
 					},
-					lots: {
+					numberOfLots: {
 						data: function () {
 							return '';
 						},
 						filter: {
 							transform(request) {
 								if (this.value || this.value === 0) {
-									request.filter.lots = this.value;
+									request.filter.numberOfLots = this.value;
 									this.isFiltered = true;
 								}
 							}
@@ -296,7 +296,7 @@
 						// LOTS
 						targets: 6,
 						createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
-							$(td).append('<span>' + (rowData.lots != 0 ? rowData.lots : '-') + '</span>');
+							$(td).append('<span>' + (rowData.numberOfLots != 0 ? rowData.numberOfLots : '-') + '</span>');
 						}
 					},
 					{

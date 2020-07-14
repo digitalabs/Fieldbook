@@ -171,12 +171,12 @@
 							}
 						}
 					},
-					location: {
-						data: 'location',
+					breedingLocationName: {
+						data: 'breedingLocationName',
 						filter: {
 							transform(request) {
 								if (this.value) {
-									request.filter.location = this.value;
+									request.filter.breedingLocationName = this.value;
 									this.isFiltered = true;
 								}
 							}
@@ -274,7 +274,7 @@
 						// Checkbox
 						targets: 0,
 						createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
-							$(td).append($compile('<span><input type="checkbox" ng-checked="isSelected(' + rowData.sourceId + ')" ng-click="toggleSelect(' + rowData.sourceId + ')"></span>')($scope));
+							$(td).append($compile('<span><input type="checkbox" ng-checked="isSelected(' + rowData.germplasmStudySourceId + ')" ng-click="toggleSelect(' + rowData.germplasmStudySourceId + ')"></span>')($scope));
 							$scope.$apply();
 						}
 					},
@@ -366,7 +366,7 @@
 						return [];
 					}
 					return dataTable.data().toArray().map((data) => {
-						return data.sourceId;
+						return data.germplasmStudySourceId;
 					});
 				}
 

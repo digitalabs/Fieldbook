@@ -226,7 +226,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 				final List<GermplasmListData> data = new ArrayList<>();
 				data.addAll(this.germplasmListManager.getGermplasmListDataByListId(germplasmListId));
-				this.germplasmStudySourceService.saveGermplasmStudySource(germplasmStudySourceList);
+				this.germplasmStudySourceService.saveGermplasmStudySources(germplasmStudySourceList);
 				results.put(GermplasmTreeController.IS_SUCCESS, 1);
 				results.put("germplasmListId", germplasmListId);
 				results.put("uniqueId", form.getListIdentifier().isEmpty() ? "0" : form.getListIdentifier());

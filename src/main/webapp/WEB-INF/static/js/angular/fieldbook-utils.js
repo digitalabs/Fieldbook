@@ -363,7 +363,7 @@
 						uiSelect2.compile(tElement, tAttrs);
 					}
 				},
-				controller: function($scope, LOCATION_ID, BREEDING_METHOD_ID, BREEDING_METHOD_CODE, $http, studyStateService) {
+				controller: function($scope, LOCATION_ID, BREEDING_METHOD_ID, BREEDING_METHOD_CODE, $http) {
 					if ($scope.settingkey === undefined) {
 						$scope.settingkey = $scope.targetkey;
 					}
@@ -371,12 +371,6 @@
 					if (!$scope.changefunction) {
 						$scope.changefunction = function() {
 						};
-					}else {
-						var oldFunction = $scope.changefunction;
-						$scope.changefunction = function () {
-							studyStateService.updateOccurred();
-							oldFunction();
-						}
 					}
 
 					$scope.variableDefinition = $scope.settings.val($scope.settingkey);

@@ -129,10 +129,6 @@
 		<constructor-arg value="${upload.directory}" />
 	</bean>
 
-	<bean id="exportAdvanceListService"
-		class="com.efficio.fieldbook.web.common.service.impl.ExportAdvanceListServiceImpl" />
-
-
 	<bean id="importGermplasmfileService"
 		class="com.efficio.fieldbook.web.trial.service.impl.ImportGermplasmFileServiceImpl" />
 

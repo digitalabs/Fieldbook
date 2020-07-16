@@ -17,6 +17,7 @@ import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.middleware.domain.dms.DatasetDTO;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -371,7 +372,6 @@ public class OpenTrialController extends BaseTrialController {
 			.convertXmlDatasetToWorkbook(dataset, this.userSelection.getExpDesignParams(), this.userSelection.getExpDesignVariables(),
 				this.fieldbookMiddlewareService, this.userSelection.getExperimentalDesignVariables(),
 				this.contextUtil.getCurrentProgramUUID());
-		this.assignOperationOnExpDesignVariables(workbook.getConditions());
 
 		workbook.setOriginalObservations(this.userSelection.getWorkbook().getOriginalObservations());
 		workbook.setTrialObservations(this.userSelection.getWorkbook().getTrialObservations());
@@ -411,8 +411,9 @@ public class OpenTrialController extends BaseTrialController {
 				this.fieldbookService.createIdNameVariablePairs(this.userSelection.getWorkbook(), new ArrayList<SettingDetail>(),
 					AppConstants.ID_NAME_COMBINATION.getString(), true);
 
-				// Set the flag that indicates whether the variates will be save
-				// or not to false since it's already save after inline edit
+				// Set the non-study variables' operation to null since they're already saved
+				this.setNonStudyVariablesOperationToNull(workbook.getAllVariables());
+
 				this.fieldbookMiddlewareService.saveWorkbookVariablesAndObservations(workbook);
 				this.fieldbookService
 					.saveStudyColumnOrdering(workbook.getStudyDetails().getId(), data.getColumnOrders(),
@@ -425,6 +426,14 @@ public class OpenTrialController extends BaseTrialController {
 			}
 		} else {
 			return returnVal;
+		}
+	}
+
+	void setNonStudyVariablesOperationToNull(final List<MeasurementVariable> variables) {
+		for(final MeasurementVariable measurementVariable: variables) {
+			if(!PhenotypicType.STUDY.equals(measurementVariable.getRole())) {
+				measurementVariable.setOperation(null);
+			}
 		}
 	}
 

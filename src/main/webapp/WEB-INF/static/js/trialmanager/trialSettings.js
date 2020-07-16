@@ -37,6 +37,10 @@
 			});
 		};
 
+		$scope.onLabelChange = function() {
+			studyStateService.updateOccurred();
+		};
+
 		$scope.$on('variableAdded', function () {
 			studyStateService.updateOccurred();
 		});

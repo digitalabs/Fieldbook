@@ -2,7 +2,6 @@
 package com.efficio.fieldbook.web.common.util;
 
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
-import org.generationcp.middleware.pojos.ListDataProject;
 
 /**
  * Created by Daniel Villafuerte on 5/8/2015.

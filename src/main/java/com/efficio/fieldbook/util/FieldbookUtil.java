@@ -9,7 +9,6 @@ import org.generationcp.commons.util.FileUtils;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.pojos.ListDataProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
@@ -113,6 +112,7 @@ public class FieldbookUtil {
 		return false;
 	}
 
+	// TODO IBP-3798 delete this method
 	public static void copyDupeNotesToListDataProject(final List<ListDataProject> dataProjectList, final List<ImportedCross> importedCrosses) {
 		if (dataProjectList != null && importedCrosses != null && dataProjectList.size() == importedCrosses.size()) {
 			for (int i = 0; i < dataProjectList.size(); i++) {

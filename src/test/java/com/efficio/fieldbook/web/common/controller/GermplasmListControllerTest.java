@@ -6,16 +6,13 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.efficio.fieldbook.web.util.parsing.InventoryHeaderLabels;
 import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
-import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.service.api.InventoryService;
 import org.junit.Assert;
 import org.junit.Test;

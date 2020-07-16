@@ -26,7 +26,6 @@ import org.generationcp.middleware.data.initializer.StandardVariableTestDataInit
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.*;
 import org.generationcp.middleware.domain.etl.*;
-import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -68,7 +67,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.text.ParseException;
-import java.util.List;
 import java.util.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -81,8 +79,6 @@ public class OpenTrialControllerTest {
 	private static final int NO_OF_TRIAL_INSTANCES = 3;
 	private static final int NO_OF_OBSERVATIONS = 5;
 	private static final int STUDY_ID = 1;
-	private static final long WORKBENCH_PROJECT_ID = 1L;
-	private static final String WORKBENCH_PROJECT_NAME = "Project 1";
 	private static final String PROGRAM_UUID = "68f0d114-5b5b-11e5-885d-feff819cdc9f";
 	private static final String TEST_STUDY_NAME = "dummyStudy";
 	private static final int BM_CODE_VTE_ID = 8252;
@@ -1111,7 +1107,6 @@ public class OpenTrialControllerTest {
 		final int germplasmListId = 111;
 		final int studyId = 1;
 
-		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).getListDataProject(germplasmListId);
 		Mockito.verify(this.studyGermplasmService, Mockito.times(0)).countStudyGermplasmByEntryTypeIds(studyId,
 			Arrays.asList(String.valueOf(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId())));
 
@@ -1134,7 +1129,6 @@ public class OpenTrialControllerTest {
 		final List<GermplasmList> listOfGermplasmList = new ArrayList<>();
 		listOfGermplasmList.add(germplasmList);
 
-		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).getListDataProject(germplasmListId);
 		Mockito.verify(this.studyGermplasmService, Mockito.times(0)).countStudyGermplasmByEntryTypeIds(studyId,
 			Arrays.asList(String.valueOf(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId())));
 

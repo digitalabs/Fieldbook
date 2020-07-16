@@ -278,20 +278,7 @@ var ImportCrosses = {
 		return deferred.promise();
 	},
 
-	displayCrossesGermplasmDetails: function(listId) {
-		'use strict';
-		$.ajax({
-			url: '/Fieldbook/germplasm/list/crosses/' + listId,
-			type: 'GET',
-			cache: false,
-			success: function(html) {
-				$('.crosses-list' + getCurrentAdvanceTabTempIdentifier()).html(html);
-			},
-			error: function() {
-				//TODO put error message
-			}
-		});
-	},
+
 	showPlotDuplicateConfirmation: function() {
 			'use strict';
 			if (ImportCrosses.hasPlotDuplicate()) {

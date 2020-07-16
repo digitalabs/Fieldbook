@@ -80,27 +80,6 @@ if (typeof ImportInventoryFunctions === 'undefined') {
 			ImportInventoryFunctions.displayFinalizedInventoryDetails(getCurrentAdvanceTabListIdentifier(), source);
 		},
 
-		displayFinalizedInventoryDetails: function(listId, source) {
-			'use strict';
-			var url;
-
-			if (source === 'advance') {
-				url = '/Fieldbook/germplasm/list/advance/' + listId;
-			} else {
-				url = '/Fieldbook/germplasm/list/crosses/' + listId;
-			}
-
-			$.ajax({
-				url: url,
-				type: 'GET',
-				cache: false,
-				success: function(html) {
-					$('.import-inventory').data('data-import', '0');
-					$('#advance-list' + getCurrentAdvanceTabTempIdentifier()).html(html);
-				}
-			});
-		},
-
 		displayUpdatedAdvanceGermplasmDetails: function(listId) {
 			'use strict';
 			$.ajax({

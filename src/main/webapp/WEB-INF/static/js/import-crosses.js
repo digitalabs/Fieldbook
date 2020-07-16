@@ -844,37 +844,7 @@ var ImportCrosses = {
 			}
 		});
 	},
-	
-	saveParentList: function(listId) {
-		'use strict';
-		var  germplasmTreeNode = $('#germplasmFolderTree').dynatree('getTree');
-		//TODO handle errors for ajax request
-		$.ajax({
-			url: '/Fieldbook/ListTreeManager/saveParentList/',
-			type: 'GET',
-			cache: false,
-			success: function(html) {
-				$('#saveGermplasmRightSection').html(html);
-				$('#saveListTreeModal').modal({
-					show: true,
-					keyboard: true,
-					backdrop: 'static'
-				});
-				$('#saveListTreeModal').data('is-save-parent', '1');
-				$('#saveListTreeModal').data('sourceListId', listId);
 
-				TreePersist.preLoadGermplasmTreeState(false, '#germplasmFolderTree', true);
-
-				//we preselect the program lists
-				if (germplasmTreeNode !== null && germplasmTreeNode.getNodeByKey('LOCAL') !== null) {
-					germplasmTreeNode.getNodeByKey('LOCAL').activate();
-				}
-			},
-			error: function() {
-				//TODO process errors
-			}
-		});
-	},
 	openGermplasmModal : function (gid, desig) {
 		'use strict';
 		$('#openCrossesListModal').modal('hide');

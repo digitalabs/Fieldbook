@@ -222,16 +222,6 @@ public class GermplasmTreeControllerTest {
 		Assert.assertEquals(GermplasmTreeControllerTest.TEST_USER_NAME, form.getListOwner());
 	}
 
-	@Test
-	public void testSaveParentList() {
-		final SaveListForm form = new SaveListForm();
-		this.controller.saveParentList(form, Mockito.mock(Model.class));
-		Assert.assertEquals("", form.getListName());
-		Assert.assertEquals(DateUtil.getCurrentDateInUIFormat(), form.getListDate());
-		Assert.assertEquals(AppConstants.PARENT_LIST_DESCRIPTION.getString(), form.getListDescription());
-		Assert.assertEquals(AppConstants.PARENT_LIST_TYPE.getString(), form.getListType());
-		Assert.assertEquals(GermplasmTreeControllerTest.TEST_USER_NAME, form.getListOwner());
-	}
 
 	@Test
 	public void saveCrossesList() {
@@ -594,20 +584,6 @@ public class GermplasmTreeControllerTest {
 				originAttribute.getLocationId());
 		}
 
-	}
-
-	@Test
-	public void testSaveParentListPostSuccessful() {
-		final SaveListForm form = createSaveListForm();
-		form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_PARENT);
-
-		final Map<String, Object> result = this.controller.savePost(form, Mockito.mock(Model.class));
-
-		Assert.assertEquals("isSuccess Value should be 1", 1, result.get("isSuccess"));
-		Assert.assertEquals("germplasmListId should be 1", 1, result.get("germplasmListId"));
-		Assert.assertEquals("Unique ID should be LIST IDENTIFIER", form.getListIdentifier(), result.get("uniqueId"));
-		Assert.assertEquals("List Name should be LIST 1", form.getListName(), result.get("listName"));
-		Mockito.verify(this.germplasmStudySourceService).saveGermplasmStudySources(ArgumentMatchers.anyList());
 	}
 
 	@Test

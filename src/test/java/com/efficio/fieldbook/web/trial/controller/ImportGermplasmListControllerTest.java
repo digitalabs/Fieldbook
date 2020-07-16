@@ -600,10 +600,6 @@ public class ImportGermplasmListControllerTest {
 		Mockito.when(this.dataImportService.saveDataset(workbook, true, true, project.getUniqueID(), this.cropType))
 			.thenReturn(studyIdInSaveDataset);
 
-		final List<ListDataProject> listDataProjects = new ArrayList<>();
-		final ListDataProject listDataProject = new ListDataProject();
-		listDataProjects.add(listDataProject);
-
 		Mockito.doNothing().when(this.fieldbookService).saveStudyColumnOrdering(studyIdInSaveDataset, null,
 			workbook);
 
@@ -616,8 +612,6 @@ public class ImportGermplasmListControllerTest {
 		Mockito.verify(this.dataImportService).saveDataset(workbook, true, true, project.getUniqueID(),
 			this.cropType);
 
-		Mockito.verify(this.fieldbookService)
-			.saveStudyImportedCrosses(ArgumentMatchers.<List<Integer>>isNull(), ArgumentMatchers.isA(Integer.class));
 		Mockito.verify(this.fieldbookService).saveStudyColumnOrdering(studyIdInSaveDataset, null, workbook);
 
 		Assert.assertEquals("Expecting studyIdInSaveDataset returned from nextScreen", "3", studyIdInNextScreen);

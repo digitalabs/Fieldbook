@@ -15,14 +15,11 @@ import org.generationcp.commons.service.GermplasmExportService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.dao.GermplasmListDAO;
 import org.generationcp.middleware.domain.dms.Enumeration;
-import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.interfaces.GermplasmExportSource;
-import org.generationcp.middleware.manager.api.GermplasmListManager;
-import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -55,13 +52,7 @@ public class ExportStudyGermplasmServiceImpl implements ExportStudyGermplasmServ
 	private ContextUtil contextUtil;
 
 	@Resource
-	private GermplasmListManager germplasmListManager;
-
-	@Resource
 	private GermplasmExportService germplasmExportService;
-
-	@Resource
-	private InventoryDataManager inventoryDataManager;
 
 	@Resource
 	private StudyGermplasmService studyGermplasmService;
@@ -213,20 +204,7 @@ public class ExportStudyGermplasmServiceImpl implements ExportStudyGermplasmServ
 		return standardVariableMap;
 	}
 
-	protected void processEntryTypeCode(final List<? extends GermplasmExportSource> listData, final List<ValueReference> possibleValues) {
 
-		for (final GermplasmExportSource data : listData) {
-			if (possibleValues != null && !possibleValues.isEmpty()) {
-				for (final ValueReference possibleValue : possibleValues) {
-					if (possibleValue.getId().equals(Integer.valueOf(data.getCheckType().toString()))) {
-						((ListDataProject) data).setCheckTypeDescription(possibleValue.getName());
-					}
-				}
-			} else {
-				((ListDataProject) data).setCheckTypeDescription(String.valueOf(data.getCheckType()));
-			}
-		}
-	}
 
 	protected List<ExportColumnHeader> getExportColumnHeadersFromTable(final Map<String, Boolean> visibleColumns) {
 
@@ -301,9 +279,6 @@ public class ExportStudyGermplasmServiceImpl implements ExportStudyGermplasmServ
 		return value;
 	}
 
-	protected void setGermplasmListManager(final GermplasmListManager germplasmListManager) {
-		this.germplasmListManager = germplasmListManager;
-	}
 
 	protected UserSelection getUserSelection() {
 		return this.userSelection;

@@ -26,7 +26,6 @@ import org.generationcp.middleware.data.initializer.StandardVariableTestDataInit
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.*;
 import org.generationcp.middleware.domain.etl.*;
-import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -81,8 +80,6 @@ public class OpenTrialControllerTest {
 	private static final int NO_OF_TRIAL_INSTANCES = 3;
 	private static final int NO_OF_OBSERVATIONS = 5;
 	private static final int STUDY_ID = 1;
-	private static final long WORKBENCH_PROJECT_ID = 1L;
-	private static final String WORKBENCH_PROJECT_NAME = "Project 1";
 	private static final String PROGRAM_UUID = "68f0d114-5b5b-11e5-885d-feff819cdc9f";
 	private static final String TEST_STUDY_NAME = "dummyStudy";
 	private static final int BM_CODE_VTE_ID = 8252;
@@ -1304,6 +1301,20 @@ public class OpenTrialControllerTest {
 				.detectValueChangesInVariables(Arrays.asList(measurementRowWithOldData), Arrays.asList(measurementRowWithNewData));
 
 		Assert.assertFalse(result.containsKey(geoLocationId));
+	}
+
+	@Test
+	public void testSetNonStudyVariablesOperationToNull() {
+		final List<MeasurementVariable> measurementVariables = new ArrayList<>();
+		final MeasurementVariable studyVariable = MeasurementVariableTestDataInitializer.createMeasurementVariableWithOperation(TermId.SITE_NAME.getId(), TermId.SITE_NAME.name(), "SITE NAME", Operation.ADD);
+		studyVariable.setRole(PhenotypicType.STUDY);
+		measurementVariables.add(studyVariable);
+		final MeasurementVariable locationVariable = MeasurementVariableTestDataInitializer.createMeasurementVariableWithOperation(TermId.LOCATION_ID.getId(), TermId.LOCATION_ID.name(), "SITE NAME", Operation.ADD);
+		locationVariable.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
+		measurementVariables.add(locationVariable);
+		this.openTrialController.setNonStudyVariablesOperationToNull(measurementVariables);
+		Assert.assertEquals(Operation.ADD, measurementVariables.get(0).getOperation());
+		Assert.assertNull(measurementVariables.get(1).getOperation());
 	}
 
 	private void verifyUserSelectionUponBasicDetailsPreparation(final StudyDetails studyDetails) {

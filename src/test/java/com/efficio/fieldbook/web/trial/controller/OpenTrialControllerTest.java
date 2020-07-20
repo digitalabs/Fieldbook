@@ -1300,6 +1300,20 @@ public class OpenTrialControllerTest {
 		Assert.assertFalse(result.containsKey(geoLocationId));
 	}
 
+	@Test
+	public void testSetNonStudyVariablesOperationToNull() {
+		final List<MeasurementVariable> measurementVariables = new ArrayList<>();
+		final MeasurementVariable studyVariable = MeasurementVariableTestDataInitializer.createMeasurementVariableWithOperation(TermId.SITE_NAME.getId(), TermId.SITE_NAME.name(), "SITE NAME", Operation.ADD);
+		studyVariable.setRole(PhenotypicType.STUDY);
+		measurementVariables.add(studyVariable);
+		final MeasurementVariable locationVariable = MeasurementVariableTestDataInitializer.createMeasurementVariableWithOperation(TermId.LOCATION_ID.getId(), TermId.LOCATION_ID.name(), "SITE NAME", Operation.ADD);
+		locationVariable.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
+		measurementVariables.add(locationVariable);
+		this.openTrialController.setNonStudyVariablesOperationToNull(measurementVariables);
+		Assert.assertEquals(Operation.ADD, measurementVariables.get(0).getOperation());
+		Assert.assertNull(measurementVariables.get(1).getOperation());
+	}
+
 	private void verifyUserSelectionUponBasicDetailsPreparation(final StudyDetails studyDetails) {
 		Mockito.verify(this.userSelection).setBasicDetails(ArgumentMatchers.anyListOf(SettingDetail.class));
 		Mockito.verify(this.userSelection).setStudyName(studyDetails.getStudyName());

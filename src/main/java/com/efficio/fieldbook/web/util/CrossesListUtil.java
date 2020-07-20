@@ -119,8 +119,8 @@ public class CrossesListUtil {
 
 	// Look at the study germplasm list with plot to find plot number assigned to the male/female parent germplasm of the cross.
 	private Integer getParentPlotNo(final Integer parentGid, final List<StudyGermplasmDto> studyGermplasmList) {
-		// Use "0" for unknown parent
-		Integer parentPlotNo = parentGid;
+		// If the parent is unknown or not from the study, parent plot number is null
+		Integer parentPlotNo = null;
 		if (!parentGid.equals(0)) {
 			for (final StudyGermplasmDto row : studyGermplasmList) {
 				final String plotNumber = row.getPosition();

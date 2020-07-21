@@ -1,5 +1,3 @@
-var isAdvanceListGeneratedForTrial = false;
-
 $(function() {
 	'use strict';
 

@@ -98,7 +98,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	protected static final String PROGRAM_LISTS = "LISTS";
 	protected static final String CROP_LISTS = "CROPLISTS";
 
-	// TODO IBP-3798 check if we can use GermplasmStudySourceType enum
 	public static final String GERMPLASM_LIST_TYPE_ADVANCE = "advance";
 	public static final String GERMPLASM_LIST_TYPE_CROSS = "cross";
 	public static final String NODE_NONE = "None";

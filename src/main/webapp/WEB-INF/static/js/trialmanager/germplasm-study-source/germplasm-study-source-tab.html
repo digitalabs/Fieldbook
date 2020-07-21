@@ -5,6 +5,20 @@
 			<img style="margin-left: -10px; display:none;" class="section-expanded" src="/Fieldbook/static/img/expanded-arrow.png">
 			<strong class="sub-content-heading ng-binding">Crosses and Selections</strong>
 		</label>
+
+		<div class="pull-right">
+			<div class="btn-group">
+				<button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
+					<span>Actions</span>
+				</button>
+				<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
+					<li>
+						<a ng-click="openLotCreationModal()">Create lots</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+
 		<table id="crossesAndSelectionTable"
 			   datatable=""
 			   dt-instance="nested.dtInstance"

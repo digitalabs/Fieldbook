@@ -4,8 +4,8 @@
 	var germplasmStudySourceModule = angular.module('germplasm-study-source', []);
 
 	germplasmStudySourceModule.controller('GermplasmStudySourceCtrl',
-		['$scope', '$q', '$compile', 'studyContext', 'DTOptionsBuilder', 'germplasmStudySourceService',
-			function ($scope, $q, $compile, studyContext, DTOptionsBuilder, germplasmStudySourceService) {
+		['$scope', '$q', '$compile', '$uibModal', 'studyContext', 'DTOptionsBuilder', 'germplasmStudySourceService',
+			function ($scope, $q, $compile, $uibModal, studyContext, DTOptionsBuilder, germplasmStudySourceService) {
 
 				$scope.nested = {};
 				$scope.nested.dtInstance = null;
@@ -359,6 +359,14 @@
 				$scope.size = function (obj) {
 					return Object.keys(obj).length;
 				};
+
+				$scope.openLotCreationModal = function () {
+					$uibModal.open({
+						templateUrl: '/Fieldbook/static/js/trialmanager/inventory/lot-creation/lot-creation-modal.html',
+						windowClass: 'modal-very-huge',
+						controller: 'LotCreationCtrl'
+					});
+				}
 
 				function getPageItemIds() {
 					const dataTable = table();

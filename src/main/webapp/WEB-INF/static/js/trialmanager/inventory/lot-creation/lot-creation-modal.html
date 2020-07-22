@@ -1,5 +1,24 @@
-<div class="row">
-	<div class="col-xs-12 col-md-12">
-		Hello World
+<div class="modal-content">
+	<div class="modal-body" id="addVariablesSettingBody">
+		<div class="row form-group">
+			<div class="col-xs-11 col-md-11">
+				<label class="modal-title fbk-modal-title" id="heading-modal">Create Inventory Lot</label>
+			</div>
+			<div class="col-xs-1 col-md-1">
+				<button class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal"/>
+			</div>
+		</div>
+		<div class="row">
+			<div id="page-message-modal" class="col-xs-12 col-md-12">
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12 col-md-12">
+				<div>
+					<iframe id="lotCreationModalIFrame" width="500" height="700" frameborder="0"
+							ng-src="{{url}}"></iframe>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>

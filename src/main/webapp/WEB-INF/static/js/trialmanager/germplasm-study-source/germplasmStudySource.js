@@ -363,8 +363,8 @@
 				$scope.openLotCreationModal = function () {
 					$uibModal.open({
 						templateUrl: '/Fieldbook/static/js/trialmanager/inventory/lot-creation/lot-creation-modal.html',
-						windowClass: 'modal-very-huge',
-						controller: 'LotCreationCtrl'
+						controller: 'LotCreationCtrl',
+						size: 'md'
 					});
 				}
 

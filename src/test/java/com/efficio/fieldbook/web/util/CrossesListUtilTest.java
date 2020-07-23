@@ -7,11 +7,14 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
 import org.generationcp.middleware.constant.ColumnLabels;
+import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.germplasm.GermplasmParent;
+import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
+import org.generationcp.middleware.service.impl.study.StudyGermplasmServiceImplTest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -215,6 +218,28 @@ public class CrossesListUtilTest {
 		for (final ImportedGermplasmParent parent : testImportedCross.getMaleParents()) {
 			Assert.assertEquals(studyName, parent.getStudyName());
 		}
+	}
+
+	@Test
+	public void testGetParentPlotNumber() {
+		final List<StudyGermplasmDto> studyList = this.createStudyGermplasmList(10);
+		Assert.assertEquals(10, this.crossesListUtil.getParentPlotNo(101, studyList).intValue());
+		Assert.assertEquals(3, this.crossesListUtil.getParentPlotNo(108, studyList).intValue());
+		Assert.assertNull(this.crossesListUtil.getParentPlotNo(0, studyList));
+		Assert.assertNull(this.crossesListUtil.getParentPlotNo(99, studyList));
+	}
+
+	private List<StudyGermplasmDto> createStudyGermplasmList(final Integer numberOfEntries) {
+		final List<StudyGermplasmDto> studyList = new ArrayList<>();
+		for (int i = 0; i < numberOfEntries; i++) {
+			final StudyGermplasmDto germplasmDto = new StudyGermplasmDto();
+			germplasmDto.setGermplasmId(100 + i + 1);
+			germplasmDto.setEntryNumber(i + 1);
+			germplasmDto.setPosition(String.valueOf(numberOfEntries - i));
+			studyList.add(germplasmDto);
+		}
+		return studyList;
+
 	}
 
 }

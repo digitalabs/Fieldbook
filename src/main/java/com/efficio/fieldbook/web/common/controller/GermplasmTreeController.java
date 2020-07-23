@@ -20,6 +20,7 @@ import com.efficio.fieldbook.web.common.service.impl.CrossingServiceImpl;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
 import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
+import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
 import org.apache.commons.collections.CollectionUtils;
@@ -562,10 +563,14 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 		Boolean isTrimed = false;
 		final Integer studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
-		// Take the plot of the female parent as the source observation unit. Take the observation units from the first trial instance
-		final Set<Integer> sourcePlotNumbers = importedGermplasmList.stream().map(g -> Integer.valueOf(g.getFemalePlotNo())).collect(Collectors.toSet());
-		final Table<Integer, Integer, Integer> observationUnitIdsTable = this.datasetService.getTrialNumberPlotNumberObservationUnitIdTable(this.userSelection.getWorkbook().getMeasurementDatesetId(),
-				Collections.singleton(1), sourcePlotNumbers);
+		// Take the plot of the female parent as the source observation unit. It is possible for female plot #s to be null if source is from another study
+		final Set<Integer> sourcePlotNumbers = importedGermplasmList.stream().filter(g-> Objects.nonNull(g.getFemalePlotNo())).map(g -> Integer.valueOf(g.getFemalePlotNo())).collect(Collectors.toSet());
+		Table<Integer, Integer, Integer> observationUnitIdsTable = HashBasedTable.create();
+		if (!CollectionUtils.isEmpty(sourcePlotNumbers)) {
+			// Take the observation units from the first trial instance
+			observationUnitIdsTable = this.datasetService.getTrialNumberPlotNumberObservationUnitIdTable(this.userSelection.getWorkbook().getMeasurementDatesetId(),
+					Collections.singleton(1), sourcePlotNumbers);
+		}
 		for (final ImportedCross importedCross : importedGermplasmList) {
 
 			final Integer gid = importedCross.getGid() != null ? Integer.valueOf(importedCross.getGid()) : null;
@@ -607,7 +612,10 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 			listDataItems.add(new ImmutablePair<>(germplasm, listData));
 			// Observation Units, by female plot number, are from the first trial instance
-			germplasmStudySourceList.add(new GermplasmStudySourceInput(gid, studyId, observationUnitIdsTable.get(1, importedCross.getFemalePlotNo()), GermplasmStudySourceType.CROSS));
+			// It's possible for female plot numbers to be null if female parent was from another study
+			final Integer femalePlotNo = importedCross.getFemalePlotNo();
+			final Integer sourcePlotNo = femalePlotNo != null? observationUnitIdsTable.get(1, femalePlotNo) : null;
+			germplasmStudySourceList.add(new GermplasmStudySourceInput(gid, studyId, sourcePlotNo, GermplasmStudySourceType.CROSS));
 		}
 		return isTrimed;
 	}

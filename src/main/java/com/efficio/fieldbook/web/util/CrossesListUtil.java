@@ -1,8 +1,6 @@
 
 package com.efficio.fieldbook.web.util;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
@@ -12,14 +10,13 @@ import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.germplasm.GermplasmParent;
 import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class CrossesListUtil {
@@ -44,9 +41,6 @@ public class CrossesListUtil {
 
 	@Autowired
 	private OntologyDataManager ontologyDataManager;
-	
-	@Resource
-	private MessageSource messageSource;
 
 	public static final String DEFAULT_SEPARATOR = "/";
 
@@ -118,9 +112,9 @@ public class CrossesListUtil {
 	}
 
 	// Look at the study germplasm list with plot to find plot number assigned to the male/female parent germplasm of the cross.
-	private Integer getParentPlotNo(final Integer parentGid, final List<StudyGermplasmDto> studyGermplasmList) {
-		// Use "0" for unknown parent
-		Integer parentPlotNo = parentGid;
+	Integer getParentPlotNo(final Integer parentGid, final List<StudyGermplasmDto> studyGermplasmList) {
+		// If the parent is unknown or not from the study, parent plot number is null
+		Integer parentPlotNo = null;
 		if (!parentGid.equals(0)) {
 			for (final StudyGermplasmDto row : studyGermplasmList) {
 				final String plotNumber = row.getPosition();
@@ -190,30 +184,15 @@ public class CrossesListUtil {
 	}
 	
 	private List<Integer> getGids(final List<GermplasmParent> parents) {
-		return com.google.common.collect.Lists.newArrayList(Iterables.transform(parents, new Function<GermplasmParent, Integer>() {
-
-			public Integer apply(GermplasmParent data) {
-				return data.getGid();
-			}
-		}));
+		return parents.stream().map(GermplasmParent::getGid).collect(Collectors.toList());
 	}
 	
 	private List<String> getDesignationsList(final List<GermplasmParent> parents) {
-		return com.google.common.collect.Lists.newArrayList(Iterables.transform(parents, new Function<GermplasmParent, String>() {
-
-			public String apply(GermplasmParent data) {
-				return data.getDesignation();
-			}
-		}));
+		return parents.stream().map(GermplasmParent::getDesignation).collect(Collectors.toList());
 	}
 	
 	private List<String> getPedigreeList(final List<GermplasmParent> parents) {
-		return com.google.common.collect.Lists.newArrayList(Iterables.transform(parents, new Function<GermplasmParent, String>() {
-
-			public String apply(GermplasmParent data) {
-				return data.getPedigree();
-			}
-		}));
+		return parents.stream().map(GermplasmParent::getPedigree).collect(Collectors.toList());
 	}
 	
 	private String concatenateMaleParentsValue(final List<String> list) {

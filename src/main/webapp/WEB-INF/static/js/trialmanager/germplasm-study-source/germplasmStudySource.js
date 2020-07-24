@@ -4,8 +4,8 @@
 	var germplasmStudySourceModule = angular.module('germplasm-study-source', []);
 
 	germplasmStudySourceModule.controller('GermplasmStudySourceCtrl',
-		['$scope', '$q', '$compile', '$uibModal', 'studyContext', 'DTOptionsBuilder', 'germplasmStudySourceService',
-			function ($scope, $q, $compile, $uibModal, studyContext, DTOptionsBuilder, germplasmStudySourceService) {
+		['$rootScope', '$scope', '$q', '$compile', '$uibModal', 'studyContext', 'DTOptionsBuilder', 'germplasmStudySourceService', 'lotService',
+			function ($rootScope, $scope, $q, $compile, $uibModal, studyContext, DTOptionsBuilder, germplasmStudySourceService, lotService) {
 
 				$scope.nested = {};
 				$scope.nested.dtInstance = null;
@@ -274,7 +274,7 @@
 						// Checkbox
 						targets: 0,
 						createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
-							$(td).append($compile('<span><input type="checkbox" ng-checked="isSelected(' + rowData.germplasmStudySourceId + ')" ng-click="toggleSelect(' + rowData.germplasmStudySourceId + ')"></span>')($scope));
+							$(td).append($compile('<span><input type="checkbox" ng-checked="isSelected(' + rowData.gid + ')" ng-click="toggleSelect(' + rowData.gid + ')"></span>')($scope));
 							$scope.$apply();
 						}
 					},
@@ -361,11 +361,22 @@
 				};
 
 				$scope.openLotCreationModal = function () {
-					$uibModal.open({
-						templateUrl: '/Fieldbook/static/js/trialmanager/inventory/lot-creation/lot-creation-modal.html',
-						controller: 'LotCreationCtrl',
-						size: 'md'
-					});
+					lotService.saveSearchRequest({gids: Object.keys($scope.selectedItems)})
+						.then((searchDto) => {
+							$uibModal.open({
+								templateUrl: '/Fieldbook/static/js/trialmanager/inventory/lot-creation/lot-creation-modal.html',
+								controller: 'LotCreationCtrl',
+								size: 'md',
+								resolve: {
+									searchResultDbId: function () {
+										return searchDto.result.searchResultDbId;
+									}
+								}
+							}).result.finally(function () {
+								// Refresh and show the 'Crosses and Selections' tab
+								$rootScope.navigateToTab('germplasmStudySource', {reload: true});
+							});
+						});
 				}
 
 				function getPageItemIds() {
@@ -374,7 +385,7 @@
 						return [];
 					}
 					return dataTable.data().toArray().map((data) => {
-						return data.germplasmStudySourceId;
+						return data.gid;
 					});
 				}
 

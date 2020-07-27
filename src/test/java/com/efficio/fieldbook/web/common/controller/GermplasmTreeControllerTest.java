@@ -1,6 +1,5 @@
 package com.efficio.fieldbook.web.common.controller;
 
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.SaveListForm;
@@ -31,12 +30,10 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
-import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.*;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.dataset.DatasetService;
@@ -67,8 +64,6 @@ public class GermplasmTreeControllerTest {
 	private static final String LIST_IDENTIFIER = "LIST IDENTIFIER";
 	private static final String LIST_DESCRIPTION = "LIST DESCRIPTION";
 	private static final String LIST_DATE = "2015-01-30";
-	private static final String SAVED_CROSSES_GID1 = "-9999";
-	private static final String SAVED_CROSSES_GID2 = "-8888";
 	private static final String LIST_NAME = "LIST 1";
 	private static final Integer SAVED_GERMPLASM_ID = 1;
 	private static final String ERROR_MESSAGE = "middeware exception message";
@@ -104,18 +99,11 @@ public class GermplasmTreeControllerTest {
 
 	@Mock
 	private CrossingServiceImpl crossingService;
-
-	@Mock
-	private WorkbenchDataManager workbenchDataManager;
-
 	@Mock
 	private UserTreeStateService userTreeStateService;
 
 	@Mock
 	private NamingConventionService namingConventionService;
-
-	@Mock
-	private AbstractBaseFieldbookController abstractFieldbookController;
 
 	@Mock
 	private DatasetService datasetService;
@@ -136,7 +124,6 @@ public class GermplasmTreeControllerTest {
 		Mockito.doReturn(GermplasmTreeControllerTest.SAVED_GERMPLASM_ID).when(this.fieldbookMiddlewareService)
 				.saveGermplasmList(ArgumentMatchers.<List<Pair<Germplasm, GermplasmListData>>>any(), ArgumentMatchers.any(GermplasmList.class), ArgumentMatchers.eq(false));
 
-		Mockito.doReturn(this.createGermplasmListData()).when(this.germplasmListManager).getGermplasmListDataByListId(ArgumentMatchers.anyInt());
 		final Table<Integer, Integer, Integer> observationUnitIdsTable = HashBasedTable.create();
 		observationUnitIdsTable.put(1, 1, 100);
 		observationUnitIdsTable.put(1, 3, 101);
@@ -230,6 +217,7 @@ public class GermplasmTreeControllerTest {
 		Assert.assertEquals("germplasmListId should be 1", 1, result.get("germplasmListId"));
 		Assert.assertEquals("Unique ID should be LIST IDENTIFIER", form.getListIdentifier(), result.get("uniqueId"));
 		Assert.assertEquals("List Name should be LIST 1", form.getListName(), result.get("listName"));
+		Mockito.verify(this.crossingService).applyCrossSetting(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any());
 		Mockito.verify(this.germplasmStudySourceService).saveGermplasmStudySources(ArgumentMatchers.anyList());
 	}
 
@@ -827,27 +815,6 @@ public class GermplasmTreeControllerTest {
 		importedCrossesList.setImportedGermplasms(importedCrosses);
 
 		return importedCrossesList;
-	}
-
-	private List<GermplasmListData> createGermplasmListData() {
-		final List<GermplasmListData> listData = new ArrayList<>();
-
-		final GermplasmListData data1 = new GermplasmListData();
-		data1.setGid(Integer.valueOf(GermplasmTreeControllerTest.SAVED_CROSSES_GID1));
-		data1.setDesignation("DESIG 1");
-		data1.setEntryId(1);
-		data1.setGroupName("GROUP 1");
-		data1.setSeedSource("SEED 1");
-		listData.add(data1);
-		final GermplasmListData data2 = new GermplasmListData();
-		data2.setGid(Integer.valueOf(GermplasmTreeControllerTest.SAVED_CROSSES_GID2));
-		data2.setDesignation("DESIG 2");
-		data2.setEntryId(2);
-		data2.setGroupName("GROUP 2");
-		data2.setSeedSource("SEED 2");
-		listData.add(data2);
-
-		return listData;
 	}
 
 	private Workbook createWorkBook() {

@@ -216,9 +216,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			if (germplasmListIsNew == null && !this.isSimilarToRootFolderName(trimmedListName)) {
 				final GermplasmListResult result = this.saveGermplasmList(form, germplasmStudySourceList);
 				final Integer germplasmListId = result.getGermplasmListId();
-
-				final List<GermplasmListData> data = new ArrayList<>();
-				data.addAll(this.germplasmListManager.getGermplasmListDataByListId(germplasmListId));
 				this.germplasmStudySourceService.saveGermplasmStudySources(germplasmStudySourceList);
 				results.put(GermplasmTreeController.IS_SUCCESS, 1);
 				results.put("germplasmListId", germplasmListId);

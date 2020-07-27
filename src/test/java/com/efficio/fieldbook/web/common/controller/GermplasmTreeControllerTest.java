@@ -222,7 +222,7 @@ public class GermplasmTreeControllerTest {
 	@Test
 	public void testSaveCrossesListPostSuccessful() {
 		final SaveListForm form = createSaveListForm();
-		form.setGermplasmListType(GermplasmListType.F1.name());
+		form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS);
 
 		final Map<String, Object> result = this.controller.savePost(form, Mockito.mock(Model.class));
 

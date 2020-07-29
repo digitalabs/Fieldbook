@@ -198,12 +198,12 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						// Show confirmation message for overwriting measurements and/or fieldmap
 					} else {
 						var message = $ .environmentMessages.deleteEnvironmentNoData;
-						if (studyInstance.hasMeasurements || studyInstance.hasFieldmap) {
+						if (studyInstance.hasMeasurements || studyInstance.hasFieldmap || studyInstance.hasExperimentalDesign) {
 							message = $ .environmentMessages.environmentHasDataThatWillBeLost;
 						}
 						var modalConfirmDelete = $scope.openConfirmModal(message, 'Yes', 'No');
 						modalConfirmDelete.result.then(function (shouldContinue) {
-							if (shouldContinue) {
+							if (shkouldContinue) {
 								$scope.continueInstanceDeletion(index, [instanceId]);
 							}
 						});

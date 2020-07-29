@@ -203,7 +203,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						}
 						var modalConfirmDelete = $scope.openConfirmModal(message, 'Yes', 'No');
 						modalConfirmDelete.result.then(function (shouldContinue) {
-							if (shkouldContinue) {
+							if (shouldContinue) {
 								$scope.continueInstanceDeletion(index, [instanceId]);
 							}
 						});

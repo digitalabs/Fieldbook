@@ -196,15 +196,17 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						return;
 
 						// Show confirmation message for overwriting measurements and/or fieldmap
-					} else if (studyInstance.hasMeasurements || studyInstance.hasFieldmap) {
-						var modalConfirmDelete = $scope.openConfirmModal($ .environmentMessages.environmentHasDataThatWillBeLost, 'Yes', 'No');
+					} else {
+						var message = $ .environmentMessages.deleteEnvironmentNoData;
+						if (studyInstance.hasMeasurements || studyInstance.hasFieldmap) {
+							message = $ .environmentMessages.environmentHasDataThatWillBeLost;
+						}
+						var modalConfirmDelete = $scope.openConfirmModal(message, 'Yes', 'No');
 						modalConfirmDelete.result.then(function (shouldContinue) {
 							if (shouldContinue) {
 								$scope.continueInstanceDeletion(index, [instanceId]);
 							}
 						});
-					} else {
-						$scope.continueInstanceDeletion(index, [instanceId]);
 					}
 				}, function (errResponse) {
 					showErrorMessage($.fieldbookMessages.errorServerError, errResponse.errors[0].message);

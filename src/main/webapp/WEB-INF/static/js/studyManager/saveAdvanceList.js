@@ -1,4 +1,4 @@
-/*globals displayGermplasmListTree, changeBrowseGermplasmButtonBehavior, displayAdvanceList,saveGermplasmReviewError */
+/*globals displayGermplasmListTree, changeBrowseGermplasmButtonBehavior, saveGermplasmReviewError */
 /*globals $,showErrorMessage, showInvalidInputMessage, getDisplayedTreeName,ImportCrosses,listShouldNotBeEmptyError,getJquerySafeId,
 validateAllDates, saveListSuccessfullyMessage */
 /*globals listParentFolderRequired, listNameRequired */

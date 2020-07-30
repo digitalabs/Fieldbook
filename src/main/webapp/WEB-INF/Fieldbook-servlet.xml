@@ -129,10 +129,6 @@
 		<constructor-arg value="${upload.directory}" />
 	</bean>
 
-	<bean id="exportAdvanceListService"
-		class="com.efficio.fieldbook.web.common.service.impl.ExportAdvanceListServiceImpl" />
-
-
 	<bean id="importGermplasmfileService"
 		class="com.efficio.fieldbook.web.trial.service.impl.ImportGermplasmFileServiceImpl" />
 
@@ -372,11 +368,6 @@
 
 	<bean id="settingsService" class="com.efficio.fieldbook.service.SettingsServiceImpl" />
 
-	<bean id="listDataProjectSaver" factory-bean="managerFactory"
-		  factory-method="getListDataProjectSaver" scope="request">
-		<aop:scoped-proxy />
-	</bean>
-
 	<bean id="trialEnvironmentBuilder" factory-bean="managerFactory"
 		  factory-method="getTrialEnvironmentBuilder" scope="request">
 		<aop:scoped-proxy />
@@ -465,17 +456,6 @@
 
 	<bean id="settingsPresetService"
 		class="org.generationcp.commons.service.impl.SettingsPresetServiceImpl" />
-
-	<bean id="importInventoryService"
-		class="com.efficio.fieldbook.web.common.service.impl.ImportInventoryServiceImpl">
-		<aop:scoped-proxy />
-	</bean>
-
-	<bean id="inventoryImportParser"
-		class="com.efficio.fieldbook.web.util.parsing.InventoryImportParser"
-		scope="prototype">
-		<aop:scoped-proxy />
-	</bean>
 
 	<bean id="designImportParser"
 		class="com.efficio.fieldbook.web.util.parsing.DesignImportParser"

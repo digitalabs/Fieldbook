@@ -67,7 +67,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.text.ParseException;
-import java.util.List;
 import java.util.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -1108,7 +1107,6 @@ public class OpenTrialControllerTest {
 		final int germplasmListId = 111;
 		final int studyId = 1;
 
-		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).getListDataProject(germplasmListId);
 		Mockito.verify(this.studyGermplasmService, Mockito.times(0)).countStudyGermplasmByEntryTypeIds(studyId,
 			Arrays.asList(String.valueOf(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId())));
 
@@ -1131,7 +1129,6 @@ public class OpenTrialControllerTest {
 		final List<GermplasmList> listOfGermplasmList = new ArrayList<>();
 		listOfGermplasmList.add(germplasmList);
 
-		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).getListDataProject(germplasmListId);
 		Mockito.verify(this.studyGermplasmService, Mockito.times(0)).countStudyGermplasmByEntryTypeIds(studyId,
 			Arrays.asList(String.valueOf(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId())));
 

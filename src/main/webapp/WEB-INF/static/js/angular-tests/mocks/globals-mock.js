@@ -128,7 +128,6 @@ var variableDetailsHeader = /*[[#{variable.details.heading}]]*/ '',
 	saveListSuccessfullyMessage = /*[[#{germplasm.save.list.success}]]*/ '',
 	saveSampleListSuccessfullyMessage = /*[[#{sampleList.save.list.success}]]*/ '',
 	crossesWarningMessage = /*[[#{crosses.truncated}]]*/ '',
-	advanceListAlreadyGeneratedForTrialWarningMessage = /*[[#{germplasm.list.you.can.not.clear.or.modify.study.list.as.advance.list.is.already.generated}]]*/ '',
 	expDesignMsgs = {
 		0: /*[[#{experiment.design.invalid.generic.error}]]*/ '',
 		1: /*[[#{experiment.design.rows.per.replication.should.be.a.number}]]*/ '',

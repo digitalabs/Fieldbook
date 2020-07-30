@@ -31,7 +31,6 @@ import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
@@ -40,11 +39,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Matchers;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
@@ -57,7 +52,6 @@ public class ExportStudyGermplasmServiceTest {
 	private static final String LST = "LST";
 	private static final String SAMPLE_DESCRIPTION = "Sample description";
 	private static final String SAMPLE_LIST = "Sample List";
-	private static final String CATEG_CODE_VALUE = "CATEG CODE VAL";
 	private static final String DESIG_VALUE = "DESIG VALUE";
 	private static final String CROSS_VALUE = "Cross value";
 	private static final String SOURCE_VALUE = "Source value";
@@ -123,9 +117,6 @@ public class ExportStudyGermplasmServiceTest {
 	private StudyGermplasmService studyGermplasmService;
 
 	@Mock
-	ListDataProject listDataProject;
-
-	@Mock
 	GermplasmList germplasmList;
 
 	@Mock
@@ -174,7 +165,7 @@ public class ExportStudyGermplasmServiceTest {
 			.getGermplasm(1);
 		Mockito.doReturn(ExportStudyGermplasmServiceTest.CURRENT_USER_NAME).when(this.fieldbookMiddlewareService)
 			.getOwnerListName(ExportStudyGermplasmServiceTest.CURRENT_USER_ID);
-		Mockito.doReturn("1010").when(this.fieldbookMiddlewareService).getOwnerListName(Matchers.anyInt());
+		Mockito.doReturn("1010").when(this.fieldbookMiddlewareService).getOwnerListName(ArgumentMatchers.anyInt());
 
 		final StandardVariable checkStandardVariable = new StandardVariable();
 		checkStandardVariable.setEnumerations(Arrays.asList(new Enumeration(1, "T", "TEST ENTRY", 1)));
@@ -193,8 +184,8 @@ public class ExportStudyGermplasmServiceTest {
 		try {
 			this.exportStudyGermplasmListServiceImpl.exportAsCSVFile(1, this.testFileName, this.getVisibleColumnMap());
 			Mockito.verify(this.germplasmExportService, Mockito.times(1))
-				.generateCSVFile(Matchers.any(List.class), Matchers.any(List.class),
-					Matchers.anyString());
+				.generateCSVFile(ArgumentMatchers.any(List.class), ArgumentMatchers.any(List.class),
+					ArgumentMatchers.anyString());
 
 		} catch (final GermplasmListExporterException e) {
 			Assert.fail();
@@ -210,8 +201,8 @@ public class ExportStudyGermplasmServiceTest {
 		try {
 			this.exportStudyGermplasmListServiceImpl.exportAsCSVFile(1, this.testFileName, this.getVisibleColumnMap());
 			Mockito.verify(this.germplasmExportService, Mockito.times(1))
-				.generateCSVFile(Matchers.any(List.class), Matchers.any(List.class),
-					Matchers.anyString());
+				.generateCSVFile(ArgumentMatchers.any(List.class), ArgumentMatchers.any(List.class),
+					ArgumentMatchers.anyString());
 		} catch (final GermplasmListExporterException e) {
 			Assert.fail();
 		} catch (final IOException e) {
@@ -376,21 +367,6 @@ public class ExportStudyGermplasmServiceTest {
 
 	}
 
-	private ImportedGermplasm generateImportedGermplasm() {
-
-		final ImportedGermplasm importedGermplasm = new ImportedGermplasm();
-		importedGermplasm.setEntryTypeValue(ExportStudyGermplasmServiceTest.CHECK_VALUE);
-		importedGermplasm.setIndex(0);
-		importedGermplasm.setGid(ExportStudyGermplasmServiceTest.GID_VALUE);
-		importedGermplasm.setEntryCode(ExportStudyGermplasmServiceTest.ENTRY_CODE_VALUE);
-		importedGermplasm.setEntryNumber(Integer.valueOf(ExportStudyGermplasmServiceTest.ENTRY_NO_VALUE));
-		importedGermplasm.setSource(ExportStudyGermplasmServiceTest.SOURCE_VALUE);
-		importedGermplasm.setCross(ExportStudyGermplasmServiceTest.CROSS_VALUE);
-		importedGermplasm.setDesig(ExportStudyGermplasmServiceTest.DESIG_VALUE);
-
-		return importedGermplasm;
-
-	}
 
 	private Map<String, Boolean> getVisibleColumnMap() {
 		final Map<String, Boolean> visibleColumnMap = new LinkedHashMap<String, Boolean>();

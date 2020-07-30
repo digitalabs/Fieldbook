@@ -494,37 +494,6 @@ public class FieldbookServiceTest {
 	}
 
 	@Test
-	public void testSaveStudyImportCrossesIfStudyIdIsNull() throws MiddlewareQueryException {
-		final FieldbookServiceImpl fieldbookService = new FieldbookServiceImpl();
-		final FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
-		final List<Integer> crossesIds = new ArrayList<>();
-		crossesIds.add(1);
-		crossesIds.add(2);
-		fieldbookService.setFieldbookMiddlewareService(fieldbookMiddlewareService);
-		fieldbookService.saveStudyImportedCrosses(crossesIds, null);
-		for (final Integer crossesId : crossesIds) {
-			Mockito.verify(fieldbookMiddlewareService, Mockito.times(1)).updateGermlasmListInfoStudy(crossesId, 0);
-		}
-	}
-
-	@Test
-	public void testSaveStudyImportCrossesIfStudyIdIsNotNull() throws MiddlewareQueryException {
-		final FieldbookServiceImpl fieldbookService = new FieldbookServiceImpl();
-		final FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
-		final List<Integer> crossesIds = new ArrayList<>();
-		crossesIds.add(1);
-		crossesIds.add(2);
-		final int studyId = 5;
-
-		fieldbookService.setFieldbookMiddlewareService(fieldbookMiddlewareService);
-		fieldbookService.saveStudyImportedCrosses(crossesIds, studyId);
-		for (final Integer crossesId : crossesIds) {
-			Mockito.verify(fieldbookMiddlewareService, Mockito.times(1)).updateGermlasmListInfoStudy(crossesId,
-					studyId);
-		}
-	}
-
-	@Test
 	public void testSaveStudyColumnOrderingIfStudyIdIsNull() throws MiddlewareException {
 		final FieldbookServiceImpl fieldbookService = new FieldbookServiceImpl();
 		final FieldbookService api = Mockito.mock(FieldbookService.class);

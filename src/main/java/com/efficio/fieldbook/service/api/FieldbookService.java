@@ -201,8 +201,6 @@ public interface FieldbookService {
 	 */
 	void manageCheckVariables(UserSelection userSelection, ImportGermplasmListForm form);
 
-	void saveStudyImportedCrosses(List<Integer> crossesIds, Integer studyId);
-
 	void addConditionsToTrialObservationsIfNecessary(Workbook workbook);
 
 	void saveStudyColumnOrdering(Integer studyId, String columnOrderDelimited, Workbook workbook);

@@ -38,6 +38,18 @@
 				return `${BASE_URL}/programs/${programUUID}/studies/${studyId}/transactions/search`;
 			};
 
+			service.cancelStudyTransactions = function (searchRequest) {
+				console.log(searchRequest);
+				return $http.post(service.getCancelStudyTransactionsUrl(), searchRequest)
+					.then(successHandler, failureHandler);
+			}
+
+			service.getCancelStudyTransactionsUrl = function () {
+				let programUUID = studyContext.programId;
+				let studyId = studyContext.studyId;
+				return `${BASE_URL}/programs/${programUUID}/studies/${studyId}/transactions/cancellation`;
+			};
+
 			return service;
 		}
 	]);

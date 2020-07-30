@@ -5,10 +5,10 @@
 
 	const module = angular.module('manageTrialApp');
 
-	module.controller('InventoryTabCtrl', ['$scope', '$q', 'DTOptionsBuilder', 'DTColumnBuilder', 'InventoryService', '$compile', '$timeout',
+	module.controller('InventoryTabCtrl', ['$rootScope', '$scope', '$q', 'DTOptionsBuilder', 'DTColumnBuilder', 'InventoryService', '$compile', '$timeout',
 		'$uibModal', 'studyInstanceService',
 		function (
-			$scope, $q, DTOptionsBuilder, DTColumnBuilder, InventoryService, $compile, $timeout, $uibModal, studyInstanceService,
+			$rootScope, $scope, $q, DTOptionsBuilder, DTColumnBuilder, InventoryService, $compile, $timeout, $uibModal, studyInstanceService,
 		) {
 			$scope.nested = {};
 			$scope.nested.dtInstance = {};
@@ -500,6 +500,33 @@
 				return Object.keys(obj).length;
 			};
 
+			$scope.confirmTransactionsForCancellation = function () {
+				var numberOfItemsSelected = $scope.size($scope.selectedItems);
+				if (numberOfItemsSelected) {
+					// TODO check that all items selected have pending status. For now, always assume all are pending
+					var allItemsSelectedArePending = true;
+					if (allItemsSelectedArePending) {
+						var modalConfirmCancellation = $scope.openConfirmModal($.fieldbookMessages.confirmCancelPendingTransactionsMessage.replace('{0}', numberOfItemsSelected), 'Confirm','Cancel');
+						modalConfirmCancellation.result.then(function (shouldContinue) {
+							if (shouldContinue) {
+								InventoryService.cancelStudyTransactions({itemIds: Object.keys($scope.selectedItems)})
+									.then(function(){
+										showSuccessfulMessage('', $.fieldbookMessages.cancelPendingTransactionsSuccessful);
+										// Refresh and show the 'Inventory' tab
+										$rootScope.navigateToTab('inventory', {reload: true});
+									});
+							}
+						});
+					} else {
+						showErrorMessage('', $.fieldbookMessages.cancelTransactionsNotAllArePending);
+					}
+
+				} else {
+					showErrorMessage('', $.fieldbookMessages.inventoryTabNoTransactionsSelected);
+				}
+
+			}
+
 			function getPageItemIds() {
 				const dataTable = table();
 				if (!dataTable) {
@@ -509,6 +536,7 @@
 					return data.transactionId;
 				});
 			}
+
 
 			function table() {
 				return $scope.nested.dtInstance.DataTable;

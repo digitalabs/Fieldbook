@@ -175,14 +175,21 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					$scope.instanceInfo.numberOfInstances = $scope.temp.numberOfInstances;
 					$scope.addInstances($scope.temp.numberOfInstances - $scope.instanceInfo.instances.length);
 				} else if ($scope.temp.numberOfInstances < $scope.instanceInfo.instances.length) {
-					$scope.instanceInfo.numberOfInstances = $scope.temp.numberOfInstances;
-					var instanceIds = [];
 					// if new instance count is less than previous value, splice array
-					while ($scope.instanceInfo.instances.length > $scope.temp.numberOfInstances) {
-						var instance = $scope.instanceInfo.instances.pop();
-						instanceIds.push(instance.instanceId);
-					}
-					studyInstanceService.deleteStudyInstances(instanceIds);
+					var countDiff = $scope.instanceInfo.instances.length - $scope.temp.numberOfInstances;
+					var message = $ .environmentMessages.decreaseEnvironmentNoData.replace('{0}', countDiff).replace('{1}', (countDiff > 1 ? 's' : ''));
+					var modalConfirmDelete = $scope.openConfirmModal(message, 'Yes', 'No');
+					modalConfirmDelete.result.then(function (shouldContinue) {
+						$scope.instanceInfo.numberOfInstances = $scope.temp.numberOfInstances;
+						var instanceIds = [];
+						if (shouldContinue) {
+							while ($scope.instanceInfo.instances.length > $scope.temp.numberOfInstances) {
+								var instance = $scope.instanceInfo.instances.pop();
+								instanceIds.push(instance.instanceId);
+							}
+							studyInstanceService.deleteStudyInstances(instanceIds);
+						}
+					});
 				}
 			};
 
@@ -196,15 +203,17 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						return;
 
 						// Show confirmation message for overwriting measurements and/or fieldmap
-					} else if (studyInstance.hasMeasurements || studyInstance.hasFieldmap) {
-						var modalConfirmDelete = $scope.openConfirmModal($ .environmentMessages.environmentHasDataThatWillBeLost, 'Yes', 'No');
+					} else {
+						var message = $ .environmentMessages.deleteEnvironmentNoData;
+						if (studyInstance.hasMeasurements || studyInstance.hasFieldmap || studyInstance.hasExperimentalDesign) {
+							message = $ .environmentMessages.environmentHasDataThatWillBeLost;
+						}
+						var modalConfirmDelete = $scope.openConfirmModal(message, 'Yes', 'No');
 						modalConfirmDelete.result.then(function (shouldContinue) {
 							if (shouldContinue) {
 								$scope.continueInstanceDeletion(index, [instanceId]);
 							}
 						});
-					} else {
-						$scope.continueInstanceDeletion(index, [instanceId]);
 					}
 				}, function (errResponse) {
 					showErrorMessage($.fieldbookMessages.errorServerError, errResponse.errors[0].message);

@@ -1712,16 +1712,13 @@ function recreateLocationCombo(possibleFavorite) {
 	var selectedLocationBreedingFavorites = $('#harvestLocationIdBreedingFavorites').val();
 	var selectedLocationFavorite = $('#harvestLocationIdFavorite').val();
 
-	var inventoryPopup = false;
 	var advancePopup = false;
 	var fieldmapScreen = false;
 	var createGermplasm = false;
 	var hasCreateGermplasm = false;
 	var createGermplasmOpened = false;
 
-	if ($('#addLotsModal').length !== 0 && ($('#addLotsModal').data('open') === '1' ||  $('#addLotsModal').hasClass('in'))) {
-		inventoryPopup = true;
-	} else if ($('#advanceStudyModal').length !== 0 && ($('#advanceStudyModal').data('open') === '1' ||  $('#advanceStudyModal').hasClass('in'))) {
+	if ($('#advanceStudyModal').length !== 0 && ($('#advanceStudyModal').data('open') === '1' ||  $('#advanceStudyModal').hasClass('in'))) {
 		advancePopup = true;
 	} else if ($('#enterFieldDetailsForm').length !== 0) {
 		fieldmapScreen = true;
@@ -1738,7 +1735,7 @@ function recreateLocationCombo(possibleFavorite) {
 		hasCreateGermplasm = true;
 	}
 
-	if (inventoryPopup || advancePopup || fieldmapScreen || createGermplasm || hasCreateGermplasm || createGermplasmOpened) {
+	if (advancePopup || fieldmapScreen || createGermplasm || hasCreateGermplasm || createGermplasmOpened) {
 		$.ajax({
 			url: '/Fieldbook/locations/getLocations',
 			type: 'GET',
@@ -1751,34 +1748,6 @@ function recreateLocationCombo(possibleFavorite) {
 						refreshImportLocationCombo(data);
 						refreshLocationComboInSettings(data);
 						refreshGermplasLocationCombo(data);
-					} else if (inventoryPopup) {
-						recreateLocationComboAfterClose('inventoryLocationIdAll', data.allLocations); // All locations
-						recreateLocationComboAfterClose('inventoryLocationIdFavorite', data.favoriteLocations); // Favorites
-						recreateLocationComboAfterClose('inventoryLocationIdSeedStorage', data.allSeedStorageLocations);// All seed Storage
-						recreateLocationComboAfterClose('inventoryLocationIdFavoriteSeedStorage', data.allSeedStorageFavoritesLocations); // All Favorites
-						// seed
-						// Storage
-						showCorrectLocationInventoryCombo();
-						// set previously selected value of location
-						if ($('#showFavoriteLocationInventory').prop('checked')) {
-							if ($('#showSeedStorageLocationInventory').prop('checked')) {
-								setComboValues(generateGenericLocationSuggestions(data.allSeedStorageFavoritesLocations), $(
-									'#inventoryLocationIdFavoriteSeedStorage').val(), 'inventoryLocationIdFavoriteSeedStorage');
-							} else {
-								setComboValues(generateGenericLocationSuggestions(data.favoriteLocations),
-									$('#inventoryLocationIdFavorite').val(), 'inventoryLocationIdFavorite');
-							}
-						} else {
-							if ($('#showSeedStorageLocationInventory').prop('checked')) {
-								setComboValues(generateGenericLocationSuggestions(data.allSeedStorageLocations), $(
-									'#inventoryLocationIdSeedStorage').val(), 'inventoryLocationIdSeedStorage');
-							} else {
-								setComboValues(generateGenericLocationSuggestions(data.allLocations), $('#inventoryLocationIdAll').val(),
-									'inventoryLocationIdAll');
-
-							}
-						}
-						refreshLocationComboInSettings(data);
 					} else if (advancePopup === true
 						|| selectedLocationAll != null) {
 						// recreate the select2 combos to get updated list
@@ -1940,15 +1909,6 @@ function recreateLocationComboAfterClose(comboName, data) {
 		//reload the data retrieved
 		locationSuggestionsBreedingFavorites = data;
 		initializeHarvestLocationBreedingFavoritesSelect2(locationSuggestionsBreedingFavorites, locationSuggestionsBreedingFavoritesObj);
-	} else if (comboName == 'inventoryLocationIdAll') {
-		//clear all locations dropdown
-		initializePossibleValuesComboInventory(data, '#inventoryLocationIdAll', true, null);
-	} else if (comboName == 'inventoryLocationIdFavorite') {
-		initializePossibleValuesComboInventory(data, '#inventoryLocationIdFavorite', false, null);
-	} else if(comboName == 'inventoryLocationIdSeedStorage' ){
-		initializePossibleValuesComboInventory(data, '#inventoryLocationIdSeedStorage', false, null);
-	}else if(comboName == 'inventoryLocationIdFavoriteSeedStorage' ){
-		initializePossibleValuesComboInventory(data, '#inventoryLocationIdFavoriteSeedStorage', false, null);
 	} else {
 		//clear the favorite locations dropdown
 		locationSuggestionsFav = [];

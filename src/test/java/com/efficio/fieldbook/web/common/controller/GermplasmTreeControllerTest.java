@@ -1,26 +1,25 @@
 package com.efficio.fieldbook.web.common.controller;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.form.SaveListForm;
+import com.efficio.fieldbook.web.common.service.impl.CrossingServiceImpl;
+import com.efficio.fieldbook.web.naming.service.NamingConventionService;
+import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
+import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
 import org.apache.commons.lang.math.RandomUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.constant.ListTreeState;
 import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
+import org.generationcp.commons.pojo.AdvancingSource;
+import org.generationcp.commons.pojo.AdvancingSourceList;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.service.UserTreeStateService;
 import org.generationcp.commons.settings.AdditionalDetailsSetting;
@@ -31,20 +30,11 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
-import org.generationcp.middleware.manager.api.WorkbenchDataManager;
-import org.generationcp.middleware.pojos.Attribute;
-import org.generationcp.middleware.pojos.Germplasm;
-import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.pojos.GermplasmListData;
-import org.generationcp.middleware.pojos.ListDataProject;
-import org.generationcp.middleware.pojos.Name;
-import org.generationcp.middleware.pojos.UserDefinedField;
-import org.generationcp.middleware.pojos.germplasm.GermplasmParent;
+import org.generationcp.middleware.pojos.*;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.generationcp.middleware.service.api.study.germplasm.source.GermplasmStudySourceService;
@@ -52,30 +42,14 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.ArgumentMatchers;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.ui.Model;
 
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.controller.GermplasmTreeController.GermplasmListResult;
-import com.efficio.fieldbook.web.common.form.SaveListForm;
-import com.efficio.fieldbook.web.common.service.impl.CrossingServiceImpl;
-import com.efficio.fieldbook.web.naming.service.NamingConventionService;
-import org.generationcp.commons.pojo.AdvancingSource;
-import org.generationcp.commons.pojo.AdvancingSourceList;
-import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
-import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
-import org.generationcp.commons.constant.AppConstants;
-import com.google.common.collect.Lists;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -90,11 +64,8 @@ public class GermplasmTreeControllerTest {
 	private static final String LIST_IDENTIFIER = "LIST IDENTIFIER";
 	private static final String LIST_DESCRIPTION = "LIST DESCRIPTION";
 	private static final String LIST_DATE = "2015-01-30";
-	private static final String SAVED_CROSSES_GID1 = "-9999";
-	private static final String SAVED_CROSSES_GID2 = "-8888";
 	private static final String LIST_NAME = "LIST 1";
 	private static final Integer SAVED_GERMPLASM_ID = 1;
-	private static final int SAVED_LISTPROJECT_ID = 2;
 	private static final String ERROR_MESSAGE = "middeware exception message";
 	private static final Integer TEST_USER_ID = 101;
 	private static final String TEST_USER_NAME = "Test User";
@@ -104,12 +75,6 @@ public class GermplasmTreeControllerTest {
 	private static final int PLOT_FIELD_NO = 1154;
 	private static final int TRIAL_INSTANCE_FIELD_NO = 1155;
 	private static final int PLANT_NUMBER = 1156;
-
-	@Captor
-	private ArgumentCaptor<List<Pair<Germplasm, GermplasmListData>>> listDataItemsCaptor;
-
-	@Captor
-	private ArgumentCaptor<List<Integer>> idListCaptor;
 
 	@Mock
 	private ResourceBundleMessageSource messageSource;
@@ -134,18 +99,11 @@ public class GermplasmTreeControllerTest {
 
 	@Mock
 	private CrossingServiceImpl crossingService;
-
-	@Mock
-	private WorkbenchDataManager workbenchDataManager;
-
 	@Mock
 	private UserTreeStateService userTreeStateService;
 
 	@Mock
 	private NamingConventionService namingConventionService;
-
-	@Mock
-	private AbstractBaseFieldbookController abstractFieldbookController;
 
 	@Mock
 	private DatasetService datasetService;
@@ -166,7 +124,6 @@ public class GermplasmTreeControllerTest {
 		Mockito.doReturn(GermplasmTreeControllerTest.SAVED_GERMPLASM_ID).when(this.fieldbookMiddlewareService)
 				.saveGermplasmList(ArgumentMatchers.<List<Pair<Germplasm, GermplasmListData>>>any(), ArgumentMatchers.any(GermplasmList.class), ArgumentMatchers.eq(false));
 
-		Mockito.doReturn(this.createGermplasmListData()).when(this.germplasmListManager).getGermplasmListDataByListId(ArgumentMatchers.anyInt());
 		final Table<Integer, Integer, Integer> observationUnitIdsTable = HashBasedTable.create();
 		observationUnitIdsTable.put(1, 1, 100);
 		observationUnitIdsTable.put(1, 3, 101);
@@ -223,16 +180,6 @@ public class GermplasmTreeControllerTest {
 		Assert.assertEquals(GermplasmTreeControllerTest.TEST_USER_NAME, form.getListOwner());
 	}
 
-	@Test
-	public void testSaveParentList() {
-		final SaveListForm form = new SaveListForm();
-		this.controller.saveParentList(form, Mockito.mock(Model.class));
-		Assert.assertEquals("", form.getListName());
-		Assert.assertEquals(DateUtil.getCurrentDateInUIFormat(), form.getListDate());
-		Assert.assertEquals(AppConstants.PARENT_LIST_DESCRIPTION.getString(), form.getListDescription());
-		Assert.assertEquals(AppConstants.PARENT_LIST_TYPE.getString(), form.getListType());
-		Assert.assertEquals(GermplasmTreeControllerTest.TEST_USER_NAME, form.getListOwner());
-	}
 
 	@Test
 	public void saveCrossesList() {
@@ -262,7 +209,7 @@ public class GermplasmTreeControllerTest {
 	@Test
 	public void testSaveCrossesListPostSuccessful() {
 		final SaveListForm form = createSaveListForm();
-		form.setGermplasmListType(GermplasmListType.IMP_CROSS.name());
+		form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS);
 
 		final Map<String, Object> result = this.controller.savePost(form, Mockito.mock(Model.class));
 
@@ -270,6 +217,7 @@ public class GermplasmTreeControllerTest {
 		Assert.assertEquals("germplasmListId should be 1", 1, result.get("germplasmListId"));
 		Assert.assertEquals("Unique ID should be LIST IDENTIFIER", form.getListIdentifier(), result.get("uniqueId"));
 		Assert.assertEquals("List Name should be LIST 1", form.getListName(), result.get("listName"));
+		Mockito.verify(this.crossingService).applyCrossSetting(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any());
 		Mockito.verify(this.germplasmStudySourceService).saveGermplasmStudySources(ArgumentMatchers.anyList());
 	}
 
@@ -598,20 +546,6 @@ public class GermplasmTreeControllerTest {
 	}
 
 	@Test
-	public void testSaveParentListPostSuccessful() {
-		final SaveListForm form = createSaveListForm();
-		form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_PARENT);
-
-		final Map<String, Object> result = this.controller.savePost(form, Mockito.mock(Model.class));
-
-		Assert.assertEquals("isSuccess Value should be 1", 1, result.get("isSuccess"));
-		Assert.assertEquals("germplasmListId should be 1", 1, result.get("germplasmListId"));
-		Assert.assertEquals("Unique ID should be LIST IDENTIFIER", form.getListIdentifier(), result.get("uniqueId"));
-		Assert.assertEquals("List Name should be LIST 1", form.getListName(), result.get("listName"));
-		Mockito.verify(this.germplasmStudySourceService).saveGermplasmStudySources(ArgumentMatchers.anyList());
-	}
-
-	@Test
 	public void testCreateGermplasmListParentDoesntExist() {
 
 		final SaveListForm saveListForm = createSaveListForm();
@@ -826,146 +760,6 @@ public class GermplasmTreeControllerTest {
 
 	}
 
-	@Test
-	public void testSaveCrossesParentsAsList() {
-		final SaveListForm form = new SaveListForm();
-		final Random random = new Random();
-		final int sourceListId = random.nextInt();
-		form.setSourceListId(sourceListId);
-
-		final int numOfCrosses = 5;
-		final int numCrossWithUnknownParent = 2;
-		this.setupMocksForSavingCrossParents(sourceListId, numOfCrosses, numCrossWithUnknownParent);
-
-		final List<Pair<Germplasm, GermplasmListData>> items = new ArrayList<>();
-		final boolean isTrimed = random.nextBoolean();
-		final GermplasmList germplasmList = new GermplasmList(random.nextInt());
-		final GermplasmListResult result = this.controller.saveCrossesParentsAsList(form, items, isTrimed, germplasmList);
-		Assert.assertEquals(SAVED_GERMPLASM_ID, result.getGermplasmListId());
-		Assert.assertEquals(isTrimed, result.getIsTrimed());
-		Mockito.verify(this.germplasmDataManager).getSortedGermplasmWithPrefName(this.idListCaptor.capture());
-		// Verify that unknown parent was not queried from Middleware in retrieving germplasm info of items to add
-		Assert.assertFalse(idListCaptor.getValue().contains(0));
-		Mockito.verify(this.fieldbookMiddlewareService).saveGermplasmList(this.listDataItemsCaptor.capture(), ArgumentMatchers.eq(germplasmList), ArgumentMatchers.eq(false));
-		Assert.assertEquals((2*numOfCrosses) - numCrossWithUnknownParent, this.listDataItemsCaptor.getValue().size());
-	}
-
-	@Test
-	public void testSaveCrossesParentsAsListWithMultipleMaleParents() {
-		final SaveListForm form = new SaveListForm();
-		final Random random = new Random();
-		final int sourceListId = random.nextInt();
-		form.setSourceListId(sourceListId);
-
-		final int numOfCrosses = 5;
-		final int numOfCrossWithMultipleParents = 3;
-		final List<ListDataProject> list = this.setupMocksWithMultipleMaleParents(sourceListId, numOfCrosses, numOfCrossWithMultipleParents);
-		final List<Integer> femaleGids = new ArrayList<>();
-		final List<Integer> maleGids = new ArrayList<>();
-		final Set<Integer> parentGids = new HashSet<>();
-		for (final ListDataProject data : list) {
-			femaleGids.add(data.getFemaleGid());
-			for (final GermplasmParent parent : data.getMaleParents()) {
-				maleGids.add(parent.getGid());
-			}
-		}
-		parentGids.addAll(femaleGids);
-		parentGids.addAll(maleGids);
-		final List<Pair<Germplasm, GermplasmListData>> items = new ArrayList<>();
-		final boolean isTrimed = random.nextBoolean();
-		final GermplasmList germplasmList = new GermplasmList(random.nextInt());
-
-		final GermplasmListResult result = this.controller.saveCrossesParentsAsList(form, items, isTrimed, germplasmList);
-		Assert.assertEquals(SAVED_GERMPLASM_ID, result.getGermplasmListId());
-		Assert.assertEquals(isTrimed, result.getIsTrimed());
-		Mockito.verify(this.germplasmDataManager).getSortedGermplasmWithPrefName(this.idListCaptor.capture());
-		Assert.assertEquals(parentGids, new HashSet<>(this.idListCaptor.getValue()));
-		Mockito.verify(this.fieldbookMiddlewareService).saveGermplasmList(this.listDataItemsCaptor.capture(), ArgumentMatchers.eq(germplasmList), ArgumentMatchers.eq(false));
-		Assert.assertEquals(2*numOfCrosses + numOfCrossWithMultipleParents, this.listDataItemsCaptor.getValue().size());
-	}
-
-	private void setupMocksForSavingCrossParents(final int sourceListId, final int numOfCrosses, final int numCrossWithUnknownParent) {
-		final Random random = new Random();
-		final List<ListDataProject> snapshotListData = new ArrayList<>();
-		final List<Germplasm> germplasmFromDB = new ArrayList<>();
-		final List<Integer> parentGids = new ArrayList<>();
-
-		for (int i = 1; i<=numOfCrosses; i++) {
-			final ListDataProject listData = new ListDataProject();
-			final Integer femaleGid = random.nextInt();
-			// For the first and 2nd crosses, set the male parent as unknown (GID = 0)
-			final int maleGid = (i <= numCrossWithUnknownParent) ? 0 : random.nextInt();
-			listData.addMaleParent(new GermplasmParent(maleGid, "", ""));
-			snapshotListData.add(listData);
-			parentGids.add(femaleGid);
-			parentGids.add(maleGid);
-
-			final Germplasm femaleGermplasm = new Germplasm();
-			femaleGermplasm.setGid(femaleGid);
-			final Name preferredName = new Name();
-			preferredName.setNval(RandomStringUtils.randomAlphabetic(20));
-			femaleGermplasm.setPreferredName(preferredName);
-			germplasmFromDB.add(femaleGermplasm);
-			listData.setFemaleParent(new GermplasmParent(femaleGid, preferredName.getNval(), ""));
-
-			if (i > numCrossWithUnknownParent) {
-				final Germplasm maleGermplasm = new Germplasm();
-				maleGermplasm.setGid(maleGid);
-				final Name name = new Name();
-				name.setNval(RandomStringUtils.randomAlphabetic(20));
-				maleGermplasm.setPreferredName(name);
-				germplasmFromDB.add(maleGermplasm);
-			}
-		}
-		Mockito.doReturn(snapshotListData).when(this.germplasmListManager).retrieveSnapshotListDataWithParents(sourceListId);
-		// Check that one of the male parent is unknown, just to verify that it's not added later on
-		Assert.assertTrue(parentGids.contains(0));
-		Mockito.doReturn(germplasmFromDB).when(this.germplasmDataManager).getSortedGermplasmWithPrefName(ArgumentMatchers.<Integer>anyList());
-	}
-
-	private List<ListDataProject> setupMocksWithMultipleMaleParents(final int sourceListId, final int numOfCrosses, final int numOfCrossWithMultipleParents) {
-		final Random random = new Random();
-		final List<ListDataProject> snapshotListData = new ArrayList<>();
-		final List<Germplasm> germplasmFromDB = new ArrayList<>();
-
-		for (int i = 1; i<=numOfCrosses; i++) {
-			final ListDataProject listData = new ListDataProject();
-			final Integer femaleGid = random.nextInt();
-
-			final int maleGid = random.nextInt();
-			snapshotListData.add(listData);
-
-			final Germplasm femaleGermplasm = new Germplasm();
-			femaleGermplasm.setGid(femaleGid);
-			final Name preferredName = new Name();
-			preferredName.setNval(RandomStringUtils.randomAlphabetic(20));
-			femaleGermplasm.setPreferredName(preferredName);
-			germplasmFromDB.add(femaleGermplasm);
-			listData.setFemaleParent(new GermplasmParent(femaleGid, preferredName.getNval(), ""));
-
-			final Germplasm maleGermplasm = new Germplasm();
-			maleGermplasm.setGid(maleGid);
-			final Name name = new Name();
-			name.setNval(RandomStringUtils.randomAlphabetic(20));
-			maleGermplasm.setPreferredName(name);
-			germplasmFromDB.add(maleGermplasm);
-			listData.addMaleParent(new GermplasmParent(maleGid, name.getNval(), ""));
-
-			if (i<= numOfCrossWithMultipleParents) {
-				final int maleGid2 = random.nextInt();
-				final Germplasm maleGermplasm2 = new Germplasm();
-				maleGermplasm2.setGid(maleGid2);
-				final Name name2 = new Name();
-				name2.setNval(RandomStringUtils.randomAlphabetic(20));
-				maleGermplasm2.setPreferredName(name2);
-				germplasmFromDB.add(maleGermplasm2);
-				listData.addMaleParent(new GermplasmParent(maleGid2, name2.getNval(), ""));
-			}
-		}
-		Mockito.doReturn(snapshotListData).when(this.germplasmListManager).retrieveSnapshotListDataWithParents(sourceListId);
-		Mockito.doReturn(germplasmFromDB).when(this.germplasmDataManager).getSortedGermplasmWithPrefName(ArgumentMatchers.<Integer>anyList());
-		return snapshotListData;
-	}
 
 	public SaveListForm createSaveListForm() {
 		final SaveListForm form = new SaveListForm();
@@ -1021,27 +815,6 @@ public class GermplasmTreeControllerTest {
 		importedCrossesList.setImportedGermplasms(importedCrosses);
 
 		return importedCrossesList;
-	}
-
-	private List<GermplasmListData> createGermplasmListData() {
-		final List<GermplasmListData> listData = new ArrayList<>();
-
-		final GermplasmListData data1 = new GermplasmListData();
-		data1.setGid(Integer.valueOf(GermplasmTreeControllerTest.SAVED_CROSSES_GID1));
-		data1.setDesignation("DESIG 1");
-		data1.setEntryId(1);
-		data1.setGroupName("GROUP 1");
-		data1.setSeedSource("SEED 1");
-		listData.add(data1);
-		final GermplasmListData data2 = new GermplasmListData();
-		data2.setGid(Integer.valueOf(GermplasmTreeControllerTest.SAVED_CROSSES_GID2));
-		data2.setDesignation("DESIG 2");
-		data2.setEntryId(2);
-		data2.setGroupName("GROUP 2");
-		data2.setSeedSource("SEED 2");
-		listData.add(data2);
-
-		return listData;
 	}
 
 	private Workbook createWorkBook() {

@@ -14,7 +14,6 @@ package com.efficio.fieldbook.web.trial.controller;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.TableHeader;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.efficio.fieldbook.web.exception.FieldbookRequestValidationException;
 import com.efficio.fieldbook.web.study.germplasm.StudyGermplasmTransformer;
 import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
@@ -232,7 +231,6 @@ public class ImportGermplasmListController extends SettingsController {
 		final int studyId = this.dataImportService.saveDataset(this.userSelection.getWorkbook(), true,
 				isDeleteObservations, this.getCurrentProject().getUniqueID(),
 				this.getCurrentProject().getCropType());
-		this.fieldbookService.saveStudyImportedCrosses(this.userSelection.getImportedCrossesId(), studyId);
 
 		// for saving the stocks
 		this.saveStudyGermplasm(studyId);

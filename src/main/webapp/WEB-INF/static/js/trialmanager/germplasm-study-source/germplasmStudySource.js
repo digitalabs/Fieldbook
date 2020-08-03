@@ -92,7 +92,7 @@
 						filter: {
 							transform(request) {
 								if (this.value) {
-									request.filter.gid = this.value;
+									request.filter.gidList = this.value.split(',');
 									this.isFiltered = true;
 								}
 							}
@@ -105,7 +105,7 @@
 						filter: {
 							transform(request) {
 								if (this.value) {
-									request.filter.groupId = this.value;
+									request.filter.groupIdList = this.value.split(',');
 									this.isFiltered = true;
 								}
 							}
@@ -187,7 +187,7 @@
 						filter: {
 							transform(request) {
 								if (this.value) {
-									request.filter.trialInstance = this.value;
+									request.filter.trialInstanceList = this.value.split(',');
 									this.isFiltered = true;
 								}
 							}
@@ -198,7 +198,7 @@
 						filter: {
 							transform(request) {
 								if (this.value) {
-									request.filter.plotNumber = this.value;
+									request.filter.plotNumberList = this.value.split(',');
 									this.isFiltered = true;
 								}
 							}
@@ -209,7 +209,7 @@
 						filter: {
 							transform(request) {
 								if (this.value) {
-									request.filter.replicationNumber = this.value;
+									request.filter.replicationNumberList = this.value.split(',');
 									this.isFiltered = true;
 								}
 							}
@@ -220,7 +220,7 @@
 						filter: {
 							transform(request) {
 								if (this.value) {
-									request.filter.germplasmDate = this.value;
+									request.filter.germplasmDateList = this.value.split(',');
 									this.isFiltered = true;
 								}
 							}

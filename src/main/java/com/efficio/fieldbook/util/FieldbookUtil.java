@@ -1,15 +1,14 @@
 package com.efficio.fieldbook.util;
 
-import org.generationcp.commons.constant.AppConstants;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.util.FileUtils;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.pojos.ListDataProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
@@ -29,7 +28,7 @@ import java.util.StringTokenizer;
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
  */
 public class FieldbookUtil {
-	public static final String UTF_8 = "UTF-8";
+
 	public static final String ISO_8859_1 = "iso-8859-1";
 	private static final Logger LOG = LoggerFactory.getLogger(FieldbookUtil.class);
 	public static final String DESCRIPTION = "Description";
@@ -113,13 +112,6 @@ public class FieldbookUtil {
 		return false;
 	}
 
-	public static void copyDupeNotesToListDataProject(final List<ListDataProject> dataProjectList, final List<ImportedCross> importedCrosses) {
-		if (dataProjectList != null && importedCrosses != null && dataProjectList.size() == importedCrosses.size()) {
-			for (int i = 0; i < dataProjectList.size(); i++) {
-				dataProjectList.get(i).setDuplicate(importedCrosses.get(i).getDuplicate());
-			}
-		}
-	}
 
 	public static List<Integer> getFilterForMeansAndStatisticalVars() {
 

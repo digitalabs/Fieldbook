@@ -128,7 +128,6 @@ var variableDetailsHeader = /*[[#{variable.details.heading}]]*/ '',
 	saveListSuccessfullyMessage = /*[[#{germplasm.save.list.success}]]*/ '',
 	saveSampleListSuccessfullyMessage = /*[[#{sampleList.save.list.success}]]*/ '',
 	crossesWarningMessage = /*[[#{crosses.truncated}]]*/ '',
-	advanceListAlreadyGeneratedForTrialWarningMessage = /*[[#{germplasm.list.you.can.not.clear.or.modify.study.list.as.advance.list.is.already.generated}]]*/ '',
 	expDesignMsgs = {
 		0: /*[[#{experiment.design.invalid.generic.error}]]*/ '',
 		1: /*[[#{experiment.design.rows.per.replication.should.be.a.number}]]*/ '',
@@ -189,6 +188,9 @@ var variableDetailsHeader = /*[[#{variable.details.heading}]]*/ '',
 	stockIdGenerationPrefixError = /*[[#{stock.generate.id.breeder.identifier.error.numbers.found}]]*/ '',
 	addEnvironmentsImportDesignWarning = /*[[#{study.add.environments.import.design.warning}]]*/ '',
 	addEnvironmentsImportDesignMessage = /*[[#{study.add.environments.import.design.message}]]*/ '';
+$.environmentMessages = {};
+$.environmentMessages.environmentHasDataThatWillBeLost = /*[[#{environment.has.plot.data}]]*/ '';
+$.environmentMessages.deleteEnvironmentNoData = /*[[#{environment.delete.no.plot.data}]]*/ '';
 $.experimentDesignMessages = {};
 $.experimentDesignMessages.experimentDesignGeneratedSuccessfully = /*[[#{experiment.design.generated.successfully}]]*/ '';
 $.fieldbookMessages = {};

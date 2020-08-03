@@ -5,7 +5,12 @@
 
 	germplasmStudySourceModule.controller('GermplasmStudySourceCtrl',
 		['$rootScope', '$scope', '$q', '$compile', '$uibModal', 'studyContext', 'DTOptionsBuilder', 'germplasmStudySourceService', 'lotService',
-			function ($rootScope, $scope, $q, $compile, $uibModal, studyContext, DTOptionsBuilder, germplasmStudySourceService, lotService) {
+			'HasAnyAuthorityService', 'PERMISSIONS',
+			function ($rootScope, $scope, $q, $compile, $uibModal, studyContext, DTOptionsBuilder, germplasmStudySourceService, lotService,
+			HasAnyAuthorityService, PERMISSIONS) {
+
+				$scope.hasAnyAuthority = HasAnyAuthorityService.hasAnyAuthority;
+				$scope.PERMISSIONS = PERMISSIONS;
 
 				$scope.nested = {};
 				$scope.nested.dtInstance = null;

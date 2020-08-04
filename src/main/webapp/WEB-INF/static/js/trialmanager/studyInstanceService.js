@@ -33,13 +33,13 @@
 			return request.then(successHandler, failureHandler);
 		};
 
-		studyInstanceService.addInstanceData = function (instanceData) {
-			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/instances/' + instanceData.instanceId + '/instance-data', instanceData);
+		studyInstanceService.addInstanceObservation = function (observationData) {
+			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/instances/' + observationData.instanceId + '/observation', observationData);
 			return request.then(successHandler, failureHandler);
 		};
 
-		studyInstanceService.updateInstanceData = function (instanceData) {
-			var request = $http.patch(BASE_STUDY_URL + studyContext.studyId + '/instances/' + instanceData.instanceId + '/instance-data/' + instanceData.instanceDataId, instanceData);
+		studyInstanceService.updateInstanceObservation = function (observationData) {
+			var request = $http.patch(BASE_STUDY_URL + studyContext.studyId + '/instances/' + observationData.instanceId + '/observation/' + observationData.observationId, observationData);
 			return request.then(successHandler, failureHandler);
 		};
 

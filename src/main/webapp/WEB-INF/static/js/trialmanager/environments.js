@@ -295,7 +295,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
 						$scope.settings.managementDetails),
 					trialDetailValues: TrialManagerDataService.constructDataStructureFromDetails($scope.settings.trialConditionDetails),
-					managementDetailDataIdMap: {8190: studyInstance.locationInstanceDataId},
+					managementDetailDataIdMap: {8190: studyInstance.locationObservationId},
 					trialConditionDataIdMap: {},
 					experimentId : studyInstance.experimentId
 				};
@@ -479,16 +479,16 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					var instanceId = instance.instanceId;
 					var variableSettings;
 					var valueContainer;
-					var instanceDataIdMap;
+					var observationIdMap;
 
 					if (isManagementDetailVariable) {
 						variableSettings = $scope.settings.managementDetails;
 						valueContainer = instance.managementDetailValues;
-						instanceDataIdMap = instance.managementDetailDataIdMap;
+						observationIdMap = instance.managementDetailDataIdMap;
 					} else {
 						variableSettings = $scope.settings.trialConditionDetails;
 						valueContainer = instance.trialDetailValues;
-						instanceDataIdMap = instance.trialConditionDataIdMap;
+						observationIdMap = instance.trialConditionDataIdMap;
 					}
 
 					var $inlineScope = $scope.$new(true);
@@ -529,25 +529,25 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 							return;
 						}
 
-						if (!instanceDataIdMap[variableId]) {
-							studyInstanceService.addInstanceData({
+						if (!observationIdMap[variableId]) {
+							studyInstanceService.addInstanceObservation({
 								instanceId: instanceId,
 								variableId: variableId,
 								value: newValue
-							}).then(function (instanceData) {
+							}).then(function (observationData) {
 
-								// Add the created instanceDataId from the server to the map
+								// Add the created observationId from the server to the map
 								// so that it can be used to update the instance data later.
-								instanceDataIdMap[variableId] = instanceData.instanceDataId;
+								observationIdMap[variableId] = observationData.observationId;
 								refreshDisplay();
 							});
 						} else {
-							studyInstanceService.updateInstanceData({
+							studyInstanceService.updateInstanceObservation({
 								instanceId: instanceId,
 								variableId: variableId,
-								instanceDataId: instanceDataIdMap[variableId],
+								observationId: observationIdMap[variableId],
 								value: newValue
-							}).then(function (instanceData) {
+							}).then(function (observationData) {
 								// Restore handler
 								refreshDisplay();
 							});

@@ -16,13 +16,19 @@
 								data-dismiss="modal" aria-hidden="true"></button>
 						</div>
 					</div>
-
+					<div class="row form-group add-top-padding fbk-hide" id="showOnlyRecordsWithAlertsDiv">
+						<div class="col-xs-11 col-md-11">
+							<input type="checkbox" id="showOnlyRecordsWithAlerts"/>
+							<label th:text="#{crossing.show.only.records.with.alerts}"></label>
+						</div>
+					</div>
 					<div class="row form-group add_top_padding">
 						<div class="col-xs-12 col-md-12 cross-preview-section">
 							<table id="preview-crosses-table" width="100%"
 								class="table-curved table-condensed">
 								<thead>
 									<tr>
+										<th nowrap="nowrap" style="min-width: 30px !important;" class="factors" th:text="#{open.crosses.factors.alerts}">ALERTS</th>
 										<th nowrap="nowrap" style="min-width: 30px !important;" class="factors" th:text="#{open.crosses.factors.entry}">ENTRY</th>
 										<th nowrap="nowrap" style="min-width: 110px !important;" class="factors" th:text="#{open.crosses.factors.parentage}">PARENTAGE</th>
 										<th nowrap="nowrap" style="min-width: 173px !important;" class="factors" th:text="#{open.crosses.factors.duplicate}">DUPLICATES</th>
@@ -34,6 +40,7 @@
 										<th nowrap="nowrap" style="min-width: 140px !important;" class="factors" th:text="#{open.crosses.factors.source}">SOURCE</th>
 										<th nowrap="nowrap" style="min-width: 57px !important;" class="factors" th:text="#{open.crosses.factors.fgid}">FEMALE GID</th>
 										<th nowrap="nowrap" style="min-width: 57px !important;" class="factors" th:text="#{open.crosses.factors.mgid}">MALE GID</th>
+										<th nowrap="nowrap" style="min-width: 57px !important;" class="factors" th:text="#{open.crosses.factors.breedingmethodnumber}">BREEDING METHOD NUMBER</th>
 									</tr>
 								</thead>
 							</table>
@@ -50,11 +57,12 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<table id="preview-crosses-table-template" width="100%"
 		class="table-curved table-condensed fbk-hide">
 		<thead>
 			<tr>
+				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.alerts}">ALERTS</th>
 				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.entry}">ENTRY</th>
 				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.parentage}">PARENTAGE</th>
 				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.duplicate}">DUPLICATES</th>
@@ -66,10 +74,11 @@
 				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.source}">SOURCE</th>
 				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.fgid}">FEMALE GID</th>
 				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.mgid}">MALE GID</th>
+				<th nowrap="nowrap" class="factors" th:text="#{open.crosses.factors.breedingmethodnumber}">BREEDING METHOD NUMBER</th>
 			</tr>
 		</thead>
 	</table>
-	
+
 	<div class="modal fade" id="duplicate-crosses-modal" role="dialog"
 		aria-labelledby="duplicate-crosses-modal" aria-hidden="true">
 		<div class="modal-dialog modal-small">

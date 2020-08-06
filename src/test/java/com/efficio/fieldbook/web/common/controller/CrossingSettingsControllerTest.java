@@ -501,13 +501,13 @@ public class CrossingSettingsControllerTest {
 		final Map<String, Object> data = testMasterList.get(0);
 		Assert.assertEquals("The master list should contain 1 record: ", 1, testMasterList.size());
 		Assert.assertEquals(CrossingSettingsControllerTest.ENTRY_ID, data.get(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX)));
-		Assert.assertEquals(CrossingSettingsControllerTest.FGID, data.get(tableHeaderList.get(CrossesListUtil.FGID_INDEX)));
+		Assert.assertEquals(CrossingSettingsControllerTest.FGID.toString(), data.get(tableHeaderList.get(CrossesListUtil.FGID_INDEX)));
 		Assert.assertEquals(CrossingSettingsControllerTest.TEST_FEMALE_PARENT + "/" + CrossingSettingsControllerTest.TEST_MALE_PARENT1, data.get(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX)));
 		Assert.assertEquals(CrossingSettingsControllerTest.TEST_SEED_SOURCE, data.get(tableHeaderList.get(CrossesListUtil.SOURCE_INDEX)));
 		Assert.assertEquals(Arrays.asList(CrossingSettingsControllerTest.MGID1), data.get(tableHeaderList.get(CrossesListUtil.MGID_INDEX)));
 		Assert.assertEquals(CrossingSettingsControllerTest.TEST_FEMALE_PARENT, data.get(ColumnLabels.FEMALE_PARENT.name()));
 		Assert.assertEquals(Arrays.asList(CrossingSettingsControllerTest.TEST_MALE_PARENT1), data.get(ColumnLabels.MALE_PARENT.name()));
-		Assert.assertEquals("", data.get(tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX)));
+		Assert.assertNull(data.get(tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX)));
 		Assert.assertEquals(CrossingSettingsControllerTest.FEMALE_PEDIGREE, data.get(tableHeaderList.get(CrossesListUtil.FEMALE_PEDIGREE)));
 		Assert.assertEquals(CrossingSettingsControllerTest.MALE_PEDIGREE1, data.get(tableHeaderList.get(CrossesListUtil.MALE_PEDIGREE)));
 	}

@@ -4,8 +4,13 @@
 	var germplasmStudySourceModule = angular.module('germplasm-study-source', []);
 
 	germplasmStudySourceModule.controller('GermplasmStudySourceCtrl',
-		['$scope', '$q', '$compile', 'studyContext', 'DTOptionsBuilder', 'germplasmStudySourceService',
-			function ($scope, $q, $compile, studyContext, DTOptionsBuilder, germplasmStudySourceService) {
+		['$rootScope', '$scope', '$q', '$compile', '$uibModal', 'studyContext', 'DTOptionsBuilder', 'germplasmStudySourceService', 'lotService',
+			'HasAnyAuthorityService', 'PERMISSIONS',
+			function ($rootScope, $scope, $q, $compile, $uibModal, studyContext, DTOptionsBuilder, germplasmStudySourceService, lotService,
+			HasAnyAuthorityService, PERMISSIONS) {
+
+				$scope.hasAnyAuthority = HasAnyAuthorityService.hasAnyAuthority;
+				$scope.PERMISSIONS = PERMISSIONS;
 
 				$scope.nested = {};
 				$scope.nested.dtInstance = null;
@@ -274,7 +279,7 @@
 						// Checkbox
 						targets: 0,
 						createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
-							$(td).append($compile('<span><input type="checkbox" ng-checked="isSelected(' + rowData.germplasmStudySourceId + ')" ng-click="toggleSelect(' + rowData.germplasmStudySourceId + ')"></span>')($scope));
+							$(td).append($compile('<span><input type="checkbox" ng-checked="isSelected(' + rowData.gid + ')" ng-click="toggleSelect(' + rowData.gid + ')"></span>')($scope));
 							$scope.$apply();
 						}
 					},
@@ -360,13 +365,36 @@
 					return Object.keys(obj).length;
 				};
 
+				$scope.openLotCreationModal = function () {
+					if ($scope.size($scope.selectedItems)) {
+						lotService.saveSearchRequest({gids: Object.keys($scope.selectedItems)})
+							.then((searchDto) => {
+								$uibModal.open({
+									templateUrl: '/Fieldbook/static/js/trialmanager/inventory/lot-creation/lot-creation-modal.html',
+									controller: 'LotCreationCtrl',
+									resolve: {
+										searchResultDbId: function () {
+											return searchDto.result.searchResultDbId;
+										}
+									}
+								}).result.finally(function () {
+									// Refresh and show the 'Crosses and Selections' tab
+									$rootScope.navigateToTab('germplasmStudySource', {reload: true});
+								});
+							});
+					} else {
+						showErrorMessage('', $.fieldbookMessages.crossesAndSelectionsNoGermplasmError);
+					}
+
+				}
+
 				function getPageItemIds() {
 					const dataTable = table();
 					if (!dataTable) {
 						return [];
 					}
 					return dataTable.data().toArray().map((data) => {
-						return data.germplasmStudySourceId;
+						return data.gid;
 					});
 				}
 

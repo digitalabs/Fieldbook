@@ -24,12 +24,14 @@ import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.PresetService;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
+import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.Person;
@@ -66,6 +68,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -386,9 +389,8 @@ public class CrossingSettingsController extends SettingsController {
 
 	/** This is used for the Review Imported Cross (no temporary list created yet as in Design Crosses **/
 	@ResponseBody
-	@RequestMapping(value = "/getImportedCrossesList", method = RequestMethod.GET)
-	public Map<String, Object> getImportedCrossesList() {
-
+	@RequestMapping(value = "/getImportedCrossesList/{checkExistingCrosses}", method = RequestMethod.GET)
+	public Map<String, Object> getImportedCrossesList(@PathVariable final boolean checkExistingCrosses) {
 		final Map<String, Object> responseMap = new HashMap<>();
 		final ImportedCrossesList importedCrossesList = this.studySelection.getImportedCrossesList();
 
@@ -410,7 +412,31 @@ public class CrossingSettingsController extends SettingsController {
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
 
 		for (final ImportedCross cross : importedCrossesList.getImportedCrosses()) {
-			masterList.add(this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, cross));
+			masterList.add(this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, cross, checkExistingCrosses));
+		}
+
+		responseMap.put(CrossesListUtil.TABLE_HEADER_LIST, tableHeaderList);
+		responseMap.put(CrossesListUtil.LIST_DATA_TABLE, masterList);
+		responseMap.put(CrossingSettingsController.IS_SUCCESS, 1);
+
+		responseMap.put(CrossesListUtil.IS_IMPORT, true);
+		return responseMap;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/getExistingCrossesList/{femaleGID}/{maleGIDs}/{breedingMethodId}", method = RequestMethod.GET)
+	public Map<String, Object> getExistingCrossesList(@PathVariable final String femaleGID, @PathVariable final List<Integer> maleGIDs,
+		@PathVariable final Integer breedingMethodId) {
+		final Map<String, Object> responseMap = new HashMap<>();
+
+		final List<Map<String, Object>> masterList = new ArrayList<>();
+		final List<String> tableHeaderList = Arrays.asList(ColumnLabels.GID.getName(), ColumnLabels.DESIGNATION.getName());
+		final List<Germplasm> existingCrosses = this.germplasmDataManager.getExistingCrosses(femaleGID, breedingMethodId, maleGIDs);
+		for(final Germplasm existingCross: existingCrosses) {
+			final Map<String, Object> dataMap = new HashMap<>();
+			dataMap.put(ColumnLabels.GID.getName(), existingCross.getGid());
+			dataMap.put(ColumnLabels.DESIGNATION.getName(), existingCross.getGermplasmPeferredName());
+			masterList.add(dataMap);
 		}
 
 		responseMap.put(CrossesListUtil.TABLE_HEADER_LIST, tableHeaderList);
@@ -480,9 +506,9 @@ public class CrossingSettingsController extends SettingsController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/getImportedCrossesList/{createdCrossesListId}", method = RequestMethod.GET)
-	public Map<String, Object> getImportedCrossesList(@PathVariable final String createdCrossesListId) {
-
+	@RequestMapping(value = "/getImportedCrossesList/{checkExistingCrosses}/{createdCrossesListId}", method = RequestMethod.GET)
+	public Map<String, Object> getImportedCrossesList(@PathVariable final boolean checkExistingCrosses,
+		@PathVariable final String createdCrossesListId) {
 		final Map<String, Object> responseMap = new HashMap<>();
 		final List<Map<String, Object>> masterList = new ArrayList<>();
 		final List<ImportedCross> importedCrosses = new ArrayList<>();
@@ -495,7 +521,6 @@ public class CrossingSettingsController extends SettingsController {
 		final String studyName = this.studySelection.getWorkbook().getStudyDetails().getStudyName();
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
 		for (final GermplasmListData listData : germplasmListDataList) {
-			masterList.add(this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, listData));
 			final ImportedCross importedCross = this.crossesListUtil.convertGermplasmListDataToImportedCrosses(listData, studyName, studyGermplasmList);
 			if (importedCross.getGid() == null) {
 				responseMap.put(CrossingSettingsController.IS_SUCCESS, 0);
@@ -517,6 +542,9 @@ public class CrossingSettingsController extends SettingsController {
 		this.userSelection.setImportedCrossesList(importedCrossesList);
 
 		this.crossingService.processCrossBreedingMethod(this.studySelection.getCrossSettings(), importedCrossesList);
+		for (final ImportedCross cross : importedCrossesList.getImportedCrosses()) {
+			masterList.add(this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, cross, checkExistingCrosses));
+		}
 
 		final UserDefinedField createdCrossUserDefinedField = this.germplasmDataManager
 				.getUserDefinedFieldByTableTypeAndCode(UDTableType.LISTNMS_LISTTYPE.getTable(), UDTableType.LISTNMS_LISTTYPE.getType(),

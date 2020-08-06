@@ -493,7 +493,7 @@ public class CrossingSettingsControllerTest {
 				.getUserDefinedFieldByTableTypeAndCode(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), ArgumentMatchers.anyString()))
 				.thenReturn(userDefinedField);
 
-		final Map<String, Object> testResponseMap = this.crossingSettingsController.getImportedCrossesList("80");
+		final Map<String, Object> testResponseMap = this.crossingSettingsController.getImportedCrossesList(false, "80");
 		final List<String> tableHeaderList = (List<String>) testResponseMap.get(CrossesListUtil.TABLE_HEADER_LIST);
 		final List<Map<String, Object>> testMasterList = (List<Map<String, Object>>) testResponseMap.get(CrossesListUtil.LIST_DATA_TABLE);
 
@@ -514,7 +514,7 @@ public class CrossingSettingsControllerTest {
 
 	@Test
 	public void testGetImportedCrossesListEmpty() throws Exception {
-		final Map<String, Object> testResponseMap = this.crossingSettingsController.getImportedCrossesList();
+		final Map<String, Object> testResponseMap = this.crossingSettingsController.getImportedCrossesList(false);
 		Assert.assertTrue("The response map should be empty", testResponseMap.isEmpty());
 	}
 
@@ -528,7 +528,7 @@ public class CrossingSettingsControllerTest {
 				.getUserDefinedFieldByTableTypeAndCode(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), ArgumentMatchers.anyString()))
 				.thenReturn(userDefinedField);
 
-		final Map<String, Object> testResponseMap = this.crossingSettingsController.getImportedCrossesList();
+		final Map<String, Object> testResponseMap = this.crossingSettingsController.getImportedCrossesList(false);
 		Assert.assertFalse("The response map should not be empty", testResponseMap.isEmpty());
 
 		final List<String> tableHeaderList = (List<String>) testResponseMap.get(CrossesListUtil.TABLE_HEADER_LIST);
@@ -547,7 +547,7 @@ public class CrossingSettingsControllerTest {
 		Assert.assertEquals(CrossingSettingsControllerTest.FEMALE_PEDIGREE, data.get(tableHeaderList.get(CrossesListUtil.FEMALE_PEDIGREE)));
 		Assert.assertEquals(CrossingSettingsControllerTest.MALE_PEDIGREE1, data.get(tableHeaderList.get(CrossesListUtil.MALE_PEDIGREE)));
 	}
-	
+
 	@Test
 	public void testSetParentsInformation() {
 		final List<ImportedCross> crosses = this.createImportedCrossesList(true).getImportedCrosses();
@@ -563,7 +563,7 @@ public class CrossingSettingsControllerTest {
 		parentsMap.put(CrossingSettingsControllerTest.MGID2, new String[] {newMalePedigree2, newMaleCross2});
 		Mockito.when(this.germplasmDataManager.getParentsInfoByGIDList(Arrays.asList(CrossingSettingsControllerTest.MGID1,
 				CrossingSettingsControllerTest.MGID2, CrossingSettingsControllerTest.FGID))).thenReturn(parentsMap);
-		
+
 		this.crossingSettingsController.setParentsInformation(crosses);
 		final ImportedCross cross = crosses.get(0);
 		Assert.assertEquals(newFemalePedigree, cross.getFemalePedigree());
@@ -572,7 +572,7 @@ public class CrossingSettingsControllerTest {
 		Assert.assertEquals(newMaleCross1,cross.getMaleParents().get(0).getCross());
 		Assert.assertEquals(newMalePedigree2, cross.getMaleParents().get(1).getPedigree());
 		Assert.assertEquals(newMaleCross2,cross.getMaleParents().get(1).getCross());
-		
+
 	}
 
 	private void fillUpUserSelectionWithImportedCrossTestData() {
@@ -586,12 +586,12 @@ public class CrossingSettingsControllerTest {
 		importedCross.setEntryNumber(CrossingSettingsControllerTest.ENTRY_ID);
 		importedCross.setCross(CrossingSettingsControllerTest.TEST_FEMALE_PARENT + "/" + CrossingSettingsControllerTest.TEST_MALE_PARENT1);
 		importedCross.setEntryCode(CrossingSettingsControllerTest.TEST_ENTRY_CODE);
-		
-		final ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(CrossingSettingsControllerTest.FGID, CrossingSettingsControllerTest.TEST_FEMALE_PARENT, CrossingSettingsControllerTest.FEMALE_PLOT, ""); 
+
+		final ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(CrossingSettingsControllerTest.FGID, CrossingSettingsControllerTest.TEST_FEMALE_PARENT, CrossingSettingsControllerTest.FEMALE_PLOT, "");
 		femaleParent.setPedigree(CrossingSettingsControllerTest.FEMALE_PEDIGREE);
 		importedCross.setFemaleParent(femaleParent);
 		femaleParent.setCross(CrossingSettingsControllerTest.FEMALE_CROSS);
-		
+
 		final ImportedGermplasmParent maleParent1 = new ImportedGermplasmParent(CrossingSettingsControllerTest.MGID1, CrossingSettingsControllerTest.TEST_MALE_PARENT1, CrossingSettingsControllerTest.MALE_PLOT1, CrossingSettingsControllerTest.MALE_STUDY_NAME);
 		maleParent1.setPedigree(CrossingSettingsControllerTest.MALE_PEDIGREE1);
 		maleParent1.setCross(CrossingSettingsControllerTest.MALE_CROSS1);
@@ -603,7 +603,7 @@ public class CrossingSettingsControllerTest {
 		} else {
 			importedCross.setMaleParents(Lists.newArrayList(maleParent1, maleParent2));
 		}
-		
+
 		importedCross.setSource(CrossingSettingsControllerTest.TEST_SEED_SOURCE);
 		importedCross.setDuplicate(CrossingSettingsControllerTest.TEST_DUPLICATE);
 		importedCross.setRawBreedingMethod(CrossingSettingsControllerTest.BREEDING_METHOD);

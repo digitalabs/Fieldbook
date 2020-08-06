@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
 import org.generationcp.middleware.constant.ColumnLabels;
+import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.germplasm.GermplasmParent;
@@ -27,59 +28,27 @@ public class CrossesListUtil {
 	public static final String LIST_DATA_TABLE = "listDataTable";
 	public static final String IS_IMPORT = "isImport";
 	public static final String BREEDING_METHOD_PENDING = "Pending";
-	public static final int ENTRY_INDEX = 0;
-	public static final int PARENTAGE_INDEX = 1;
-	public static final int DUPLICATE_INDEX = 2;
-	public static final int FEMALE_PEDIGREE = 3;
-	public static final int FEMALE_CROSS = 4;
-	public static final int MALE_PEDIGREE = 5;
-	public static final int MALE_CROSS = 6;
-	public static final int BREEDING_METHOD_INDEX = 7;
-	public static final int SOURCE_INDEX = 8;
-	public static final int FGID_INDEX = 9;
-	public static final int MGID_INDEX = 10;
+	public static final int ENTRY_INDEX = 1;
+	public static final int PARENTAGE_INDEX = 2;
+	public static final int DUPLICATE_INDEX = 3;
+	public static final int FEMALE_PEDIGREE = 4;
+	public static final int FEMALE_CROSS = 5;
+	public static final int MALE_PEDIGREE = 6;
+	public static final int MALE_CROSS = 7;
+	public static final int BREEDING_METHOD_INDEX = 8;
+	public static final int SOURCE_INDEX = 9;
+	public static final int FGID_INDEX = 10;
+	public static final int MGID_INDEX = 11;
+	public static final String ALERTS = "ALERTS";
 
 	@Autowired
 	private OntologyDataManager ontologyDataManager;
 
+	@Autowired
+	private GermplasmDataManager germplasmDataManager;
+
 	public static final String DEFAULT_SEPARATOR = "/";
 
-	public Map<String, Object> generateCrossesTableDataMap(final ImportedCross importedCross) {
-
-		final Map<String, Object> dataMap = new HashMap<>();
-
-		dataMap.put(this.getTermNameFromOntology(ColumnLabels.ENTRY_ID), importedCross.getEntryNumber());
-		dataMap.put(this.getTermNameFromOntology(ColumnLabels.PARENTAGE), importedCross.getCross());
-		dataMap.put(this.getTermNameFromOntology(ColumnLabels.ENTRY_CODE), importedCross.getEntryCode());
-		dataMap.put(this.getTermNameFromOntology(ColumnLabels.FEMALE_PARENT), importedCross.getFemaleDesignation());
-		dataMap.put(this.getTermNameFromOntology(ColumnLabels.FGID), importedCross.getFemaleGid());
-		dataMap.put(this.getTermNameFromOntology(ColumnLabels.MALE_PARENT), importedCross.getMaleDesignations());
-		dataMap.put(this.getTermNameFromOntology(ColumnLabels.MGID), importedCross.getMaleGids());
-		dataMap.put(this.getTermNameFromOntology(ColumnLabels.SEED_SOURCE), importedCross.getSource());
-
-		return dataMap;
-	}
-
-	public Map<String, Object> generateCrossesTableWithDuplicationNotes(final List<String> tableHeaderList,
-		final GermplasmListData crossesData) {
-		final Map<String, Object> dataMap = new HashMap<>();
-		dataMap.put(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX), crossesData.getEntryId());
-		final List<String> maleDesignations = this.getDesignationsList(crossesData.getMaleParents());
-		final String concatenatedMaleDesignations = this.concatenateMaleParentsValue(maleDesignations);
-		dataMap.put(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX),
-			crossesData.getFemaleParentDesignation() + CrossesListUtil.DEFAULT_SEPARATOR + concatenatedMaleDesignations);
-		dataMap.put(ColumnLabels.DUPLICATE.name(), "");
-		dataMap.put(tableHeaderList.get(CrossesListUtil.FEMALE_PEDIGREE), crossesData.getFemaleParent().getPedigree());
-		dataMap.put(ColumnLabels.FEMALE_PARENT.name(), crossesData.getFemaleParentDesignation());
-		dataMap.put(tableHeaderList.get(CrossesListUtil.MALE_PEDIGREE), this.concatenateMaleParentsValue(this.getPedigreeList(crossesData.getMaleParents()))); // MALE PEDIGREE
-		dataMap.put(ColumnLabels.MALE_PARENT.name(), maleDesignations);
-		dataMap.put(tableHeaderList.get(CrossesListUtil.BREEDING_METHOD_INDEX), crossesData.getBreedingMethodName());
-		dataMap.put(tableHeaderList.get(CrossesListUtil.SOURCE_INDEX), crossesData.getSeedSource());
-		dataMap.put(ColumnLabels.FGID.name(), crossesData.getFemaleGid());
-		dataMap.put(ColumnLabels.MGID.name(), this.getGids(crossesData.getMaleParents()));
-		return dataMap;
-	}
-	
 	public ImportedCross convertGermplasmListDataToImportedCrosses(final GermplasmListData crossesData, final String studyName, final List<StudyGermplasmDto> studyGermplasmList) {
 		final ImportedCross importedCross = new ImportedCross();
 		importedCross.setId(crossesData.getId());
@@ -87,7 +56,7 @@ public class CrossesListUtil {
 		importedCross.setGid(crossesData.getGid() != null ? Integer.toString(crossesData.getGid()) : null);
 		importedCross.setEntryCode(crossesData.getEntryCode());
 		importedCross.setSource(crossesData.getSeedSource());
-		
+
 		final GermplasmParent femaleParentFromDB = crossesData.getFemaleParent();
 		final Integer femaleParentGid = femaleParentFromDB.getGid();
 		final ImportedGermplasmParent femaleParent = new ImportedGermplasmParent(femaleParentGid, femaleParentFromDB.getDesignation(), femaleParentFromDB.getPedigree());
@@ -95,7 +64,7 @@ public class CrossesListUtil {
 		femaleParent.setStudyName(studyName);
 		femaleParent.setPlotNo(this.getParentPlotNo(femaleParentGid, studyGermplasmList));
 		importedCross.setFemaleParent(femaleParent);
-		
+
 		final List<ImportedGermplasmParent> maleParents = new ArrayList<>();
 		for (final GermplasmParent maleParentFromDB : crossesData.getMaleParents()) {
 			final Integer maleParentGid = maleParentFromDB.getGid();
@@ -107,7 +76,7 @@ public class CrossesListUtil {
 		}
 		importedCross.setMaleParents(maleParents);
 		importedCross.setCross(femaleParent.getDesignation() + CrossesListUtil.DEFAULT_SEPARATOR + this.concatenateMaleParentsValue(this.getDesignationsList(crossesData.getMaleParents())));
-		
+
 		return importedCross;
 	}
 
@@ -127,10 +96,17 @@ public class CrossesListUtil {
 		return parentPlotNo;
 	}
 
-	public Map<String, Object> generateCrossesTableWithDuplicationNotes(final List<String> tableHeaderList, final ImportedCross importedCross) {
+	public Map<String, Object> generateCrossesTableWithDuplicationNotes(final List<String> tableHeaderList,
+		final ImportedCross importedCross, final boolean checkExistingCrosses) {
 
 		final Map<String, Object> dataMap = new HashMap<>();
-
+		if(checkExistingCrosses) {
+			dataMap.put(
+				ALERTS, this.germplasmDataManager
+					.hasExistingCrosses(importedCross.getFemaleGid(), importedCross.getBreedingMethodId(), importedCross.getMaleGids()));
+		} else  {
+			dataMap.put(ALERTS, false);
+		}
 		dataMap.put(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX), importedCross.getEntryNumber());
 		dataMap.put(tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX), importedCross.getCross());
 		dataMap.put(ColumnLabels.DUPLICATE.name(), importedCross.getDuplicate());
@@ -153,7 +129,7 @@ public class CrossesListUtil {
 		dataMap.put(tableHeaderList.get(CrossesListUtil.SOURCE_INDEX), importedCross.getSource());
 		dataMap.put(ColumnLabels.FGID.name(), importedCross.getFemaleGid());
 		dataMap.put(ColumnLabels.MGID.name(), importedCross.getMaleGids());
-
+		dataMap.put(ColumnLabels.BREEDING_METHOD_NUMBER.getName(), importedCross.getBreedingMethodId());
 		return dataMap;
 
 	}
@@ -169,6 +145,7 @@ public class CrossesListUtil {
 	public List<String> getTableHeaders() {
 
 		final List<String> tableHeaderList = new ArrayList<>();
+		tableHeaderList.add(ALERTS);
 		tableHeaderList.add("#");
 		tableHeaderList.add("CROSS");
 		tableHeaderList.add(this.getTermNameFromOntology(ColumnLabels.DUPLICATE));
@@ -180,26 +157,27 @@ public class CrossesListUtil {
 		tableHeaderList.add(this.getTermNameFromOntology(ColumnLabels.SEED_SOURCE));
 		tableHeaderList.add(this.getTermNameFromOntology(ColumnLabels.FGID));
 		tableHeaderList.add(this.getTermNameFromOntology(ColumnLabels.MGID));
+		tableHeaderList.add(this.getTermNameFromOntology(ColumnLabels.BREEDING_METHOD_NUMBER));
 		return tableHeaderList;
 	}
-	
+
 	private List<Integer> getGids(final List<GermplasmParent> parents) {
 		return parents.stream().map(GermplasmParent::getGid).collect(Collectors.toList());
 	}
-	
+
 	private List<String> getDesignationsList(final List<GermplasmParent> parents) {
 		return parents.stream().map(GermplasmParent::getDesignation).collect(Collectors.toList());
 	}
-	
+
 	private List<String> getPedigreeList(final List<GermplasmParent> parents) {
 		return parents.stream().map(GermplasmParent::getPedigree).collect(Collectors.toList());
 	}
-	
+
 	private String concatenateMaleParentsValue(final List<String> list) {
 		if (list.size() == 1) {
 			return list.get(0);
 		}
 		return MULTIPARENT_BEGIN_CHAR + StringUtils.join(list, ",") + MULTIPARENT_END_CHAR;
 	}
-	
+
 }

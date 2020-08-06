@@ -503,23 +503,37 @@
 			$scope.confirmTransactionsForCancellation = function () {
 				var numberOfItemsSelected = $scope.size($scope.selectedItems);
 				if (numberOfItemsSelected) {
-					// TODO check that all items selected have pending status. For now, always assume all are pending
-					var allItemsSelectedArePending = true;
-					if (allItemsSelectedArePending) {
-						var modalConfirmCancellation = $scope.openConfirmModal($.fieldbookMessages.confirmCancelPendingTransactionsMessage.replace('{0}', numberOfItemsSelected), 'Confirm','Cancel');
-						modalConfirmCancellation.result.then(function (shouldContinue) {
-							if (shouldContinue) {
-								InventoryService.cancelStudyTransactions({itemIds: Object.keys($scope.selectedItems)})
-									.then(function(){
-										showSuccessfulMessage('', $.fieldbookMessages.cancelPendingTransactionsSuccessful);
-										// Refresh and show the 'Inventory' tab
-										$rootScope.navigateToTab('inventory', {reload: true});
-									});
+					const request = JSON.stringify(
+						{
+							transactionsSearch : {transactionIds: Object.keys($scope.selectedItems)},
+							sortedPageRequest: {pageNumber: 1, pageSize: 100}
+						}
+					);
+					// Check that all selected items have Pending Status
+					InventoryService.searchStudyTransactions(request).then((transactionsTable) => {
+						if (transactionsTable.data.length) {
+							var allSelectedItemsPending = transactionsTable.data.every(function (item) {
+								return item.transactionStatus === 'Pending';
+							});
+
+							if (allSelectedItemsPending) {
+								var modalConfirmCancellation = $scope.openConfirmModal($.fieldbookMessages.confirmCancelPendingTransactionsMessage.replace('{0}', numberOfItemsSelected), 'Confirm','Cancel');
+								modalConfirmCancellation.result.then(function (shouldContinue) {
+									if (shouldContinue) {
+										InventoryService.cancelStudyTransactions({itemIds: Object.keys($scope.selectedItems)})
+											.then(function(){
+												showSuccessfulMessage('', $.fieldbookMessages.cancelPendingTransactionsSuccessful);
+												// Refresh and show the 'Inventory' tab
+												$rootScope.navigateToTab('inventory', {reload: true});
+											});
+									}
+								});
+							} else {
+								showErrorMessage('', $.fieldbookMessages.cancelTransactionsNotAllArePending);
 							}
-						});
-					} else {
-						showErrorMessage('', $.fieldbookMessages.cancelTransactionsNotAllArePending);
-					}
+						}
+					});
+
 
 				} else {
 					showErrorMessage('', $.fieldbookMessages.inventoryTabNoTransactionsSelected);

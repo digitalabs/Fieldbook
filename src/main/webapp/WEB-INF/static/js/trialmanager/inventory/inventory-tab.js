@@ -524,18 +524,20 @@
 					var numberOfItemsSelected = transactionsTable.data.length;
 					if (numberOfItemsSelected) {
 						// Check that all selected items have Pending Status
-						var allSelectedItemsPending = transactionsTable.data.every(function (item) {
+						var allSelectedItemsPending = transactionsTable.data.every((item) => {
 							return item.transactionStatus === 'Pending';
 						});
 
 						if (allSelectedItemsPending) {
+							var selectedItemIds = transactionsTable.data.map((item) => {
+								return item.transactionId;
+							});
 							var modalConfirmCancellation = $scope.openConfirmModal($.fieldbookMessages.confirmCancelPendingTransactionsMessage.replace('{0}', numberOfItemsSelected), 'Confirm','Cancel');
 							modalConfirmCancellation.result.then(function (shouldContinue) {
 								if (shouldContinue) {
-									InventoryService.cancelStudyTransactions({itemIds: Object.keys($scope.selectedItems)})
+									InventoryService.cancelStudyTransactions({itemIds: selectedItemIds})
 										.then(function(){
 											showSuccessfulMessage('', $.fieldbookMessages.cancelPendingTransactionsSuccessful);
-											// TODO handle if all transactions become cancelled then Inventory tab should be hidden
 											// Refresh and show the 'Inventory' tab
 											$rootScope.navigateToTab('inventory', {reload: true});
 										});

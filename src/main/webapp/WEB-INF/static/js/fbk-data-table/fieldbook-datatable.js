@@ -969,6 +969,21 @@ BMS.Fieldbook.ExistingCrossesDataTable = (function($) {
 			});
 		});
 
+		$(tableIdentifier + ' thead tr th').each(function(index) {
+			if ($(this).html() === 'GID') {
+				columnsDef.push({
+					targets: index,
+					width: '100px',
+					render: function(data, type, row) {
+						return '<a class="gid-link" href="javascript: void(0)" ' +
+							'onclick="ImportCrosses.openGermplasmModalFromExistingCrossesView(&quot;' +
+							row.GID + '&quot;,&quot;' + row.DESIGNATION + '&quot;)">' + row['GID'] + '</a>';
+					}
+				});
+
+			}
+		});
+
 
 		if ($.fn.dataTable.isDataTable($(tableIdentifier))) {
 			table = $(tableIdentifier).DataTable();

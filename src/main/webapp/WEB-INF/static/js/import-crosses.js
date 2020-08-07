@@ -179,6 +179,7 @@ var ImportCrosses = {
 	openCrossesList: function(createdCrossesListId) {
 		'use strict';
 
+
 		$('#openCrossesListModal').one('shown.bs.modal', function() {
 			// After the modal window is shown, make sure that the table header is properly adjusted.
 			$('#preview-crosses-table').resize();
@@ -293,9 +294,10 @@ var ImportCrosses = {
 			});
 	},
 
-	getExistingCrossesTable: function(femaleGID, maleGIDs, breedingMethodId) {
+	getExistingCrossesTable: function(femaleGID, maleGIDs, breedingMethodId, gid) {
 		'use strict';
-		var crossesURL = ImportCrosses.CROSSES_URL + '/getExistingCrossesList' + '/' + femaleGID + '/' + maleGIDs + '/' + breedingMethodId;
+		var crossesURL = ImportCrosses.CROSSES_URL + '/getExistingCrossesList' + '/' + femaleGID + '/' + maleGIDs + '/' + breedingMethodId
+			+ '/' + gid;
 		return $.ajax(
 			{
 				url: crossesURL,
@@ -889,13 +891,31 @@ var ImportCrosses = {
 		});
 	},
 
-	openGermplasmModal : function (gid, desig) {
+	openGermplasmModalFromExistingCrossesView : function (gid, desig) {
 		'use strict';
 		$('#openCrossesListModal').modal('hide');
+		$('#existingCrossesModal').modal('hide');
 		openGermplasmDetailsPopopWithGidAndDesig(gid, desig);
 		$('#openGermplasmModal').one('hidden.bs.modal', function () {
 			$('#openGermplasmModal').modal ('hide');
-			$('#openCrossesListModal').modal({ backdrop: 'static', keyboard: true });
+			$('#existingCrossesModal').one('shown.bs.modal', function() {
+				// After the modal window is shown, make sure that the table header is properly adjusted.
+				$('#existing-crosses-table').resize();
+			}).modal({ backdrop: 'static', keyboard: true });
+		});
+	},
+
+	openGermplasmModal : function (gid, desig) {
+		'use strict';
+		$('#openCrossesListModal').modal('hide');
+		$('#existingCrossesModal').modal('hide');
+		openGermplasmDetailsPopopWithGidAndDesig(gid, desig);
+		$('#openGermplasmModal').one('hidden.bs.modal', function () {
+			$('#openGermplasmModal').modal ('hide');
+			$('#openCrossesListModal').one('shown.bs.modal', function() {
+				// After the modal window is shown, make sure that the table header is properly adjusted.
+				$('#preview-crosses-table').resize();
+			}).modal({ backdrop: 'static', keyboard: true });
 		});
 	}
 };

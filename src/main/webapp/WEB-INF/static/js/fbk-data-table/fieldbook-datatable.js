@@ -202,7 +202,7 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 					visible: isImport
 				},
 				{
-					targets: [10,11, 12],
+					targets: [10,11, 12, 13],
 					visible: false
 				}
 			],
@@ -270,7 +270,7 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 							return '<a class="gid-link" href="javascript: void(0)" ' +
 								'onclick="ImportCrosses.viewExistingCrosses(&quot;' +
 								row.FGID + '&quot;,&quot;' + row.MGID + '&quot;,&quot;' + row.CROSS + '&quot;' +
-								',&quot;' + row['METHOD NUMBER'] + '&quot;)">View Existing Crosses</a>';
+								',&quot;' + row['METHOD NUMBER'] + '&quot;,&quot;' + row.GID + '&quot;)">View Existing Crosses</a>';
 						} else {
 							return '';
 						}

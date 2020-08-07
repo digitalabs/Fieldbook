@@ -228,7 +228,7 @@ var ImportCrosses = {
 		});
 	},
 
-	viewExistingCrosses: function(femaleGID, maleGIDs, cross, breedingMethodId) {
+	viewExistingCrosses: function(femaleGID, maleGIDs, cross, breedingMethodId, gid) {
 		$('#openCrossesListModal').modal('hide');
 		$('#existingCrossesModal').one('shown.bs.modal', function() {
 			$('#existingCrossesModal .modal-title').html(cross);
@@ -245,7 +245,7 @@ var ImportCrosses = {
 			}).modal({ backdrop: 'static', keyboard: true });
 		});
 
-		return ImportCrosses.getExistingCrossesTable(femaleGID, maleGIDs, breedingMethodId).done(function(response) {
+		return ImportCrosses.getExistingCrossesTable(femaleGID, maleGIDs, breedingMethodId, gid).done(function(response) {
 			if (response.isSuccess === 0) {
 				showErrorMessage('', response.error);
 				return;

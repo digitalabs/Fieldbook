@@ -103,7 +103,8 @@ public class CrossesListUtil {
 		if(checkExistingCrosses) {
 			dataMap.put(
 				ALERTS, this.germplasmDataManager
-					.hasExistingCrosses(importedCross.getFemaleGid(), importedCross.getBreedingMethodId(), importedCross.getMaleGids()));
+					.hasExistingCrosses(importedCross.getFemaleGid(), importedCross.getBreedingMethodId(), importedCross.getMaleGids(),
+						importedCross.getGid()));
 		} else  {
 			dataMap.put(ALERTS, false);
 		}
@@ -130,8 +131,8 @@ public class CrossesListUtil {
 		dataMap.put(ColumnLabels.FGID.name(), importedCross.getFemaleGid());
 		dataMap.put(ColumnLabels.MGID.name(), importedCross.getMaleGids());
 		dataMap.put(ColumnLabels.BREEDING_METHOD_NUMBER.getName(), importedCross.getBreedingMethodId());
+		dataMap.put(ColumnLabels.GID.name(), importedCross.getGid());
 		return dataMap;
-
 	}
 
 	public String getTermNameFromOntology(final ColumnLabels columnLabels) {
@@ -158,6 +159,7 @@ public class CrossesListUtil {
 		tableHeaderList.add(this.getTermNameFromOntology(ColumnLabels.FGID));
 		tableHeaderList.add(this.getTermNameFromOntology(ColumnLabels.MGID));
 		tableHeaderList.add(this.getTermNameFromOntology(ColumnLabels.BREEDING_METHOD_NUMBER));
+		tableHeaderList.add(this.getTermNameFromOntology(ColumnLabels.GID));
 		return tableHeaderList;
 	}
 

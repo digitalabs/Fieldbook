@@ -500,45 +500,52 @@
 				return Object.keys(obj).length;
 			};
 
-			$scope.confirmTransactionsForCancellation = function () {
-				var numberOfItemsSelected = $scope.size($scope.selectedItems);
-				if (numberOfItemsSelected) {
-					const request = JSON.stringify(
+			$scope.validateTransactionsForCancellation = function () {
+				var numberOfSelectedItems =  $scope.size($scope.selectedItems);
+				if (!$scope.isAllPagesSelected && !numberOfSelectedItems) {
+					showErrorMessage('', $.fieldbookMessages.inventoryTabNoTransactionsSelected);
+					return;
+				} else {
+					const request = $scope.isAllPagesSelected?  JSON.stringify(addFilters({
+							sortedPageRequest: {}
+						})) :
+						JSON.stringify(
 						{
 							transactionsSearch : {transactionIds: Object.keys($scope.selectedItems)},
-							sortedPageRequest: {pageNumber: 1, pageSize: 100}
-						}
-					);
-					// Check that all selected items have Pending Status
-					InventoryService.searchStudyTransactions(request).then((transactionsTable) => {
-						if (transactionsTable.data.length) {
-							var allSelectedItemsPending = transactionsTable.data.every(function (item) {
-								return item.transactionStatus === 'Pending';
-							});
-
-							if (allSelectedItemsPending) {
-								var modalConfirmCancellation = $scope.openConfirmModal($.fieldbookMessages.confirmCancelPendingTransactionsMessage.replace('{0}', numberOfItemsSelected), 'Confirm','Cancel');
-								modalConfirmCancellation.result.then(function (shouldContinue) {
-									if (shouldContinue) {
-										InventoryService.cancelStudyTransactions({itemIds: Object.keys($scope.selectedItems)})
-											.then(function(){
-												showSuccessfulMessage('', $.fieldbookMessages.cancelPendingTransactionsSuccessful);
-												// Refresh and show the 'Inventory' tab
-												$rootScope.navigateToTab('inventory', {reload: true});
-											});
-									}
-								});
-							} else {
-								showErrorMessage('', $.fieldbookMessages.cancelTransactionsNotAllArePending);
-							}
-						}
-					});
-
-
-				} else {
-					showErrorMessage('', $.fieldbookMessages.inventoryTabNoTransactionsSelected);
+							sortedPageRequest: {}
+						});
+					confirmTransactionsForCancellation(request);
 				}
 
+			}
+
+			function confirmTransactionsForCancellation(request) {
+				InventoryService.searchStudyTransactions(request).then((transactionsTable) => {
+					var numberOfItemsSelected = transactionsTable.data.length;
+					if (numberOfItemsSelected) {
+						// Check that all selected items have Pending Status
+						var allSelectedItemsPending = transactionsTable.data.every(function (item) {
+							return item.transactionStatus === 'Pending';
+						});
+
+						if (allSelectedItemsPending) {
+							var modalConfirmCancellation = $scope.openConfirmModal($.fieldbookMessages.confirmCancelPendingTransactionsMessage.replace('{0}', numberOfItemsSelected), 'Confirm','Cancel');
+							modalConfirmCancellation.result.then(function (shouldContinue) {
+								if (shouldContinue) {
+									InventoryService.cancelStudyTransactions({itemIds: Object.keys($scope.selectedItems)})
+										.then(function(){
+											showSuccessfulMessage('', $.fieldbookMessages.cancelPendingTransactionsSuccessful);
+											// TODO handle if all transactions become cancelled then Inventory tab should be hidden
+											// Refresh and show the 'Inventory' tab
+											$rootScope.navigateToTab('inventory', {reload: true});
+										});
+								}
+							});
+						} else {
+							showErrorMessage('', $.fieldbookMessages.cancelTransactionsNotAllArePending);
+						}
+					}
+				});
 			}
 
 			function getPageItemIds() {

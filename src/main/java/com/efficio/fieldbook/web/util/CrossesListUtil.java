@@ -22,24 +22,24 @@ import java.util.stream.Collectors;
 @Component
 public class CrossesListUtil {
 
-	public static final String MULTIPARENT_BEGIN_CHAR = "[";
-	public static final String MULTIPARENT_END_CHAR = "]";
+	static final String MULTIPARENT_BEGIN_CHAR = "[";
+	static final String MULTIPARENT_END_CHAR = "]";
 	public static final String TABLE_HEADER_LIST = "tableHeaderList";
 	public static final String LIST_DATA_TABLE = "listDataTable";
 	public static final String IS_IMPORT = "isImport";
-	public static final String BREEDING_METHOD_PENDING = "Pending";
+	private static final String BREEDING_METHOD_PENDING = "Pending";
 	public static final int ENTRY_INDEX = 1;
 	public static final int PARENTAGE_INDEX = 2;
 	public static final int DUPLICATE_INDEX = 3;
 	public static final int FEMALE_PEDIGREE = 4;
-	public static final int FEMALE_CROSS = 5;
+	static final int FEMALE_CROSS = 5;
 	public static final int MALE_PEDIGREE = 6;
-	public static final int MALE_CROSS = 7;
+	static final int MALE_CROSS = 7;
 	public static final int BREEDING_METHOD_INDEX = 8;
 	public static final int SOURCE_INDEX = 9;
 	public static final int FGID_INDEX = 10;
 	public static final int MGID_INDEX = 11;
-	public static final String ALERTS = "ALERTS";
+	static final String ALERTS = "ALERTS";
 
 	@Autowired
 	private OntologyDataManager ontologyDataManager;
@@ -47,7 +47,7 @@ public class CrossesListUtil {
 	@Autowired
 	private GermplasmDataManager germplasmDataManager;
 
-	public static final String DEFAULT_SEPARATOR = "/";
+	private static final String DEFAULT_SEPARATOR = "/";
 
 	public ImportedCross convertGermplasmListDataToImportedCrosses(final GermplasmListData crossesData, final String studyName, final List<StudyGermplasmDto> studyGermplasmList) {
 		final ImportedCross importedCross = new ImportedCross();
@@ -135,7 +135,7 @@ public class CrossesListUtil {
 		return dataMap;
 	}
 
-	public String getTermNameFromOntology(final ColumnLabels columnLabels) {
+	private String getTermNameFromOntology(final ColumnLabels columnLabels) {
 		return columnLabels.getTermNameFromOntology(this.ontologyDataManager);
 	}
 

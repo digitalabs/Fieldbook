@@ -82,15 +82,15 @@ import java.util.Set;
 public class CrossingSettingsController extends SettingsController {
 
 	public static final String URL = "/crosses";
-	public static final int YEAR_INTERVAL = 10;
+	static final int YEAR_INTERVAL = 10;
 	public static final String ID = "id";
 	public static final String TEXT = "text";
-	public static final String SUCCESS_KEY = "success";
+	static final String SUCCESS_KEY = "success";
 
 	private static final Logger LOG = LoggerFactory.getLogger(CrossingSettingsController.class);
 	static final String IS_SUCCESS = "isSuccess";
 	private static final String HAS_PLOT_DUPLICATE = "hasPlotDuplicate";
-	public static final String CHOOSING_LIST_OWNER_NEEDED = "isChoosingListOwnerNeeded";
+	private static final String CHOOSING_LIST_OWNER_NEEDED = "isChoosingListOwnerNeeded";
 	public static final String ERROR = "error";
 
 	private static final String OUTPUT_FILENAME = "outputFilename";
@@ -570,11 +570,11 @@ public class CrossingSettingsController extends SettingsController {
 		return responseMap;
 	}
 
-	protected void deleteCrossSetting(final int programPresetId) {
+	void deleteCrossSetting(final int programPresetId) {
 		this.presetService.deleteProgramPreset(programPresetId);
 	}
 
-	protected void saveCrossSetting(final CrossSetting setting, final String programUUID) throws JAXBException {
+	private void saveCrossSetting(final CrossSetting setting, final String programUUID) throws JAXBException {
 
 		final int fieldbookToolId = this.workbenchDataManager.getToolWithName(ToolName.FIELDBOOK_WEB.getName()).getToolId().intValue();
 		final List<ProgramPreset> presets = this.presetService
@@ -603,11 +603,11 @@ public class CrossingSettingsController extends SettingsController {
 		this.presetService.saveOrUpdateProgramPreset(forSaving);
 	}
 
-	protected String getCurrentProgramID() {
+	String getCurrentProgramID() {
 		return this.contextUtil.getCurrentProgramUUID();
 	}
 
-	public void setCrossesListUtil(final CrossesListUtil crossesListUtil) {
+	void setCrossesListUtil(final CrossesListUtil crossesListUtil) {
 		this.crossesListUtil = crossesListUtil;
 	}
 

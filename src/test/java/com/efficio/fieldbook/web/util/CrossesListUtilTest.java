@@ -7,9 +7,11 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
 import org.generationcp.middleware.constant.ColumnLabels;
+import org.generationcp.middleware.data.initializer.GermplasmTestDataInitializer;
 import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.germplasm.GermplasmParent;
@@ -40,6 +42,9 @@ public class CrossesListUtilTest {
 	@Mock
 	private OntologyDataManager ontologyDataManager;
 
+	@Mock
+	private GermplasmDataManager germplasmDataManager;
+
 	private ImportedCross importedCross;
 
 	private CrossesListUtil crossesListUtil;
@@ -54,6 +59,7 @@ public class CrossesListUtilTest {
 
 		this.crossesListUtil = new CrossesListUtil();
 		this.crossesListUtil.setOntologyDataManager(this.ontologyDataManager);
+		this.crossesListUtil.setGermplasmDataManager(this.germplasmDataManager);
 
 		for (final TermId term : this.terms) {
 			final String fromOntology = RandomStringUtils.random(10);
@@ -67,6 +73,8 @@ public class CrossesListUtilTest {
 		// Setup 3 male parents
 		this.importedCross
 			.setMaleParents(Arrays.asList(new ImportedGermplasmParent(random.nextInt(), RandomStringUtils.random(20), RandomStringUtils.random(20)), new ImportedGermplasmParent(random.nextInt(), RandomStringUtils.random(20), RandomStringUtils.random(20)), new ImportedGermplasmParent(random.nextInt(), RandomStringUtils.random(20), RandomStringUtils.random(20))));
+		this.importedCross.setBreedingMethodId(1);
+		this.importedCross.setGid("1");
 
 	}
 
@@ -77,6 +85,10 @@ public class CrossesListUtilTest {
 		final Map<String, Object> dataMap =
 			this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, this.importedCross, false);
 
+		Mockito.verify(this.germplasmDataManager, Mockito.never()).hasExistingCrosses(importedCross.getFemaleGid(), importedCross.getBreedingMethodId(), importedCross.getMaleGids(),
+			importedCross.getGid());
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.ENTRY_INDEX) + ".",
+			dataMap.containsKey(CrossesListUtil.ALERTS));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.ENTRY_INDEX) + ".",
 			dataMap.containsKey(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX)));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX) + ".",
@@ -105,8 +117,12 @@ public class CrossesListUtilTest {
 	@Test
 	public void testGenerateDatatableDataMapWithDupsGermplasmListData() {
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
-		final Map<String, Object> dataMap = this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, this.importedCross, false);
+		final Map<String, Object> dataMap = this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, this.importedCross, true);
 
+		Mockito.verify(this.germplasmDataManager).hasExistingCrosses(importedCross.getFemaleGid(), importedCross.getBreedingMethodId(), importedCross.getMaleGids(),
+			importedCross.getGid());
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.ENTRY_INDEX) + ".",
+			dataMap.containsKey(CrossesListUtil.ALERTS));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.ENTRY_INDEX) + ".",
 				dataMap.containsKey(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX)));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX) + ".",

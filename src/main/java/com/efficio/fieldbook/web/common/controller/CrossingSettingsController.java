@@ -88,7 +88,7 @@ public class CrossingSettingsController extends SettingsController {
 	public static final String SUCCESS_KEY = "success";
 
 	private static final Logger LOG = LoggerFactory.getLogger(CrossingSettingsController.class);
-	private static final String IS_SUCCESS = "isSuccess";
+	static final String IS_SUCCESS = "isSuccess";
 	private static final String HAS_PLOT_DUPLICATE = "hasPlotDuplicate";
 	public static final String CHOOSING_LIST_OWNER_NEEDED = "isChoosingListOwnerNeeded";
 	public static final String ERROR = "error";

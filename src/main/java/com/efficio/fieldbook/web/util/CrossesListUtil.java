@@ -163,16 +163,8 @@ public class CrossesListUtil {
 		return tableHeaderList;
 	}
 
-	private List<Integer> getGids(final List<GermplasmParent> parents) {
-		return parents.stream().map(GermplasmParent::getGid).collect(Collectors.toList());
-	}
-
 	private List<String> getDesignationsList(final List<GermplasmParent> parents) {
 		return parents.stream().map(GermplasmParent::getDesignation).collect(Collectors.toList());
-	}
-
-	private List<String> getPedigreeList(final List<GermplasmParent> parents) {
-		return parents.stream().map(GermplasmParent::getPedigree).collect(Collectors.toList());
 	}
 
 	private String concatenateMaleParentsValue(final List<String> list) {
@@ -180,6 +172,10 @@ public class CrossesListUtil {
 			return list.get(0);
 		}
 		return MULTIPARENT_BEGIN_CHAR + StringUtils.join(list, ",") + MULTIPARENT_END_CHAR;
+	}
+
+	void setGermplasmDataManager(final GermplasmDataManager germplasmDataManager) {
+		this.germplasmDataManager = germplasmDataManager;
 	}
 
 }

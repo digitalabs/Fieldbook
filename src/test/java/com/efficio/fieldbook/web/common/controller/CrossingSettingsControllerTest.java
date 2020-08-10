@@ -5,6 +5,7 @@ import static org.mockito.Mockito.times;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -29,6 +30,7 @@ import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.constant.ColumnLabels;
+import org.generationcp.middleware.data.initializer.GermplasmTestDataInitializer;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Term;
@@ -39,6 +41,7 @@ import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.PresetService;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
+import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.UserDefinedField;
@@ -573,6 +576,23 @@ public class CrossingSettingsControllerTest {
 		Assert.assertEquals(newMalePedigree2, cross.getMaleParents().get(1).getPedigree());
 		Assert.assertEquals(newMaleCross2,cross.getMaleParents().get(1).getCross());
 
+	}
+
+	@Test
+	public void getExistingCrossesList() {
+		final Germplasm germplasm = GermplasmTestDataInitializer.createGermplasm(1);
+		Mockito.when(this.germplasmDataManager.getExistingCrosses("1", 1, Collections.singletonList(1), null)).thenReturn(
+			Collections.singletonList(germplasm));
+		final Map<String, Object> responseMap = this.crossingSettingsController.getExistingCrossesList("1", Collections.singletonList(1), 1, null);
+		Assert.assertEquals(1, responseMap.get(CrossingSettingsController.IS_SUCCESS));
+
+		final List<String> tableHeaderList = (List<String>) responseMap.get(CrossesListUtil.TABLE_HEADER_LIST);
+		Assert.assertEquals(ColumnLabels.GID.getName(), tableHeaderList.get(0));
+		Assert.assertEquals(ColumnLabels.DESIGNATION.getName(), tableHeaderList.get(1));
+
+		final List<Map<String, Object>> masterList = (List<Map<String, Object>>) responseMap.get(CrossesListUtil.LIST_DATA_TABLE);
+		Assert.assertEquals(germplasm.getGid(), masterList.get(0).get(ColumnLabels.GID.getName()));
+		Assert.assertEquals(germplasm.getGermplasmPeferredName(), masterList.get(0).get(ColumnLabels.DESIGNATION.getName()));
 	}
 
 	private void fillUpUserSelectionWithImportedCrossTestData() {

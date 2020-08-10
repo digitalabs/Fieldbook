@@ -895,11 +895,20 @@ var ImportCrosses = {
 
 	openGermplasmModalFromExistingCrossesView : function (gid, desig) {
 		'use strict';
-		$('#openCrossesListModal').modal('hide');
+		$('#openGermplasmModal').off('hidden.bs.modal');
+		$('#existingCrossesModal').off('hidden.bs.modal');
+		$('#existingCrossesModal').off('shown.bs.modal');
 		$('#existingCrossesModal').modal('hide');
 		openGermplasmDetailsPopopWithGidAndDesig(gid, desig);
 		$('#openGermplasmModal').one('hidden.bs.modal', function () {
-			$('#openGermplasmModal').modal ('hide');
+			$('#openGermplasmModal').modal('hide');
+			$('#existingCrossesModal').on('hidden.bs.modal', function () {
+				$('#existingCrossesModal').modal ('hide');
+				$('#openCrossesListModal').one('shown.bs.modal', function() {
+					// After the modal window is shown, make sure that the table header is properly adjusted.
+					$('#preview-crosses-table').resize();
+				}).modal({ backdrop: 'static', keyboard: true });
+			});
 			$('#existingCrossesModal').one('shown.bs.modal', function() {
 				// After the modal window is shown, make sure that the table header is properly adjusted.
 				$('#existing-crosses-table').resize();
@@ -909,8 +918,10 @@ var ImportCrosses = {
 
 	openGermplasmModal : function (gid, desig) {
 		'use strict';
+		$('#openGermplasmModal').off('hidden.bs.modal');
+		$('#openCrossesListModal').off('hidden.bs.modal');
+		$('#openCrossesListModal').off('shown.bs.modal');
 		$('#openCrossesListModal').modal('hide');
-		$('#existingCrossesModal').modal('hide');
 		openGermplasmDetailsPopopWithGidAndDesig(gid, desig);
 		$('#openGermplasmModal').one('hidden.bs.modal', function () {
 			$('#openGermplasmModal').modal ('hide');

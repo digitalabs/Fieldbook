@@ -34,12 +34,22 @@
 		};
 
 		studyInstanceService.addInstanceObservation = function (observationData) {
-			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/instances/' + observationData.instanceId + '/observation', observationData);
+			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/instances/' + observationData.instanceId + '/observations', observationData);
 			return request.then(successHandler, failureHandler);
 		};
 
 		studyInstanceService.updateInstanceObservation = function (observationData) {
-			var request = $http.patch(BASE_STUDY_URL + studyContext.studyId + '/instances/' + observationData.instanceId + '/observation/' + observationData.observationId, observationData);
+			var request = $http.patch(BASE_STUDY_URL + studyContext.studyId + '/instances/' + observationData.instanceId + '/observations/' + observationData.observationDataId, observationData);
+			return request.then(successHandler, failureHandler);
+		};
+
+		studyInstanceService.addInstanceDescriptor = function (descriptorData) {
+			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/instances/' + descriptorData.instanceId + '/descriptors', descriptorData);
+			return request.then(successHandler, failureHandler);
+		};
+
+		studyInstanceService.updateInstanceDescriptor = function (descriptorData) {
+			var request = $http.patch(BASE_STUDY_URL + studyContext.studyId + '/instances/' + descriptorData.instanceId + '/descriptors/' + descriptorData.descriptorDataId, descriptorData);
 			return request.then(successHandler, failureHandler);
 		};
 

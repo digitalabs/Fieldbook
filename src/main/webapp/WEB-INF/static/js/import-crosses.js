@@ -166,6 +166,8 @@ var ImportCrosses = {
 		$('#locationDropdown').select2('val', '');
 		$('#importNextSequenceName').text('');
 		$('#presetName').val('');
+		$('#checkExistingCrosses').prop('checked', false);
+		$('#showOnlyRecordsWithAlerts').prop('checked', false);
 	},
 
 	hasPlotDuplicate: function() {

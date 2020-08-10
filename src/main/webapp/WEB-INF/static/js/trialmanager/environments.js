@@ -295,7 +295,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
 						$scope.settings.managementDetails),
 					trialDetailValues: TrialManagerDataService.constructDataStructureFromDetails($scope.settings.trialConditionDetails),
-					managementDetailDataIdMap: {8190: studyInstance.locationobservationDataId},
+					managementDetailDataIdMap: {8190: studyInstance.locationDescriptorDataId},
 					trialConditionDataIdMap: {},
 					experimentId: studyInstance.experimentId
 				};

@@ -39,7 +39,6 @@
 			};
 
 			service.cancelStudyTransactions = function (searchRequest) {
-				console.log(searchRequest);
 				return $http.post(service.getCancelStudyTransactionsUrl(), searchRequest)
 					.then(successHandler, failureHandler);
 			}

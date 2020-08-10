@@ -330,18 +330,14 @@ function displayGermplasmListTree(treeName, isLocalOnly, isFolderOnly,
 function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 							   clickFunction) {
 	'use strict';
-	var lazyLoadUrlGetChildren = '/Fieldbook/SampleListTreeManager/expandTree/';
-	var initLoadUrl = '/Fieldbook/SampleListTreeManager/loadInitTree';
-	initLoadUrl += '/' + isFolderOnly;
-
-	var authParams =
-		'authToken=' + authToken
-		+ '&selectedProjectId=' + selectedProjectId
-		+ '&loggedInUserId=' + loggedInUserId;
-
+	var lazyLoadUrlGetChildren = '/bmsapi/crops/' + cropName + '/sample-lists/tree?onlyFolders=0';
+	var initLoadUrl ='/bmsapi/crops/' + cropName + '/sample-lists/tree?onlyFolders=' + isFolderOnly;
 	if (selectedProjectId) {
-		initLoadUrl += '?' + authParams
+		lazyLoadUrlGetChildren += '&programUUID=' + currentProgramId;
+		initLoadUrl += '&programUUID=' + currentProgramId;
 	}
+
+	var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
 	var dynaTreeOptions = {
 		title : treeName,
@@ -352,7 +348,10 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 		activeVisible : true,
 		initAjax : {
 			url : initLoadUrl,
-			dataType : 'json'
+			dataType : 'json',
+			beforeSend: function (xhr) {
+				xhr.setRequestHeader('X-Auth-Token', xAuthToken);
+			}
 		},
 		onLazyRead : function(node) {
 			doSampleLazyLoad(node);
@@ -470,11 +469,13 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 					showErrorMessage(getMessageErrorDiv(), cannotMoveFolderToCropListError);
 				} else {
 					$.ajax({
-						url : lazyLoadUrlGetChildren
-						+ sourceNode.data.key,
+						url : lazyLoadUrlGetChildren,
 						type : 'GET',
 						cache : false,
-						aysnc : false,
+						async : false,
+						beforeSend: function (xhr) {
+							xhr.setRequestHeader('X-Auth-Token', xAuthToken);
+						},
 						success : function(data) {
 							var childCount = $.parseJSON(data).length;
 							if (childCount === 0) {

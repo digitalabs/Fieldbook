@@ -4,7 +4,6 @@
 /*exported getDisplayedTreeName, doGermplasmLazyLoad, doSampleLazyLoad*/
 
 var lazyLoadUrl = '/Fieldbook/ListTreeManager/expandGermplasmTree/',
-	lazySampleLoadUrl = '/Fieldbook/SampleListTreeManager/expandTree/',
 	additionalLazyLoadUrl = '',
 	germplasmFocusNode = null,
 	sampleFocusNode = null,
@@ -97,11 +96,20 @@ function doSampleLazyLoad(node) {
 	'use strict';
 
 	if (node.data.isFolder === true) {
+		var url = '/bmsapi/crops/' + cropName + '/sample-lists/tree?onlyFolders=0&parentFolderId=' + node.data.key;
+		if (selectedProjectId) {
+			url += '&programUUID=' + currentProgramId;
+		}
+
+		var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
 		node.appendAjax({
-			url : lazySampleLoadUrl + node.data.key + additionalLazyLoadUrl,
+			url: url,
 			dataType : 'json',
 			async : false,
+			beforeSend: function (xhr) {
+				xhr.setRequestHeader('X-Auth-Token', xAuthToken);
+			},
 			success : function(node) {
 				//do nothing
 

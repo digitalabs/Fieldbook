@@ -34,6 +34,18 @@
 			</div>
 		</form>
 	</div>
+	<div class="pull-right">
+		<div class="btn-group">
+			<button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
+				<span>Inventory Actions</span>
+			</button>
+			<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
+				<li>
+					<a ng-click="validateTransactionsForCancellation()">Cancel pending transactions</a>
+				</li>
+			</ul>
+		</div>
+	</div>
 	<div class="col-xs-12 col-md-12">
 		<table datatable="" class="table table-curved table-condensed table-no-wrap table-sorted"
 			   dt-instance="nested.dtInstance"

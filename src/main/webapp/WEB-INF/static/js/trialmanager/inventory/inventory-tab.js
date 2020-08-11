@@ -5,10 +5,10 @@
 
 	const module = angular.module('manageTrialApp');
 
-	module.controller('InventoryTabCtrl', ['$scope', '$q', 'DTOptionsBuilder', 'DTColumnBuilder', 'InventoryService', '$compile', '$timeout',
+	module.controller('InventoryTabCtrl', ['$rootScope', '$scope', '$q', 'DTOptionsBuilder', 'DTColumnBuilder', 'InventoryService', '$compile', '$timeout',
 		'$uibModal', 'studyInstanceService',
 		function (
-			$scope, $q, DTOptionsBuilder, DTColumnBuilder, InventoryService, $compile, $timeout, $uibModal, studyInstanceService,
+			$rootScope, $scope, $q, DTOptionsBuilder, DTColumnBuilder, InventoryService, $compile, $timeout, $uibModal, studyInstanceService,
 		) {
 			$scope.nested = {};
 			$scope.nested.dtInstance = {};
@@ -500,6 +500,56 @@
 				return Object.keys(obj).length;
 			};
 
+			$scope.validateTransactionsForCancellation = function () {
+				var numberOfSelectedItems =  $scope.size($scope.selectedItems);
+				if (!$scope.isAllPagesSelected && !numberOfSelectedItems) {
+					showErrorMessage('', $.fieldbookMessages.inventoryTabNoTransactionsSelected);
+					return;
+				} else {
+					const request = $scope.isAllPagesSelected?  JSON.stringify(addFilters({
+							sortedPageRequest: {}
+						})) :
+						JSON.stringify(
+						{
+							transactionsSearch : {transactionIds: Object.keys($scope.selectedItems)},
+							sortedPageRequest: {}
+						});
+					confirmTransactionsForCancellation(request);
+				}
+
+			}
+
+			function confirmTransactionsForCancellation(request) {
+				InventoryService.searchStudyTransactions(request).then((transactionsTable) => {
+					var numberOfItemsSelected = transactionsTable.data.length;
+					if (numberOfItemsSelected) {
+						// Check that all selected items have Pending Status
+						var allSelectedItemsPending = transactionsTable.data.every((item) => {
+							return item.transactionStatus === 'Pending';
+						});
+
+						if (allSelectedItemsPending) {
+							var selectedItemIds = transactionsTable.data.map((item) => {
+								return item.transactionId;
+							});
+							var modalConfirmCancellation = $scope.openConfirmModal($.fieldbookMessages.confirmCancelPendingTransactionsMessage.replace('{0}', numberOfItemsSelected), 'Confirm','Cancel');
+							modalConfirmCancellation.result.then(function (shouldContinue) {
+								if (shouldContinue) {
+									InventoryService.cancelStudyTransactions({itemIds: selectedItemIds})
+										.then(function(){
+											showSuccessfulMessage('', $.fieldbookMessages.cancelPendingTransactionsSuccessful);
+											// Refresh and show the 'Inventory' tab
+											$rootScope.navigateToTab('inventory', {reload: true});
+										});
+								}
+							});
+						} else {
+							showErrorMessage('', $.fieldbookMessages.cancelTransactionsNotAllArePending);
+						}
+					}
+				});
+			}
+
 			function getPageItemIds() {
 				const dataTable = table();
 				if (!dataTable) {
@@ -509,6 +559,7 @@
 					return data.transactionId;
 				});
 			}
+
 
 			function table() {
 				return $scope.nested.dtInstance.DataTable;

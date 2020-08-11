@@ -20,6 +20,7 @@ import java.util.List;
 /**
  * The Class SampleTreeController. <br/>
  * TODO Extract supper class with {@link GermplasmTreeController}
+ * TODO Migrate tree state logic to BMSAPI
  */
 @Controller
 @RequestMapping(value = "/SampleListTreeManager")

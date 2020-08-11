@@ -156,7 +156,7 @@
 				}
 			};
 		}
-	]).directive('sectionContainer', ['$parse', function($parse) {
+	]).directive('sectionContainer', ['$parse', '$http', 'serviceUtilities', function($parse, $http, serviceUtilities) {
 			return {
 				restrict: 'E',
 				scope: {
@@ -179,7 +179,9 @@
 					useExactProperties: '@',
 					collapsible: '=',
 					toggleSection: '=',
-					actionButtonDirection: '@'
+					actionButtonDirection: '@',
+					helpToolType:'@',
+					helpToolUrl:'='
 				},
 				transclude: true,
 				templateUrl: '/Fieldbook/static/angular-templates/sectionContainer.html',
@@ -191,6 +193,25 @@
 							scope.hasHelpTooltip = true;
 						}
 					});
+
+					attrs.$observe('helpToolType', function (value){
+						if (value) {
+							var config = {responseType: 'text', observe: 'response'};
+							var successHandler = serviceUtilities.restSuccessHandler,
+								failureHandler = serviceUtilities.restFailureHandler;
+							$http({
+								method: 'GET',
+								url: '/ibpworkbench/controller/help/getUrl/' + value,
+								responseType: 'text',
+								transformResponse: undefined
+							}).then(function(response){
+								scope.helpToolUrl = response.data;
+							}, function (error){
+							});
+						}
+					});
+
+
 
 				},
 				controller: ['$scope', '$attrs', function($scope, $attrs) {

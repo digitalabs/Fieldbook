@@ -44,6 +44,7 @@ import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
 import org.generationcp.middleware.service.api.study.StudyGermplasmService;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.generationcp.middleware.util.CrossExpansionProperties;
+import org.generationcp.middleware.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +76,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 @Controller
@@ -425,13 +427,14 @@ public class CrossingSettingsController extends SettingsController {
 
 	@ResponseBody
 	@RequestMapping(value = "/getExistingCrossesList/{femaleGID}/{maleGIDs}/{breedingMethodId}/{gid}", method = RequestMethod.GET)
-	public Map<String, Object> getExistingCrossesList(@PathVariable final String femaleGID, @PathVariable final List<Integer> maleGIDs,
+	public Map<String, Object> getExistingCrossesList(@PathVariable final Integer femaleGID, @PathVariable final List<Integer> maleGIDs,
 		@PathVariable final Integer breedingMethodId, @PathVariable final String gid) {
 		final Map<String, Object> responseMap = new HashMap<>();
 
 		final List<Map<String, Object>> masterList = new ArrayList<>();
 		final List<String> tableHeaderList = Arrays.asList(ColumnLabels.GID.getName(), ColumnLabels.DESIGNATION.getName());
-		final List<Germplasm> existingCrosses = this.germplasmDataManager.getExistingCrosses(femaleGID, breedingMethodId, maleGIDs, gid);
+		final Optional<Integer> optionalGid = gid.equals("null") ? Optional.empty(): Optional.of(Integer.valueOf(gid));
+		final List<Germplasm> existingCrosses = this.germplasmDataManager.getExistingCrosses(Integer.valueOf(femaleGID), breedingMethodId, maleGIDs, optionalGid);
 		for(final Germplasm existingCross: existingCrosses) {
 			final Map<String, Object> dataMap = new HashMap<>();
 			dataMap.put(ColumnLabels.GID.getName(), existingCross.getGid());

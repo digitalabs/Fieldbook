@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -101,10 +102,11 @@ public class CrossesListUtil {
 
 		final Map<String, Object> dataMap = new HashMap<>();
 		if(checkExistingCrosses) {
+			final Optional<Integer> optionalGid = importedCross.getGid() == null? Optional.empty(): Optional.of(Integer.valueOf(importedCross.getGid()));
 			dataMap.put(
 				ALERTS, this.germplasmDataManager
-					.hasExistingCrosses(importedCross.getFemaleGid(), importedCross.getBreedingMethodId(), importedCross.getMaleGids(),
-						importedCross.getGid()));
+					.hasExistingCrosses(Integer.valueOf(importedCross.getFemaleGid()), importedCross.getBreedingMethodId(), importedCross.getMaleGids(),
+						optionalGid));
 		} else  {
 			dataMap.put(ALERTS, false);
 		}

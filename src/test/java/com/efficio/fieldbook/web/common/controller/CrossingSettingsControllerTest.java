@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -582,9 +583,9 @@ public class CrossingSettingsControllerTest {
 	@Test
 	public void getExistingCrossesList() {
 		final Germplasm germplasm = GermplasmTestDataInitializer.createGermplasm(1);
-		Mockito.when(this.germplasmDataManager.getExistingCrosses("1", 1, Collections.singletonList(1), null)).thenReturn(
+		Mockito.when(this.germplasmDataManager.getExistingCrosses(1, 1, Collections.singletonList(1), Optional.empty())).thenReturn(
 			Collections.singletonList(germplasm));
-		final Map<String, Object> responseMap = this.crossingSettingsController.getExistingCrossesList("1", Collections.singletonList(1), 1, null);
+		final Map<String, Object> responseMap = this.crossingSettingsController.getExistingCrossesList(1, Collections.singletonList(1), 1, null);
 		Assert.assertEquals(1, responseMap.get(CrossingSettingsController.IS_SUCCESS));
 
 		final List<String> tableHeaderList = (List<String>) responseMap.get(CrossesListUtil.TABLE_HEADER_LIST);

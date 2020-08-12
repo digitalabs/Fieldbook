@@ -80,11 +80,10 @@ public class CrossesListUtilTest {
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
 		final Map<String, Object> dataMap =
 			this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, this.importedCross, false);
-
+		final Optional<Integer> optionalGid = importedCross.getGid() == null? Optional.empty(): Optional.of(Integer.valueOf(importedCross.getGid()));
 		Mockito.verify(this.germplasmDataManager, Mockito.never()).hasExistingCrosses(
-			this.importedCross.getFemaleGid(), this.importedCross.getBreedingMethodId(),
-			this.importedCross.getMaleGids(),
-			this.importedCross.getGid());
+			Integer.valueOf(this.importedCross.getFemaleGid()), this.importedCross.getBreedingMethodId(),
+			this.importedCross.getMaleGids(), optionalGid);
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.ENTRY_INDEX) + ".",
 			dataMap.containsKey(CrossesListUtil.ALERTS));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.ENTRY_INDEX) + ".",
@@ -117,10 +116,11 @@ public class CrossesListUtilTest {
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
 		final Map<String, Object> dataMap = this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, this.importedCross, true);
 
+		final Optional<Integer> optionalGid = importedCross.getGid() == null? Optional.empty(): Optional.of(Integer.valueOf(importedCross.getGid()));
 		Mockito.verify(this.germplasmDataManager).hasExistingCrosses(
-			this.importedCross.getFemaleGid(), this.importedCross.getBreedingMethodId(),
+			Integer.valueOf(this.importedCross.getFemaleGid()), this.importedCross.getBreedingMethodId(),
 			this.importedCross.getMaleGids(),
-			this.importedCross.getGid());
+			optionalGid);
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.ENTRY_INDEX) + ".",
 			dataMap.containsKey(CrossesListUtil.ALERTS));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.ENTRY_INDEX) + ".",

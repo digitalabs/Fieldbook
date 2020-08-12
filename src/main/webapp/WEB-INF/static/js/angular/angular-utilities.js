@@ -156,7 +156,7 @@
 				}
 			};
 		}
-	]).directive('sectionContainer', ['$parse', '$http', 'serviceUtilities', function($parse, $http, serviceUtilities) {
+	]).directive('sectionContainer', ['$parse', '$http', 'serviceUtilities', 'helpLinkService', function($parse, $http, serviceUtilities, helpLinkService) {
 			return {
 				restrict: 'E',
 				scope: {
@@ -196,17 +196,8 @@
 
 					attrs.$observe('helpToolType', function (value){
 						if (value) {
-							var config = {responseType: 'text', observe: 'response'};
-							var successHandler = serviceUtilities.restSuccessHandler,
-								failureHandler = serviceUtilities.restFailureHandler;
-							$http({
-								method: 'GET',
-								url: '/ibpworkbench/controller/help/getUrl/' + value,
-								responseType: 'text',
-								transformResponse: undefined
-							}).then(function(response){
-								scope.helpToolUrl = response.data;
-							}, function (error){
+							helpLinkService.helpLink(value).then(function (url){
+								scope.helpToolUrl = url;
 							});
 						}
 					});

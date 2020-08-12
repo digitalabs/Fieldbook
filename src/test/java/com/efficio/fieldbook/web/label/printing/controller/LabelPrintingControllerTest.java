@@ -444,52 +444,6 @@ public class LabelPrintingControllerTest extends AbstractBaseIntegrationTest {
 		Assert.assertEquals("Labels-for-Name-2-"  +  currentDate, this.labelPrintingController.generateDefaultFilename(userLabelPrinting));
 	}
 
-	private GermplasmListData getTestGermplasmListData(final GermplasmList germplasmList, final Integer listDataId, final Integer gid,
-			final String withdrawalStatus, final Double withdrawalBalance) {
-		final GermplasmListData listEntry = new GermplasmListData();
-		listEntry.setId(listDataId);
-		listEntry.setList(germplasmList);
-		listEntry.setDesignation("Designation " + listDataId);
-		listEntry.setEntryCode("EntryCode " + listDataId);
-		listEntry.setEntryId(listDataId);
-		listEntry.setGroupName("GroupName " + listDataId);
-		listEntry.setStatus(listDataId);
-		listEntry.setSeedSource("SeedSource " + listDataId);
-		listEntry.setGid(gid);
-		// Default GROUP ID is 0
-		listEntry.setGroupId(0);
-
-		final ListDataInventory listDataInventory = new ListDataInventory(listDataId, gid);
-		listDataInventory.setLotCount(0);
-		listDataInventory.setActualInventoryLotCount(0);
-
-		final ArrayList<LotDetails> lotRows = new ArrayList<>();
-		final LotDetails lotDetails = new LotDetails();
-		lotDetails.setWithdrawalBalance(withdrawalBalance);
-		lotDetails.setWithdrawalStatus(withdrawalStatus);
-		lotRows.add(lotDetails);
-
-		listDataInventory.setLotRows(lotRows);
-		listDataInventory.setReservedLotCount(0);
-		listDataInventory.setStockIDs("SID:" + listDataId);
-
-		listEntry.setInventoryInfo(listDataInventory);
-		return listEntry;
-	}
-
-	private GermplasmList getTestGermplasmList() {
-		final GermplasmList germplasmList = new GermplasmList();
-		germplasmList.setId(5578);
-		germplasmList.setName("List " + 5578);
-		germplasmList.setDescription("List " + 5578 + " Description");
-		germplasmList.setDate(20150101L);
-		germplasmList.setUserId(1);
-		germplasmList.setType(GermplasmListType.LST.name());
-		germplasmList.setStatus(1);
-		germplasmList.setNotes("Some notes here");
-		return germplasmList;
-	}
-	
 	@After
 	public void cleanup() {
 		this.deleteTestInstallationDirectory();

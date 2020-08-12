@@ -476,32 +476,40 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 				} else if (node.data.key === 'CROPLISTS' && sourceNode.data.isFolder) {
 					showErrorMessage(getMessageErrorDiv(), cannotMoveFolderToCropListError);
 				} else {
-					$.ajax({
-						url : lazyLoadUrlGetChildren,
-						type : 'GET',
-						cache : false,
-						async : false,
-						beforeSend: function (xhr) {
-							xhr.setRequestHeader('X-Auth-Token', xAuthToken);
-						},
-						success : function(data) {
-							var childCount = $.parseJSON(data).length;
-							if (childCount === 0) {
-								moveSamplesListFolder(sourceNode, node).done(function () {
-									sourceNode.remove();
-									doSampleLazyLoad(node);
-									node.focus();
-								});
-							} else {
-								showErrorMessage(getMessageErrorDiv(),
-									cannotMove + ' '
-									+ sourceNode.data.title
-									+ ' '
-									+ hasChildrenString);
-							}
+					if (sourceNode.data.isFolder) {
+						$.ajax({
+							url : lazyLoadUrlGetChildren + '&parentFolderId=' + sourceNode.data.key,
+							type : 'GET',
+							cache : false,
+							async : false,
+							beforeSend: function (xhr) {
+								xhr.setRequestHeader('X-Auth-Token', xAuthToken);
+							},
+							success : function(data) {
+								var childCount = data.length;
+								if (childCount === 0) {
+									moveSamplesListFolder(sourceNode, node).done(function () {
+										sourceNode.remove();
+										doSampleLazyLoad(node);
+										node.focus();
+									});
+								} else {
+									showErrorMessage(getMessageErrorDiv(),
+										cannotMove + ' '
+										+ sourceNode.data.title
+										+ ' '
+										+ hasChildrenString);
+								}
 
-						}
-					});
+							}
+						});
+					} else {
+						moveSamplesListFolder(sourceNode, node).done(function () {
+							sourceNode.remove();
+							doSampleLazyLoad(node);
+							node.focus();
+						});
+					}
 				}
 			},
 			onDragLeave : function(node, sourceNode) {

@@ -33,23 +33,23 @@
 			return request.then(successHandler, failureHandler);
 		};
 
-		studyInstanceService.addInstanceObservation = function (observationData) {
-			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/instances/' + observationData.instanceId + '/observations', observationData);
+		studyInstanceService.addInstanceObservation = function (instanceObservationData) {
+			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/instances/' + instanceObservationData.instanceId + '/observations', instanceObservationData);
 			return request.then(successHandler, failureHandler);
 		};
 
-		studyInstanceService.updateInstanceObservation = function (observationData) {
-			var request = $http.patch(BASE_STUDY_URL + studyContext.studyId + '/instances/' + observationData.instanceId + '/observations/' + observationData.observationDataId, observationData);
+		studyInstanceService.updateInstanceObservation = function (instanceObservationData) {
+			var request = $http.patch(BASE_STUDY_URL + studyContext.studyId + '/instances/' + instanceObservationData.instanceId + '/observations/' + instanceObservationData.instanceObservationId, instanceObservationData);
 			return request.then(successHandler, failureHandler);
 		};
 
-		studyInstanceService.addInstanceDescriptor = function (descriptorData) {
-			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/instances/' + descriptorData.instanceId + '/descriptors', descriptorData);
+		studyInstanceService.addInstanceDescriptorData = function (instanceDescriptorData) {
+			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/instances/' + instanceDescriptorData.instanceId + '/descriptors', instanceDescriptorData);
 			return request.then(successHandler, failureHandler);
 		};
 
-		studyInstanceService.updateInstanceDescriptor = function (descriptorData) {
-			var request = $http.patch(BASE_STUDY_URL + studyContext.studyId + '/instances/' + descriptorData.instanceId + '/descriptors/' + descriptorData.descriptorDataId, descriptorData);
+		studyInstanceService.updateInstanceDescriptorData = function (instanceDescriptorData) {
+			var request = $http.patch(BASE_STUDY_URL + studyContext.studyId + '/instances/' + instanceDescriptorData.instanceId + '/descriptors/' + instanceDescriptorData.instanceDescriptorDataId, instanceDescriptorData);
 			return request.then(successHandler, failureHandler);
 		};
 

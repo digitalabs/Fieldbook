@@ -532,15 +532,15 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						if (!instanceDataIdMap[variableId]) {
 
 							if (isManagementDetailVariable) {
-								studyInstanceService.addInstanceDescriptor({
+								studyInstanceService.addInstanceDescriptorData({
 									instanceId: instanceId,
 									variableId: variableId,
 									value: newValue
-								}).then(function (descriptorData) {
+								}).then(function (instanceDescriptorData) {
 
-									// Add the created descriptorDataId from the server to the map
+									// Add the created instanceDescriptorDataId from the server to the map
 									// so that it can be used to update the instance descriptor later.
-									instanceDataIdMap[variableId] = descriptorData.descriptorDataId;
+									instanceDataIdMap[variableId] = instanceDescriptorData.instanceDescriptorDataId;
 									refreshDisplay();
 								});
 							} else {
@@ -548,20 +548,20 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 									instanceId: instanceId,
 									variableId: variableId,
 									value: newValue
-								}).then(function (observationData) {
+								}).then(function (instanceObservationData) {
 
 									// Add the created observationDataId from the server to the map
 									// so that it can be used to update the instance observation later.
-									instanceDataIdMap[variableId] = observationData.observationDataId;
+									instanceDataIdMap[variableId] = instanceObservationData.instanceObservationId;
 									refreshDisplay();
 								});
 							}
 						} else {
 							if (isManagementDetailVariable) {
-								studyInstanceService.updateInstanceDescriptor({
+								studyInstanceService.updateInstanceDescriptorData({
 									instanceId: instanceId,
 									variableId: variableId,
-									descriptorDataId: instanceDataIdMap[variableId],
+									instanceDescriptorDataId: instanceDataIdMap[variableId],
 									value: newValue
 								}).then(function (descriptorData) {
 									// Restore handler
@@ -571,7 +571,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 								studyInstanceService.updateInstanceObservation({
 									instanceId: instanceId,
 									variableId: variableId,
-									observationDataId: instanceDataIdMap[variableId],
+									instanceObservationId: instanceDataIdMap[variableId],
 									value: newValue
 								}).then(function (observationData) {
 									// Restore handler

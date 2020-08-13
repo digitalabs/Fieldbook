@@ -426,15 +426,15 @@ public class CrossingSettingsController extends SettingsController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/getExistingCrossesList/{femaleGID}/{maleGIDs}/{breedingMethodId}/{gid}", method = RequestMethod.GET)
+	@RequestMapping(value = "/getExistingCrossesList/{femaleGID}/{maleGIDs}/{gid}", method = RequestMethod.GET)
 	public Map<String, Object> getExistingCrossesList(@PathVariable final Integer femaleGID, @PathVariable final List<Integer> maleGIDs,
-		@PathVariable final Integer breedingMethodId, @PathVariable final String gid) {
+		@PathVariable final String gid) {
 		final Map<String, Object> responseMap = new HashMap<>();
 
 		final List<Map<String, Object>> masterList = new ArrayList<>();
 		final List<String> tableHeaderList = Arrays.asList(ColumnLabels.GID.getName(), ColumnLabels.DESIGNATION.getName());
 		final Optional<Integer> optionalGid = gid.equals("null") ? Optional.empty(): Optional.of(Integer.valueOf(gid));
-		final List<Germplasm> existingCrosses = this.germplasmDataManager.getExistingCrosses(Integer.valueOf(femaleGID), breedingMethodId, maleGIDs, optionalGid);
+		final List<Germplasm> existingCrosses = this.germplasmDataManager.getExistingCrosses(Integer.valueOf(femaleGID), maleGIDs, optionalGid);
 		for(final Germplasm existingCross: existingCrosses) {
 			final Map<String, Object> dataMap = new HashMap<>();
 			dataMap.put(ColumnLabels.GID.getName(), existingCross.getGid());

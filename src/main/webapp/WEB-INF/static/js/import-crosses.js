@@ -298,8 +298,7 @@ var ImportCrosses = {
 
 	getExistingCrossesTable: function(femaleGID, maleGIDs, breedingMethodId, gid) {
 		'use strict';
-		var crossesURL = ImportCrosses.CROSSES_URL + '/getExistingCrossesList' + '/' + femaleGID + '/' + maleGIDs + '/' + breedingMethodId
-			+ '/' + gid;
+		var crossesURL = ImportCrosses.CROSSES_URL + '/getExistingCrossesList' + '/' + femaleGID + '/' + maleGIDs + '/' + gid;
 		return $.ajax(
 			{
 				url: crossesURL,

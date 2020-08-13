@@ -105,7 +105,7 @@ public class CrossesListUtil {
 			final Optional<Integer> optionalGid = importedCross.getGid() == null? Optional.empty(): Optional.of(Integer.valueOf(importedCross.getGid()));
 			dataMap.put(
 				ALERTS, this.germplasmDataManager
-					.hasExistingCrosses(Integer.valueOf(importedCross.getFemaleGid()), importedCross.getBreedingMethodId(), importedCross.getMaleGids(),
+					.hasExistingCrosses(Integer.valueOf(importedCross.getFemaleGid()), importedCross.getMaleGids(),
 						optionalGid));
 		} else  {
 			dataMap.put(ALERTS, false);

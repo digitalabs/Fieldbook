@@ -82,8 +82,7 @@ public class CrossesListUtilTest {
 			this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, this.importedCross, false);
 		final Optional<Integer> optionalGid = importedCross.getGid() == null? Optional.empty(): Optional.of(Integer.valueOf(importedCross.getGid()));
 		Mockito.verify(this.germplasmDataManager, Mockito.never()).hasExistingCrosses(
-			Integer.valueOf(this.importedCross.getFemaleGid()), this.importedCross.getBreedingMethodId(),
-			this.importedCross.getMaleGids(), optionalGid);
+			Integer.valueOf(this.importedCross.getFemaleGid()), this.importedCross.getMaleGids(), optionalGid);
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.ENTRY_INDEX) + ".",
 			dataMap.containsKey(CrossesListUtil.ALERTS));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.ENTRY_INDEX) + ".",
@@ -118,9 +117,7 @@ public class CrossesListUtilTest {
 
 		final Optional<Integer> optionalGid = importedCross.getGid() == null? Optional.empty(): Optional.of(Integer.valueOf(importedCross.getGid()));
 		Mockito.verify(this.germplasmDataManager).hasExistingCrosses(
-			Integer.valueOf(this.importedCross.getFemaleGid()), this.importedCross.getBreedingMethodId(),
-			this.importedCross.getMaleGids(),
-			optionalGid);
+			Integer.valueOf(this.importedCross.getFemaleGid()), this.importedCross.getMaleGids(), optionalGid);
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.ENTRY_INDEX) + ".",
 			dataMap.containsKey(CrossesListUtil.ALERTS));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.ENTRY_INDEX) + ".",

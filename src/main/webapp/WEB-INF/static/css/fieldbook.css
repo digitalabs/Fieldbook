@@ -710,6 +710,11 @@ tr.trialInstance {
     cursor: pointer;
 }
 
+.help-tooltip-study:hover {
+    color: #7D7D7D;
+    text-decoration: none;
+}
+
 .tooltip.medium .tooltip-inner {
     width: 250px;
 }

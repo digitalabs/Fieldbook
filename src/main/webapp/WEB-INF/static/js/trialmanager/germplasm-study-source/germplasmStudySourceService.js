@@ -16,9 +16,9 @@
 				return BASE_URL + studyContext.studyId + '/germplasm-sources/table';
 			};
 
-			germplasmStudySourceService.searchGermplasmStudySources = function (germplasmStudySourceRequest) {
+			germplasmStudySourceService.searchGermplasmStudySources = function (page, pageSize, germplasmStudySourceRequest) {
 				germplasmStudySourceRequest.studyId = studyContext.studyId;
-				return $http.post(BASE_URL + studyContext.studyId + '/germplasm-sources/table', germplasmStudySourceRequest)
+				return $http.post(BASE_URL + studyContext.studyId + '/germplasm-sources/table?page=' + page + '&size=' + pageSize, germplasmStudySourceRequest)
 					.then(successHandler, failureHandler);
 			};
 

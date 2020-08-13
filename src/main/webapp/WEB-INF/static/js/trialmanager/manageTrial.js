@@ -167,7 +167,7 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 
 	// do not switch tab if we have newly imported measurements
 	function isTabChangeDisabled() {
-		return  $('.import-study-data').data('data-import') === '1';
+		return $('.import-study-data').data('data-import') === '1';
 	}
 
 	manageTrialApp.run(
@@ -282,9 +282,7 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 			});
 
 			function loadCrossesAndSelectionsTab() {
-				germplasmStudySourceService.searchGermplasmStudySources({
-					sortedRequest: {pageNumber: 1, pageSize: 1}
-				}).then((germplasmStudySourceTable) => {
+				germplasmStudySourceService.searchGermplasmStudySources(1, 1, {}).then((germplasmStudySourceTable) => {
 					if (germplasmStudySourceTable.data.length) {
 						$scope.crossesAndSelectionsTab.hidden = false;
 					}

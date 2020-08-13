@@ -7,7 +7,7 @@
 		['$rootScope', '$scope', '$q', '$compile', '$uibModal', 'studyContext', 'DTOptionsBuilder', 'germplasmStudySourceService', 'lotService',
 			'HasAnyAuthorityService', 'PERMISSIONS',
 			function ($rootScope, $scope, $q, $compile, $uibModal, studyContext, DTOptionsBuilder, germplasmStudySourceService, lotService,
-			HasAnyAuthorityService, PERMISSIONS) {
+					  HasAnyAuthorityService, PERMISSIONS) {
 
 				$scope.hasAnyAuthority = HasAnyAuthorityService.hasAnyAuthority;
 				$scope.PERMISSIONS = PERMISSIONS;
@@ -19,25 +19,24 @@
 				$scope.dtOptions = dtOptionsDeferred.promise;
 
 				const dtOptions = DTOptionsBuilder.newOptions()
-					.withOption('ajax', {
-						url: germplasmStudySourceService.getGermplasmStudySourceTableUrl(),
-						type: 'POST',
-						contentType: 'application/json',
-						beforeSend: function (xhr) {
-							xhr.setRequestHeader('X-Auth-Token', JSON.parse(localStorage['bms.xAuthToken']).token);
-						},
-						data: function (d) {
-							var order = d.order && d.order[0];
+					.withOption('ajax', function (data, callback) {
+						var order = data.order && data.order[0];
+						var pageQuery = '?size=' + data.length
+							+ '&page=' + ((data.length === 0) ? 1 : data.start / data.length + 1)
+							+ '&sort=' + $scope.dtColumns[order.column].name + ',' + order.dir;
 
-							return JSON.stringify(addFilters({
-								sortedRequest: {
-									pageSize: d.length,
-									pageNumber: d.length === 0 ? 1 : d.start / d.length + 1,
-									sortBy: $scope.dtColumns[order.column].name,
-									sortOrder: order.dir
-								}
-							}));
-						}
+						$.ajax({
+							type: 'POST',
+							url: germplasmStudySourceService.getGermplasmStudySourceTableUrl() + pageQuery,
+							data: JSON.stringify(addFilters({})),
+							success: function (res) {
+								callback(res);
+							},
+							contentType: 'application/json',
+							beforeSend: function (xhr) {
+								xhr.setRequestHeader('X-Auth-Token', JSON.parse(localStorage['bms.xAuthToken']).token);
+							},
+						});
 					})
 					.withDataProp('data')
 					.withOption('serverSide', true)

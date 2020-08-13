@@ -137,9 +137,7 @@
             };
 
             $scope.validateGermplasmForReplacement = function() {
-                germplasmStudySourceService.searchGermplasmStudySources({
-                    sortedRequest: {pageNumber: 1, pageSize: 1}
-                }).then((germplasmStudySourceTable) => {
+                germplasmStudySourceService.searchGermplasmStudySources(1, 1,{}).then((germplasmStudySourceTable) => {
 
                     // Check if study has advance or cross list
                     if (germplasmStudySourceTable.data.length > 0) {

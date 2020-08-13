@@ -888,6 +888,9 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 										},
 										instanceId: function () {
 											return $scope.selected.instanceId;
+										},
+										helpModule: function () {
+											return 'MANAGE_STUDIES_FIELDMAP_GEOREFERENCE';
 										}
 									}
 								});

@@ -2,7 +2,7 @@
 	ng-cloak="">
 
 	<div id="experimental-design-choose-design">
-		<section-container icon="bms-exp-design" heading="Experimental Design">
+		<section-container icon="bms-exp-design" heading="Experimental Design" help-tool-type="MANAGE_STUDIES_EXPERIMENTAL_DESIGN">
 			<section-container name="content" heading="{{ toggleDesignView() ? 'DETAILS OF EXPERIMENTAL DESIGN' : 'CHOOSE A DESIGN TYPE'}}">
 				<div class="row" name="content">
 					<div ng-hide="toggleDesignView()">
@@ -28,7 +28,7 @@
 									<div class="col-xs-2 add-top-padding-small">
 										<span class="bms-fa-question-circle help-tooltip-study"
 											tooltip-placement="right" tooltip-append-to-body="true"
-											th:attr="tooltip=#{study.experimental.design.incomplete.block.design.tooltip}"></span>
+											th:attr="uib-tooltip=#{study.experimental.design.incomplete.block.design.tooltip}"></span>
 									</div>
 								</div>
 							</div>

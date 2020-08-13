@@ -295,9 +295,13 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 				InventoryService.searchStudyTransactions({
 					sortedPageRequest: {pageNumber: 1, pageSize: 1}
 				}).then((transactionsTable) => {
-					if (transactionsTable.data.length) {
-						$scope.inventoryTab.hidden = false;
-					}
+					$scope.safeApply(function () {
+						$scope.inventoryTab.hidden = !transactionsTable.data.length;
+						// If the Inventory tab becomes hidden, if no transactions left, navigate to Observations tab to show its content
+						if ($scope.inventoryTab.hidden) {
+							$scope.navigateToSubObsTab(studyContext.measurementDatasetId);
+						}
+					});
 				});
 			}
 
@@ -569,6 +573,8 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 					adjustColumns($('#environment-table .fbk-datatable-environments'));
 				} else if (targetState.indexOf('/subObservationTabs/') === 0) {
 					$rootScope.$broadcast('subObsTabSelected');
+				} else if (targetState === 'inventory') {
+					$rootScope.$broadcast('inventoryChanged');
 				}
 			};
 
@@ -885,6 +891,9 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 										},
 										instanceId: function () {
 											return $scope.selected.instanceId;
+										},
+										helpModule: function () {
+											return 'MANAGE_STUDIES_FIELDMAP_GEOREFERENCE';
 										}
 									}
 								});

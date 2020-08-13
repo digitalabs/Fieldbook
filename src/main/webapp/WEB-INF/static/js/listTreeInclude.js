@@ -4,7 +4,6 @@
 /*exported getDisplayedTreeName, doGermplasmLazyLoad, doSampleLazyLoad*/
 
 var lazyLoadUrl = '/Fieldbook/ListTreeManager/expandGermplasmTree/',
-	lazySampleLoadUrl = '/Fieldbook/SampleListTreeManager/expandTree/',
 	additionalLazyLoadUrl = '',
 	germplasmFocusNode = null,
 	sampleFocusNode = null,
@@ -97,11 +96,20 @@ function doSampleLazyLoad(node) {
 	'use strict';
 
 	if (node.data.isFolder === true) {
+		var url = '/bmsapi/crops/' + cropName + '/sample-lists/tree?onlyFolders=0&parentFolderId=' + node.data.key;
+		if (selectedProjectId) {
+			url += '&programUUID=' + currentProgramId;
+		}
+
+		var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
 		node.appendAjax({
-			url : lazySampleLoadUrl + node.data.key + additionalLazyLoadUrl,
+			url: url,
 			dataType : 'json',
 			async : false,
+			beforeSend: function (xhr) {
+				xhr.setRequestHeader('X-Auth-Token', xAuthToken);
+			},
 			success : function(node) {
 				//do nothing
 
@@ -330,18 +338,14 @@ function displayGermplasmListTree(treeName, isLocalOnly, isFolderOnly,
 function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 							   clickFunction) {
 	'use strict';
-	var lazyLoadUrlGetChildren = '/Fieldbook/SampleListTreeManager/expandTree/';
-	var initLoadUrl = '/Fieldbook/SampleListTreeManager/loadInitTree';
-	initLoadUrl += '/' + isFolderOnly;
-
-	var authParams =
-		'authToken=' + authToken
-		+ '&selectedProjectId=' + selectedProjectId
-		+ '&loggedInUserId=' + loggedInUserId;
-
+	var lazyLoadUrlGetChildren = '/bmsapi/crops/' + cropName + '/sample-lists/tree?onlyFolders=0';
+	var initLoadUrl ='/bmsapi/crops/' + cropName + '/sample-lists/tree?onlyFolders=' + isFolderOnly;
 	if (selectedProjectId) {
-		initLoadUrl += '?' + authParams
+		lazyLoadUrlGetChildren += '&programUUID=' + currentProgramId;
+		initLoadUrl += '&programUUID=' + currentProgramId;
 	}
+
+	var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 
 	var dynaTreeOptions = {
 		title : treeName,
@@ -352,7 +356,10 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 		activeVisible : true,
 		initAjax : {
 			url : initLoadUrl,
-			dataType : 'json'
+			dataType : 'json',
+			beforeSend: function (xhr) {
+				xhr.setRequestHeader('X-Auth-Token', xAuthToken);
+			}
 		},
 		onLazyRead : function(node) {
 			doSampleLazyLoad(node);
@@ -469,30 +476,40 @@ function displaySampleListTree(treeName, isLocalOnly, isFolderOnly,
 				} else if (node.data.key === 'CROPLISTS' && sourceNode.data.isFolder) {
 					showErrorMessage(getMessageErrorDiv(), cannotMoveFolderToCropListError);
 				} else {
-					$.ajax({
-						url : lazyLoadUrlGetChildren
-						+ sourceNode.data.key,
-						type : 'GET',
-						cache : false,
-						aysnc : false,
-						success : function(data) {
-							var childCount = $.parseJSON(data).length;
-							if (childCount === 0) {
-								moveSamplesListFolder(sourceNode, node).done(function () {
-									sourceNode.remove();
-									doSampleLazyLoad(node);
-									node.focus();
-								});
-							} else {
-								showErrorMessage(getMessageErrorDiv(),
-									cannotMove + ' '
-									+ sourceNode.data.title
-									+ ' '
-									+ hasChildrenString);
-							}
+					if (sourceNode.data.isFolder) {
+						$.ajax({
+							url : lazyLoadUrlGetChildren + '&parentFolderId=' + sourceNode.data.key,
+							type : 'GET',
+							cache : false,
+							async : false,
+							beforeSend: function (xhr) {
+								xhr.setRequestHeader('X-Auth-Token', xAuthToken);
+							},
+							success : function(data) {
+								var childCount = data.length;
+								if (childCount === 0) {
+									moveSamplesListFolder(sourceNode, node).done(function () {
+										sourceNode.remove();
+										doSampleLazyLoad(node);
+										node.focus();
+									});
+								} else {
+									showErrorMessage(getMessageErrorDiv(),
+										cannotMove + ' '
+										+ sourceNode.data.title
+										+ ' '
+										+ hasChildrenString);
+								}
 
-						}
-					});
+							}
+						});
+					} else {
+						moveSamplesListFolder(sourceNode, node).done(function () {
+							sourceNode.remove();
+							doSampleLazyLoad(node);
+							node.focus();
+						});
+					}
 				}
 			},
 			onDragLeave : function(node, sourceNode) {

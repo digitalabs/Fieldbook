@@ -8,7 +8,7 @@ if (typeof (BMS.Fieldbook) === 'undefined') {
 	BMS.Fieldbook = {};
 }
 
- BMS.Fieldbook.checkPagination = function(parentDiv) {
+BMS.Fieldbook.checkPagination = function(parentDiv) {
 	'use strict';
 	$(parentDiv + ' .dataTables_length select').on('change', function() {
 		if ($(parentDiv + ' .fbk-page-div ul.pagination li').length > 3) {
@@ -17,7 +17,7 @@ if (typeof (BMS.Fieldbook) === 'undefined') {
 			$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');
 		}
 	});
- };
+};
 
 BMS.Fieldbook.MeasurementsTable = {
 	getColumnOrdering: function(tableName, forceGet) {
@@ -33,7 +33,7 @@ BMS.Fieldbook.MeasurementsTable = {
 				if (index != prevIndex) {
 					hasOrderingChange = true;
 				}
-				
+
 				var termId = $($(cols[index].nTh)[0]).attr('data-term-id');
 				if (termId !== undefined) {
 					orderedColumns[orderedColumns.length] = termId;
@@ -61,7 +61,7 @@ BMS.Fieldbook.MeasurementsTable = {
 };
 
 BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
-	
+
 	/**
 	 * Creates a new ReviewDetailsOutOfBoundsDataTable.
 	 *
@@ -97,17 +97,17 @@ BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
 					}
 				});
 			} else {
-                columns.push({
-                    data: $(this).html(),
-                    defaultContent: '',
-                    render: function (data, type, row) {
-                        if (data && Array.isArray(data)) {
-                            return EscapeHTML.escape(data[0] ? data[0] : '');
-                        } else {
-                            return EscapeHTML.escape(data ? data : '');
-                        }
-                    }
-                });
+				columns.push({
+					data: $(this).html(),
+					defaultContent: '',
+					render: function (data, type, row) {
+						if (data && Array.isArray(data)) {
+							return EscapeHTML.escape(data[0] ? data[0] : '');
+						} else {
+							return EscapeHTML.escape(data ? data : '');
+						}
+					}
+				});
 			}
 
 			if ($(this).data('term-data-type-id') == '1130' || $(this).data('term-data-type-id') == '1110') {
@@ -175,7 +175,7 @@ BMS.Fieldbook.ReviewDetailsOutOfBoundsDataTable = (function($) {
 })(jQuery);
 
 BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
-	
+
 	/**
 	 * Creates a new PreviewCrossesDataTable.
 	 *
@@ -184,26 +184,30 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 	 * @param {string} tableIdentifier the id of the table container
 	 * @param {string} ajaxUrl the URL from which to retrieve table data
 	 */
-	var dataTableConstructor = function PreviewCrossesDataTable(tableIdentifier, dataList, tableHeaderList, isImport) {
+	var dataTableConstructor = function PreviewCrossesDataTable(tableIdentifier, dataList, tableHeaderList, isImport, checkExistingCrosses) {
 		'use strict';
 
 		var columns = [],
 
-		/*Column defs for female plot,male plot,crossing date,notes, breeding method,male nursery name(hide if cross is created)
-		From Datatable API, using negative index counts from the last index of the columns (n-1)
-		https://datatables.net/reference/option/columnDefs*/
-		columnsDef = [
+			/*Column defs for female plot,male plot,crossing date,notes, breeding method,male nursery name(hide if cross is created)
+			From Datatable API, using negative index counts from the last index of the columns (n-1)
+			https://datatables.net/reference/option/columnDefs*/
+			columnsDef = [
 				{
-					targets: [2],
+					targets: [0],
+					visible: checkExistingCrosses
+				},
+				{
+					targets: [3],
 					visible: isImport
 				},
 				{
-					targets: [9,10],
+					targets: [10,11, 12, 13],
 					visible: false
 				}
 			],
 			table;
-		
+
 		$.each( tableHeaderList, function( index, value ){
 			columns.push({
 				data: value,
@@ -239,14 +243,14 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 						// Do not render as link if male parent is unknown
 						if (row.MGID[0] === 0) {
 							return row['MALE PARENT'];
-						} 
+						}
 						// Render bracket-enclosed, comma-separated links for male parents
 						var size = row.MGID.length;
 						var str = size > 1 ? '[':'';
 						$.each(row.MGID, function( index, value ) {
 							str += '<a class="gid-link" href="javascript: void(0)" ' +
-							'onclick="ImportCrosses.openGermplasmModal(&quot;' +
-							row.MGID[index] + '&quot;,&quot;' + row['MALE_PARENT'][index] + '&quot;)">' + row['MALE_PARENT'][index] + '</a>'
+								'onclick="ImportCrosses.openGermplasmModal(&quot;' +
+								row.MGID[index] + '&quot;,&quot;' + row['MALE_PARENT'][index] + '&quot;)">' + row['MALE_PARENT'][index] + '</a>'
 							if (index < (size-1)) {
 								str += ", ";
 							}
@@ -257,6 +261,22 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 						return str;
 					}
 				});
+			} else if ($(this).html() === 'ALERTS') {
+				columnsDef.push({
+					targets: index,
+					width: '100px',
+					render: function(data, type, row) {
+						if(row.ALERTS) {
+							return '<a class="gid-link" href="javascript: void(0)" ' +
+								'onclick="ImportCrosses.viewExistingCrosses(&quot;' +
+								row.FGID + '&quot;,&quot;' + row.MGID + '&quot;,&quot;' + row.CROSS + '&quot;' +
+								',&quot;' + row['METHOD NUMBER'] + '&quot;,&quot;' + row.GID + '&quot;)">View Existing Crosses</a>';
+						} else {
+							return '';
+						}
+					}
+				});
+
 			}
 			//update header with the correct ontology name
 			$(this).html(columns[index].data);
@@ -274,6 +294,7 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 				scrollY: '400px',
 				scrollX: '100%',
 				scrollCollapse: true,
+				order: [[1, 'asc']],
 				columnDefs: columnsDef,
 				lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
 				bAutoWidth: true,
@@ -306,7 +327,8 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 			});
 		}
 
-		$(tableIdentifier).DataTable().column( 2 ).visible( isImport );
+		$(tableIdentifier).DataTable().column( 3 ).visible( isImport );
+		$(tableIdentifier).DataTable().column( 0 ).visible( checkExistingCrosses);
 
 		$(tableIdentifier).dataTable().bind('sort', function() {
 			$(tableIdentifier).dataTable().fnAdjustColumnSizing();
@@ -320,7 +342,7 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 
 BMS.Fieldbook.GermplasmListDataTable = (function($) {
 
-	
+
 	/**
 	 * Creates a new GermplasmListDataTable.
 	 *
@@ -334,8 +356,8 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 		'use strict';
 
 		var columns = [],
-		columnsDef = [],
-		germplasmDataTable;
+			columnsDef = [],
+			germplasmDataTable;
 
 		$(tableIdentifier + ' thead tr th').each(function() {
 			columns.push({data: $(this).data('col-name')});
@@ -382,21 +404,21 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 				$(nRow).data('gid', aData.gid);
 				$(nRow).data('index', aData.position);
 
-					$(nRow).addClass('draggable primaryRow');
-					$('td', nRow).attr('nowrap', 'nowrap');
-					return nRow;
-				},
-				fnInitComplete: function(oSettings, json) {
+				$(nRow).addClass('draggable primaryRow');
+				$('td', nRow).attr('nowrap', 'nowrap');
+				return nRow;
+			},
+			fnInitComplete: function(oSettings, json) {
 
-					var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
-					if (totalPages === 1) {
-						$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');
-					}
-					$(parentDiv).removeClass('fbk-hide-opacity');
-					oSettings.oInstance.fnAdjustColumnSizing();
-					oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
-					oSettings.oInstance.fnAdjustColumnSizing();
+				var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
+				if (totalPages === 1) {
+					$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');
 				}
+				$(parentDiv).removeClass('fbk-hide-opacity');
+				oSettings.oInstance.fnAdjustColumnSizing();
+				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
+				oSettings.oInstance.fnAdjustColumnSizing();
+			}
 		});
 
 		GermplasmListDataTable.prototype.getDataTable = function() {
@@ -414,9 +436,9 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 		'use strict';
 
 		var columns = [],
-		columnsDef = [],
-		defaultOrdering = [],
-		table;
+			columnsDef = [],
+			defaultOrdering = [],
+			table;
 		$(tableIdentifier + ' thead tr th').each(function() {
 			columns.push({data: $(this).data('col-name')});
 			if ($(this).data('col-name') == '8230-key') {
@@ -588,7 +610,7 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 
 BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 
-	
+
 	/**
 	 * Creates a new AdvancedGermplasmListDataTable. This Datatable is the summary table view of the Advanced Germplasm list
 	 *
@@ -661,11 +683,8 @@ BMS.Fieldbook.AdvancedGermplasmListDataTable = (function($) {
 	return dataTableConstructor;
 })(jQuery);
 
-
-
-
 BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
-	
+
 	/**
 	 * Creates a new PreviewDesignMeasurementsDataTable.
 	 *
@@ -920,6 +939,100 @@ BMS.Fieldbook.FinalSampleListDataTable = (function($) {
 		{
 			return table;
 		};
+	};
+
+	return dataTableConstructor;
+
+})(jQuery);
+
+BMS.Fieldbook.ExistingCrossesDataTable = (function($) {
+
+	/**
+	 * Creates a new ExistingCrossesDataTable.
+	 *
+	 * @constructor
+	 * @alias module:fieldbook-datatable
+	 * @param {string} tableIdentifier the id of the table container
+	 * @param {string} ajaxUrl the URL from which to retrieve table data
+	 */
+	var dataTableConstructor = function ExistingCrossesDataTable(tableIdentifier, dataList, tableHeaderList) {
+		'use strict';
+
+		var columns = [],
+			columnsDef = [],
+			table;
+
+		$.each( tableHeaderList, function( index, value ){
+			columns.push({
+				data: value,
+				defaultContent: '',
+			});
+		});
+
+		$(tableIdentifier + ' thead tr th').each(function(index) {
+			if ($(this).html() === 'GID') {
+				columnsDef.push({
+					targets: index,
+					width: '100px',
+					render: function(data, type, row) {
+						return '<a class="gid-link" href="javascript: void(0)" ' +
+							'onclick="ImportCrosses.openGermplasmModalFromExistingCrossesView(&quot;' +
+							row.GID + '&quot;,&quot;' + row.DESIGNATION + '&quot;)">' + row['GID'] + '</a>';
+					}
+				});
+
+			}
+		});
+
+
+		if ($.fn.dataTable.isDataTable($(tableIdentifier))) {
+			table = $(tableIdentifier).DataTable();
+			table.clear();
+			table.rows.add(dataList).draw();
+		} else {
+			table = $(tableIdentifier).DataTable({
+				data: dataList,
+				columns: columns,
+				retrieve: true,
+				scrollY: '400px',
+				scrollX: '100%',
+				scrollCollapse: true,
+				columnDefs: columnsDef,
+				lengthMenu: [[50, 75, 100, -1], [50, 75, 100, 'All']],
+				bAutoWidth: true,
+				iDisplayLength: 100,
+
+				fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+
+					// Assuming ID is in last column
+					$(nRow).attr('id', aData.experimentId);
+					$(nRow).data('row-index', this.fnGetPosition(nRow));
+
+					$('td', nRow).attr('nowrap', 'nowrap');
+					$('td', nRow).attr('nowrap', 'nowrap');
+
+					return nRow;
+				},
+				fnInitComplete: function(oSettings, json) {
+					$(tableIdentifier + '_wrapper .dataTables_length select').select2({minimumResultsForSearch: 10});
+					oSettings.oInstance.fnAdjustColumnSizing();
+					oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
+				},
+				language: {
+					search: '<span class="mdt-filtering-label">Search:</span>'
+				},
+				dom: 'R<<"mdt-header"rli<"mdt-filtering">r><t>p>',
+				// Problem with reordering plugin and fixed column for column re-ordering
+				colReorder: {
+					fixedColumns: 1
+				}
+			});
+		}
+
+		$(tableIdentifier).dataTable().bind('sort', function() {
+			$(tableIdentifier).dataTable().fnAdjustColumnSizing();
+		});
+
 	};
 
 	return dataTableConstructor;

@@ -7,18 +7,16 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
 import org.generationcp.middleware.constant.ColumnLabels;
-import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.germplasm.GermplasmParent;
 import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
-import org.generationcp.middleware.service.impl.study.StudyGermplasmServiceImplTest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -26,26 +24,29 @@ import org.mockito.MockitoAnnotations;
 
 public class CrossesListUtilTest {
 
-	public static final int TEST_ENTRY_ID_VALUE = 123;
-	public static final String TEST_ENTRY_CODE_VALUE = "Test Entry code";
-	public static final String TEST_FEMALE_PARENT_VALUE = "Test female parent";
-	public static final Integer TEST_FGID_VALUE = 893;
-	public static final String TEST_MALE_PARENT1_VALUE = "Test male parent " + RandomStringUtils.randomNumeric(3);
-	public static final Integer TEST_MGID1_VALUE = 493;
-	public static final String TEST_MALE_PARENT2_VALUE = "Test male parent " + RandomStringUtils.randomNumeric(3);;
-	public static final Integer TEST_MGID2_VALUE = 495;
-	public static final String TEST_SEED_SOURCE_VALUE = "Test seed source";
-	public static final String UNKNOWN_PEDIGREE = "-";
+	private static final int TEST_ENTRY_ID_VALUE = 123;
+	private static final String TEST_ENTRY_CODE_VALUE = "Test Entry code";
+	private static final String TEST_FEMALE_PARENT_VALUE = "Test female parent";
+	private static final Integer TEST_FGID_VALUE = 893;
+	private static final String TEST_MALE_PARENT1_VALUE = "Test male parent " + RandomStringUtils.randomNumeric(3);
+	private static final Integer TEST_MGID1_VALUE = 493;
+	private static final String TEST_MALE_PARENT2_VALUE = "Test male parent " + RandomStringUtils.randomNumeric(3);
+	private static final Integer TEST_MGID2_VALUE = 495;
+	private static final String TEST_SEED_SOURCE_VALUE = "Test seed source";
+	private static final String UNKNOWN_PEDIGREE = "-";
 
 	@Mock
 	private OntologyDataManager ontologyDataManager;
 
+	@Mock
+	private GermplasmDataManager germplasmDataManager;
+
 	private ImportedCross importedCross;
 
 	private CrossesListUtil crossesListUtil;
-	
-	private Map<Integer, String> headersMap = new HashMap<>();
-	private List<TermId> terms = Arrays.asList(TermId.ENTRY_NO, TermId.CROSS, TermId.ENTRY_CODE, TermId.FEMALE_PARENT, TermId.FGID,
+
+	private final Map<Integer, String> headersMap = new HashMap<>();
+	private final List<TermId> terms = Arrays.asList(TermId.ENTRY_NO, TermId.CROSS, TermId.ENTRY_CODE, TermId.FEMALE_PARENT, TermId.FGID,
 			TermId.MALE_PARENT, TermId.MGID, TermId.SEED_SOURCE);
 
 	@Before
@@ -54,50 +55,22 @@ public class CrossesListUtilTest {
 
 		this.crossesListUtil = new CrossesListUtil();
 		this.crossesListUtil.setOntologyDataManager(this.ontologyDataManager);
-		
+		this.crossesListUtil.setGermplasmDataManager(this.germplasmDataManager);
+
 		for (final TermId term : this.terms) {
 			final String fromOntology = RandomStringUtils.random(10);
 			Mockito.when(this.ontologyDataManager.getTermById(term.getId())).thenReturn(new Term(term.getId(), fromOntology, ""));
-			headersMap.put(term.getId(), fromOntology);
+			this.headersMap.put(term.getId(), fromOntology);
 		}
-		
+
 		final Random random = new Random();
 		this.importedCross = new ImportedCross(random.nextInt(), "", null, RandomStringUtils.random(20), RandomStringUtils.random(20), RandomStringUtils.random(20), "");
 		this.importedCross.setFemaleParent(new ImportedGermplasmParent(random.nextInt(), RandomStringUtils.random(20), RandomStringUtils.random(20)));
 		// Setup 3 male parents
 		this.importedCross
 			.setMaleParents(Arrays.asList(new ImportedGermplasmParent(random.nextInt(), RandomStringUtils.random(20), RandomStringUtils.random(20)), new ImportedGermplasmParent(random.nextInt(), RandomStringUtils.random(20), RandomStringUtils.random(20)), new ImportedGermplasmParent(random.nextInt(), RandomStringUtils.random(20), RandomStringUtils.random(20))));
-
-	}
-
-	@Test
-	public void testGenerateDatatableDataMap_returnsTheValueFromOntology() {
-
-		final Map<String, Object> dataMap = this.crossesListUtil.generateCrossesTableDataMap(this.importedCross);
-		// Verify that map keys are names of terms from Ontology
-		Assert.assertEquals(this.importedCross.getEntryNumber(), dataMap.get(this.headersMap.get(TermId.ENTRY_NO.getId())));
-		Assert.assertEquals(this.importedCross.getCross(), dataMap.get(this.headersMap.get(TermId.CROSS.getId())));
-		Assert.assertEquals(this.importedCross.getEntryCode(), dataMap.get(this.headersMap.get(TermId.ENTRY_CODE.getId())));
-		Assert.assertEquals(this.importedCross.getFemaleDesignation(), dataMap.get(this.headersMap.get(TermId.FEMALE_PARENT.getId())));
-		Assert.assertEquals(this.importedCross.getFemaleGid(), dataMap.get(this.headersMap.get(TermId.FGID.getId())));
-		Assert.assertEquals(this.importedCross.getMaleDesignations(), dataMap.get(this.headersMap.get(TermId.MALE_PARENT.getId())));
-		Assert.assertEquals(this.importedCross.getMaleGids(), dataMap.get(this.headersMap.get(TermId.MGID.getId())));
-		Assert.assertEquals(this.importedCross.getSource(), dataMap.get(this.headersMap.get(TermId.SEED_SOURCE.getId())));
-	}
-
-	@Test
-	public void testGenerateDatatableDataMap_returnsTheValueFromColumLabelDefaultName() {
-		Mockito.doReturn(new Term()).when(this.ontologyDataManager).getTermById(ArgumentMatchers.anyInt());
-		final Map<String, Object> tableHeaderList = this.crossesListUtil.generateCrossesTableDataMap(this.importedCross);
-
-		Assert.assertTrue("Expecting to have a column name ENTRY_ID.", tableHeaderList.containsKey("ENTRY_ID"));
-		Assert.assertTrue("Expecting to have a column name PARENTAGE.", tableHeaderList.containsKey("PARENTAGE"));
-		Assert.assertTrue("Expecting to have a column name ENTRY CODE.", tableHeaderList.containsKey("ENTRY CODE"));
-		Assert.assertTrue("Expecting to have a column name Female Parent.", tableHeaderList.containsKey("Female Parent"));
-		Assert.assertTrue("Expecting to have a column name FGID.", tableHeaderList.containsKey("FGID"));
-		Assert.assertTrue("Expecting to have a column name Male Parent.", tableHeaderList.containsKey("Male Parent"));
-		Assert.assertTrue("Expecting to have a column name MGID.", tableHeaderList.containsKey("MGID"));
-		Assert.assertTrue("Expecting to have a column name SEED SOURCE.", tableHeaderList.containsKey("SEED SOURCE"));
+		this.importedCross.setBreedingMethodId(1);
+		this.importedCross.setGid("1");
 
 	}
 
@@ -106,8 +79,12 @@ public class CrossesListUtilTest {
 
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
 		final Map<String, Object> dataMap =
-			this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, this.importedCross);
-
+			this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, this.importedCross, false);
+		final Optional<Integer> optionalGid = importedCross.getGid() == null? Optional.empty(): Optional.of(Integer.valueOf(importedCross.getGid()));
+		Mockito.verify(this.germplasmDataManager, Mockito.never()).hasExistingCrosses(
+			Integer.valueOf(this.importedCross.getFemaleGid()), this.importedCross.getMaleGids(), optionalGid);
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.ENTRY_INDEX) + ".",
+			dataMap.containsKey(CrossesListUtil.ALERTS));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.ENTRY_INDEX) + ".",
 			dataMap.containsKey(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX)));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX) + ".",
@@ -136,8 +113,13 @@ public class CrossesListUtilTest {
 	@Test
 	public void testGenerateDatatableDataMapWithDupsGermplasmListData() {
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
-		final Map<String, Object> dataMap = this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, this.importedCross);
+		final Map<String, Object> dataMap = this.crossesListUtil.generateCrossesTableWithDuplicationNotes(tableHeaderList, this.importedCross, true);
 
+		final Optional<Integer> optionalGid = importedCross.getGid() == null? Optional.empty(): Optional.of(Integer.valueOf(importedCross.getGid()));
+		Mockito.verify(this.germplasmDataManager).hasExistingCrosses(
+			Integer.valueOf(this.importedCross.getFemaleGid()), this.importedCross.getMaleGids(), optionalGid);
+		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.ENTRY_INDEX) + ".",
+			dataMap.containsKey(CrossesListUtil.ALERTS));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.ENTRY_INDEX) + ".",
 				dataMap.containsKey(tableHeaderList.get(CrossesListUtil.ENTRY_INDEX)));
 		Assert.assertTrue("Expecting to have a column name " + tableHeaderList.get(CrossesListUtil.PARENTAGE_INDEX) + ".",
@@ -184,7 +166,7 @@ public class CrossesListUtilTest {
 		Assert.assertEquals(Arrays.asList(CrossesListUtilTest.UNKNOWN_PEDIGREE), testImportedCross.getMalePedigree());
 
 	}
-	
+
 	@Test
 	public void testConvertGermplasmListDataToImportedCrossesWhenMultipleMaleParents() {
 		final GermplasmListData germplasmListData = new GermplasmListData();

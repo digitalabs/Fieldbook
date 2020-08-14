@@ -2,7 +2,7 @@
 <div class="row" >
 	<div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
 		<section-container th:attr="heading=#{study.managesettings.germplasm.factors.label}" collapsible="true">
-			<section-container icon="bms-factors" name="content" th:attr="heading=#{study.studydetails.germplasm.descriptors},help-tooltip=#{study.reminder.add.germplasm.factors}">
+			<section-container icon="bms-factors" name="content" th:attr="heading=#{study.studydetails.germplasm.descriptors}" help-tool-type="MANAGE_STUDIES_GERMPLASM">
 				<display-settings hide-delete="hasGeneratedDesign()" settings="settings" variable-type="1804" name="content"></display-settings>
 				<span name="action-buttons">
 				<span class="btn btn-primary" ng-show="displayUpdateButton()" ng-click="updateDataTable()">

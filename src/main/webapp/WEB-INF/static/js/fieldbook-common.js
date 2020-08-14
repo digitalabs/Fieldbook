@@ -538,9 +538,11 @@ function createLabelPrinting(tableName) {
 	}
 
 	if (idVal !== null) {
-		labelPrintingHref = $('#label-printing-url').attr('href');
-		id = idVal;
-		location.href = labelPrintingHref + '/' + id;
+		window.location.href = '/ibpworkbench/controller/jhipster#label-printing' +
+			'?datasetId=' + $('#plotDataset').val() +
+			'&studyId=' + $('#studyId').val() +
+			'&programId=' + $('#currentProgramId').val() +
+			'&printingLabelType=ObservationDataset';
 
 	} else {
 		type = 'Trial';

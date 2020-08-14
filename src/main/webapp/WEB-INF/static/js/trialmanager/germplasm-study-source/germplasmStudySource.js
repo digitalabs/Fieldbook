@@ -19,15 +19,10 @@
 				$scope.dtOptions = dtOptionsDeferred.promise;
 
 				const dtOptions = DTOptionsBuilder.newOptions()
-					.withOption('ajax', function (data, callback) {
-						var order = data.order && data.order[0];
-						var pageQuery = '?size=' + data.length
-							+ '&page=' + ((data.length === 0) ? 1 : data.start / data.length + 1)
-							+ '&sort=' + $scope.dtColumns[order.column].name + ',' + order.dir;
-
+					.withOption('ajax', function (d, callback) {
 						$.ajax({
 							type: 'POST',
-							url: germplasmStudySourceService.getGermplasmStudySourceTableUrl() + pageQuery,
+							url: germplasmStudySourceService.getGermplasmStudySourceTableUrl() + getPageQueryParameters(d),
 							data: JSON.stringify(addFilters({})),
 							success: function (res) {
 								callback(res);
@@ -68,6 +63,13 @@
 						columns: ':gt(0)'
 					}])
 					.withPaginationType('full_numbers');
+
+				function getPageQueryParameters(data) {
+					var order = data.order && data.order[0];
+					return '?size=' + data.length
+						+ '&page=' + ((data.length === 0) ? 1 : data.start / data.length + 1)
+						+ '&sort=' + $scope.dtColumns[order.column].name + ',' + order.dir;
+				}
 
 				function addFilters(request) {
 					request.filter = {};

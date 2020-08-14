@@ -15,28 +15,25 @@
 
 			const dtOptionsDeferred = $q.defer();
 			$scope.dtOptions = dtOptionsDeferred.promise;
-			const dtOptions = DTOptionsBuilder.newOptions()
-				.withOption('ajax', {
-					url: InventoryService.getSearchStudyTransactionsUrl(),
-					type: 'POST',
-					contentType: 'application/json',
-					beforeSend: function (xhr) {
-						xhr.setRequestHeader('X-Auth-Token', JSON.parse(localStorage['bms.xAuthToken']).token);
-					},
-					data: function (d) {
-						var order = d.order && d.order[0];
 
-						return JSON.stringify(addFilters({
-							draw: d.draw,
-							sortedPageRequest: {
-								pageSize: d.length,
-								pageNumber: d.length === 0 ? 1 : d.start / d.length + 1,
-								sortBy: $scope.dtColumns[order.column].name,
-								sortOrder: order.dir
-							}
-						}));
+			const dtOptions = DTOptionsBuilder.newOptions()
+				.withOption('ajax', function (d, callback) {
+						$.ajax({
+							type: 'POST',
+							url: InventoryService.getSearchStudyTransactionsUrl() + getPageQueryParameters(d),
+							data: JSON.stringify(addFilters({
+								draw: d.draw
+							})),
+							success: function (res) {
+								callback(res);
+							},
+							contentType: 'application/json',
+							beforeSend: function (xhr) {
+								xhr.setRequestHeader('X-Auth-Token', JSON.parse(localStorage['bms.xAuthToken']).token);
+							},
+						});
 					}
-				})
+				)
 				.withDataProp('data')
 				.withOption('serverSide', true)
 				.withOption('processing', true)
@@ -67,6 +64,16 @@
 					columns: ':gt(0)'
 				}])
 				.withPaginationType('full_numbers');
+
+			function getPageQueryParameters(data) {
+				var order = data.order && data.order[0];
+				var pageQuery = '?size=' + data.length
+					+ '&page=' + ((data.length === 0) ? 1 : data.start / data.length + 1);
+				if ($scope.dtColumns[order.column]) {
+					pageQuery += '&sort=' + $scope.dtColumns[order.column].name + ',' + order.dir;
+				}
+				return pageQuery;
+			}
 
 			function addFilters(request) {
 				request.transactionsSearch = {};
@@ -392,7 +399,7 @@
 				}
 			});
 
-			$scope.dtColumnDefs =  [
+			$scope.dtColumnDefs = [
 				{
 					targets: 0,
 					createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
@@ -501,19 +508,19 @@
 			};
 
 			$scope.validateTransactionsForCancellation = function () {
-				var numberOfSelectedItems =  $scope.size($scope.selectedItems);
+				var numberOfSelectedItems = $scope.size($scope.selectedItems);
 				if (!$scope.isAllPagesSelected && !numberOfSelectedItems) {
 					showErrorMessage('', $.fieldbookMessages.inventoryTabNoTransactionsSelected);
 					return;
 				} else {
-					const request = $scope.isAllPagesSelected?  JSON.stringify(addFilters({
+					const request = $scope.isAllPagesSelected ? JSON.stringify(addFilters({
 							sortedPageRequest: {}
 						})) :
 						JSON.stringify(
-						{
-							transactionsSearch : {transactionIds: Object.keys($scope.selectedItems)},
-							sortedPageRequest: {}
-						});
+							{
+								transactionsSearch: {transactionIds: Object.keys($scope.selectedItems)},
+								sortedPageRequest: {}
+							});
 					confirmTransactionsForCancellation(request);
 				}
 
@@ -532,11 +539,11 @@
 							var selectedItemIds = transactionsTable.data.map((item) => {
 								return item.transactionId;
 							});
-							var modalConfirmCancellation = $scope.openConfirmModal($.fieldbookMessages.confirmCancelPendingTransactionsMessage.replace('{0}', numberOfItemsSelected), 'Confirm','Cancel');
+							var modalConfirmCancellation = $scope.openConfirmModal($.fieldbookMessages.confirmCancelPendingTransactionsMessage.replace('{0}', numberOfItemsSelected), 'Confirm', 'Cancel');
 							modalConfirmCancellation.result.then(function (shouldContinue) {
 								if (shouldContinue) {
 									InventoryService.cancelStudyTransactions({itemIds: selectedItemIds})
-										.then(function(){
+										.then(function () {
 											showSuccessfulMessage('', $.fieldbookMessages.cancelPendingTransactionsSuccessful);
 											// Refresh and show the 'Inventory' tab
 											$rootScope.navigateToTab('inventory', {reload: true});

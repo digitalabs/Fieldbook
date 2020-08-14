@@ -177,7 +177,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				} else if ($scope.temp.numberOfInstances < $scope.instanceInfo.instances.length) {
 					// if new instance count is less than previous value, splice array
 					var countDiff = $scope.instanceInfo.instances.length - $scope.temp.numberOfInstances;
-					var message = $ .environmentMessages.decreaseEnvironmentNoData.replace('{0}', countDiff).replace('{1}', (countDiff > 1 ? 's' : ''));
+					var message = $.environmentMessages.decreaseEnvironmentNoData.replace('{0}', countDiff).replace('{1}', (countDiff > 1 ? 's' : ''));
 					var modalConfirmDelete = $scope.openConfirmModal(message, 'Yes', 'No');
 					modalConfirmDelete.result.then(function (shouldContinue) {
 						$scope.instanceInfo.numberOfInstances = $scope.temp.numberOfInstances;
@@ -204,9 +204,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 						// Show confirmation message for overwriting measurements and/or fieldmap
 					} else {
-						var message = $ .environmentMessages.deleteEnvironmentNoData;
+						var message = $.environmentMessages.deleteEnvironmentNoData;
 						if (studyInstance.hasMeasurements || studyInstance.hasFieldmap || studyInstance.hasExperimentalDesign) {
-							message = $ .environmentMessages.environmentHasDataThatWillBeLost;
+							message = $.environmentMessages.environmentHasDataThatWillBeLost;
 						}
 						var modalConfirmDelete = $scope.openConfirmModal(message, 'Yes', 'No');
 						modalConfirmDelete.result.then(function (shouldContinue) {
@@ -295,9 +295,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					managementDetailValues: TrialManagerDataService.constructDataStructureFromDetails(
 						$scope.settings.managementDetails),
 					trialDetailValues: TrialManagerDataService.constructDataStructureFromDetails($scope.settings.trialConditionDetails),
-					managementDetailDataIdMap: {8190: studyInstance.locationInstanceDataId},
+					managementDetailDataIdMap: {8190: studyInstance.locationDescriptorDataId},
 					trialConditionDataIdMap: {},
-					experimentId : studyInstance.experimentId
+					experimentId: studyInstance.experimentId
 				};
 				instance.managementDetailValues[LOCATION_ID] = UNSPECIFIED_LOCATION_ID;
 				instance.managementDetailValues[$scope.TRIAL_INSTANCE_NO_INDEX] = studyInstance.instanceNumber;
@@ -339,7 +339,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					}
 				});
 
-				function clearArray (targetArray) {
+				function clearArray(targetArray) {
 					// current internet research suggests that this is the fastest way of clearing an array
 					while (targetArray.length > 0) {
 						targetArray.pop();
@@ -357,7 +357,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 						possibleValues.push({
 							id: value.locid,
-							key: value.locid+'',
+							key: value.locid + '',
 							name: locNameDisplay,
 							description: locNameDisplay
 						});
@@ -530,27 +530,55 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 						}
 
 						if (!instanceDataIdMap[variableId]) {
-							studyInstanceService.addInstanceData({
-								instanceId: instanceId,
-								variableId: variableId,
-								value: newValue
-							}).then(function (instanceData) {
 
-								// Add the created instanceDataId from the server to the map
-								// so that it can be used to update the instance data later.
-								instanceDataIdMap[variableId] = instanceData.instanceDataId;
-								refreshDisplay();
-							});
+							if (isManagementDetailVariable) {
+								studyInstanceService.addInstanceDescriptorData({
+									instanceId: instanceId,
+									variableId: variableId,
+									value: newValue
+								}).then(function (instanceDescriptorData) {
+
+									// Add the created instanceDescriptorDataId from the server to the map
+									// so that it can be used to update the instance descriptor later.
+									instanceDataIdMap[variableId] = instanceDescriptorData.instanceDescriptorDataId;
+									refreshDisplay();
+								});
+							} else {
+								studyInstanceService.addInstanceObservation({
+									instanceId: instanceId,
+									variableId: variableId,
+									value: newValue
+								}).then(function (instanceObservationData) {
+
+									// Add the created observationDataId from the server to the map
+									// so that it can be used to update the instance observation later.
+									instanceDataIdMap[variableId] = instanceObservationData.instanceObservationId;
+									refreshDisplay();
+								});
+							}
 						} else {
-							studyInstanceService.updateInstanceData({
-								instanceId: instanceId,
-								variableId: variableId,
-								instanceDataId: instanceDataIdMap[variableId],
-								value: newValue
-							}).then(function (instanceData) {
-								// Restore handler
-								refreshDisplay();
-							});
+							if (isManagementDetailVariable) {
+								studyInstanceService.updateInstanceDescriptorData({
+									instanceId: instanceId,
+									variableId: variableId,
+									instanceDescriptorDataId: instanceDataIdMap[variableId],
+									value: newValue
+								}).then(function (descriptorData) {
+									// Restore handler
+									refreshDisplay();
+								});
+							} else {
+								studyInstanceService.updateInstanceObservation({
+									instanceId: instanceId,
+									variableId: variableId,
+									instanceObservationId: instanceDataIdMap[variableId],
+									value: newValue
+								}).then(function (observationData) {
+									// Restore handler
+									refreshDisplay();
+								});
+							}
+
 						}
 					}
 

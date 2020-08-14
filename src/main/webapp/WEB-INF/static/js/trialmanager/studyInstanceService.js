@@ -33,13 +33,23 @@
 			return request.then(successHandler, failureHandler);
 		};
 
-		studyInstanceService.addInstanceData = function (instanceData) {
-			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/instances/' + instanceData.instanceId + '/instance-data', instanceData);
+		studyInstanceService.addInstanceObservation = function (instanceObservationData) {
+			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/instances/' + instanceObservationData.instanceId + '/observations', instanceObservationData);
 			return request.then(successHandler, failureHandler);
 		};
 
-		studyInstanceService.updateInstanceData = function (instanceData) {
-			var request = $http.patch(BASE_STUDY_URL + studyContext.studyId + '/instances/' + instanceData.instanceId + '/instance-data/' + instanceData.instanceDataId, instanceData);
+		studyInstanceService.updateInstanceObservation = function (instanceObservationData) {
+			var request = $http.patch(BASE_STUDY_URL + studyContext.studyId + '/instances/' + instanceObservationData.instanceId + '/observations/' + instanceObservationData.instanceObservationId, instanceObservationData);
+			return request.then(successHandler, failureHandler);
+		};
+
+		studyInstanceService.addInstanceDescriptorData = function (instanceDescriptorData) {
+			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/instances/' + instanceDescriptorData.instanceId + '/descriptors', instanceDescriptorData);
+			return request.then(successHandler, failureHandler);
+		};
+
+		studyInstanceService.updateInstanceDescriptorData = function (instanceDescriptorData) {
+			var request = $http.patch(BASE_STUDY_URL + studyContext.studyId + '/instances/' + instanceDescriptorData.instanceId + '/descriptors/' + instanceDescriptorData.instanceDescriptorDataId, instanceDescriptorData);
 			return request.then(successHandler, failureHandler);
 		};
 

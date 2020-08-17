@@ -37,7 +37,6 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -745,8 +744,8 @@ public class FieldbookServiceImpl implements FieldbookService {
 								Double.valueOf(studyConditionMap.get(idTermId).getValue()).intValue());
 						} else {
 							method = studyConditionMap.get(codeTermId).getValue().isEmpty() ? null
-								: this.fieldbookMiddlewareService.getMethodById(
-								Integer.parseInt(studyConditionMap.get(codeTermId).getValue()));
+								: this.fieldbookMiddlewareService.getMethodByCode(
+									studyConditionMap.get(codeTermId).getValue(), this.contextUtil.getCurrentProgramUUID());
 						}
 
 						// add name variable if it is not yet in the list

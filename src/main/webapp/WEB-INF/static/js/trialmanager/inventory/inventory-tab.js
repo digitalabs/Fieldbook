@@ -68,7 +68,7 @@
 			function getPageQueryParameters(data) {
 				var order = data.order && data.order[0];
 				var pageQuery = '?size=' + data.length
-					+ '&page=' + ((data.length === 0) ? 1 : data.start / data.length + 1);
+					+ '&page=' + ((data.length === 0) ? 0 : data.start / data.length);
 				if ($scope.dtColumns[order.column]) {
 					pageQuery += '&sort=' + $scope.dtColumns[order.column].name + ',' + order.dir;
 				}

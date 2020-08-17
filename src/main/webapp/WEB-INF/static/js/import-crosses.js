@@ -773,7 +773,7 @@ var ImportCrosses = {
 		settingObject.additionalDetailsSetting = {};
 		settingObject.additionalDetailsSetting.harvestLocationId = $('#locationDropdown').select2('val');
 		if ($('#harvestYearDropdown').val() !== '' && $('#harvestMonthDropdown').val() !== '') {
-			settingObject.additionalDetailsSetting.harvestDate = $('#harvestYearDropdown').val() + '-' + $('#harvestMonthDropdown').val();
+			settingObject.additionalDetailsSetting.harvestDate = $('#harvestYearDropdown').val() + '-' + $('#harvestMonthDropdown').val() + '-01';
 		}
 
 		return settingObject;

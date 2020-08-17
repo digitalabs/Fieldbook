@@ -514,12 +514,10 @@
 					return;
 				} else {
 					const request = $scope.isAllPagesSelected ? JSON.stringify(addFilters({
-							sortedPageRequest: {}
 						})) :
 						JSON.stringify(
 							{
-								transactionsSearch: {transactionIds: Object.keys($scope.selectedItems)},
-								sortedPageRequest: {}
+								transactionsSearch: {transactionIds: Object.keys($scope.selectedItems)}
 							});
 					confirmTransactionsForCancellation(request);
 				}

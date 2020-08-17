@@ -37,6 +37,7 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -59,7 +60,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 /**
  * The Class FieldbookServiceImpl.
@@ -735,8 +745,8 @@ public class FieldbookServiceImpl implements FieldbookService {
 								Double.valueOf(studyConditionMap.get(idTermId).getValue()).intValue());
 						} else {
 							method = studyConditionMap.get(codeTermId).getValue().isEmpty() ? null
-								: this.fieldbookMiddlewareService.getMethodByCode(
-									studyConditionMap.get(codeTermId).getValue(), this.contextUtil.getCurrentProgramUUID());
+								: this.fieldbookMiddlewareService.getMethodById(
+								Integer.parseInt(studyConditionMap.get(codeTermId).getValue()));
 						}
 
 						// add name variable if it is not yet in the list

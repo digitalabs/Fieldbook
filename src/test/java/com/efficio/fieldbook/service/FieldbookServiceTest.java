@@ -501,6 +501,37 @@ public class FieldbookServiceTest {
 	}
 
 	@Test
+	public void testSaveStudyImportCrossesIfStudyIdIsNull() throws MiddlewareQueryException {
+		final FieldbookServiceImpl fieldbookService = new FieldbookServiceImpl();
+		final FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
+		final List<Integer> crossesIds = new ArrayList<>();
+		crossesIds.add(1);
+		crossesIds.add(2);
+		fieldbookService.setFieldbookMiddlewareService(fieldbookMiddlewareService);
+//		fieldbookService.saveStudyImportedCrosses(crossesIds, null);
+//		for (final Integer crossesId : crossesIds) {
+//			Mockito.verify(fieldbookMiddlewareService, Mockito.times(1)).updateGermlasmListInfoStudy(crossesId, 0);
+//		}
+	}
+
+	@Test
+	public void testSaveStudyImportCrossesIfStudyIdIsNotNull() throws MiddlewareQueryException {
+		final FieldbookServiceImpl fieldbookService = new FieldbookServiceImpl();
+		final FieldbookService fieldbookMiddlewareService = Mockito.mock(FieldbookService.class);
+		final List<Integer> crossesIds = new ArrayList<>();
+		crossesIds.add(1);
+		crossesIds.add(2);
+		final int studyId = 5;
+
+		fieldbookService.setFieldbookMiddlewareService(fieldbookMiddlewareService);
+//		fieldbookService.saveStudyImportedCrosses(crossesIds, studyId);
+//		for (final Integer crossesId : crossesIds) {
+//			Mockito.verify(fieldbookMiddlewareService, Mockito.times(1)).updateGermlasmListInfoStudy(crossesId,
+//					studyId);
+//		}
+	}
+
+	@Test
 	public void testSaveStudyColumnOrderingIfStudyIdIsNull() throws MiddlewareException {
 		final FieldbookServiceImpl fieldbookService = new FieldbookServiceImpl();
 		final FieldbookService api = Mockito.mock(FieldbookService.class);
@@ -726,6 +757,25 @@ public class FieldbookServiceTest {
 		final String result = this.fieldbookServiceImpl.getDisplayName(location);
 		Assert.assertEquals("The result's value should be " + FieldbookServiceTest.LOCATION_NAME,
 				FieldbookServiceTest.LOCATION_NAME, result);
+	}
+
+	@Test
+	public void testGetGermplasmListChecksSize() {
+		final Variable variable = VariableTestDataInitializer.createVariable(DataType.CATEGORICAL_VARIABLE);
+		this.possibleValuesCache.addPossibleValuesByDataType(DataType.CATEGORICAL_VARIABLE,
+			this.nonLocationVariable.getPossibleValues());
+
+		Mockito.when(this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(),
+			TermId.ENTRY_TYPE.getId(), true)).thenReturn(variable);
+
+		final List<ValueReference> entryTypes = ValueReferenceTestDataInitializer.createPossibleValues();
+		final List<Integer> checkEntryTypeIds = new ArrayList<>();
+		for(final ValueReference entryType: entryTypes) {
+			checkEntryTypeIds.add(entryType.getId() - 1);
+		}
+		entryTypes.add(new ValueReference(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId(), SystemDefinedEntryType.TEST_ENTRY.getEntryTypeName(), SystemDefinedEntryType.TEST_ENTRY.getEntryTypeValue()));
+//		this.fieldbookServiceImpl.getGermplasmListChecksSize(1);
+//		Mockito.verify(this.fieldbookMiddlewareService).countListDataProjectByListIdAndEntryTypeIds(1, checkEntryTypeIds);
 	}
 
 	@Test

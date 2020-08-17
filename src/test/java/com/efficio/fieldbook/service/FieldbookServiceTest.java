@@ -7,6 +7,8 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.PossibleValuesCache;
 import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
+import com.google.inject.matcher.Matchers;
+import org.apache.commons.lang.RandomStringUtils;
 import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
@@ -42,6 +44,7 @@ import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -54,7 +57,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -106,6 +108,9 @@ public class FieldbookServiceTest {
 	@InjectMocks
 	private FieldbookServiceImpl fieldbookServiceImpl;
 
+	@Mock
+	private OntologyService ontologyService;
+
 	private MeasurementVariable locationVariable;
 	private MeasurementVariable nonLocationVariable;
 
@@ -122,6 +127,7 @@ public class FieldbookServiceTest {
 		Mockito.when(this.fieldbookMiddlewareService.getAllBreedingLocations()).thenReturn(new ArrayList<Location>());
 
 		this.fieldbookServiceImpl.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
+		this.fieldbookServiceImpl.setOntologyService(this.ontologyService);
 		this.possibleValuesCache = new PossibleValuesCache();
 		this.fieldbookServiceImpl.setPossibleValuesCache(this.possibleValuesCache);
 		this.fieldbookServiceImpl.setOntologyVariableDataManager(this.ontologyVariableDataManager);
@@ -833,7 +839,7 @@ public class FieldbookServiceTest {
 				new MeasurementVariable(termId, "PI_ID", "TRIAL NUMBER", WorkbookDataUtil.NUMBER,
 						WorkbookDataUtil.ENUMERATED, WorkbookDataUtil.TRIAL_INSTANCE, WorkbookDataUtil.NUMERIC, "", WorkbookDataUtil.TRIAL);
 		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
-		variable.setPossibleValues(this.getValueReferenceList());
+		variable.setPossibleValues(this.getValueReferenceListWithKey());
 		variable.setRole(PhenotypicType.STUDY);
 		variable.setOperation(operation);
 		return variable;
@@ -849,36 +855,117 @@ public class FieldbookServiceTest {
 		return possibleValues;
 	}
 
+	private List<ValueReference> getValueReferenceListWithKey() {
+		final List<ValueReference> possibleValues = new ArrayList<>();
+
+		for (int i = 0; i < 5; i++) {
+			final ValueReference possibleValue = new ValueReference(i, String.valueOf(i));
+			possibleValue.setKey(RandomStringUtils.random(3));
+			possibleValues.add(possibleValue);
+		}
+		return possibleValues;
+	}
+
+	private MeasurementVariable getMeasurementVariableForBreedingMethodVariable(final Operation operation) {
+		final MeasurementVariable variable =
+			new MeasurementVariable(TermId.BREEDING_METHOD_CODE.getId(), "BREEDING_METHOD_CODE", "BREEDING_METHOD_CODE", WorkbookDataUtil.NUMBER,
+				WorkbookDataUtil.ENUMERATED, WorkbookDataUtil.TRIAL_INSTANCE, WorkbookDataUtil.NUMERIC, "", WorkbookDataUtil.TRIAL);
+		variable.setDataTypeId(TermId.CHARACTER_VARIABLE.getId());
+		variable.setPossibleValues(this.getValueReferenceList());
+		variable.setRole(PhenotypicType.STUDY);
+		variable.setOperation(operation);
+		variable.setValue(variable.getPossibleValues().get(0).getKey());
+
+		return variable;
+	}
+
 	private List<MeasurementVariable> getConditions(final int cvtermId, final Operation operation){
 		final List<MeasurementVariable> conditionsList = new ArrayList<>();
-		conditionsList.add(this.getMeasurementVariableForCategoricalVariable(cvtermId, operation));
+		if(cvtermId == TermId.BREEDING_METHOD_CODE.getId()) {
+			conditionsList.add(this.getMeasurementVariableForBreedingMethodVariable(operation));
+		}else{
+			conditionsList.add(this.getMeasurementVariableForCategoricalVariable(cvtermId, operation));
+		}
 		return  conditionsList;
-
 	}
 
 	@Test
-	public void testGetAllBreedingMethods() {
-		final Method breedingMethod =
-			new Method(40, "DER", "G", "SLF", "Self and Bulk", "Selfing a Single Plant or population and bulk seed", 0, -1, 1, 0, 1490,
-				1, 0, 19980708, this.contextUtil.getCurrentProgramUUID());
-		Mockito.when(this.fieldbookMiddlewareService.getAllBreedingMethods(Mockito.anyBoolean())).thenReturn(Arrays.asList(breedingMethod));
-		final List<ValueReference> valueReferences = this.fieldbookServiceImpl.getAllBreedingMethods(true, this.contextUtil.getCurrentProgramUUID());
-		Assert.assertEquals("Breeding methods returns 1",1,valueReferences.size());
-		for(final ValueReference valueReference : valueReferences){
-			Assert.assertEquals(valueReference.getKey(), breedingMethod.getMcode());
+	public void testPairVariableCodeAndNameAddOperation(){
+		final UserSelection userSelection = new UserSelection();
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
+		workbook.setConditions(this.getConditions(TermId.BREEDING_METHOD_CODE.getId(), Operation.ADD));
+		userSelection.setWorkbook(workbook);
+
+		final StandardVariable breedingMethodName = StandardVariableTestDataInitializer.createStandardVariable(TermId.BREEDING_METHOD.getId(), "BREEDING_METHOD");
+		breedingMethodName.setPhenotypicType(PhenotypicType.STUDY);
+
+		final Method breedingMethod = new Method(40, "DER", "G", "SLF", "Self and Bulk",
+			"Selfing a Single Plant or population and bulk seed", 0, -1, 1, 0, 1490, 1, 0, 19980708, "");
+
+		Mockito.when(this.fieldbookMiddlewareService.getMethodByCode(Mockito.anyString(), Mockito.anyString())).thenReturn(breedingMethod);
+
+		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(
+			TermId.BREEDING_METHOD.getId(), this.contextUtil.getCurrentProgramUUID())).thenReturn(breedingMethodName);
+
+		this.fieldbookServiceImpl.createIdCodeNameVariablePairs(userSelection.getWorkbook(),
+			AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
+
+		Assert.assertEquals(2, userSelection.getWorkbook().getConditions().size());
+		for(final MeasurementVariable measurementVariable : userSelection.getWorkbook().getConditions()){
+			Assert.assertTrue("TermId must include BREEDING_METHOD and BREEDING_METHOD_CODE ",measurementVariable.getTermId() == TermId.BREEDING_METHOD.getId() || measurementVariable.getTermId() == TermId.BREEDING_METHOD_CODE.getId());
+			Assert.assertTrue("Operation is ADD", measurementVariable.getOperation().equals(Operation.ADD));
 		}
 	}
 
 	@Test
-	public void testGetFavoriteBreedingMethods() {
-		final Method breedingMethod =
-			new Method(40, "DER", "G", "SLF", "Self and Bulk", "Selfing a Single Plant or population and bulk seed", 0, -1, 1, 0, 1490,
-				1, 0, 19980708, this.contextUtil.getCurrentProgramUUID());
-		Mockito.when(this.fieldbookMiddlewareService.getFavoriteMethods(Mockito.anyList(), Mockito.anyBoolean())).thenReturn(Arrays.asList(breedingMethod));
-		final List<ValueReference> valueReferences = this.fieldbookServiceImpl.getFavoriteBreedingMethods(Arrays.asList(breedingMethod.getMid()),true);
-		Assert.assertEquals("Breeding methods returns 1",1,valueReferences.size());
-		for(final ValueReference valueReference : valueReferences){
-			Assert.assertEquals(valueReference.getKey(), breedingMethod.getMcode());
+	public void testPairVariableCodeAndNameUpdateOperation(){
+		final UserSelection userSelection = new UserSelection();
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
+		workbook.setConditions(this.getConditions(TermId.BREEDING_METHOD_CODE.getId(), Operation.UPDATE));
+		userSelection.setWorkbook(workbook);
+
+		final StandardVariable breedingMethodName = StandardVariableTestDataInitializer.createStandardVariable(TermId.BREEDING_METHOD.getId(), "BREEDING_METHOD");
+		breedingMethodName.setPhenotypicType(PhenotypicType.STUDY);
+
+		final Method breedingMethod = new Method(40, "DER", "G", "SLF", "Self and Bulk",
+			"Selfing a Single Plant or population and bulk seed", 0, -1, 1, 0, 1490, 1, 0, 19980708, "");
+
+		Mockito.when(this.fieldbookMiddlewareService.getMethodByCode(Mockito.anyString(), Mockito.anyString())).thenReturn(breedingMethod);
+
+		this.fieldbookServiceImpl.createIdCodeNameVariablePairs(userSelection.getWorkbook(),
+			AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
+
+		Assert.assertEquals(1, userSelection.getWorkbook().getConditions().size());
+		for(final MeasurementVariable measurementVariable : userSelection.getWorkbook().getConditions()){
+			Assert.assertTrue("TermId must include BREEDING_METHOD_CODE ",measurementVariable.getTermId() == TermId.BREEDING_METHOD_CODE.getId());
+			Assert.assertTrue("Operation is UPDATE", measurementVariable.getOperation().equals(Operation.UPDATE));
+		}
+	}
+
+	@Test
+	public void testPairVariableCodeAndNameDeleteOperation(){
+		final UserSelection userSelection = new UserSelection();
+		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
+		workbook.setConditions(this.getConditions(TermId.BREEDING_METHOD_CODE.getId(), Operation.DELETE));
+		userSelection.setWorkbook(workbook);
+
+		final StandardVariable breedingMethodName = StandardVariableTestDataInitializer.createStandardVariable(TermId.BREEDING_METHOD.getId(), "BREEDING_METHOD");
+		breedingMethodName.setPhenotypicType(PhenotypicType.STUDY);
+
+		final Method breedingMethod = new Method(40, "DER", "G", "SLF", "Self and Bulk",
+			"Selfing a Single Plant or population and bulk seed", 0, -1, 1, 0, 1490, 1, 0, 19980708, "");
+
+		Mockito.when(this.fieldbookMiddlewareService.getMethodByCode(Mockito.anyString(), Mockito.anyString())).thenReturn(breedingMethod);
+
+		this.fieldbookServiceImpl.createIdCodeNameVariablePairs(userSelection.getWorkbook(),
+			AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
+
+		Assert.assertEquals(1, userSelection.getWorkbook().getConditions().size());
+		System.out.println(userSelection.getWorkbook().getConditions());
+		for(final MeasurementVariable measurementVariable : userSelection.getWorkbook().getConditions()){
+			Assert.assertTrue("TermId must include BREEDING_METHOD_CODE ",measurementVariable.getTermId() == TermId.BREEDING_METHOD_CODE.getId());
+			Assert.assertTrue("Operation is DELETE", measurementVariable.getOperation().equals(Operation.DELETE));
+
 		}
 	}
 }

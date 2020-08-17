@@ -127,14 +127,6 @@ public class UserLabelPrinting implements Serializable {
 
 	private String includeColumnHeadinginNonPdf;
 
-	private boolean isStockList;
-
-	private Integer stockListId;
-
-    private String stockListTypeName;
-
-	private List<InventoryDetails> inventoryDetailsList;
-
 	/** The automatically barcode. */
 	private String barcodeGeneratedAutomatically;
 
@@ -207,53 +199,6 @@ public class UserLabelPrinting implements Serializable {
 			}
 			this.totalNumberOfLabelToPrint = Integer.toString(totalLabels);
 		}
-	}
-
-	/**
-	 * Sets the field map info.
-	 *
-	 * @param fieldMapInfo the new field map info
-	 * @param inventoryDetails the inventory details for study stock.
-	 *
-	 */
-	public void setFieldMapInfo(final FieldMapInfo fieldMapInfo, final List<InventoryDetails> inventoryDetails) {
-		this.fieldMapInfo = fieldMapInfo;
-
-		//Override FieldMapInfo for Trial Stock to populate data based in Inventories instead of Measurements
-		Map<Integer,Integer> instanceWiseLabelsNeeded = new HashMap<>();
-
-		Integer instanceNumber = null;
-		for(InventoryDetails inventoryDetail : inventoryDetails){
-			instanceNumber = inventoryDetail.getInstanceNumber();
-			if(instanceNumber != null){
-				if(!instanceWiseLabelsNeeded.containsKey(instanceNumber)){
-					instanceWiseLabelsNeeded.put(instanceNumber, 0);
-				}
-				Integer labelCount = instanceWiseLabelsNeeded.get(instanceNumber)+1;
-				instanceWiseLabelsNeeded.put(instanceNumber,labelCount);
-			}
-		}
-
-		if (fieldMapInfo != null) {
-			if (fieldMapInfo.getDatasets() != null && !fieldMapInfo.getDatasets().isEmpty()) {
-				FieldMapDatasetInfo info = fieldMapInfo.getDatasets().get(0);
-				if (info.getTrialInstances() != null) {
-					this.numberOfInstances = Integer.toString(info.getTrialInstances().size());
-					for (int i = 0; i < info.getTrialInstances().size(); i++) {
-						FieldMapTrialInstanceInfo trialInstanceInfo = info.getTrialInstances().get(i);
-						instanceNumber = Integer.valueOf(trialInstanceInfo.getTrialInstanceNo());
-						if(instanceWiseLabelsNeeded.get(instanceNumber) != null){
-							trialInstanceInfo.setLabelsNeeded(instanceWiseLabelsNeeded.get(instanceNumber));
-						}
-						else{
-							trialInstanceInfo.setLabelsNeeded(0);
-						}
-					}
-				}
-			}
-			this.totalNumberOfLabelToPrint = Integer.toString(inventoryDetails.size());
-		}
-
 	}
 
 	/**
@@ -654,14 +599,6 @@ public class UserLabelPrinting implements Serializable {
 		this.includeColumnHeadinginNonPdf = includeColumnHeadinginNonPdf;
 	}
 
-	public boolean isStockList() {
-		return this.isStockList;
-	}
-
-	public void setIsStockList(final boolean isStockList) {
-		this.isStockList = isStockList;
-	}
-
 	public Integer getStudyId() {
 		return this.studyId;
 	}
@@ -669,30 +606,6 @@ public class UserLabelPrinting implements Serializable {
 	public void setStudyId(final Integer studyId) {
 		this.studyId = studyId;
 	}
-
-    public Integer getStockListId() {
-        return this.stockListId;
-    }
-
-    public void setStockListId(final Integer stockListId) {
-        this.stockListId = stockListId;
-    }
-
-    public String getStockListTypeName() {
-        return this.stockListTypeName;
-    }
-
-    public void setStockListTypeName(final String stockListTypeName) {
-        this.stockListTypeName = stockListTypeName;
-    }
-
-    public List<InventoryDetails> getInventoryDetailsList() {
-        return this.inventoryDetailsList;
-    }
-
-    public void setInventoryDetailsList(final List<InventoryDetails> inventoryDetailsList) {
-        this.inventoryDetailsList = inventoryDetailsList;
-    }
 
 	public String getOwner() {
 		return this.owner;

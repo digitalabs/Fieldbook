@@ -175,7 +175,8 @@
 				restrict: 'A',
 				scope: {
 					modeldata: '=',
-					callback: '&'
+					callback: '&',
+					mappedheader: '=mappedData'
 				},
 
 				link: function (scope, elem, attrs) {
@@ -201,7 +202,6 @@
 					elem.on('click', function () {
 						// temporarily close the current modal
 						var $importMapModal = $('#importMapModal');
-
 						var params = {
 							variableType: '1043',
 							retrieveSelectedVariableFunction: function () {
@@ -218,6 +218,17 @@
 								variableSelectBtnName: Messages.SELECT_TEXT,
 								variableSelectBtnIco: 'glyphicon-chevron-right',
 								noAlias: true
+							},
+							retrieveMappedTraits: function () {
+								var mappedHeader = [];
+								var mapped = scope.mappedheader;
+								var object = {};
+								$.each(mapped, function(index, header) {
+									if(header.variable){
+										mappedHeader[header.variable.id] = header.variable.alias || header.variable.name;
+									}
+								});
+								return mappedHeader;
 							}
 						};
 

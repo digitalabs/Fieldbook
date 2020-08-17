@@ -1,24 +1,22 @@
 
 package com.efficio.fieldbook.util;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.util.FileUtils;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.pojos.ListDataProject;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import junit.framework.Assert;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class FieldbookUtilTest {
 
@@ -50,8 +48,8 @@ public class FieldbookUtilTest {
 	public void testIsPlotDuplicateNonFirstInstanceIfNotFirstInstance() {
 		ImportedCross crosses = new ImportedCross();
 		crosses.setDuplicatePrefix(ImportedCross.PLOT_DUPE_PREFIX);
-		crosses.setEntryId(6);
-		Set<Integer> dupeEntries = new TreeSet<Integer>();
+		crosses.setEntryNumber(6);
+		Set<Integer> dupeEntries = new TreeSet<>();
 		dupeEntries.add(5);
 		dupeEntries.add(7);
 		crosses.setDuplicateEntries(dupeEntries);
@@ -62,8 +60,8 @@ public class FieldbookUtilTest {
 	public void testisPlotDuplicateNonFirstInstanceIfFirstInstance() {
 		ImportedCross crosses = new ImportedCross();
 		crosses.setDuplicatePrefix(ImportedCross.PLOT_DUPE_PREFIX);
-		crosses.setEntryId(2);
-		Set<Integer> dupeEntries = new TreeSet<Integer>();
+		crosses.setEntryNumber(2);
+		Set<Integer> dupeEntries = new TreeSet<>();
 		dupeEntries.add(5);
 		dupeEntries.add(7);
 		crosses.setDuplicateEntries(dupeEntries);
@@ -74,8 +72,8 @@ public class FieldbookUtilTest {
 	public void testisPlotDuplicateNonFirstInstanceIfPedigreeDupe() {
 		ImportedCross crosses = new ImportedCross();
 		crosses.setDuplicatePrefix(ImportedCross.PEDIGREE_DUPE_PREFIX);
-		crosses.setEntryId(2);
-		Set<Integer> dupeEntries = new TreeSet<Integer>();
+		crosses.setEntryNumber(2);
+		Set<Integer> dupeEntries = new TreeSet<>();
 		dupeEntries.add(5);
 		dupeEntries.add(7);
 		crosses.setDuplicateEntries(dupeEntries);
@@ -86,7 +84,7 @@ public class FieldbookUtilTest {
 	public void testisPlotDuplicateNonFirstInstanceIfPlotDupeButNoLitOfDuplicate() {
 		ImportedCross crosses = new ImportedCross();
 		crosses.setDuplicatePrefix(ImportedCross.PLOT_DUPE_PREFIX);
-		crosses.setEntryId(2);
+		crosses.setEntryNumber(2);
 		crosses.setDuplicateEntries(null);
 		Assert.assertFalse("Should return false since its it has no list of duplicate entries",
 				FieldbookUtil.isPlotDuplicateNonFirstInstance(crosses));
@@ -96,20 +94,20 @@ public class FieldbookUtilTest {
 	public void testMergeCrossesPlotDuplicateDataIfThereIsDuplicate() {
 		ImportedCross crosses1 = new ImportedCross();
 		crosses1.setDuplicatePrefix(ImportedCross.PLOT_DUPE_PREFIX);
-		crosses1.setEntryId(1);
+		crosses1.setEntryNumber(1);
 		ImportedCross crosses2 = new ImportedCross();
 		crosses2.setDuplicatePrefix(ImportedCross.PLOT_DUPE_PREFIX);
-		crosses2.setEntryId(2);
+		crosses2.setEntryNumber(2);
 		crosses2.setGid("11223");
 		crosses2.setCross("Cross 11223");
 		ImportedCross crosses3 = new ImportedCross();
 		crosses3.setDuplicatePrefix(ImportedCross.PLOT_DUPE_PREFIX);
-		crosses3.setEntryId(3);
-		Set<Integer> dupeEntries = new TreeSet<Integer>();
+		crosses3.setEntryNumber(3);
+		Set<Integer> dupeEntries = new TreeSet<>();
 		dupeEntries.add(2);
 		dupeEntries.add(7);
 		crosses3.setDuplicateEntries(dupeEntries);
-		List<ImportedCross> importedCrossList = new ArrayList<ImportedCross>();
+		List<ImportedCross> importedCrossList = new ArrayList<>();
 		importedCrossList.add(crosses1);
 		importedCrossList.add(crosses2);
 		importedCrossList.add(crosses3);
@@ -122,18 +120,18 @@ public class FieldbookUtilTest {
 	public void testMergeCrossesPlotDuplicateDataIfThereIsNoDuplicate() {
 		ImportedCross crosses1 = new ImportedCross();
 		crosses1.setDuplicatePrefix(ImportedCross.PLOT_DUPE_PREFIX);
-		crosses1.setEntryId(1);
+		crosses1.setEntryNumber(1);
 		ImportedCross crosses2 = new ImportedCross();
 		crosses2.setDuplicatePrefix(ImportedCross.PLOT_DUPE_PREFIX);
-		crosses2.setEntryId(2);
+		crosses2.setEntryNumber(2);
 		crosses2.setGid("11223");
 		crosses2.setCross("Cross 11223");
 		ImportedCross crosses3 = new ImportedCross();
 		crosses3.setDuplicatePrefix(ImportedCross.PLOT_DUPE_PREFIX);
-		crosses3.setEntryId(3);
+		crosses3.setEntryNumber(3);
 		crosses3.setGid("555");
 		crosses3.setDuplicateEntries(null);
-		List<ImportedCross> importedCrossList = new ArrayList<ImportedCross>();
+		List<ImportedCross> importedCrossList = new ArrayList<>();
 		importedCrossList.add(crosses1);
 		importedCrossList.add(crosses2);
 		importedCrossList.add(crosses3);
@@ -145,8 +143,8 @@ public class FieldbookUtilTest {
 	public void testIsContinueCrossingMergeWhenMergeConditionIsFalse() {
 		ImportedCross crosses3 = new ImportedCross();
 		crosses3.setDuplicatePrefix(ImportedCross.PLOT_DUPE_PREFIX);
-		crosses3.setEntryId(3);
-		Set<Integer> dupeEntries = new TreeSet<Integer>();
+		crosses3.setEntryNumber(3);
+		Set<Integer> dupeEntries = new TreeSet<>();
 		dupeEntries.add(4);
 		dupeEntries.add(7);
 		crosses3.setDuplicateEntries(dupeEntries);
@@ -162,70 +160,13 @@ public class FieldbookUtilTest {
 	public void testIsContinueCrossingMergeWhenMergeConditionIsTrue() {
 		ImportedCross crosses3 = new ImportedCross();
 		crosses3.setDuplicatePrefix(ImportedCross.PLOT_DUPE_PREFIX);
-		crosses3.setEntryId(3);
-		Set<Integer> dupeEntries = new TreeSet<Integer>();
+		crosses3.setEntryNumber(3);
+		Set<Integer> dupeEntries = new TreeSet<>();
 		dupeEntries.add(2);
 		dupeEntries.add(7);
 		crosses3.setDuplicateEntries(dupeEntries);
 		Assert.assertTrue("Should return true since there is plot duplicate, preserve plot duplicate is false and non first instance",
 				FieldbookUtil.isContinueCrossingMerge(true, false, crosses3));
-	}
-
-	@Test
-	public void testCopyDupeNotesToListDataProjectIfSameSize() {
-		ImportedCross crosses1 = new ImportedCross();
-		crosses1.setDuplicate("Dupe 1");
-		ImportedCross crosses2 = new ImportedCross();
-		crosses2.setDuplicate("Dupe 2");
-		ImportedCross crosses3 = new ImportedCross();
-		crosses3.setDuplicate("Dupe 3");
-		List<ImportedCross> importedCrossList = new ArrayList<ImportedCross>();
-		importedCrossList.add(crosses1);
-		importedCrossList.add(crosses2);
-		importedCrossList.add(crosses3);
-		List<ListDataProject> listDataProject = new ArrayList<ListDataProject>();
-		listDataProject.add(new ListDataProject());
-		listDataProject.add(new ListDataProject());
-		listDataProject.add(new ListDataProject());
-		FieldbookUtil.copyDupeNotesToListDataProject(listDataProject, importedCrossList);
-		for (int i = 0; i < 3; i++) {
-			Assert.assertEquals("Should have copied the duplicate string from the original pojo",
-					importedCrossList.get(i).getDuplicate(), listDataProject.get(i).getDuplicate());
-		}
-	}
-
-	@Test
-	public void testCopyDupeNotesToListDataProjectIfNotSameSize() {
-		ImportedCross crosses1 = new ImportedCross();
-		crosses1.setDuplicate("Dupe 1");
-		ImportedCross crosses2 = new ImportedCross();
-		crosses2.setDuplicate("Dupe 2");
-		ImportedCross crosses3 = new ImportedCross();
-		crosses3.setDuplicate("Dupe 3");
-		List<ImportedCross> importedCrossList = new ArrayList<ImportedCross>();
-		importedCrossList.add(crosses1);
-		importedCrossList.add(crosses2);
-		importedCrossList.add(crosses3);
-		List<ListDataProject> listDataProject = new ArrayList<ListDataProject>();
-		listDataProject.add(new ListDataProject());
-		listDataProject.add(new ListDataProject());
-
-		FieldbookUtil.copyDupeNotesToListDataProject(listDataProject, importedCrossList);
-		for (int i = 0; i < listDataProject.size(); i++) {
-			Assert.assertNull("Should have null for the duplicate since it was not copied", listDataProject.get(i).getDuplicate());
-		}
-	}
-
-	@Test
-	public void testCopyDupeNotesToListDataProjectIfCrossesListIsNull() {
-		List<ListDataProject> listDataProject = new ArrayList<ListDataProject>();
-		listDataProject.add(new ListDataProject());
-		listDataProject.add(new ListDataProject());
-
-		FieldbookUtil.copyDupeNotesToListDataProject(listDataProject, null);
-		for (int i = 0; i < listDataProject.size(); i++) {
-			Assert.assertNull("Should have null for the duplicate since it was not copied", listDataProject.get(i).getDuplicate());
-		}
 	}
 
 	@Test

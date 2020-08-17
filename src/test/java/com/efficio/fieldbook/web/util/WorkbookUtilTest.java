@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
+import com.efficio.fieldbook.web.trial.bean.Instance;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.generationcp.commons.data.initializer.ImportedGermplasmTestDataInitializer;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
@@ -185,7 +187,7 @@ public class WorkbookUtilTest {
 		Assert.assertTrue(newMeasurementData.isEditable());
 		Assert.assertTrue(newMeasurementData.getValue().isEmpty());
 		Assert.assertEquals(variable, newMeasurementData.getMeasurementVariable());
-		Assert.assertNull(newMeasurementData.getPhenotypeId());
+		Assert.assertNull(newMeasurementData.getMeasurementDataId());
 		Assert.assertEquals(this.breedingMethods, variable.getPossibleValues());
 
 		WorkbookUtil.addMeasurementDataToRowsExp(variableList, observations, isVariate, this.ontologyService, this.fieldbookService,
@@ -215,7 +217,7 @@ public class WorkbookUtilTest {
 		Assert.assertTrue(newMeasurementData.isEditable());
 		Assert.assertTrue(newMeasurementData.getValue().isEmpty());
 		Assert.assertEquals(variable, newMeasurementData.getMeasurementVariable());
-		Assert.assertNull(newMeasurementData.getPhenotypeId());
+		Assert.assertNull(newMeasurementData.getMeasurementDataId());
 		Assert.assertEquals(this.breedingMethods, variable.getPossibleValues());
 	}
 
@@ -240,7 +242,7 @@ public class WorkbookUtilTest {
 		Assert.assertTrue(newMeasurementData.isEditable());
 		Assert.assertTrue(newMeasurementData.getValue().isEmpty());
 		Assert.assertEquals(variable, newMeasurementData.getMeasurementVariable());
-		Assert.assertNull(newMeasurementData.getPhenotypeId());
+		Assert.assertNull(newMeasurementData.getMeasurementDataId());
 		Assert.assertEquals(this.breedingMethods, variable.getPossibleValues());
 
 		WorkbookUtil.addMeasurementDataToRowsExp(variableList, observations, isVariate, this.ontologyService, this.fieldbookService,
@@ -273,7 +275,7 @@ public class WorkbookUtilTest {
 		Assert.assertTrue(newMeasurementData.isEditable());
 		Assert.assertTrue(newMeasurementData.getValue().isEmpty());
 		Assert.assertEquals(variable, newMeasurementData.getMeasurementVariable());
-		Assert.assertNull(newMeasurementData.getPhenotypeId());
+		Assert.assertNull(newMeasurementData.getMeasurementDataId());
 		Assert.assertEquals(this.breedingMethods, variable.getPossibleValues());
 		Mockito.verify(userSelection).getMeasurementRowList();
 		Mockito.verifyNoMoreInteractions(userSelection);
@@ -313,7 +315,7 @@ public class WorkbookUtilTest {
 		Assert.assertFalse(newMeasurementData.isEditable());
 		Assert.assertEquals(factorValue, newMeasurementData.getValue());
 		Assert.assertEquals(variable, newMeasurementData.getMeasurementVariable());
-		Assert.assertNull(newMeasurementData.getPhenotypeId());
+		Assert.assertNull(newMeasurementData.getMeasurementDataId());
 		Assert.assertEquals(WorkbookUtil.transformPossibleValues(stdVariable.getEnumerations()), variable.getPossibleValues());
 	}
 
@@ -509,5 +511,20 @@ public class WorkbookUtilTest {
 		final List<Integer> measurementVariableList = variatesMapUsedInFormulas.get(measurementVariable1.getTermId());
 		Assert.assertTrue(measurementVariableList.get(0).equals(measurementVariable2.getTermId()));
 
+	}
+
+	@Test
+	public void testCreateMeasurementRowsFromEnvironments() {
+		final MeasurementVariable variable =
+			MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.PLOT_CODE.getId(), TermId.PLOT_CODE.name(), null);
+		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
+		final Instance instance = new Instance();
+		instance.setStockId(Long.parseLong(RandomStringUtils.randomNumeric(5)));
+		instance.setExperimentId(Integer.parseInt(RandomStringUtils.randomNumeric(5)));
+		instance.setInstanceId(Long.parseLong(RandomStringUtils.randomNumeric(5)));
+		final List<MeasurementRow> row = WorkbookUtil.createMeasurementRowsFromEnvironments(Arrays.asList(instance), Arrays.asList(variable), new ExpDesignParameterUi());
+		Assert.assertNotNull(row);
+		Assert.assertEquals(instance.getExperimentId(), row.get(0).getExperimentId());
+		Assert.assertEquals(instance.getStockId(), row.get(0).getStockId());
 	}
 }

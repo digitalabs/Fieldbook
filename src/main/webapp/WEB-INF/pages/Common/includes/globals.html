@@ -75,7 +75,6 @@
 	addGermplasmInvalidFolderMessage = /*[[#{study.germplasm.list.tree.invalid.public}]]*/ '',
 	importSuccessReminderToSaveMessage = /*[[#{import.success.reminder.to.save}]]*/ '',
 	importSuccessOverwriteDataWarningToSaveMessage = /*[[#{import.success.overwrite.data.warning}]]*/ '',
-	importStocklistSuccessOverwriteDataWarningToSaveMessage = /*[[#{import.stocklist.success.overwrite.data.warning}]]*/ '',
 	importSaveDataWarningMessage = /*[[#{study.import.save.data.warning}]]*/ '',
 	importDiscardDataWarningMessage = /*[[#{import.data.discard.confirmation}]]*/ '',
 	ajaxGenericErrorMsg = /*[[#{ajax.generic.exception.error.message}]]*/ '',
@@ -135,8 +134,7 @@
 	saveListSuccessfullyMessage = /*[[#{germplasm.save.list.success}]]*/ '',
 	saveSampleListSuccessfullyMessage = /*[[#{sampleList.save.list.success}]]*/ '',
 	crossesWarningMessage = /*[[#{crosses.truncated}]]*/ '',
-    advanceListAlreadyGeneratedForTrialWarningMessage = /*[[#{germplasm.list.you.can.not.clear.or.modify.study.list.as.advance.list.is.already.generated}]]*/ '',
-	expDesignMsgs = {
+    expDesignMsgs = {
 		0: /*[[#{experiment.design.invalid.generic.error}]]*/ '',
 		1: /*[[#{experiment.design.rows.per.replication.should.be.a.number}]]*/ '',
 		2: /*[[#{experiment.design.cols.per.replication.should.be.a.number}]]*/ '',
@@ -200,12 +198,21 @@
 	$.environmentMessages = {};
 	$.environmentMessages.environmentDeletedSuccessfully = /*[[#{environment.deleted.successfully}]]*/ '';
 	$.environmentMessages.environmentCannotBeDeleted = /*[[#{environment.cannot.be.deleted}]]*/ '';
+	$.environmentMessages.studyShouldHaveAtLeastOneEnvironment = /*[[#{study.should.have.at.least.one.environment}]]*/ '';
 	$.environmentMessages.environmentHasDataThatWillBeLost = /*[[#{environment.has.plot.data}]]*/ '';
+	$.environmentMessages.deleteEnvironmentNoData = /*[[#{environment.delete.no.plot.data}]]*/ '';
+	$.environmentMessages.decreaseEnvironmentNoData = /*[[#{environment.decrease.no.plot.data}]]*/ '';
 	$.experimentDesignMessages = {};
 	$.experimentDesignMessages.experimentDesignGeneratedSuccessfully = /*[[#{experiment.design.generated.successfully}]]*/ '';
 	$.experimentDesignMessages.bvLicenseGenericError = /*[[#{bv.license.generic.error}]]*/ '';
 	$.experimentDesignMessages.bvLicenseExpiring = /*[[#{experiment.design.license.expiring}]]*/ '';
 	$.experimentDesignMessages.bvLicenseExpired = /*[[#{experiment.design.license.expired}]]*/ '';
+    $.germplasmMessages = {};
+    $.germplasmMessages.replaceGermplasmSuccessful = /*[[#{replace.germplasm.successful}]]*/ '';
+    $.germplasmMessages.replaceGermplasmWarning = /*[[#{replace.germplasm.warning.for.generated.design}]]*/ '';
+    $.germplasmMessages.selectEntryForReplacement = /*[[#{replace.germplasm.select.entry}]]*/ '';
+    $.germplasmMessages.selectOnlyOneEntryForReplacement = /*[[#{replace.germplasm.select.only.one.entry}]]*/ '';
+    $.germplasmMessages.studyHasCrossesOrSelections = /*[[#{replace.germplasm.study.has.crosses.or.selections}]]*/ '';
 	$.fieldbookMessages = {};
 	$.fieldbookMessages.studyManageSettingsManageLocation = /*[[#{study.managesettings.manage.location}]]*/ '';
 	$.fieldbookMessages.errorNoFileSelectedForImport = /*[[#{error.no.file.selected.for.import}]]*/ '';
@@ -242,6 +249,12 @@
 	$.fieldbookMessages.plantingPendingTransactionsWarning = /*[[#{study.observations.prepare.planting.pending.transactions.warning}]]*/ '';
 	$.fieldbookMessages.plantingConfirmedTransactionsWarning = /*[[#{study.observations.prepare.planting.confirmed.transactions.warning}]]*/ '';
 	$.fieldbookMessages.plantingNoStockError = /*[[#{study.observations.prepare.planting.no.stock.error}]]*/ '';
+	$.fieldbookMessages.confirmCancelPendingTransactionsMessage = /*[[#{confirm.cancellation.pending.transactions}]]*/ '';
+    $.fieldbookMessages.inventoryTabNoTransactionsSelected = /*[[#{cancel.pending.transactions.none.selected}]]*/ '';
+    $.fieldbookMessages.cancelTransactionsNotAllArePending = /*[[#{cancel.pending.transactions.invalid.status}]]*/ '';
+    $.fieldbookMessages.cancelPendingTransactionsSuccessful = /*[[#{cancel.pending.transactions.successful}]]*/ '';
+
+	$.fieldbookMessages.crossesAndSelectionsNoGermplasmError = /*[[#{crosses.and.selections.no.germplasm.error}]]*/ '';
 
     // Measurement observation messages
     window.measurementObservationMessages = {

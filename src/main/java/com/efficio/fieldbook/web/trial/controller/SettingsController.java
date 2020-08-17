@@ -10,23 +10,19 @@
 
 package com.efficio.fieldbook.web.trial.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import javax.annotation.Resource;
-
-import com.efficio.fieldbook.web.trial.bean.Environment;
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.util.FieldbookUtil;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.bean.Instance;
+import com.efficio.fieldbook.web.trial.service.ValidationService;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -50,15 +46,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.HtmlUtils;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.service.ValidationService;
-import org.generationcp.commons.constant.AppConstants;
-import com.efficio.fieldbook.web.util.SettingsUtil;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 /**
  * The Class SettingsController.
@@ -69,26 +67,32 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		.asList(TermId.EXPERIMENT_DESIGN_FACTOR.getId(), TermId.NUMBER_OF_REPLICATES.getId(), TermId.PERCENTAGE_OF_REPLICATION.getId(),
 			TermId.EXPT_DESIGN_SOURCE.getId());
 
-	/** The Constant LOG. */
+	/**
+	 * The Constant LOG.
+	 */
 	private static final Logger LOG = LoggerFactory.getLogger(SettingsController.class);
 
-	/** The fieldbook service. */
-	@Resource
-	protected FieldbookService fieldbookService;
-
-	/** The fieldbook middleware service. */
+	/**
+	 * The fieldbook middleware service.
+	 */
 	@Resource
 	protected org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 
-	/** The user selection. */
+	/**
+	 * The user selection.
+	 */
 	@Resource
 	protected UserSelection userSelection;
 
-	/** The validation service. */
+	/**
+	 * The validation service.
+	 */
 	@Resource
 	protected ValidationService validationService;
 
-	/** The data import service. */
+	/**
+	 * The data import service.
+	 */
 	@Resource
 	protected DataImportService dataImportService;
 
@@ -98,7 +102,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	@Resource
 	protected StudyDataManager studyDataManager;
 
-	
 	/**
 	 * Builds the required factors.
 	 *
@@ -112,7 +115,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	/**
 	 * Creates the setting detail.
 	 *
-	 * @param id the id
+	 * @param id   the id
 	 * @param name the name
 	 * @return the setting detail
 	 */
@@ -127,12 +130,12 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 		if (stdVar != null && stdVar.getName() != null) {
 			final SettingVariable svar =
-					new SettingVariable(variableName, stdVar.getDescription(), stdVar.getProperty().getName(), stdVar.getScale().getName(),
-							stdVar.getMethod().getName(), role, stdVar.getDataType().getName(), stdVar.getDataType().getId(),
-							stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null
-									? stdVar.getConstraints().getMinValue() : null,
-							stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null
-									? stdVar.getConstraints().getMaxValue() : null);
+				new SettingVariable(variableName, stdVar.getDescription(), stdVar.getProperty().getName(), stdVar.getScale().getName(),
+					stdVar.getMethod().getName(), role, stdVar.getDataType().getName(), stdVar.getDataType().getId(),
+					stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null
+						? stdVar.getConstraints().getMinValue() : null,
+					stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null
+						? stdVar.getConstraints().getMaxValue() : null);
 			svar.setCvTermId(stdVar.getId());
 			svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
 			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
@@ -147,7 +150,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			}
 			settingDetail.setPossibleValuesToJson(possibleValues);
 			final List<ValueReference> possibleValuesFavorite =
-					this.fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProject().getUniqueID(), true);
+				this.fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProject().getUniqueID(), true);
 			settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
 			settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
 
@@ -156,7 +159,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			settingDetail.setAllValuesToJson(allValues);
 
 			final List<ValueReference> allFavoriteValues =
-					this.fieldbookService.getAllPossibleValuesFavorite(svar.getCvTermId(), this.getCurrentProject().getUniqueID(), null);
+				this.fieldbookService.getAllPossibleValuesFavorite(svar.getCvTermId(), this.getCurrentProject().getUniqueID(), null);
 
 			final List<ValueReference> intersection = SettingsUtil.intersection(allValues, allFavoriteValues);
 
@@ -174,8 +177,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	/**
 	 * Creates the setting detail of given variable type
 	 *
-	 * @param id the variable id
-	 * @param alias the variable alias
+	 * @param id           the variable id
+	 * @param alias        the variable alias
 	 * @param variableType the variable type
 	 * @return the setting detail
 	 */// TODO TRIAL
@@ -195,8 +198,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		final Double maxValue = variable.getMaxValue() == null ? null : Double.parseDouble(variable.getMaxValue());
 
 		final SettingVariable settingVariable = new SettingVariable(variableName, variable.getDefinition(),
-				variable.getProperty().getName(), scale.getName(), method.getName(), variableType.getRole().name(),
-				scale.getDataType().getName(), scale.getDataType().getId(), minValue, maxValue);
+			variable.getProperty().getName(), scale.getName(), method.getName(), variableType.getRole().name(),
+			scale.getDataType().getName(), scale.getDataType().getId(), minValue, maxValue);
 
 		// NOTE: Using variable type which is used in project properties
 		settingVariable.setVariableTypes(Collections.singleton(variableType));
@@ -224,7 +227,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 		settingDetail.setPossibleValuesToJson(possibleValues);
 		final List<ValueReference> possibleValuesFavorite =
-				this.fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProject().getUniqueID(), false);
+			this.fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProject().getUniqueID(), false);
 		settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
 		settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
 		return settingDetail;
@@ -355,7 +358,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	/**
 	 * Removes the deleted set update.
 	 *
-	 * @param settingList the setting list
+	 * @param settingList  the setting list
 	 * @param variableList the variable list
 	 */
 	//TODO TRIAL
@@ -471,15 +474,15 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 					// add code to the removed conditions if code is not yet in the list
 					if (studyConditionMap.get(idTermId) != null && studyConditionMap.get(codeTermId) != null
-							&& removedConditionsMap.get(codeTermId) == null) {
+						&& removedConditionsMap.get(codeTermId) == null) {
 						this.addSettingDetail(removedConditions, removedConditionsMap, studyConditionMap, codeTermId,
-								method == null ? "" : method.getMcode());
+							method == null ? "" : method.getMcode());
 					}
 
 					// add name to the removed conditions if name is not yet in the list
 					if (studyConditionMap.get(nameTermId) != null && removedConditionsMap.get(nameTermId) == null) {
 						this.addSettingDetail(removedConditions, removedConditionsMap, studyConditionMap, nameTermId,
-								method == null ? "" : method.getMname());
+							method == null ? "" : method.getMname());
 
 					}
 				}
@@ -489,21 +492,21 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	//TODO TRIAL
 	protected Method getMethod(final Map<String, MeasurementVariable> studyConditionMap, final String idTermId, final String codeTermId,
-			final String programUUID) {
+		final String programUUID) {
 		Method method = null;
 		if (studyConditionMap.get(idTermId) != null) {
 			method = studyConditionMap.get(idTermId).getValue().isEmpty() ? null
-					: this.fieldbookMiddlewareService.getMethodById(Double.valueOf(studyConditionMap.get(idTermId).getValue()).intValue());
+				: this.fieldbookMiddlewareService.getMethodById(Double.valueOf(studyConditionMap.get(idTermId).getValue()).intValue());
 		} else if (studyConditionMap.get(codeTermId) != null) {
 			method = studyConditionMap.get(codeTermId).getValue().isEmpty() ? null
-					: this.fieldbookMiddlewareService.getMethodByCode(studyConditionMap.get(codeTermId).getValue(), programUUID);
+				: this.fieldbookMiddlewareService.getMethodByCode(studyConditionMap.get(codeTermId).getValue(), programUUID);
 		}
 		return method;
 	}
 
 	//TODO TRIAL
 	private void addSettingDetail(final List<SettingDetail> removedConditions, final Map<String, SettingDetail> removedConditionsMap,
-			final Map<String, MeasurementVariable> studyConditionMap, final String id, final String value) {
+		final Map<String, MeasurementVariable> studyConditionMap, final String id, final String value) {
 		if (removedConditionsMap.get(id) == null) {
 			removedConditions.add(this.createSettingDetail(Integer.parseInt(id), studyConditionMap.get(id).getName(), null));
 		}
@@ -554,7 +557,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
 	//TODO TRIAL
 	protected void addVariableInDeletedList(final List<SettingDetail> currentList, final int mode, final int variableId,
-			final boolean createNewSettingIfNull) {
+		final boolean createNewSettingIfNull) {
 		SettingDetail newSetting = null;
 		for (final SettingDetail setting : currentList) {
 			if (setting.getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {
@@ -605,7 +608,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	}
 
 	protected void addDeletedTreatmentFactorInDeletedPlotLevelList(final SettingDetail newSetting) {
-		if(!CollectionUtils.isEmpty(this.userSelection.getPlotsLevelList())) {
+		if (!CollectionUtils.isEmpty(this.userSelection.getPlotsLevelList())) {
 			//Also add the deleted setting detail to the plotLevelList to delete the corresponding TF variable in the measurements table
 			if (this.userSelection.getDeletedPlotLevelList() == null) {
 				this.userSelection.setDeletedPlotLevelList(new ArrayList<SettingDetail>());
@@ -624,13 +627,11 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		this.fieldbookService = fieldbookService;
 	}
 
-	
 	public void setOntologyService(OntologyService ontologyService) {
 		this.ontologyService = ontologyService;
 	}
 
 	/**
-	 *
 	 * @param userSelection
 	 */
 	protected void updateObservationsFromTemporaryWorkbookToWorkbook(final UserSelection userSelection) {
@@ -693,13 +694,13 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		}
 	}
 
-	protected List<List<ValueReference>> convertToValueReference(final List<Environment> environments) {
-		final List<List<ValueReference>> returnVal = new ArrayList<>(environments.size());
+	protected List<List<ValueReference>> convertToValueReference(final List<Instance> instances) {
+		final List<List<ValueReference>> returnVal = new ArrayList<>(instances.size());
 
-		for (final Environment environment : environments) {
+		for (final Instance instance : instances) {
 			final List<ValueReference> valueRefList = new ArrayList<>();
 
-			for (final Map.Entry<String, String> entry : environment.getManagementDetailValues().entrySet()) {
+			for (final Map.Entry<String, String> entry : instance.getManagementDetailValues().entrySet()) {
 				final ValueReference valueRef = new ValueReference(entry.getKey(), entry.getValue());
 				valueRefList.add(valueRef);
 			}
@@ -732,7 +733,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 			.addDeletedSettingsList(null, this.userSelection.getDeletedTreatmentFactors(), this.userSelection.getTreatmentFactors());
 	}
 
-	public void initializeBasicUserSelectionLists(){
+	public void initializeBasicUserSelectionLists() {
 		if (this.userSelection.getPlotsLevelList() == null) {
 			this.userSelection.setPlotsLevelList(new ArrayList<SettingDetail>());
 		}

@@ -3,9 +3,9 @@
         <!-- management details title -->
 
         <section-container icon="bms-mgt-details"
-                           th:attr="heading=#{study.managesettings.settings},reminder=#{section.reminder.to.add.records},help-tooltip=#{study.managesettings.settings.tooltip}"
+                           th:attr="heading=#{study.managesettings.settings},reminder=#{section.reminder.to.add.records}"
                            show-reminder="managementDetails.keys().length &lt;= 0" add-variable="true" hide-variable="addVariable"
-                           model-data="managementDetails" variable-type="1805">
+                           model-data="managementDetails" variable-type="1805" help-tool-type="MANAGE_STUDIES_SETTINGS">
             <div name="content">
                 <div class="row form-group" ng-repeat="key in filteredKeys = ( managementDetails.keys() | removeHiddenVariableFilter: managementDetails.vals() ) track by key">
                     <div class="col-xs-5 1st">
@@ -19,7 +19,7 @@
 
                     </a></div>
                     <div class="col-xs-7 2nd" style="padding-right: 0">
-                        <show-setting-form-element settings="managementDetails" targetkey="{{key}}"
+                        <show-setting-form-element settings="managementDetails" targetkey="{{key}}" changefunction="onLabelChange()"
                                                    valuecontainer="data.userInput"></show-setting-form-element>
                     </div>
                 </div>

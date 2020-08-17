@@ -17,6 +17,38 @@
 					.then(successHandler, failureHandler);
 			}
 
+			service.queryTransactionTypes = function () {
+				return $http.get(`${BASE_URL}/transaction-types`)
+					.then(successHandler, failureHandler);
+			};
+
+			service.queryTransactionStatusTypes = function () {
+				return $http.get(`${BASE_URL}/transaction-status-types`)
+					.then(successHandler, failureHandler);
+			};
+
+			service.searchStudyTransactions = function (searchRequest) {
+				return $http.post(service.getSearchStudyTransactionsUrl(), searchRequest)
+					.then(successHandler, failureHandler);
+			}
+
+			service.getSearchStudyTransactionsUrl = function () {
+				let programUUID = studyContext.programId;
+				let studyId = studyContext.studyId;
+				return `${BASE_URL}/programs/${programUUID}/studies/${studyId}/transactions/search`;
+			};
+
+			service.cancelStudyTransactions = function (searchRequest) {
+				return $http.post(service.getCancelStudyTransactionsUrl(), searchRequest)
+					.then(successHandler, failureHandler);
+			}
+
+			service.getCancelStudyTransactionsUrl = function () {
+				let programUUID = studyContext.programId;
+				let studyId = studyContext.studyId;
+				return `${BASE_URL}/programs/${programUUID}/studies/${studyId}/transactions/cancellation`;
+			};
+
 			return service;
 		}
 	]);

@@ -1,4 +1,4 @@
-/*globals displaySampleListTree, changeBrowseSampleButtonBehavior, displayAdvanceList,saveGermplasmReviewError */
+/*globals displaySampleListTree, changeBrowseSampleButtonBehavior,saveGermplasmReviewError */
 /*globals $,showErrorMessage, showInvalidInputMessage, getDisplayedTreeName, listShouldNotBeEmptyError, getJquerySafeId,
  validateAllDates, saveSampleListSuccessfullyMessage */
 /*globals listParentFolderRequired, listNameRequired */

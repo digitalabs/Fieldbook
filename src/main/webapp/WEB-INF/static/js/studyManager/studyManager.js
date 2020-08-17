@@ -680,9 +680,3 @@ function discardImportedData() {
 	});
 }
 
-function discardImportedStockList(){
-	$('#discardImportStockListDataConfirmation').modal({
-		backdrop: 'static',
-		keyboard: true
-	});
-}

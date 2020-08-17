@@ -13,7 +13,7 @@
 			http://www.springframework.org/schema/util/spring-util-4.1.xsd
 			http://www.springframework.org/schema/mvc
 			http://www.springframework.org/schema/mvc/spring-mvc.xsd
-			http://www.springframework.org/schema/aop 
+			http://www.springframework.org/schema/aop
 			http://www.springframework.org/schema/aop/spring-aop-4.1.xsd
 			http://www.springframework.org/schema/tx
 			http://www.springframework.org/schema/tx/spring-tx-4.1.xsd">
@@ -129,10 +129,6 @@
 		<constructor-arg value="${upload.directory}" />
 	</bean>
 
-	<bean id="exportAdvanceListService"
-		class="com.efficio.fieldbook.web.common.service.impl.ExportAdvanceListServiceImpl" />
-
-
 	<bean id="importGermplasmfileService"
 		class="com.efficio.fieldbook.web.trial.service.impl.ImportGermplasmFileServiceImpl" />
 
@@ -174,7 +170,7 @@
 	<bean id="exportFieldmapService" class="com.efficio.fieldbook.service.ExportFieldmapServiceImpl" />
 
 	<bean id="exportGermplasmListService"
-		class="com.efficio.fieldbook.web.common.service.impl.ExportGermplasmListServiceImpl" scope="request">
+		  class="com.efficio.fieldbook.web.common.service.impl.ExportStudyGermplasmServiceImpl" scope="request">
 		<aop:scoped-proxy />
 	</bean>
 
@@ -199,11 +195,6 @@
 
 	<bean id="etlUserSelection" class="com.efficio.etl.web.bean.UserSelection"
 		  scope="session">
-		<aop:scoped-proxy />
-	</bean>
-
-	<bean id="seedSelection" class="com.efficio.fieldbook.web.inventory.bean.SeedSelection"
-		scope="session">
 		<aop:scoped-proxy />
 	</bean>
 
@@ -291,7 +282,7 @@
 		factory-method="getOntologyMethodDataManager" scope="request">
 		<aop:scoped-proxy />
 	</bean>
-	
+
 	<bean id="termDataManager" factory-bean="managerFactory"
 		factory-method="getTermDataManager" scope="request">
 		<aop:scoped-proxy />
@@ -369,18 +360,13 @@
 		factory-method="getGermplasmListManager" scope="request">
 		<aop:scoped-proxy />
 	</bean>
-	
+
 	<bean id="germplasmGroupingService" factory-bean="managerFactory"
 		factory-method="getGermplasmGroupingService" scope="request">
 		<aop:scoped-proxy />
 	</bean>
 
 	<bean id="settingsService" class="com.efficio.fieldbook.service.SettingsServiceImpl" />
-
-	<bean id="listDataProjectSaver" factory-bean="managerFactory"
-		  factory-method="getListDataProjectSaver" scope="request">
-		<aop:scoped-proxy />
-	</bean>
 
 	<bean id="trialEnvironmentBuilder" factory-bean="managerFactory"
 		  factory-method="getTrialEnvironmentBuilder" scope="request">
@@ -451,8 +437,8 @@
 
 	<bean id="ruleService"
 		class="org.generationcp.commons.ruleengine.impl.RulesServiceImpl" />
-	<!-- This component scan automatically registers all implementations of 
-		the Rule interface into the Spring context. In conjunction with the RulesPostProcessor 
+	<!-- This component scan automatically registers all implementations of
+		the Rule interface into the Spring context. In conjunction with the RulesPostProcessor
 		above, this automatically populates the map in the RuleFactory -->
 	<context:component-scan base-package="org.generationcp.commons.ruleengine.naming" />
 	<context:component-scan base-package="org.generationcp.commons.ruleengine.naming.expression" />
@@ -471,17 +457,6 @@
 	<bean id="settingsPresetService"
 		class="org.generationcp.commons.service.impl.SettingsPresetServiceImpl" />
 
-	<bean id="importInventoryService"
-		class="com.efficio.fieldbook.web.common.service.impl.ImportInventoryServiceImpl">
-		<aop:scoped-proxy />
-	</bean>
-
-	<bean id="inventoryImportParser"
-		class="com.efficio.fieldbook.web.util.parsing.InventoryImportParser"
-		scope="prototype">
-		<aop:scoped-proxy />
-	</bean>
-	
 	<bean id="designImportParser"
 		class="com.efficio.fieldbook.web.util.parsing.DesignImportParser"
 		scope="prototype">
@@ -493,13 +468,13 @@
 		scope="prototype">
 		<aop:scoped-proxy />
 	</bean>
-	
+
 	<bean id="designImportExcelParser"
 		class="com.efficio.fieldbook.web.util.parsing.DesignImportExcelParser"
 		scope="prototype">
 		<aop:scoped-proxy />
 	</bean>
-	
+
 	<bean id="designImportValidator"
 		  class="com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator"
 		scope="prototype">
@@ -517,7 +492,7 @@
 	<bean id="germplasmExportedWorkbook" class="org.generationcp.commons.parsing.GermplasmExportedWorkbook" scope="request">
 		<aop:scoped-proxy />
 	</bean>
-	
+
 	<!-- Including all beans used for generating Code Sheet when exporting Germplasm List excel file -->
 	<context:component-scan base-package="org.generationcp.commons.workbook.generator" />
 
@@ -527,23 +502,23 @@
 		scope="request">
 		<aop:scoped-proxy />
 	</bean>
-	
+
 	<bean id="studyPermissionValidator" class=" org.generationcp.commons.util.StudyPermissionValidator"
 		scope="request">
 		<aop:scoped-proxy />
 	</bean>
-	
+
 	<bean id="seedSourceGenerator" class="org.generationcp.commons.ruleengine.generator.SeedSourceGenerator">
 	</bean>
 
     <bean id="breedersCrossIDGenerator" class="org.generationcp.commons.ruleengine.generator.BreedersCrossIDGenerator">
 	</bean>
-	
+
 	<bean id="jasperReportService" class="org.generationcp.commons.reports.service.impl.JasperReportServiceImpl"
 		scope="request">
 		<aop:scoped-proxy />
 	</bean>
-	
+
 	<bean id="pedigreeService" factory-bean="managerFactory"
 		factory-method="getPedigreeService" scope="request">
 		<aop:scoped-proxy />
@@ -588,6 +563,20 @@
 		<aop:scoped-proxy proxy-target-class="false" />
 	</bean>
 
+	<bean id="studyGermplasmService" factory-bean="managerFactory"
+		  factory-method="getStudyGermplasmService" scope="request">
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
+
+	<bean id="germplasmStudySourceService" factory-bean="managerFactory"
+		  factory-method="getGermplasmStudySourceService" scope="request">
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
+
+	<bean id="studyGermplasmTransformer" class="com.efficio.fieldbook.web.study.germplasm.StudyGermplasmTransformer" scope="request">
+		<aop:scoped-proxy/>
+	</bean>
+
 	<bean id="derivedVariableProcessor"
 		  class="org.generationcp.commons.derivedvariable.DerivedVariableProcessor"
 		  scope="request">
@@ -613,7 +602,7 @@
 		scope="request" destroy-method="close">
 		<property name="sessionFactory" ref="WORKBENCH_SessionFactory" />
 
-		<!-- JDK Standard Proxy around this request scoped bean, so we can use 
+		<!-- JDK Standard Proxy around this request scoped bean, so we can use
 			it on longer scoped beans -->
 		<aop:scoped-proxy proxy-target-class="false" />
 	</bean>
@@ -650,7 +639,7 @@
 	<bean id="objectMapper" class="org.codehaus.jackson.map.ObjectMapper" scope="prototype"/>
 
     <bean id="userTreeStateService" class="org.generationcp.commons.service.impl.UserTreeStateServiceImpl"/>
-    
+
     <bean id="resourceFinder" class="org.generationcp.middleware.util.ResourceFinder"/>
 
 	<bean id="etlService" class="com.efficio.etl.service.impl.ETLServiceImpl" >
@@ -663,7 +652,7 @@
           factory-method="getKeySequenceRegisterService" scope="request">
         <aop:scoped-proxy />
     </bean>
-    
+
     <bean id="studyService" factory-bean="managerFactory"
     	factory-method="getStudyService" scope="request">
         <aop:scoped-proxy />

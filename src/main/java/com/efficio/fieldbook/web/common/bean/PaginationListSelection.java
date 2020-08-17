@@ -11,16 +11,15 @@
 
 package com.efficio.fieldbook.web.common.bean;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.inventory.InventoryDetails;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The Class PaginationListSelection.
@@ -31,9 +30,6 @@ public class PaginationListSelection implements Serializable {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -2448596622077650635L;
-
-	/** The final advanced list. */
-	private final Map<String, List<InventoryDetails>> finalAdvancedList = new HashMap<String, List<InventoryDetails>>();
 
 	/** The review details list. */
 	private final Map<String, List<MeasurementRow>> reviewDetailsList = new HashMap<String, List<MeasurementRow>>();
@@ -46,25 +42,6 @@ public class PaginationListSelection implements Serializable {
 
 	private final Map<String, Workbook> reviewWorkbookList = new HashMap<String, Workbook>();
 
-	/**
-	 * Adds the final advanced list.
-	 *
-	 * @param id the id
-	 * @param inveList the inve list
-	 */
-	public void addFinalAdvancedList(String id, List<InventoryDetails> inveList) {
-		this.finalAdvancedList.put(id, inveList);
-	}
-
-	/**
-	 * Gets the final advanced list.
-	 *
-	 * @param id the id
-	 * @return the final advanced list
-	 */
-	public List<InventoryDetails> getFinalAdvancedList(String id) {
-		return this.finalAdvancedList.get(id);
-	}
 
 	/**
 	 * Adds the review details list.

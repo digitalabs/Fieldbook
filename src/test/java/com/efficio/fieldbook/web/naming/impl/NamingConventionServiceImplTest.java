@@ -32,18 +32,10 @@ import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentMatchers;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.anyInt;
 
@@ -116,7 +108,7 @@ public class NamingConventionServiceImplTest {
 
 		// Germplasm
 		final ImportedGermplasm ig = new ImportedGermplasm();
-		ig.setEntryId(1);
+		ig.setEntryNumber(1);
 		ig.setDesig("BARRA DE ORO DULCE");
 		ig.setGid("133");
 		ig.setCross("BARRA DE ORO DULCE");
@@ -177,7 +169,7 @@ public class NamingConventionServiceImplTest {
 
 		// germplasm1
 		final ImportedGermplasm advanceResult1 = igList.get(0);
-		Assert.assertEquals(new Integer(1), advanceResult1.getEntryId());
+		Assert.assertEquals(new Integer(1), advanceResult1.getEntryNumber());
 		Assert.assertEquals(ruleGeneratedName1, advanceResult1.getDesig());
 		Assert.assertNull(advanceResult1.getGid());
 		Assert.assertEquals(ig.getCross(), advanceResult1.getCross());
@@ -199,7 +191,7 @@ public class NamingConventionServiceImplTest {
 
 		// germplasm2
 		final ImportedGermplasm advanceResult2 = igList.get(1);
-		Assert.assertEquals(new Integer(2), advanceResult2.getEntryId());
+		Assert.assertEquals(new Integer(2), advanceResult2.getEntryNumber());
 		Assert.assertEquals(ruleGeneratedName2, advanceResult2.getDesig());
 		Assert.assertNull(advanceResult2.getGid());
 		Assert.assertEquals(ig.getCross(), advanceResult2.getCross());
@@ -249,7 +241,7 @@ public class NamingConventionServiceImplTest {
         as1.setNames(new ArrayList<Name>());
 
         final ImportedGermplasm ig = new ImportedGermplasm();
-        ig.setEntryId(1);
+        ig.setEntryNumber(1);
         ig.setDesig("BARRA DE ORO DULCE");
         ig.setGid("133");
         ig.setCross("BARRA DE ORO DULCE");
@@ -318,7 +310,7 @@ public class NamingConventionServiceImplTest {
         Assert.assertEquals(1, advanceResult.getAdvanceList().size());
 
         final ImportedGermplasm resultIG = advanceResult.getAdvanceList().get(0);
-        Assert.assertEquals(new Integer(1), resultIG.getEntryId());
+        Assert.assertEquals(new Integer(1), resultIG.getEntryNumber());
         Assert.assertEquals(ruleGeneratedName, resultIG.getDesig());
         Assert.assertNull(resultIG.getGid());
         Assert.assertEquals(ig.getCross(), resultIG.getCross());

@@ -3,9 +3,9 @@
 
 	const module = angular.module('manageTrialApp');
 
-	module.controller('PlantingPreparationModalCtrl', ['$scope', 'studyContext', '$uibModalInstance', 'DTOptionsBuilder', 'DTColumnBuilder',
+	module.controller('PlantingPreparationModalCtrl', ['$scope', '$rootScope', 'studyContext', '$uibModalInstance', 'DTOptionsBuilder', 'DTColumnBuilder',
 		'PlantingPreparationService', 'InventoryService', '$timeout', '$q', 'HasAnyAuthorityService', 'PERMISSIONS',
-		function ($scope, studyContext, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, service, InventoryService, $timeout, $q,
+		function ($scope, $rootScope, studyContext, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, service, InventoryService, $timeout, $q,
 				  HasAnyAuthorityService, PERMISSIONS) {
 
 			$scope.hasAnyAuthority = HasAnyAuthorityService.hasAnyAuthority;
@@ -169,6 +169,7 @@
 						service.confirmPlanting(getPlantingRequest(), $scope.$resolve.datasetId, $scope.isCommitOnSaving).then(() => {
 							$uibModalInstance.close();
 							showSuccessfulMessage('', $.fieldbookMessages.plantingSuccess);
+							$rootScope.$broadcast('inventoryChanged')
 						}, onError);
 					}
 				});

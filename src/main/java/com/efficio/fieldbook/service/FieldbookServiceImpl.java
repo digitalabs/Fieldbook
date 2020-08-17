@@ -37,7 +37,6 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -60,16 +59,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 
 /**
  * The Class FieldbookServiceImpl.
@@ -1176,15 +1166,6 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return false;
 	}
 
-	@Override
-	public void saveStudyImportedCrosses(final List<Integer> crossesIds, final Integer studyId) {
-		if (crossesIds != null && !crossesIds.isEmpty()) {
-			for (final Integer crossesId : crossesIds) {
-				this.fieldbookMiddlewareService.updateGermlasmListInfoStudy(crossesId, studyId != null ? studyId : 0);
-			}
-		}
-
-	}
 
 	@Override
 	public void saveStudyColumnOrdering(
@@ -1302,15 +1283,4 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return this.getOntologyService().getStandardVariable(termId, this.contextUtil.getCurrentProgramUUID());
 	}
 
-	@Override
-	public long getGermplasmListChecksSize(final int germplasmListId) {
-		final List<ValueReference> entryTypes = this.getAllPossibleValues(TermId.ENTRY_TYPE.getId(), true);
-		final List<Integer> checkEntryTypeIds = new ArrayList<>();
-		for (final ValueReference entryType : entryTypes) {
-			if (SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId() != entryType.getId()) {
-				checkEntryTypeIds.add(entryType.getId());
-			}
-		}
-		return this.fieldbookMiddlewareService.countListDataProjectByListIdAndEntryTypeIds(germplasmListId, checkEntryTypeIds);
-	}
 }

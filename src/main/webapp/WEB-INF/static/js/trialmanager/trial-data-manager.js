@@ -4,12 +4,12 @@
 (function() {
 	'use strict';
 	angular.module('manageTrialApp').service('TrialManagerDataService', ['GERMPLASM_LIST_SIZE','GERMPLASM_CHECKS_SIZE', 'TRIAL_SETTINGS_INITIAL_DATA',
-		'ADVANCE_LIST_DATA', 'SAMPLE_LIST_DATA','CROSSES_LIST_DATA','ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
-		'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA', 'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_MANAGEMENT_MODE', 'UNSPECIFIED_LOCATION_ID', 'BREEDING_METHOD_CODE','$q',
+		'SAMPLE_LIST_DATA','ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
+		'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA', 'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_MANAGEMENT_MODE', 'UNSPECIFIED_LOCATION_ID', '$q',
 		'TrialSettingsManager','studyStateService', '_', '$localStorage','$rootScope', 'studyContext', 'derivedVariableService', 'experimentDesignService',
-		function(GERMPLASM_LIST_SIZE, GERMPLASM_CHECKS_SIZE, TRIAL_SETTINGS_INITIAL_DATA, ADVANCE_LIST_DATA, SAMPLE_LIST_DATA, CROSSES_LIST_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
+		function(GERMPLASM_LIST_SIZE, GERMPLASM_CHECKS_SIZE, TRIAL_SETTINGS_INITIAL_DATA, SAMPLE_LIST_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
 					EXPERIMENTAL_DESIGN_INITIAL_DATA, EXPERIMENTAL_DESIGN_SPECIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
-					TRIAL_MANAGEMENT_MODE, UNSPECIFIED_LOCATION_ID, BREEDING_METHOD_CODE, $q, TrialSettingsManager, studyStateService, _, $localStorage, $rootScope, studyContext, derivedVariableService, experimentDesignService) {
+					TRIAL_MANAGEMENT_MODE, UNSPECIFIED_LOCATION_ID, $q, TrialSettingsManager, studyStateService, _, $localStorage, $rootScope, studyContext, derivedVariableService, experimentDesignService) {
 
 
 			// TODO: clean up data service, at the very least arrange the functions in alphabetical order
@@ -62,14 +62,8 @@
 					if (updateFunction) {
 						updateFunction(data);
 					} else {
-						// update necessary data and settings
-						// currently identified is the stockid, locationid, and experimentid found in the environment tab
-						service.updateSettings('environments', extractSettings(data.environmentData));
-						service.updateCurrentData('environments', extractData(data.environmentData));
-
 						service.currentData.basicDetails.studyID = trialID;
 					}
-
 				}).error(function() {
 					showErrorMessage('', $.fieldbookMessages.errorSaveStudy);
 				});
@@ -182,16 +176,9 @@
 			var cleanupData = function(values) {
 				if (values) {
 					angular.forEach(values, function(value, key) {
-						if(key === BREEDING_METHOD_CODE){
-							if (value && (value.key || value.key === 0)) {
-								values[key] = value.key;
-							}
-						}else{
-							if (value && (value.id || value.id === 0)) {
-								values[key] = value.id;
-							}
+						if (value && (value.id || value.id === 0)) {
+							values[key] = value.id;
 						}
-
 					});
 				}
 			};
@@ -203,7 +190,7 @@
 				// user input data and default values of standard variables
 				currentData: {
 					trialSettings: extractData(TRIAL_SETTINGS_INITIAL_DATA),
-					environments: extractData(ENVIRONMENTS_INITIAL_DATA),
+					instanceInfo: extractData(ENVIRONMENTS_INITIAL_DATA),
 					basicDetails: extractBasicDetailsData(BASIC_DETAILS_DATA),
 					treatmentFactors: extractData(TREATMENT_FACTORS_INITIAL_DATA, 'currentData'),
 					experimentalDesign: extractData(EXPERIMENTAL_DESIGN_INITIAL_DATA)
@@ -216,17 +203,16 @@
 					germplasm: extractSettings(GERMPLASM_INITIAL_DATA),
 					treatmentFactors: extractTreatmentFactorSettings(TREATMENT_FACTORS_INITIAL_DATA),
 					basicDetails: extractSettings(BASIC_DETAILS_DATA),
-					advancedList: ADVANCE_LIST_DATA,
-					sampleList: SAMPLE_LIST_DATA,
-					crossesList: CROSSES_LIST_DATA
+					sampleList: SAMPLE_LIST_DATA
 				},
 				applicationData: {
 					unsavedTreatmentFactorsAvailable: false,
 					germplasmListCleared: false,
 					isGeneratedOwnDesign: false,
 					advanceType: 'study',
-					hasNewEnvironmentAdded: false,
+					hasNewInstanceAdded: false,
 					germplasmListSelected: GERMPLASM_LIST_SIZE > 0,
+					germplasmChangesUnsaved: false,
 					designTypes: [],
 					deleteEnvironmentCallback: function() {}
 				},
@@ -262,9 +248,9 @@
                     angular.forEach(service.currentData.treatmentFactors.currentData, function(treatmentFactor) {
                         cleanupData(treatmentFactor.labels);
                     });
-                    angular.forEach(service.currentData.environments.environments, function(environment) {
-                        cleanupData(environment.managementDetailValues);
-                        cleanupData(environment.trialDetailValues);
+                    angular.forEach(service.currentData.instanceInfo.instances, function(instance) {
+                        cleanupData(instance.managementDetailValues);
+                        cleanupData(instance.trialDetailValues);
                     });
                 },
 
@@ -304,7 +290,7 @@
 				},
 
 				retrieveGenerateDesignInput: function(designType) {
-					var environmentData = angular.copy(service.currentData.environments);
+					var environmentData = angular.copy(service.currentData.instanceInfo);
 
 					_.each(environmentData.environments, function(data, key) {
 						_.each(data.managementDetailValues, function(value, key) {
@@ -318,7 +304,7 @@
 						environmentData: environmentData,
 						selectedExperimentDesignType: angular.copy(service.getDesignTypeById(designType, service.applicationData.designTypes)),
 						startingPlotNo: service.currentData.experimentalDesign.startingPlotNo,
-						hasNewEnvironmentAdded: service.applicationData.hasNewEnvironmentAdded
+						hasNewInstanceAdded: service.applicationData.hasNewInstanceAdded
 					};
 
 					return data;
@@ -352,7 +338,7 @@
 
 				},
 
-				deleteEnvironment: function(index) {
+				deleteInstance: function(index) {
 					var refreshMeasurementDeferred = $q.defer();
 					var deleteMeasurementPossible = index !== 0;
 					return refreshMeasurementDeferred.promise;
@@ -375,9 +361,9 @@
 				extractTreatmentFactorSettings: extractTreatmentFactorSettings,
 				saveCurrentData: function() {
 
-					var missingLocations = service.currentData.environments.environments.some(function (environment) {
-						return !environment.managementDetailValues ||
-							(!environment.managementDetailValues[8190] && environment.managementDetailValues[8190] !== 0);
+					var missingLocations = service.currentData.instanceInfo.instances.some(function (instance) {
+						return !instance.managementDetailValues ||
+							(!instance.managementDetailValues[8190] && instance.managementDetailValues[8190] !== 0);
 					});
 
 					if (missingLocations) {
@@ -390,9 +376,6 @@
 					} else if (service.applicationData.unsavedTreatmentFactorsAvailable) {
 							showErrorMessage('', 'TREATMENT FACTORS will be saved automatically when generating the design.');
 					} else if (service.isCurrentTrialDataValid(service.isOpenStudy())) {
-                        // Hide Discard Imported Data button when the user presses Save button
-                        $('.fbk-discard-imported-stocklist-data').addClass('fbk-hide');
-                        stockListImportNotSaved = false;
 						service.performDataCleanup();
 						var columnsOrder =  ($('#measurement-table') && $('#measurement-table').length !== 0 && service.isOpenStudy()) ?
 							BMS.Fieldbook.MeasurementsTable.getColumnOrdering('measurement-table') : [];
@@ -420,17 +403,11 @@
 									recreateSessionVariablesTrial();
 									notifySaveEventListeners();
 									updateFrontEndTrialData(service.currentData.basicDetails.studyID, function (updatedData) {
-										service.updateCurrentData('environments', extractData(updatedData.environmentData));
-										service.updateSettings('environments', extractSettings(updatedData.environmentData));
 										service.updateCurrentData('trialSettings', extractData(updatedData.trialSettingsData));
 										service.updateSettings('trialSettings', extractSettings(updatedData.trialSettingsData));
-
-										derivedVariableService.displayExecuteCalculateVariableMenu();
-										derivedVariableService.showWarningIfCalculatedVariablesAreOutOfSync();
 										setupSettingsVariables();
 										studyStateService.resetState();
 									});
-
 								}).error(function (response) {
 									if (response.data && response.data.errors) {
 										showErrorMessage('', response.data.errors[0].message);
@@ -595,7 +572,7 @@
 								return true;
 							} else if (key === 'treatmentFactors') {
 								settingsArray.push(value.details);
-							} else if (key === 'advancedList' || key === 'sampleList' || key === 'crossesList' ) {
+							} else if (key === 'sampleList') {
 								return true;
 							} else {
 								if (value) {
@@ -635,7 +612,7 @@
 						// validate creation date
 						hasError = true;
 						name = 'Creation Date';
-					} else if (service.currentData.environments.noOfEnvironments <= 0) {
+					} else if (service.currentData.instanceInfo.numberOfInstances <= 0) {
 						hasError = true;
 						customMessage = 'the study should have at least one environment';
 					} else if ($.trim(service.currentData.basicDetails.studyType) === '') {
@@ -737,7 +714,7 @@
 					_.each(service.settings.environments.managementDetails.vals(), function(item, key) {
 						if (!(!item.variable.maxRange && !item.variable.minRange)) {
 							// let's validate each environment
-							_.find(service.currentData.environments.environments, function(val, index) {
+							_.find(service.currentData.instanceInfo.instances, function(val, index) {
 								if (!!val.managementDetailValues[key]) {
 									if (item.variable.maxRange < Number(val.managementDetailValues[key])) {
 										results.customMessage = 'Invalid maximum range on management detail variable ' +
@@ -765,7 +742,7 @@
 					_.each(service.settings.environments.trialConditionDetails.vals(), function(item, key) {
 						if (!(!item.variable.maxRange && !item.variable.minRange)) {
 							// letz validate each environment
-							_.find(service.currentData.environments.environments, function(val, index) {
+							_.find(service.currentData.instanceInfo.instances, function(val, index) {
 								if (!!val.trialDetailValues[key]) {
 									if (item.variable.maxRange < Number(val.trialDetailValues[key])) {
 										results.customMessage = 'Invalid maximum range on study details variable ' +

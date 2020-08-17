@@ -13,6 +13,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
+import org.generationcp.middleware.service.api.InventoryService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,6 +42,9 @@ public class LabelPrintingServiceTest {
 
 	@Mock
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
+
+	@Mock
+	private InventoryService inventoryMiddlewareService;
 
 	@InjectMocks
 	private LabelPrintingServiceImpl unitUnderTest;
@@ -136,24 +140,6 @@ public class LabelPrintingServiceTest {
 				"Retrieved available label list does not contain all germplasm related labels");
 
 		this.verifyFieldMapLabelsPresent(retrieved);
-	}
-
-	@Test
-	public void testGetAvailableFieldsForCrossStockList() {
-		final List<LabelFields> germplasmLabels = this.createDummyGermplasmLabels();
-
-		Mockito.when(this.settingsService.retrieveGermplasmDescriptorsAsLabels(this.workbook)).thenReturn(germplasmLabels);
-
-		final List<LabelFields> retrieved =
-				this.unitUnderTest.getAvailableLabelFieldsForStockList(GermplasmListType.CROSSES, Locale.getDefault(), LabelPrintingServiceTest.DUMMY_STUDY_ID);
-
-		this.verifyLabelListContainsList(retrieved, germplasmLabels,
-				"Retrieved available label list does not contain all germplasm related labels");
-
-		this.verifyLabelByTermID(TermId.DUPLICATE.getId(), retrieved);
-		this.verifyLabelByTermID(TermId.BULK_WITH.getId(), retrieved);
-		this.verifyLabelByTermID(TermId.BULK_COMPL.getId(), retrieved);
-		this.verifyLabelByTermID(TermId.PLOT_NO.getId(), retrieved);
 	}
 
 	protected void verifyFieldMapLabelsPresent(final List<LabelFields> forVerification) {

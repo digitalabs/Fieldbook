@@ -30,7 +30,7 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 	private Integer checkSpacing;
 	private Integer checkInsertionManner;
 	private Integer replicationPercentage;
-	private List<Environment> environments;
+	private List<Instance> instances;
 	private TrialSettingsBean trialSettings;
 
 	/*
@@ -218,12 +218,12 @@ public class ExpDesignParameterUi implements Serializable, TabInfoBean {
 		this.replicationPercentage = replicationPercentage;
 	}
 
-	public List<Environment> getEnvironments() {
-		return this.environments;
+	public List<Instance> getInstances() {
+		return this.instances;
 	}
 
-	public void setEnvironments(final List<Environment> environments) {
-		this.environments = environments;
+	public void setInstances(final List<Instance> instances) {
+		this.instances = instances;
 	}
 
 	public TrialSettingsBean getTrialSettings() {

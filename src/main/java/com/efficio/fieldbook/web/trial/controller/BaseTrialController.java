@@ -4,11 +4,9 @@ package com.efficio.fieldbook.web.trial.controller;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.exception.FieldbookRequestException;
-import com.efficio.fieldbook.web.trial.bean.AdvanceList;
 import com.efficio.fieldbook.web.trial.bean.BasicDetails;
-import com.efficio.fieldbook.web.trial.bean.CrossesList;
-import com.efficio.fieldbook.web.trial.bean.Environment;
-import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.Instance;
+import com.efficio.fieldbook.web.trial.bean.InstanceInfo;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignData;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignDataDetail;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
@@ -44,7 +42,6 @@ import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.StudyDataManager;
-import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.generationcp.middleware.util.Util;
@@ -107,9 +104,9 @@ public abstract class BaseTrialController extends SettingsController {
 		studyDetails.print(1);
 	}
 
-	void processEnvironmentData(final EnvironmentData data) {
-		for (int i = 0; i < data.getEnvironments().size(); i++) {
-			final Map<String, String> values = data.getEnvironments().get(i).getManagementDetailValues();
+	void processEnvironmentData(final InstanceInfo data) {
+		for (int i = 0; i < data.getInstances().size(); i++) {
+			final Map<String, String> values = data.getInstances().get(i).getManagementDetailValues();
 
 			if (!values.containsKey(Integer.toString(TermId.LOCATION_ID.getId()))
 				|| values.get(Integer.toString(TermId.LOCATION_ID.getId())) == null || values
@@ -194,7 +191,7 @@ public abstract class BaseTrialController extends SettingsController {
 
 	private void setStartingPlotNoFromObservations(final Workbook trialWorkbook, final ExpDesignParameterUi data) {
 		// Set starting entry and plot number from observations
-		Integer startingPlotNo = 0;
+		int startingPlotNo = 0;
 		if (trialWorkbook.getObservations() != null && !trialWorkbook.getObservations().isEmpty()) {
 
 			final List<MeasurementRow> measurementRows = trialWorkbook.getObservations();
@@ -209,7 +206,7 @@ public abstract class BaseTrialController extends SettingsController {
 						}
 					});
 
-				final Integer currentPlotNo = Integer.valueOf(dataMap.get(TermId.PLOT_NO.getId()).getValue());
+				final int currentPlotNo = Integer.parseInt(dataMap.get(TermId.PLOT_NO.getId()).getValue());
 				if (currentPlotNo < startingPlotNo || startingPlotNo == 0) {
 					startingPlotNo = currentPlotNo;
 				}
@@ -454,75 +451,66 @@ public abstract class BaseTrialController extends SettingsController {
 
 		info.setSettingMap(settingMap);
 
-		final EnvironmentData data = new EnvironmentData();
+		final InstanceInfo data = new InstanceInfo();
 		final List<MeasurementRow> trialObservations = workbook.getTrialObservations();
 
-		data.setNoOfEnvironments(trialObservations.size());
+		data.setNumberOfInstances(trialObservations.size());
 
-		final List<Environment> environments = new ArrayList<>();
+		final List<Instance> instances = new ArrayList<>();
 		for (final MeasurementRow row : trialObservations) {
-			final Environment environment = new Environment();
+			final Instance instance = new Instance();
 			if (!isUsePrevious) {
-				environment.setExperimentId(row.getExperimentId());
-				environment.setLocationId(row.getLocationId());
-				environment.setStockId(row.getStockId());
+				instance.setInstanceId(row.getLocationId());
+				instance.setStockId(row.getStockId());
+				instance.setExperimentId(row.getExperimentId());
 			}
 
 			final Map<String, String> managementDetailValues = new HashMap<>();
+			final Map<String, String> trialConditionValues = new HashMap<>();
+			final Map<String, Integer> trialConditionDataIdMap = new HashMap<>();
+			final Map<String, Integer> managementDetailDataIdMap = new HashMap<>();
 			for (final SettingDetail detail : managementDetailList) {
 
 				final MeasurementData mData = row.getMeasurementData(detail.getVariable().getCvTermId());
 				if (mData != null) {
 					final String value;
-					if ("DATE".equals(detail.getVariable().getWidgetType().getType())) {
-						value = this.convertDateStringForUI(mData.getValue());
-					} else if (mData.getcValueId() != null) {
+					if (mData.getcValueId() != null) {
 						value = mData.getcValueId();
 					} else {
-
 						value = mData.getValue();
-
 					}
+					managementDetailDataIdMap.put(Integer.toString(mData.getMeasurementVariable().getTermId()), mData.getMeasurementDataId());
 					managementDetailValues.put(Integer.toString(mData.getMeasurementVariable().getTermId()), value);
 				}
 			}
-
-			final Map<String, String> trialConditionValues = new HashMap<>();
-			final Map<String, Integer> phenotypeIDMap = new HashMap<>();
 			for (final SettingDetail detail : trialConditionsList) {
 
 				final MeasurementData mData = row.getMeasurementData(detail.getVariable().getCvTermId());
 				if (mData != null) {
-					final String value;
-					if ("DATE".equals(detail.getVariable().getWidgetType().getType())) {
-						value = this.convertDateStringForUI(mData.getValue());
-					} else {
-						value = mData.getValue();
-					}
-
+					final String value = mData.getValue();
 					if (!isUsePrevious) {
-						phenotypeIDMap.put(Integer.toString(mData.getMeasurementVariable().getTermId()), mData.getPhenotypeId());
+						trialConditionDataIdMap.put(Integer.toString(mData.getMeasurementVariable().getTermId()), mData.getMeasurementDataId());
 					}
-
 					trialConditionValues.put(Integer.toString(mData.getMeasurementVariable().getTermId()), value);
 				}
 			}
 
-			environment.setManagementDetailValues(managementDetailValues);
-			environment.setTrialDetailValues(trialConditionValues);
-			environment.setPhenotypeIDMap(phenotypeIDMap);
-			environments.add(environment);
+			instance.setManagementDetailValues(managementDetailValues);
+			instance.setTrialDetailValues(trialConditionValues);
+			instance.setTrialConditionDataIdMap(trialConditionDataIdMap);
+			instance.setManagementDetailDataIdMap(managementDetailDataIdMap);
+			instances.add(instance);
 		}
 
 		// minimum number of environments is 1
-		if (data.getNoOfEnvironments() == 0) {
-			data.setNoOfEnvironments(1);
+		if (data.getNumberOfInstances() == 0) {
+			data.setNumberOfInstances(1);
 			if (isUsePrevious) {
-				environments.add(this.createEnvironmentWithDefaultLocation(this.getUnspecifiedLocationId()));
+				instances.add(this.createEnvironmentWithDefaultLocation(this.getUnspecifiedLocationId()));
 			}
 		}
 
-		data.setEnvironments(environments);
+		data.setInstances(instances);
 		info.setData(data);
 
 		this.userSelection.setTrialLevelVariableList(managementDetailList);
@@ -532,41 +520,12 @@ public abstract class BaseTrialController extends SettingsController {
 		return info;
 	}
 
-	Environment createEnvironmentWithDefaultLocation(final Integer defaultLocationId) {
-		final Environment defaultEnvironment = new Environment();
+	Instance createEnvironmentWithDefaultLocation(final Integer defaultLocationId) {
+		final Instance defaultInstance = new Instance();
 		final Map<String, String> managementDetails = new HashMap<>();
 		managementDetails.put(String.valueOf(TermId.LOCATION_ID.getId()), String.valueOf(defaultLocationId));
-		defaultEnvironment.setManagementDetailValues(managementDetails);
-		return defaultEnvironment;
-	}
-
-	List<AdvanceList> getAdvancedList(final Integer trialId) {
-		final List<GermplasmList> germplasmList =
-			this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.ADVANCED);
-		final List<AdvanceList> advanceList = new ArrayList<>();
-
-		for (final GermplasmList g : germplasmList) {
-			advanceList.add(new AdvanceList(g.getId(), g.getName()));
-		}
-
-		return advanceList;
-	}
-
-	List<CrossesList> getCrossesList(final Integer trialId) {
-		final List<GermplasmList> crossList =
-			this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.CROSSES);
-
-		crossList.addAll(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.IMP_CROSS));
-		crossList.addAll(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(trialId, GermplasmListType.CRT_CROSS));
-
-		final List<CrossesList> crossesList = new ArrayList<>();
-
-		for (final GermplasmList g : crossList) {
-			crossesList.add(new CrossesList(g.getId(), g.getName(), g.getType().equalsIgnoreCase(GermplasmListType.IMP_CROSS.toString())
-				? GermplasmList.IMP_CROSS : GermplasmList.CRT_CROSS));
-		}
-
-		return crossesList;
+		defaultInstance.setManagementDetailValues(managementDetails);
+		return defaultInstance;
 	}
 
 	public List<SettingDetail> retrieveVariablePairs(final int cvTermId) {
@@ -756,7 +715,7 @@ public abstract class BaseTrialController extends SettingsController {
 	}
 
 	void addMeasurementVariablesToTrialObservationIfNecessary(
-		final List<Environment> environments, final Workbook workbook,
+		final List<Instance> instances, final Workbook workbook,
 		final List<MeasurementRow> trialObservations) {
 
 		if (trialObservations == null) {
@@ -766,8 +725,8 @@ public abstract class BaseTrialController extends SettingsController {
 		int x = 0;
 		for (final MeasurementRow row : trialObservations) {
 
-			final Map<String, String> trialDetailValues = environments.get(x).getTrialDetailValues();
-			final Map<String, String> managementDetailValues = environments.get(x).getManagementDetailValues();
+			final Map<String, String> trialDetailValues = instances.get(x).getTrialDetailValues();
+			final Map<String, String> managementDetailValues = instances.get(x).getManagementDetailValues();
 
 			for (final MeasurementVariable measurementVariable : workbook.getTrialVariables()) {
 				final MeasurementData data = row.getMeasurementData(measurementVariable.getTermId());

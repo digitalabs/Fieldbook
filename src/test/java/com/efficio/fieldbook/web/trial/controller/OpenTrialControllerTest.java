@@ -9,45 +9,23 @@ import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
 import com.efficio.fieldbook.web.trial.TestDataHelper;
-import com.efficio.fieldbook.web.trial.bean.AdvanceList;
-import com.efficio.fieldbook.web.trial.bean.BasicDetails;
-import com.efficio.fieldbook.web.trial.bean.CrossesList;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import com.efficio.fieldbook.web.trial.bean.TabInfo;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
-import com.efficio.fieldbook.web.trial.bean.TreatmentFactorTabBean;
-import com.efficio.fieldbook.web.trial.bean.TrialData;
-import com.efficio.fieldbook.web.trial.bean.TrialSettingsBean;
+import com.efficio.fieldbook.web.trial.bean.*;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.generationcp.commons.constant.AppConstants;
-import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
-import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.security.AuthorizationService;
 import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.middleware.data.initializer.ListDataProjectTestDataInitializer;
 import org.generationcp.middleware.data.initializer.MeasurementDataTestDataInitializer;
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.StandardVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
-import org.generationcp.middleware.domain.dms.DMSVariableType;
-import org.generationcp.middleware.domain.dms.ExperimentDesignType;
-import org.generationcp.middleware.domain.dms.PhenotypicType;
-import org.generationcp.middleware.domain.dms.StandardVariable;
-import org.generationcp.middleware.domain.dms.Study;
-import org.generationcp.middleware.domain.dms.VariableTypeList;
-import org.generationcp.middleware.domain.etl.MeasurementData;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.dms.*;
+import org.generationcp.middleware.domain.etl.*;
 import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -64,7 +42,6 @@ import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.manager.ontology.api.TermDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.pojos.ListDataProject;
 import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.pojos.dms.StudyType;
 import org.generationcp.middleware.pojos.workbench.Project;
@@ -72,6 +49,7 @@ import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.SampleListService;
 import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.generationcp.middleware.service.api.dataset.DatasetTypeService;
+import org.generationcp.middleware.service.api.study.StudyGermplasmService;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.generationcp.middleware.util.Util;
 import org.generationcp.middleware.utils.test.UnitTestDaoIDGenerator;
@@ -79,11 +57,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.ArgumentMatchers;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.ui.ExtendedModelMap;
@@ -93,12 +67,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OpenTrialControllerTest {
@@ -110,8 +79,6 @@ public class OpenTrialControllerTest {
 	private static final int NO_OF_TRIAL_INSTANCES = 3;
 	private static final int NO_OF_OBSERVATIONS = 5;
 	private static final int STUDY_ID = 1;
-	private static final long WORKBENCH_PROJECT_ID = 1L;
-	private static final String WORKBENCH_PROJECT_NAME = "Project 1";
 	private static final String PROGRAM_UUID = "68f0d114-5b5b-11e5-885d-feff819cdc9f";
 	private static final String TEST_STUDY_NAME = "dummyStudy";
 	private static final int BM_CODE_VTE_ID = 8252;
@@ -184,9 +151,11 @@ public class OpenTrialControllerTest {
 	@Mock
 	private TermDataManager termDataManager;
 
+	@Mock
+	private StudyGermplasmService studyGermplasmService;
+
 	@Before
 	public void setUp() {
-		final Project project = this.createProject();
 		final DmsProject dmsProject = this.createDmsProject();
 		final StudyType studyType = new StudyType();
 		studyType.setName(StudyTypeDto.TRIAL_NAME);
@@ -535,13 +504,6 @@ public class OpenTrialControllerTest {
 		dmsProject.setName(OpenTrialControllerTest.TEST_STUDY_NAME);
 		dmsProject.setProgramUUID(OpenTrialControllerTest.PROGRAM_UUID);
 		return dmsProject;
-	}
-
-	private Project createProject() {
-		final Project project = new Project();
-		project.setProjectId(OpenTrialControllerTest.WORKBENCH_PROJECT_ID);
-		project.setProjectName(OpenTrialControllerTest.WORKBENCH_PROJECT_NAME);
-		return project;
 	}
 
 	private void initializeOntology() {
@@ -957,7 +919,7 @@ public class OpenTrialControllerTest {
 		Mockito.doReturn(standardVariable2).when(this.fieldbookMiddlewareService).getStandardVariable(OpenTrialControllerTest.N_EARS_SEL,
 			OpenTrialControllerTest.PROGRAM_UUID);
 
-		this.openTrialController.getTraitsAndSelectionVariates(new ArrayList<MeasurementVariable>(), newVariables, idList);
+		this.openTrialController.getTraitsAndSelectionVariates(new ArrayList<>(), newVariables, idList);
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(2)).getStandardVariable(ArgumentMatchers.anyInt(), ArgumentMatchers.anyString());
 		// Getting of trait and selection methods called twice because of null checking
 		Mockito.verify(this.userSelection, Mockito.times(2)).getBaselineTraitsList();
@@ -1048,24 +1010,6 @@ public class OpenTrialControllerTest {
 		return settingDetail;
 	}
 
-	@Test
-	public void testGetAdvancedList() {
-		final GermplasmList germplasm = new GermplasmList();
-		germplasm.setId(501);
-		germplasm.setName("Advance Study List");
-
-		final List<GermplasmList> germplasmList = new ArrayList<>();
-		germplasmList.add(germplasm);
-
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(ArgumentMatchers.anyInt(), ArgumentMatchers.any(GermplasmListType.class)))
-			.thenReturn(germplasmList);
-
-		final List<AdvanceList> advancedList = this.openTrialController.getAdvancedList(germplasm.getId());
-
-		Assert.assertEquals("Advance List size", 1, advancedList.size());
-		Assert.assertEquals("Advance List Id: ", germplasm.getId(), advancedList.get(0).getId());
-		Assert.assertEquals("Advance List Name: ", germplasm.getName(), advancedList.get(0).getName());
-	}
 
 	@Test
 	public void testUpdateSavedTrial() throws ParseException {
@@ -1124,69 +1068,6 @@ public class OpenTrialControllerTest {
 	}
 
 	@Test
-	public void testSetUserSelectionImportedGermplasmMainInfoGermplasmListIsNotEmpty() {
-
-		final int germplasmListId = 111;
-		final int germplasmListRef = 222;
-		final int studyId = 1;
-		final long checkCount = 23;
-		final int germplasmCount = 1;
-
-		final GermplasmList germplasmList = new GermplasmList();
-		germplasmList.setId(germplasmListId);
-		germplasmList.setListRef(germplasmListRef);
-
-		final List<GermplasmList> listOfGermplasmList = new ArrayList<>();
-		listOfGermplasmList.add(germplasmList);
-
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY))
-			.thenReturn(listOfGermplasmList);
-		final ListDataProject listDataProject = ListDataProjectTestDataInitializer.createListDataProject(germplasmList, 0, 0, 1,
-			"entryCode", "seedSource", "designation", "groupName", "duplicate", "notes", 20170125);
-		listDataProject.setGroupId(12);
-
-		final ExpDesignParameterUi expDesignParameterUi = new ExpDesignParameterUi();
-		expDesignParameterUi.setDesignType(ExperimentDesignType.AUGMENTED_RANDOMIZED_BLOCK.getId());
-		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(germplasmListId)).thenReturn(Lists.newArrayList(listDataProject));
-
-		Mockito.when(this.fieldbookService.getGermplasmListChecksSize(germplasmListId)).thenReturn(checkCount);
-
-		final Map<Integer, String> mockData = Maps.newHashMap();
-		mockData.put(0, "StockID101, StockID102");
-		Mockito.when(this.inventoryDataManager.retrieveStockIds(ArgumentMatchers.anyListOf(Integer.class))).thenReturn(mockData);
-
-		final Model model = new ExtendedModelMap();
-
-		final UserSelection userSelection = new UserSelection();
-
-		this.openTrialController.setUserSelectionImportedGermplasmMainInfo(userSelection, 1, model);
-
-		final ImportedGermplasmMainInfo importedGermplasmMainInfo = userSelection.getImportedGermplasmMainInfo();
-
-		Assert.assertEquals(germplasmListRef, importedGermplasmMainInfo.getListId().intValue());
-		Assert.assertTrue(importedGermplasmMainInfo.isAdvanceImportType());
-		Assert.assertNotNull(importedGermplasmMainInfo.getImportedGermplasmList());
-		Assert.assertTrue(userSelection.isImportValid());
-
-		Assert.assertEquals(Integer.valueOf(germplasmCount), model.asMap().get(OpenTrialControllerTest.GERMPLASM_LIST_SIZE));
-		Assert.assertEquals(checkCount, model.asMap().get(OpenTrialControllerTest.GERMPLASM_CHECKS_SIZE));
-
-		final ImportedGermplasm importedGermplasm = importedGermplasmMainInfo.getImportedGermplasmList().getImportedGermplasms().get(0);
-		Assert.assertEquals("0", importedGermplasm.getEntryTypeValue());
-		Assert.assertEquals(0, importedGermplasm.getEntryTypeCategoricalID().intValue());
-		Assert.assertEquals("groupName", importedGermplasm.getCross());
-		Assert.assertEquals("groupName", importedGermplasm.getCross());
-		Assert.assertEquals("entryCode", importedGermplasm.getEntryCode());
-		Assert.assertEquals(1, importedGermplasm.getEntryId().intValue());
-		Assert.assertEquals("0", importedGermplasm.getGid());
-		Assert.assertEquals(12, importedGermplasm.getMgid().intValue());
-		Assert.assertEquals("seedSource", importedGermplasm.getSource());
-		Assert.assertEquals(12, importedGermplasm.getGroupId().intValue());
-		Assert.assertEquals("StockID101, StockID102", importedGermplasm.getStockIDs());
-
-	}
-
-	@Test
 	public void testSubmitWhereReplaceIsZero() {
 		final TrialData data = this.setUpTrialData();
 		Mockito.when(this.studyDataManager.getStudyTypeByName(Mockito.anyString())).thenReturn(StudyTypeDto.getTrialDto());
@@ -1196,7 +1077,7 @@ public class OpenTrialControllerTest {
 
 		Assert.assertNotNull("The environment data tab should not be null", returnVal.get(OpenTrialController.ENVIRONMENT_DATA_TAB));
 		Mockito.verify(this.fieldbookMiddlewareService)
-			.saveWorkbookVariablesAndObservations(ArgumentMatchers.any(Workbook.class), ArgumentMatchers.anyString());
+			.saveWorkbookVariablesAndObservations(ArgumentMatchers.any(Workbook.class));
 		Mockito.verify(this.fieldbookService).createIdNameVariablePairs(ArgumentMatchers.any(Workbook.class), ArgumentMatchers.anyListOf(
 			SettingDetail.class),
 			ArgumentMatchers.anyString(), ArgumentMatchers.anyBoolean());
@@ -1206,16 +1087,16 @@ public class OpenTrialControllerTest {
 
 	private TrialData setUpTrialData() {
 		final TrialData data = Mockito.mock(TrialData.class);
-		Mockito.when(data.getEnvironments()).thenReturn(DesignImportTestDataInitializer.createEnvironmentData(1));
+		Mockito.when(data.getInstanceInfo()).thenReturn(DesignImportTestDataInitializer.createEnvironmentData(1));
 		final BasicDetails basicDetails = Mockito.mock(BasicDetails.class);
-		Mockito.when(basicDetails.getBasicDetails()).thenReturn(new HashMap<String, String>());
+		Mockito.when(basicDetails.getBasicDetails()).thenReturn(new HashMap<>());
 		Mockito.when(data.getBasicDetails()).thenReturn(basicDetails);
 		Mockito.when(data.getBasicDetails().getStudyType()).thenReturn(StudyTypeDto.getTrialDto());
 		final TrialSettingsBean trialSettings = Mockito.mock(TrialSettingsBean.class);
-		Mockito.when(trialSettings.getUserInput()).thenReturn(new HashMap<String, String>());
+		Mockito.when(trialSettings.getUserInput()).thenReturn(new HashMap<>());
 		Mockito.when(data.getTrialSettings()).thenReturn(trialSettings);
 		final TreatmentFactorTabBean treatmentFactor = Mockito.mock(TreatmentFactorTabBean.class);
-		Mockito.when(treatmentFactor.getCurrentData()).thenReturn(new HashMap<String, TreatmentFactorData>());
+		Mockito.when(treatmentFactor.getCurrentData()).thenReturn(new HashMap<>());
 		Mockito.when(data.getTreatmentFactors()).thenReturn(treatmentFactor);
 		return data;
 	}
@@ -1226,9 +1107,8 @@ public class OpenTrialControllerTest {
 		final int germplasmListId = 111;
 		final int studyId = 1;
 
-		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).getListDataProject(germplasmListId);
-		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).countListDataProjectByListIdAndEntryTypeIds(germplasmListId,
-			Arrays.asList(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId()));
+		Mockito.verify(this.studyGermplasmService, Mockito.times(0)).countStudyGermplasmByEntryTypeIds(studyId,
+			Arrays.asList(String.valueOf(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId())));
 
 		Assert.assertNull(this.userSelection.getImportedGermplasmMainInfo());
 		Assert.assertFalse(this.userSelection.isImportValid());
@@ -1249,9 +1129,8 @@ public class OpenTrialControllerTest {
 		final List<GermplasmList> listOfGermplasmList = new ArrayList<>();
 		listOfGermplasmList.add(germplasmList);
 
-		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).getListDataProject(germplasmListId);
-		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(0)).countListDataProjectByListIdAndEntryTypeIds(germplasmListId,
-			Arrays.asList(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId()));
+		Mockito.verify(this.studyGermplasmService, Mockito.times(0)).countStudyGermplasmByEntryTypeIds(studyId,
+			Arrays.asList(String.valueOf(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId())));
 
 		Assert.assertNull(this.userSelection.getImportedGermplasmMainInfo());
 		Assert.assertFalse(this.userSelection.isImportValid());
@@ -1276,9 +1155,7 @@ public class OpenTrialControllerTest {
 		Mockito.verify(this.model).addAttribute(ArgumentMatchers.eq("experimentalDesignSpecialData"), ArgumentMatchers.any(TabInfo.class));
 		Mockito.verify(this.model).addAttribute("studyName", testWorkbook.getStudyDetails().getLabel());
 		Mockito.verify(this.model).addAttribute("description", testWorkbook.getStudyDetails().getDescription());
-		Mockito.verify(this.model).addAttribute(ArgumentMatchers.eq("advancedList"), ArgumentMatchers.anyListOf(AdvanceList.class));
 		Mockito.verify(this.model).addAttribute(ArgumentMatchers.eq("sampleList"), ArgumentMatchers.anyListOf(SampleListDTO.class));
-		Mockito.verify(this.model).addAttribute(ArgumentMatchers.eq("crossesList"), ArgumentMatchers.anyListOf(CrossesList.class));
 		Mockito.verify(this.model).addAttribute("germplasmListSize", 0);
 		Mockito.verify(this.model).addAttribute(ArgumentMatchers.eq("isSuperAdmin"), ArgumentMatchers.anyBoolean());
 	}
@@ -1423,6 +1300,20 @@ public class OpenTrialControllerTest {
 		Assert.assertFalse(result.containsKey(geoLocationId));
 	}
 
+	@Test
+	public void testSetNonStudyVariablesOperationToNull() {
+		final List<MeasurementVariable> measurementVariables = new ArrayList<>();
+		final MeasurementVariable studyVariable = MeasurementVariableTestDataInitializer.createMeasurementVariableWithOperation(TermId.SITE_NAME.getId(), TermId.SITE_NAME.name(), "SITE NAME", Operation.ADD);
+		studyVariable.setRole(PhenotypicType.STUDY);
+		measurementVariables.add(studyVariable);
+		final MeasurementVariable locationVariable = MeasurementVariableTestDataInitializer.createMeasurementVariableWithOperation(TermId.LOCATION_ID.getId(), TermId.LOCATION_ID.name(), "SITE NAME", Operation.ADD);
+		locationVariable.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
+		measurementVariables.add(locationVariable);
+		this.openTrialController.setNonStudyVariablesOperationToNull(measurementVariables);
+		Assert.assertEquals(Operation.ADD, measurementVariables.get(0).getOperation());
+		Assert.assertNull(measurementVariables.get(1).getOperation());
+	}
+
 	private void verifyUserSelectionUponBasicDetailsPreparation(final StudyDetails studyDetails) {
 		Mockito.verify(this.userSelection).setBasicDetails(ArgumentMatchers.anyListOf(SettingDetail.class));
 		Mockito.verify(this.userSelection).setStudyName(studyDetails.getStudyName());
@@ -1484,89 +1375,5 @@ public class OpenTrialControllerTest {
 			var.setOperation(Operation.ADD);
 		}
 		return conditions;
-	}
-
-	@Test
-	public void testSetUserSelectionImportedGermplasmMainInfoNoDesignTypeWithChecks() {
-
-		final int germplasmListId = 111;
-		final int germplasmListRef = 222;
-		final int studyId = 1;
-		final long checkCount = 2;
-		final int germplasmCount = 1;
-
-		final GermplasmList germplasmList = new GermplasmList();
-		germplasmList.setId(germplasmListId);
-		germplasmList.setListRef(germplasmListRef);
-
-		final List<GermplasmList> listOfGermplasmList = new ArrayList<>();
-		listOfGermplasmList.add(germplasmList);
-
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY))
-			.thenReturn(listOfGermplasmList);
-		final ListDataProject listDataProject = ListDataProjectTestDataInitializer.createListDataProject(germplasmList, 0, 0, 1,
-			"entryCode", "seedSource", "designation", "groupName", "duplicate", "notes", 20170125);
-		listDataProject.setGroupId(12);
-
-		final ExpDesignParameterUi expDesignParameterUi = new ExpDesignParameterUi();
-		expDesignParameterUi.setDesignType(null);
-		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(germplasmListId)).thenReturn(Lists.newArrayList(listDataProject));
-
-		Mockito.when(this.fieldbookService.getGermplasmListChecksSize(germplasmListId)).thenReturn(checkCount);
-
-		final Map<Integer, String> mockData = Maps.newHashMap();
-		mockData.put(0, "StockID101, StockID102");
-		Mockito.when(this.inventoryDataManager.retrieveStockIds(ArgumentMatchers.anyListOf(Integer.class))).thenReturn(mockData);
-
-		final Model model = new ExtendedModelMap();
-
-		final UserSelection userSelection = new UserSelection();
-
-		this.openTrialController.setUserSelectionImportedGermplasmMainInfo(userSelection, 1, model);
-
-		Assert.assertEquals(Integer.valueOf(germplasmCount), model.asMap().get(OpenTrialControllerTest.GERMPLASM_LIST_SIZE));
-		Assert.assertEquals(checkCount, model.asMap().get(OpenTrialControllerTest.GERMPLASM_CHECKS_SIZE));
-	}
-
-	@Test
-	public void testSetUserSelectionImportedGermplasmMainInfoWithDesignTypeWithChecks() {
-
-		final int germplasmListId = 111;
-		final int germplasmListRef = 222;
-		final int studyId = 1;
-		final long checkCount = 2;
-		final int germplasmCount = 1;
-
-		final GermplasmList germplasmList = new GermplasmList();
-		germplasmList.setId(germplasmListId);
-		germplasmList.setListRef(germplasmListRef);
-
-		final List<GermplasmList> listOfGermplasmList = new ArrayList<>();
-		listOfGermplasmList.add(germplasmList);
-
-		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListsByProjectId(studyId, GermplasmListType.STUDY))
-			.thenReturn(listOfGermplasmList);
-		final ListDataProject listDataProject = ListDataProjectTestDataInitializer.createListDataProject(germplasmList, 0, 0, 1,
-			"entryCode", "seedSource", "designation", "groupName", "duplicate", "notes", 20170125);
-		listDataProject.setGroupId(12);
-
-		final ExpDesignParameterUi expDesignParameterUi = new ExpDesignParameterUi();
-		expDesignParameterUi.setDesignType(ExperimentDesignType.AUGMENTED_RANDOMIZED_BLOCK.getId());
-		Mockito.when(this.fieldbookMiddlewareService.getListDataProject(germplasmListId)).thenReturn(Lists.newArrayList(listDataProject));
-
-		Mockito.when(this.fieldbookService.getGermplasmListChecksSize(germplasmListId)).thenReturn(checkCount);
-
-		final Map<Integer, String> mockData = Maps.newHashMap();
-		mockData.put(0, "StockID101, StockID102");
-		Mockito.when(this.inventoryDataManager.retrieveStockIds(ArgumentMatchers.anyListOf(Integer.class))).thenReturn(mockData);
-
-		final Model model = new ExtendedModelMap();
-
-		final UserSelection userSelection = new UserSelection();
-
-		this.openTrialController.setUserSelectionImportedGermplasmMainInfo(userSelection, 1, model);
-
-		Assert.assertEquals(Integer.valueOf(germplasmCount), model.asMap().get(OpenTrialControllerTest.GERMPLASM_LIST_SIZE));
-		Assert.assertEquals(checkCount, model.asMap().get(OpenTrialControllerTest.GERMPLASM_CHECKS_SIZE));
 	}
 }

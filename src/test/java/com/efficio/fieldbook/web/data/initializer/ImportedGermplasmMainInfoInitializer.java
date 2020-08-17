@@ -46,7 +46,7 @@ public class ImportedGermplasmMainInfoInitializer {
 
 	public static ImportedGermplasm createImportedGermplasm(final int entryNo) {
 		final ImportedGermplasm importedGermplasm = new ImportedGermplasm();
-		importedGermplasm.setEntryId(entryNo);
+		importedGermplasm.setEntryNumber(entryNo);
 		importedGermplasm.setEntryCode(String.valueOf(entryNo));
 		importedGermplasm.setDesig("DESIG" + entryNo);
 		importedGermplasm.setSource("SOURCE" + entryNo);

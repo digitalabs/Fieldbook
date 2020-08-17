@@ -16,15 +16,8 @@ import org.generationcp.middleware.manager.ontology.api.OntologyScaleDataManager
 import org.springframework.context.MessageSource;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 public class DesignImportValidator {
 
@@ -92,7 +85,7 @@ public class DesignImportValidator {
 		// Extract the entry numbers from germplasmList.
 		final Set<String> entryNumbersFromGermplasmList = new HashSet<>();
 		for (final ImportedGermplasm importedGermplasm : germplasmList) {
-			entryNumbersFromGermplasmList.add(String.valueOf(importedGermplasm.getEntryId()));
+			entryNumbersFromGermplasmList.add(String.valueOf(importedGermplasm.getEntryNumber()));
 		}
 
 		// If not all entry numbers from design file match the entries in germplasm list in study, throw an error.

@@ -83,7 +83,6 @@
 
 <div layout:fragment="page-script">
     <script type="text/javascript" th:inline="javascript">
-        var warningMessage = /*[[#{study.advancelist.updateinventory.error.message}]]*/;
 
 		var advanceType = angular.element('#mainApp').injector().get('TrialManagerDataService').applicationData.advanceType;
 		if (advanceType == 'sample') {

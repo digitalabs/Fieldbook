@@ -11,13 +11,17 @@
 
 package com.efficio.fieldbook.web;
 
+import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.security.AuthorizationService;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
@@ -31,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -63,6 +68,9 @@ public abstract class AbstractBaseFieldbookController {
 
 	@Autowired
 	protected AuthorizationService authorizationService;
+
+	@Resource
+	protected FieldbookService fieldbookService;
 
 	/**
 	 * Implemented by the sub controllers to specify the html view that they render into the base template.
@@ -176,6 +184,17 @@ public abstract class AbstractBaseFieldbookController {
 			return locations.get(0).getLocid();
 		}
 		return 0;
+	}
+
+	protected List<String> getAllCheckEntryTypeIds() {
+		final List<ValueReference> entryTypes = this.fieldbookService.getAllPossibleValues(TermId.ENTRY_TYPE.getId(), true);
+		final List<String> checkEntryTypeIds = new ArrayList<>();
+		for (final ValueReference entryType : entryTypes) {
+			if (SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId() != entryType.getId()) {
+				checkEntryTypeIds.add(entryType.getId().toString());
+			}
+		}
+		return checkEntryTypeIds;
 	}
 
 	public void setContextUtil(final ContextUtil contextUtil) {

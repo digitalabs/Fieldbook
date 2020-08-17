@@ -68,6 +68,7 @@ module.exports = function (config) {
 			'WEB-INF/static/js/trialmanager/selectEnvironmentModal.js',
 			'WEB-INF/static/js/trialmanager/studyStateService.js',
 			'WEB-INF/static/js/trialmanager/studyInstanceService.js',
+			'WEB-INF/static/js/trialmanager/studyGermplasmService.js',
 			'WEB-INF/static/js/trialmanager/derivedVariable.js',
 			'WEB-INF/static/js/trialmanager/trial-data-manager.js',
 			'WEB-INF/static/js/trialmanager/saveSampleList.js',
@@ -86,6 +87,8 @@ module.exports = function (config) {
 			'WEB-INF/static/js/trialmanager/importStudy.js',
 			'WEB-INF/static/js/trialmanager/createSample.js',
 			'WEB-INF/static/js/trialmanager/inventory/planting-preparation/planting-preparation-modal.js',
+			'WEB-INF/static/js/trialmanager/germplasm-study-source/germplasmStudySource.js',
+			'WEB-INF/static/js/trialmanager/germplasm-study-source/germplasmStudySourceService.js',
 
 			// unit test files
 			'WEB-INF/static/js/angular-tests/lib/angular-mocks.js',

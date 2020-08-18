@@ -353,9 +353,8 @@ public class ManageSettingsController extends SettingsController {
 	@RequestMapping(value = "/deleteVariable/{mode}/{variableId}", method = RequestMethod.POST)
 	public ResponseEntity<String> deleteVariable(@PathVariable final int mode, @PathVariable final int variableId) {
 		try {
-			final Map<String, String> idNameRetrieveSaveMap = this.fieldbookService.getIdNamePairForRetrieveAndSave();
 			if (mode == VariableType.STUDY_DETAIL.getId()) {
-
+				final Map<String, String> idNameRetrieveSaveMap = this.fieldbookService.getIdNamePairForRetrieveAndSave();
 				this.addVariableInDeletedList(userSelection.getStudyLevelConditions(), mode, variableId, true);
 				SettingsUtil.deleteVariableInSession(userSelection.getStudyLevelConditions(), variableId);
 				if (idNameRetrieveSaveMap.get(variableId) != null) {
@@ -365,6 +364,19 @@ public class ManageSettingsController extends SettingsController {
 					SettingsUtil.deleteVariableInSession(this.userSelection.getStudyLevelConditions(),
 							Integer.parseInt(idNameRetrieveSaveMap.get(variableId)));
 				}
+				final Map<String, List<String>> idCodeNameRetrieveSaveMap = this.fieldbookService.getIdCodeNamePairForRetrieveAndSave();
+				if (idCodeNameRetrieveSaveMap.get(variableId) != null) {
+					final List<String> variables = idCodeNameRetrieveSaveMap.get(variableId);
+					if (variables != null || variables.isEmpty()) {
+						for (String varId : variables) {
+							this.addVariableInDeletedList(userSelection.getStudyLevelConditions(), mode,
+								Integer.parseInt(idNameRetrieveSaveMap.get(varId)), true);
+							SettingsUtil.deleteVariableInSession(this.userSelection.getStudyLevelConditions(),
+								Integer.parseInt(idNameRetrieveSaveMap.get(varId)));
+						}
+					}
+				}
+
 			} else if (mode == VariableType.EXPERIMENTAL_DESIGN.getId() || mode == VariableType.GERMPLASM_DESCRIPTOR.getId()) {
 				this.addVariableInDeletedList(this.userSelection.getPlotsLevelList(), mode, variableId, true);
 				SettingsUtil.deleteVariableInSession(this.userSelection.getPlotsLevelList(), variableId);

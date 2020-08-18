@@ -666,6 +666,26 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
+	public Map<String, List<String>> getIdCodeNamePairForRetrieveAndSave() {
+		final String idCodeNamePairs = AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString();
+		final StringTokenizer tokenizer = new StringTokenizer(idCodeNamePairs, ",");
+		final Map<String, List<String>> idCodeNameMap = new HashMap<>();
+		if (tokenizer.hasMoreTokens()) {
+			final String pair = tokenizer.nextToken();
+			final StringTokenizer tokenizerPair = new StringTokenizer(pair, "|");
+			final String idTermId = tokenizerPair.nextToken();
+			final String codeTermId = tokenizerPair.nextToken();
+			final String nameTermId = tokenizerPair.nextToken();
+			List<String> list = new ArrayList<>();
+			list.add(codeTermId);
+			list.add(nameTermId);
+			idCodeNameMap.put(idTermId, list);
+		}
+
+		return idCodeNameMap;
+	}
+
+	@Override
 	public MeasurementVariable createMeasurementVariable(
 		final String idToCreate, final String value,
 		final Operation operation, final PhenotypicType role) {

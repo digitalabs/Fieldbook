@@ -791,7 +791,6 @@ public class ImportGermplasmListControllerTest {
 			this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(),
 			form.getImportedGermplasm());
 		Mockito.verify(model).addAttribute(ImportGermplasmListController.CHECK_LISTS, checkTypes);
-		Mockito.verify(model).addAttribute("hasMeasurement", false);
 
 	}
 

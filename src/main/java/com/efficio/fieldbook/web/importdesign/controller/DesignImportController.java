@@ -11,15 +11,15 @@ import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.common.form.ImportDesignForm;
 import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
 import com.efficio.fieldbook.web.importdesign.validator.DesignImportValidator;
-import com.efficio.fieldbook.web.trial.controller.SettingsController;
+import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.Instance;
 import com.efficio.fieldbook.web.trial.bean.InstanceInfo;
-import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
-import org.generationcp.commons.constant.AppConstants;
+import com.efficio.fieldbook.web.trial.controller.SettingsController;
 import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import com.efficio.fieldbook.web.util.parsing.DesignImportParser;
+import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.middleware.domain.dms.ExperimentDesignType;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -31,6 +31,7 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.CvId;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
@@ -483,9 +484,11 @@ public class DesignImportController extends SettingsController {
 			final Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataSet(this.fieldbookMiddlewareService, this.userSelection.getStudyName(), this.userSelection,
 				null, this.contextUtil.getCurrentProgramUUID());
 
+			final List<Term> variableTypes = this.ontologyDataManager.getAllTermsByCvId(CvId.VARIABLE_TYPE);
+
 			final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, this.userSelection.getExpDesignParams(),
 				this.userSelection.getExpDesignVariables(),	this.fieldbookMiddlewareService, this.userSelection.getExperimentalDesignVariables(),
-				this.contextUtil.getCurrentProgramUUID());
+				this.contextUtil.getCurrentProgramUUID(), variableTypes);
 
 			workbook.setStudyDetails(this.userSelection.getWorkbook().getStudyDetails());
 			this.userSelection.setMeasurementRowList(null);
@@ -758,7 +761,9 @@ public class DesignImportController extends SettingsController {
 				null, null, this.userSelection.getStudyConditions(), this.contextUtil.getCurrentProgramUUID(), description, startDate,
 				endDate, studyUpdate);
 
-		workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, this.contextUtil.getCurrentProgramUUID());
+		final List<Term> variableTypes = this.ontologyDataManager.getAllTermsByCvId(CvId.VARIABLE_TYPE);
+
+		workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, this.contextUtil.getCurrentProgramUUID(), variableTypes);
 
 		//TODO evaluate if we can get this info from userSelection if needed. By now it is not used anywhere
 //		details.setStudyType(studyDataManager.getStudyTypeByName(studyType));

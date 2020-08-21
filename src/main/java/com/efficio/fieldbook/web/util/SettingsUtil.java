@@ -20,7 +20,6 @@ import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
-import com.hazelcast.util.StringUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.MapUtils;
@@ -38,9 +37,9 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
-import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.Method;
@@ -519,8 +518,8 @@ public class SettingsUtil {
 		return inList;
 	}
 
-	public static Workbook convertXmlDatasetToWorkbook(final ParentDataset dataset, final String programUUID) {
-		return SettingsUtil.convertXmlDatasetToWorkbook(dataset, null, null, null, null, programUUID);
+	public static Workbook convertXmlDatasetToWorkbook(final ParentDataset dataset, final String programUUID, final List<Term> variableTypes) {
+		return SettingsUtil.convertXmlDatasetToWorkbook(dataset, null, null, null, null, programUUID, variableTypes);
 	}
 
 	/**
@@ -532,14 +531,14 @@ public class SettingsUtil {
 	public static Workbook convertXmlDatasetToWorkbook(
 		final ParentDataset dataset, final ExpDesignParameterUi param,
 		final List<Integer> variables, final org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
-		final List<MeasurementVariable> allExpDesignVariables, final String programUUID) {
+		final List<MeasurementVariable> allExpDesignVariables, final String programUUID, final List<Term> variableTypes) {
 
 		final Workbook workbook = new Workbook();
 		final Dataset studyDataSet = (Dataset) dataset;
 
 		workbook.setConditions(SettingsUtil.convertConditionsToMeasurementVariables(studyDataSet.getConditions()));
 		workbook.setFactors(SettingsUtil.convertFactorsToMeasurementVariables(studyDataSet.getFactors()));
-		workbook.setVariates(SettingsUtil.convertVariatesToMeasurementVariables(studyDataSet.getVariates()));
+		workbook.setVariates(SettingsUtil.convertVariatesToMeasurementVariables(studyDataSet.getVariates(), variableTypes));
 		workbook.getConditions().addAll(SettingsUtil.convertFactorsToMeasurementVariables(studyDataSet.getTrialLevelFactor()));
 		workbook.setConstants(SettingsUtil.convertConstantsToMeasurementVariables(studyDataSet.getConstants()));
 
@@ -818,11 +817,11 @@ public class SettingsUtil {
 	 * @param variates the variates
 	 * @return the list
 	 */
-	private static List<MeasurementVariable> convertVariatesToMeasurementVariables(final List<Variate> variates) {
+	private static List<MeasurementVariable> convertVariatesToMeasurementVariables(final List<Variate> variates, final List<Term> variableTypes) {
 		final List<MeasurementVariable> list = new ArrayList<>();
 		if (variates != null && !variates.isEmpty()) {
 			for (final Variate variate : variates) {
-				list.add(SettingsUtil.convertVariateToMeasurementVariable(variate));
+				list.add(SettingsUtil.convertVariateToMeasurementVariable(variate, variableTypes));
 			}
 		}
 		return list;
@@ -834,13 +833,17 @@ public class SettingsUtil {
 	 * @param variate the variate
 	 * @return the measurement variable
 	 */
-	private static MeasurementVariable convertVariateToMeasurementVariable(final Variate variate) {
+	private static MeasurementVariable convertVariateToMeasurementVariable(final Variate variate, final List<Term> variableTypes) {
 		// because variates are mostly PLOT variables
 		final MeasurementVariable mvar = new MeasurementVariable(variate.getName(), variate.getDescription(), variate.getScale(),
 			variate.getMethod(), variate.getProperty(), variate.getDatatype(), null, PhenotypicType.TRIAL_DESIGN.getLabelList().get(0),
 			variate.getMinRange(), variate.getMaxRange(), PhenotypicType.getPhenotypicTypeByName(variate.getRole()));
 		if (variate.getVariableType() != null) {
-			mvar.setVariableType(VariableType.getByName(variate.getVariableType()));
+			final Map<String, Integer> variableTypesByName = new HashMap<>();
+			for (final Term term: variableTypes) {
+				variableTypesByName.put(term.getName(), term.getId());
+			}
+			mvar.setVariableType(VariableType.getById(variableTypesByName.get(variate.getVariableType())));
 		}
 		mvar.setOperation(variate.getOperation());
 		mvar.setTermId(variate.getId());

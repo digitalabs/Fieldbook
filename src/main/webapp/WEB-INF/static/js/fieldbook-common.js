@@ -2760,6 +2760,8 @@ function refreshListDetails() {
 			window.ImportGermplasm.initialize(dataGermplasmList);
 			$('#entries-details').css('display', 'block');
 			$('#numberOfEntries').html($('#totalGermplasms').val());
+			// Hide Clear List button if study already has generated design
+			toggleControlsForGermplasmListManagement(!hasGeneratedDesign());
 		});
 	}
 }

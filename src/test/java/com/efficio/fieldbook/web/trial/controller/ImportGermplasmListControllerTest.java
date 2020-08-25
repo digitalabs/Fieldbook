@@ -149,33 +149,6 @@ public class ImportGermplasmListControllerTest {
 	}
 
 	@Test
-	public void testHasMeasurementStudyWithMeasurement() {
-
-		this.userSelection.setMeasurementRowList(WorkbookDataUtil.createNewObservations(1));
-		final Boolean result = this.importGermplasmListController.hasMeasurement();
-		Assert.assertTrue(result);
-	}
-
-	@Test
-	public void testHasMeasurementWithNullMeasurementRowList() {
-
-		this.userSelection.setMeasurementRowList(null);
-
-		final Boolean result = this.importGermplasmListController.hasMeasurement();
-		Assert.assertFalse(result);
-	}
-
-	@Test
-	public void testHasMeasurementStudyWithoutMeasurement() {
-
-		this.userSelection.setMeasurementRowList(new ArrayList<MeasurementRow>());
-
-		final Boolean result = this.importGermplasmListController.hasMeasurement();
-		Assert.assertFalse(result);
-
-	}
-
-	@Test
 	public void testHasSavedGermplasm() {
 		// If using a new list, saved germplasm saved flag is reset (thus, false)
 		Assert.assertFalse(this.importGermplasmListController.hasSavedGermplasm(true));
@@ -818,7 +791,6 @@ public class ImportGermplasmListControllerTest {
 			this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(),
 			form.getImportedGermplasm());
 		Mockito.verify(model).addAttribute(ImportGermplasmListController.CHECK_LISTS, checkTypes);
-		Mockito.verify(model).addAttribute("hasMeasurement", false);
 
 	}
 

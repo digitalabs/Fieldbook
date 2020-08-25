@@ -417,7 +417,8 @@
 				},
 				{
 					targets: "_all",
-					orderable: false
+					orderable: false,
+					defaultContent: ''
 				}
 			];
 

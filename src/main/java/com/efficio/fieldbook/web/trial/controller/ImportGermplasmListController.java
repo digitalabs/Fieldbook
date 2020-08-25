@@ -522,7 +522,6 @@ public class ImportGermplasmListController extends SettingsController {
 				model.addAttribute(ImportGermplasmListController.CHECK_LISTS, checkList);
 				model.addAttribute(ImportGermplasmListController.LIST_DATA_TABLE, dataTableDataList);
 				model.addAttribute(ImportGermplasmListController.TABLE_HEADER_LIST, this.getGermplasmTableHeader(this.userSelection.getPlotsLevelList()));
-				model.addAttribute("hasMeasurement", this.hasMeasurement());
 
 				form.setImportedGermplasmMainInfo(this.getUserSelection().getImportedGermplasmMainInfo());
 				form.setImportedGermplasm(list);
@@ -532,11 +531,6 @@ public class ImportGermplasmListController extends SettingsController {
 			ImportGermplasmListController.LOG.error(e.getMessage(), e);
 		}
 		return super.showAjaxPage(model, ImportGermplasmListController.PAGINATION_TEMPLATE);
-	}
-
-	protected Boolean hasMeasurement() {
-		return this.userSelection.getMeasurementRowList() != null
-				&& !this.userSelection.getMeasurementRowList().isEmpty();
 	}
 
 	protected Boolean hasSavedGermplasm(final Boolean isNewList) {

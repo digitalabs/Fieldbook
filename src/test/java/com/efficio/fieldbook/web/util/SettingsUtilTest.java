@@ -1084,7 +1084,7 @@ public class SettingsUtilTest {
 		Assert.assertEquals(constant.getRole(), measurementVariable.getRole().name());
 		Assert.assertEquals(constant.getDatatype(), measurementVariable.getDataType());
 		Assert.assertEquals(PhenotypicType.STUDY.getLabelList().get(0), measurementVariable.getLabel());
-		Assert.assertEquals(VariableType.STUDY_CONDITION, measurementVariable.getVariableType());
+		Assert.assertEquals(VariableType.ENVIRONMENT_CONDITION, measurementVariable.getVariableType());
 		Assert.assertFalse(measurementVariable.isFactor());
 
 	}

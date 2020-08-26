@@ -59,7 +59,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 /**
  * The Class FieldbookServiceImpl.
@@ -170,7 +179,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 		final List<StandardVariableReference> dbList = this.fieldbookMiddlewareService.filterStandardVariablesByMode(
 			storedInIds, propertyIds,
-			mode == VariableType.TRAIT.getId() || mode == VariableType.STUDY_CONDITION.getId());
+			mode == VariableType.TRAIT.getId() || mode == VariableType.ENVIRONMENT_CONDITION.getId());
 
 		if (dbList != null && !dbList.isEmpty()) {
 
@@ -226,7 +235,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		if (mode == VariableType.STUDY_DETAIL.getId()) {
 			list.addAll(PhenotypicType.STUDY.getTypeStorages());
 		} else if (mode == VariableType.TRAIT.getId() || mode == VariableType.SELECTION_METHOD.getId()
-			|| mode == VariableType.STUDY_CONDITION.getId()) {
+			|| mode == VariableType.ENVIRONMENT_CONDITION.getId()) {
 			list.addAll(PhenotypicType.VARIATE.getTypeStorages());
 		} else if (mode == VariableType.ENVIRONMENT_DETAIL.getId()) {
 			list.addAll(PhenotypicType.TRIAL_ENVIRONMENT.getTypeStorages());
@@ -242,7 +251,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		final List<Integer> list = new ArrayList<>();
 
 		if (mode == VariableType.SELECTION_METHOD.getId() || mode == VariableType.TRAIT.getId()
-			|| mode == VariableType.STUDY_CONDITION.getId()) {
+			|| mode == VariableType.ENVIRONMENT_CONDITION.getId()) {
 
 			final StringTokenizer token = new StringTokenizer(
 				AppConstants.SELECTION_VARIATES_PROPERTIES.getString(),

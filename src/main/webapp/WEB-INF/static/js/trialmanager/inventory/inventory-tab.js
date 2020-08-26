@@ -6,12 +6,15 @@
 	const module = angular.module('manageTrialApp');
 
 	module.controller('InventoryTabCtrl', ['$rootScope', '$scope', '$q', 'DTOptionsBuilder', 'DTColumnBuilder', 'InventoryService', '$compile', '$timeout',
-		'$uibModal', 'studyInstanceService',
+		'$uibModal', 'studyInstanceService', 'HasAnyAuthorityService', 'PERMISSIONS',
 		function (
-			$rootScope, $scope, $q, DTOptionsBuilder, DTColumnBuilder, InventoryService, $compile, $timeout, $uibModal, studyInstanceService,
+			$rootScope, $scope, $q, DTOptionsBuilder, DTColumnBuilder, InventoryService, $compile, $timeout, $uibModal, studyInstanceService, HasAnyAuthorityService, PERMISSIONS
 		) {
 			$scope.nested = {};
 			$scope.nested.dtInstance = {};
+
+			$scope.PERMISSIONS = PERMISSIONS;
+			$scope.hasAnyAuthority = HasAnyAuthorityService.hasAnyAuthority;
 
 			const dtOptionsDeferred = $q.defer();
 			$scope.dtOptions = dtOptionsDeferred.promise;

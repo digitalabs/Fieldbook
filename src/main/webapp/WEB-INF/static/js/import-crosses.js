@@ -412,10 +412,8 @@ var ImportCrosses = {
 		$('#settingsNextButton').click(function() {
 			var valid = true;
 			var settingData = ImportCrosses.constructSettingsObjectFromForm();
-			if (settingData.isUseManualSettingsForNaming) {
-				if (!ImportCrosses.isCrossImportSettingsValid(settingData)) {
-					valid = false;
-				}
+			if (!ImportCrosses.isCrossImportSettingsValid(settingData)) {
+				valid = false;
 			}
 			if (valid) {
 				ImportCrosses.retrieveNextNameInSequence(function(data){
@@ -636,11 +634,8 @@ var ImportCrosses = {
 		'use strict';
 		var settingData = ImportCrosses.constructSettingsObjectFromForm();
 
-		//perform the validation depending on automated/manual names generation being selected
-		if (settingData.isUseManualSettingsForNaming) {
-			if (!ImportCrosses.isCrossImportSettingsValid(settingData)) {
-				return;
-			}
+		if (!ImportCrosses.isCrossImportSettingsValid(settingData)) {
+			return;
 		}
 
 		var targetURL = ImportCrosses.CROSSES_URL + '/submit';
@@ -694,16 +689,22 @@ var ImportCrosses = {
 	isCrossImportSettingsValid: function(importSettings) {
 		'use strict';
 		var valid = true;
-		if (!importSettings.crossNameSetting.prefix || importSettings.crossNameSetting.prefix === '') {
+		if($('#harvestMonthDropdown').val() === '') {
 			valid = false;
-			showErrorMessage('', $.fieldbookMessages.errorNoNamePrefix);
-		} else if (!importSettings.crossNameSetting.separator || importSettings.crossNameSetting.separator === '') {
-			valid = false;
-			showErrorMessage('', $.fieldbookMessages.errorNoParentageDesignationSeparator);
+			showErrorMessage('', $.fieldbookMessages.errorNoHarvestMonth);
 		}
+		if (importSettings.isUseManualSettingsForNaming) {
+			if (!importSettings.crossNameSetting.prefix || importSettings.crossNameSetting.prefix === '') {
+				valid = false;
+				showErrorMessage('', $.fieldbookMessages.errorNoNamePrefix);
+			} else if (!importSettings.crossNameSetting.separator || importSettings.crossNameSetting.separator === '') {
+				valid = false;
+				showErrorMessage('', $.fieldbookMessages.errorNoParentageDesignationSeparator);
+			}
 
-		if (!ImportCrosses.validateStartingSequenceNumber(importSettings.crossNameSetting.startNumber)) {
-			return false;
+			if (!ImportCrosses.validateStartingSequenceNumber(importSettings.crossNameSetting.startNumber)) {
+				return false;
+			}
 		}
 
 		return valid;
@@ -773,7 +774,7 @@ var ImportCrosses = {
 		settingObject.additionalDetailsSetting = {};
 		settingObject.additionalDetailsSetting.harvestLocationId = $('#locationDropdown').select2('val');
 		if ($('#harvestYearDropdown').val() !== '' && $('#harvestMonthDropdown').val() !== '') {
-			settingObject.additionalDetailsSetting.harvestDate = $('#harvestYearDropdown').val() + '-' + $('#harvestMonthDropdown').val();
+			settingObject.additionalDetailsSetting.harvestDate = $('#harvestYearDropdown').val() + '-' + $('#harvestMonthDropdown').val() + '-01';
 		}
 
 		return settingObject;

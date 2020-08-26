@@ -13,6 +13,7 @@
 			$scope.nested = {};
 			$scope.nested.dtInstance = {};
 
+			$scope.PERMISSIONS = PERMISSIONS;
 			$scope.hasAnyAuthority = HasAnyAuthorityService.hasAnyAuthority;
 
 			const dtOptionsDeferred = $q.defer();

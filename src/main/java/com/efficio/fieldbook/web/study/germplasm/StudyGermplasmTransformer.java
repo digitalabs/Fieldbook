@@ -176,7 +176,7 @@ public class StudyGermplasmTransformer {
 			dto.setEntryType(String.valueOf(importedGermplasm.getEntryTypeCategoricalID()));
 			dto.setSeedSource(importedGermplasm.getSource());
 			dto.setCross(importedGermplasm.getCross());
-
+			dto.setGroupId(importedGermplasm.getGroupId());
 			list.add(dto);
 		}
 		return list;

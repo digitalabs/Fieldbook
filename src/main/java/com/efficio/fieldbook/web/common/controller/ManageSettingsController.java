@@ -7,11 +7,11 @@ import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.ontology.form.OntologyDetailsForm;
 import com.efficio.fieldbook.web.trial.controller.SettingsController;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
-import org.generationcp.commons.constant.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
+import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.derivedvariable.DerivedVariableUtils;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -316,7 +316,7 @@ public class ManageSettingsController extends SettingsController {
 			settingsList = this.userSelection.getDeletedStudyLevelConditions();
 		} else if (mode == VariableType.EXPERIMENTAL_DESIGN.getId() || mode == VariableType.GERMPLASM_DESCRIPTOR.getId()) {
 			settingsList = this.userSelection.getDeletedPlotLevelList();
-		} else if (mode == VariableType.STUDY_CONDITION.getId()) {
+		} else if (mode == VariableType.ENVIRONMENT_CONDITION.getId()) {
 			settingsList = this.userSelection.getDeletedStudyConditions();
 		} else if (mode == VariableType.TREATMENT_FACTOR.getId()) {
 			settingsList = this.userSelection.getDeletedTreatmentFactors();
@@ -368,7 +368,7 @@ public class ManageSettingsController extends SettingsController {
 			} else if (mode == VariableType.EXPERIMENTAL_DESIGN.getId() || mode == VariableType.GERMPLASM_DESCRIPTOR.getId()) {
 				this.addVariableInDeletedList(this.userSelection.getPlotsLevelList(), mode, variableId, true);
 				SettingsUtil.deleteVariableInSession(this.userSelection.getPlotsLevelList(), variableId);
-			} else if (mode == VariableType.STUDY_CONDITION.getId() || mode == VariableType.STUDY_CONDITION.getId()) {
+			} else if (mode == VariableType.ENVIRONMENT_CONDITION.getId() || mode == VariableType.ENVIRONMENT_CONDITION.getId()) {
 				this.addVariableInDeletedList(this.userSelection.getStudyConditions(), mode, variableId, true);
 				SettingsUtil.deleteVariableInSession(this.userSelection.getStudyConditions(), variableId);
 			} else if (mode == VariableType.TREATMENT_FACTOR.getId()) {

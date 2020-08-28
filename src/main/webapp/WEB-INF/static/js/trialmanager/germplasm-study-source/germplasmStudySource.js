@@ -380,6 +380,7 @@
 								}).result.finally(function () {
 									// Refresh and show the 'Crosses and Selections' tab
 									$rootScope.navigateToTab('germplasmStudySource', {reload: true});
+									$rootScope.$broadcast('inventoryChanged');
 								});
 							});
 					} else {

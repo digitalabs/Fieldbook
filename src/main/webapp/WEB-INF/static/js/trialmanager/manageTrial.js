@@ -298,7 +298,7 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 					$scope.safeApply(function () {
 						$scope.inventoryTab.hidden = !transactionsTable.data.length;
 						// If the Inventory tab becomes hidden, if no transactions left, navigate to Observations tab to show its content
-						if ($scope.inventoryTab.hidden) {
+						if ($scope.inventoryTab.hidden && $scope.tabSelected === 'inventory') {
 							$scope.navigateToSubObsTab(studyContext.measurementDatasetId);
 						}
 					});

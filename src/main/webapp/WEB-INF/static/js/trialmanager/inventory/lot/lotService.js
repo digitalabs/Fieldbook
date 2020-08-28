@@ -13,7 +13,8 @@
 			var service = {};
 
 			service.saveSearchRequest = function (searchRequest) {
-				return $http.post(BASE_URL + '/search', searchRequest)
+				const programUUID = studyContext.programId;
+				return $http.post(BASE_URL + '/search?programUUID=' + programUUID, searchRequest)
 					.then(successHandler, failureHandler);
 			}
 			return service;

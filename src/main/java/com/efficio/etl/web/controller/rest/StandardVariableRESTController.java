@@ -70,7 +70,7 @@ public class StandardVariableRESTController {
 		StandardVariableRESTController.PLOT_DATA_VARIABLE_FILTER.addVariableType(VariableType.GERMPLASM_DESCRIPTOR);
 		StandardVariableRESTController.PLOT_DATA_VARIABLE_FILTER.addVariableType(VariableType.EXPERIMENTAL_DESIGN);
 		StandardVariableRESTController.PLOT_DATA_VARIABLE_FILTER.addVariableType(VariableType.TREATMENT_FACTOR);
-		StandardVariableRESTController.PLOT_DATA_VARIABLE_FILTER.addVariableType(VariableType.STUDY_CONDITION);
+		StandardVariableRESTController.PLOT_DATA_VARIABLE_FILTER.addVariableType(VariableType.ENVIRONMENT_CONDITION);
 		StandardVariableRESTController.PLOT_DATA_VARIABLE_FILTER.addVariableType(VariableType.SELECTION_METHOD);
 		StandardVariableRESTController.PLOT_DATA_VARIABLE_FILTER.addVariableType(VariableType.TRAIT);
 

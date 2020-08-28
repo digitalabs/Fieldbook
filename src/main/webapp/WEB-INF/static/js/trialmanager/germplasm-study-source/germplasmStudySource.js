@@ -137,7 +137,7 @@
 						filter: {
 							transform(request) {
 								if (this.value || this.value === 0) {
-									request.filter.numberOfLots = this.value;
+									request.filter.numberOfLotsList = this.value.split(',');
 									this.isFiltered = true;
 								}
 							}

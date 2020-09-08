@@ -17,7 +17,6 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.FileUtils;
 import org.generationcp.commons.util.InstallationDirectoryUtil;
 import org.generationcp.middleware.data.initializer.ProjectTestDataInitializer;
-import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -34,14 +33,23 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 
 public class ExportStudyGermplasmControllerTest {
 
@@ -165,7 +173,7 @@ public class ExportStudyGermplasmControllerTest {
 		studyDetails.setId(studyId);
 		workbook.setStudyDetails(studyDetails);
 		Mockito.doReturn(workbook).when(this.userSelection).getWorkbook();
-		Mockito.doReturn(10L).when(this.studyGermplasmService).countStudyGermplasm(studyId);
+		Mockito.doReturn(10L).when(this.studyGermplasmService).countStudyEntries(studyId);
 
 		try {
 			final String output =

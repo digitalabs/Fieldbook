@@ -18,7 +18,6 @@ import org.generationcp.middleware.domain.dms.Experiment;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.Variable;
 import org.generationcp.middleware.domain.dms.VariableList;
-import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
@@ -49,7 +48,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -121,7 +119,7 @@ public class CrossingTemplateExcelExporterTest {
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(ProjectTestDataInitializer.createProject());
 		Mockito.when(this.userService.getUsersByProjectId(ArgumentMatchers.anyLong()))
 			.thenReturn(new ArrayList<WorkbenchUser>());
-		Mockito.when(this.studyGermplasmService.countStudyGermplasm(CrossingTemplateExcelExporterTest.STUDY_ID)).thenReturn(1l);
+		Mockito.when(this.studyGermplasmService.countStudyEntries(CrossingTemplateExcelExporterTest.STUDY_ID)).thenReturn(1l);
 
 		final FileExportInfo exportInfo = this.exporter.export(CrossingTemplateExcelExporterTest.STUDY_ID,
 				CrossingTemplateExcelExporterTest.STUDY_NAME, CrossingTemplateExcelExporterTest.CURRENT_USER_ID);
@@ -324,7 +322,7 @@ public class CrossingTemplateExcelExporterTest {
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(ProjectTestDataInitializer.createProject());
 		Mockito.when(this.userService.getUsersByProjectId(ArgumentMatchers.anyLong()))
 			.thenReturn(new ArrayList<WorkbenchUser>());
-		Mockito.when(this.studyGermplasmService.countStudyGermplasm(CrossingTemplateExcelExporterTest.STUDY_ID)).thenReturn(1l);
+		Mockito.when(this.studyGermplasmService.countStudyEntries(CrossingTemplateExcelExporterTest.STUDY_ID)).thenReturn(1l);
 
 		// to test
 		final FileExportInfo exportInfo = this.exporter.export(CrossingTemplateExcelExporterTest.STUDY_ID, studyName,
@@ -346,7 +344,7 @@ public class CrossingTemplateExcelExporterTest {
 	@Test(expected = CrossingTemplateExportException.class)
 	@SuppressWarnings("unchecked")
 	public void retrieveAndValidateIfHasGermplasmListExceptionHandling() throws Exception {
-		Mockito.when(this.studyGermplasmService.countStudyGermplasm(CrossingTemplateExcelExporterTest.STUDY_ID)).thenReturn(0l);
+		Mockito.when(this.studyGermplasmService.countStudyEntries(CrossingTemplateExcelExporterTest.STUDY_ID)).thenReturn(0l);
 		this.exporter.validateIfStudyHasGermplasm(CrossingTemplateExcelExporterTest.STUDY_ID);
 	}
 

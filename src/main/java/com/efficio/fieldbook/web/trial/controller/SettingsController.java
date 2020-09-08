@@ -587,7 +587,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 				this.userSelection.setDeletedPlotLevelList(new ArrayList<SettingDetail>());
 			}
 			this.userSelection.getDeletedPlotLevelList().add(newSetting);
-		} else if (mode == VariableType.STUDY_CONDITION.getId()) {
+		} else if (mode == VariableType.ENVIRONMENT_CONDITION.getId()) {
 			if (this.userSelection.getDeletedStudyConditions() == null) {
 				this.userSelection.setDeletedStudyConditions(new ArrayList<SettingDetail>());
 			}

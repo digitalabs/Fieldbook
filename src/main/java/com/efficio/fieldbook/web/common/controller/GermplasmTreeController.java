@@ -67,6 +67,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -562,8 +564,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	void populateGermplasmListDataFromAdvanced(final GermplasmList germplasmList, final AdvancingStudyForm form,
 			final List<Pair<Germplasm, List<Name>>> germplasms, final List<Pair<Germplasm, GermplasmListData>> listDataItems,
 			final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes) {
-
-		final String harvestDate = form.getHarvestYear() + form.getHarvestMonth() + "00";
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+		final String harvestDate = LocalDate.now().format(formatter);
 		final Integer currentUserID = this.getCurrentIbdbUserId();
 
 		// Common germplasm fields

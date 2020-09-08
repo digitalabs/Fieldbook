@@ -138,7 +138,7 @@
 						filter: {
 							transform(request) {
 								if (this.value || this.value === 0) {
-									request.filter.numberOfLots = this.value;
+									request.filter.numberOfLotsList = this.value.split(',');
 									this.isFiltered = true;
 								}
 							}
@@ -381,6 +381,7 @@
 								}).result.finally(function () {
 									// Refresh and show the 'Crosses and Selections' tab
 									$rootScope.navigateToTab('germplasmStudySource', {reload: true});
+									$rootScope.$broadcast('inventoryChanged');
 								});
 							});
 					} else {

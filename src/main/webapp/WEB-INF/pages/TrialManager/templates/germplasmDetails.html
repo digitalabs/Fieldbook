@@ -25,14 +25,6 @@
 		<button class="btn btn-primary show-germplasm-details"  ng-click="updateModifyList()" th:text="#{study.germplasm.replace}">Overwrite</button>
 	</div>
 </div>
-<div ng-show="hasGeneratedDesign()" class="row form-group">
-	<div class="col-xs-12 col-md-12">
-		<label class="control-label">
-			<strong class="sub-content-heading" th:text="#{study.edit.study.cannot.modify.germplasm.list.message}">This Study has saved observations, germplasm list cannot be modified.</strong>
-		</label>
-	</div>
-</div>
-
 <div class="collapse in germplasmListDetails germplasmAndCheckSection" id="chooseGermplasmAndChecks" data-replace="0">
 	<!-- Germplasm List Table View -->
 	<div id="primary-section">

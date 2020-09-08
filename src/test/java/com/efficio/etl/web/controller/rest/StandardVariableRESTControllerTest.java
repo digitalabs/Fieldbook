@@ -93,9 +93,9 @@ public class StandardVariableRESTControllerTest {
 			variables.add(this.createVariableTestData(++variableId, ++propertyId, ++scaleId, ++methodId,
 				Arrays.asList(new VariableType[] {VariableType.TRAIT})));
 			variables.add(this.createVariableTestData(++variableId, ++propertyId, ++scaleId, ++methodId,
-				Arrays.asList(new VariableType[] {VariableType.STUDY_CONDITION})));
+				Arrays.asList(new VariableType[] {VariableType.ENVIRONMENT_CONDITION})));
 			variables.add(this.createVariableTestData(++variableId, ++propertyId, ++scaleId, ++methodId,
-				Arrays.asList(new VariableType[] {VariableType.STUDY_CONDITION})));
+				Arrays.asList(new VariableType[] {VariableType.ENVIRONMENT_CONDITION})));
 			variables.add(this.createVariableTestData(++variableId, ++propertyId, ++scaleId, ++methodId,
 				Arrays.asList(new VariableType[] {VariableType.SELECTION_METHOD})));
 		}
@@ -180,7 +180,7 @@ public class StandardVariableRESTControllerTest {
 			variableTypes.add(VariableType.GERMPLASM_DESCRIPTOR);
 			variableTypes.add(VariableType.EXPERIMENTAL_DESIGN);
 			variableTypes.add(VariableType.TREATMENT_FACTOR);
-			variableTypes.add(VariableType.STUDY_CONDITION);
+			variableTypes.add(VariableType.ENVIRONMENT_CONDITION);
 			variableTypes.add(VariableType.SELECTION_METHOD);
 			variableTypes.add(VariableType.TRAIT);
 		}

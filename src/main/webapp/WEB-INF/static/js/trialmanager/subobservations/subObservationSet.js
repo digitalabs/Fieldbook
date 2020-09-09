@@ -1,9 +1,12 @@
 (function () {
 	'use strict';
 
-	var subObsTabSelectedDeRegister = () => {};
-	var sampleListCreatedDeRegister = () => {};
-	var startPlantingPreparationDeRegister = () => {};
+	var subObsTabSelectedDeRegister = () => {
+	};
+	var sampleListCreatedDeRegister = () => {
+	};
+	var startPlantingPreparationDeRegister = () => {
+	};
 
 	var subObservationModule = angular.module('subObservation', ['visualization']);
 	var TRIAL_INSTANCE = 8170,
@@ -224,7 +227,7 @@
 							searchComposite: function () {
 								return {
 									itemIds: $scope.selectedItems.length ? $scope.selectedItems : null,
-									searchRequest: $scope.selectedItems.length  ? null : {
+									searchRequest: $scope.selectedItems.length ? null : {
 										instanceId: $scope.nested.selectedEnvironment.instanceId,
 										draftMode: $scope.isPendingView,
 										filter: getFilter()
@@ -809,36 +812,41 @@
 
 			function getDtOptions() {
 				return addCommonOptions(DTOptionsBuilder.newOptions()
-					.withOption('ajax', {
-						url: datasetService.getObservationTableUrl(subObservationSet.id),
-						type: 'POST',
-						contentType: 'application/json',
-						beforeSend: function (xhr) {
-							xhr.setRequestHeader('X-Auth-Token', JSON.parse(localStorage['bms.xAuthToken']).token);
-						},
-						data: function (d) {
-							var order = d.order && d.order[0];
-							var sortedColTermId = subObservationSet.columnsData[order.column].termId;
-
-							return JSON.stringify({
-								draw: d.draw,
-								sortedRequest: {
-									pageSize: d.length,
-									pageNumber: d.length === 0 ? 1 : d.start / d.length + 1,
-									sortBy: sortedColTermId,
-									sortOrder: order.dir
+					.withOption('ajax',
+						function (d, callback) {
+							$.ajax({
+								type: 'POST',
+								url: datasetService.getObservationTableUrl(subObservationSet.id) + getPageQueryParameters(d),
+								data: JSON.stringify({
+									draw: d.draw,
+									instanceId: $scope.nested.selectedEnvironment.instanceId,
+									draftMode: $scope.isPendingView,
+									filter: getFilter()
+								}),
+								success: function (res) {
+									callback(res);
 								},
-								instanceId: $scope.nested.selectedEnvironment.instanceId,
-								draftMode: $scope.isPendingView,
-								filter: getFilter()
+								contentType: 'application/json',
+								beforeSend: function (xhr) {
+									xhr.setRequestHeader('X-Auth-Token', JSON.parse(localStorage['bms.xAuthToken']).token);
+								},
 							});
-						}
-					})
+						})
 					.withDataProp('data')
 					.withOption('serverSide', true)
 					.withOption('initComplete', initCompleteCallback)
 					.withOption('headerCallback', headerCallback)
 					.withOption('drawCallback', drawCallback));
+			}
+
+			function getPageQueryParameters(data) {
+				var order = data.order && data.order[0];
+				var pageQuery = '?size=' + data.length
+					+ '&page=' + ((data.length === 0) ? 0 : data.start / data.length);
+				if (subObservationSet.columnsData[order.column]) {
+					pageQuery += '&sort=' + subObservationSet.columnsData[order.column].termId + ',' + order.dir;
+				}
+				return pageQuery;
 			}
 
 			function addCommonOptions(options) {
@@ -1220,7 +1228,8 @@
 				$scope.isAllPagesSelected = false;
 				try {
 					table().columns(0).visible(!$scope.isAllPagesSelected);
-				} catch (e) {}
+				} catch (e) {
+				}
 			}
 
 			function getCategoricalValueId(cellDataValue, columnData) {

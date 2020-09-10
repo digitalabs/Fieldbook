@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.commons.pojo.AdvancingSource;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.middleware.domain.etl.Workbook;
 
@@ -26,23 +27,11 @@ import org.generationcp.commons.pojo.AdvancingSourceList;
 /**
  *
  * Service for Rules Based Naming.
- * //TODO Remove advancing logic from this service
  *
  */
 public interface NamingConventionService {
 
-	/**
-	 * Provides the service for advancing a study.
-	 *
-	 * @param info
-	 * @return
-	 * @throws RuleException
-	 * @throws FieldbookException
-	 */
-	AdvanceResult advanceStudy(AdvancingStudy info, Workbook workbook) throws RuleException, FieldbookException;
-
-	List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows, AdvancingStudy advancingParameters, Workbook workbook)
-			throws RuleException;
+	void generateAdvanceListNames(List<AdvancingSource> advancingSourceItems, boolean checkForDuplicateName, List<ImportedGermplasm> germplasmList) throws RuleException;
 
 	/*
 	* Generated the names for the list of crosses based on on rules setup for the breeding methods

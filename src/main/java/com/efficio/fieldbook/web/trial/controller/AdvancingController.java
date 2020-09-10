@@ -15,6 +15,8 @@ import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.*;
+import com.efficio.fieldbook.web.naming.impl.AdvancingSourceListFactory;
+import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.trial.bean.AdvanceType;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
 import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
@@ -24,7 +26,10 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.pojo.AdvanceGermplasmChangeDetail;
+import org.generationcp.commons.pojo.AdvancingSource;
+import org.generationcp.commons.pojo.AdvancingSourceList;
 import org.generationcp.commons.ruleengine.RuleException;
+import org.generationcp.commons.ruleengine.generator.SeedSourceGenerator;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.middleware.domain.dms.DatasetDTO;
@@ -39,15 +44,18 @@ import org.generationcp.middleware.domain.ontology.Property;
 import org.generationcp.middleware.domain.ontology.Scale;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.domain.ontology.VariableType;
+import org.generationcp.middleware.domain.sample.SampleDTO;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
+import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.dataset.DatasetService;
+import org.generationcp.middleware.util.TimerWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -65,6 +73,8 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static org.generationcp.middleware.service.api.dataset.ObservationUnitUtils.fromMeasurementRow;
 
 @Controller
 @RequestMapping(AdvancingController.URL)
@@ -111,6 +121,19 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private DatasetService datasetService;
+
+	@Resource
+	private NamingConventionService namingConventionService;
+
+	@Resource
+	private AdvancingSourceListFactory advancingSourceListFactory;
+
+	@Resource
+	private SeedSourceGenerator seedSourceGenerator;
+
+	@Resource
+	private StudyDataManager studyDataManager;
+
 
 	@Override
 	public String getContentName() {
@@ -283,7 +306,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			}
 
 
-			AdvanceResult advanceResult = this.fieldbookService.advanceStudy(advancingStudy, this.userSelection.getWorkbook());
+			AdvanceResult advanceResult = this.createAdvanceList(advancingStudy);
 			List<ImportedGermplasm> importedGermplasmList = advanceResult.getAdvanceList();
 			long id = DateUtil.getCurrentDate().getTime();
 			this.getPaginationListSelection().addAdvanceDetails(Long.toString(id), form);
@@ -317,6 +340,186 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			}
 		}
 		return results;
+	}
+
+	private AdvanceResult createAdvanceList(final AdvancingStudy advanceInfo) throws FieldbookException, RuleException {
+		final Map<Integer, Method> breedingMethodMap = new HashMap<>();
+		final Map<String, Method> breedingMethodCodeMap = new HashMap<>();
+		final List<Method> methodList = this.fieldbookMiddlewareService.getAllBreedingMethods(false);
+
+		for (final Method method : methodList) {
+			breedingMethodMap.put(method.getMid(), method);
+			breedingMethodCodeMap.put(method.getMcode(), method);
+		}
+
+		final AdvancingSourceList list = this.createAdvancingSourceList(advanceInfo, breedingMethodMap, breedingMethodCodeMap);
+		this.updatePlantsSelectedIfNecessary(list, advanceInfo);
+
+		final List<AdvanceGermplasmChangeDetail> changeDetails = new ArrayList<>();
+		for (final AdvancingSource source : list.getRows()) {
+			if (source.getChangeDetail() != null) {
+				changeDetails.add(source.getChangeDetail());
+			}
+		}
+
+		final List<ImportedGermplasm> germplasmList = this.generateGermplasmList(list, advanceInfo);
+		this.namingConventionService.generateAdvanceListNames(list.getRows(), advanceInfo.isCheckAdvanceLinesUnique(), germplasmList);
+		final AdvanceResult result = new AdvanceResult();
+		result.setAdvanceList(germplasmList);
+		result.setChangeDetails(changeDetails);
+
+		return result;
+	}
+
+	List<ImportedGermplasm> generateGermplasmList(final AdvancingSourceList rows, final AdvancingStudy advancingParameters) {
+
+		final List<ImportedGermplasm> list = new ArrayList<>();
+		int index = 1;
+		final TimerWatch timer = new TimerWatch("advance");
+		final Map<String, String> locationIdNameMap = this.studyDataManager.createInstanceLocationIdToNameMapFromStudy(this.userSelection.getWorkbook().getStudyDetails().getId());
+		final List<MeasurementVariable> environmentVariables =
+				this.datasetService.getObservationSetVariables(this.userSelection.getWorkbook().getTrialDatasetId(), Collections.singletonList(
+						VariableType.ENVIRONMENT_DETAIL.getId()));
+		Map<String, Integer> keySequenceMap = new HashMap<>();
+		for (final AdvancingSource row : rows.getRows()) {
+			if (row.getGermplasm() != null && !row.isCheck() && row.getPlantsSelected() != null && row.getBreedingMethod() != null
+					&& row.getPlantsSelected() > 0 && row.getBreedingMethod().isBulkingMethod() != null) {
+				row.setKeySequenceMap(keySequenceMap);
+
+				// if change detail object is created due to a duplicate being encountered somewhere during processing, provide a
+				// reference index
+				if (row.getChangeDetail() != null) {
+					// index - 1 is used because Java uses 0-based referencing
+					row.getChangeDetail().setIndex(index - 1);
+				}
+
+				// One plot may result in multiple plants/ears selected depending on selection method.
+				int selectionNumber = row.getCurrentMaxSequence() + 1;
+				final Iterator<SampleDTO> sampleIterator = row.getSamples().iterator();
+
+				final int iterationCount = row.isBulk() ? 1 : row.getPlantsSelected();
+				for (int i = 0; i < iterationCount; i++) {
+					String sampleNo = null;
+					if (sampleIterator.hasNext()) {
+						sampleNo = String.valueOf(sampleIterator.next().getSampleNumber());
+					}
+					this.addImportedGermplasmToList(list, row, row.getBreedingMethod(), index++, selectionNumber,
+							advancingParameters, sampleNo, locationIdNameMap, environmentVariables);
+					selectionNumber++;
+				}
+
+			}
+		}
+		timer.stop();
+		return list;
+	}
+
+	protected void addImportedGermplasmToList(final List<ImportedGermplasm> list, final AdvancingSource source,
+											  final Method breedingMethod, final int index, final int selectionNumber,
+											  final AdvancingStudy advancingParameters, final String plantNo, final Map<String, String> locationIdNameMap,
+											  final List<MeasurementVariable> environmentVariables) {
+
+		String selectionNumberToApply = null;
+		final boolean allPlotsSelected = "1".equals(advancingParameters.getAllPlotsChoice());
+		if (source.isBulk()) {
+			if (allPlotsSelected) {
+				selectionNumberToApply = null;
+			} else {
+				selectionNumberToApply = String.valueOf(source.getPlantsSelected());
+			}
+		} else {
+			selectionNumberToApply = String.valueOf(selectionNumber);
+		}
+
+		// set the seed source string for the new Germplasm
+		final String seedSource = this.seedSourceGenerator
+				.generateSeedSource(fromMeasurementRow(this.userSelection.getWorkbook().getTrialObservationByTrialInstanceNo(Integer.valueOf(source.getTrialInstanceNumber()))),
+						this.userSelection.getWorkbook().getConditions(), selectionNumberToApply, source.getPlotNumber(), this.userSelection.getWorkbook().getStudyName(), plantNo, locationIdNameMap, environmentVariables);
+
+		// Use index as germplasm name for now
+		final ImportedGermplasm germplasm =
+				new ImportedGermplasm(index, String.valueOf(index), null /* gid */
+						, source.getGermplasm().getCross(), seedSource,
+						FieldbookUtil.generateEntryCode(index), null /* check */
+						, breedingMethod.getMid());
+
+		// assign parentage etc for the new Germplasm
+		final Integer sourceGid = source.getGermplasm().getGid() != null ? Integer.valueOf(source.getGermplasm().getGid()) : -1;
+		final Integer gnpgs = source.getGermplasm().getGnpgs() != null ? source.getGermplasm().getGnpgs() : -1;
+		this.assignGermplasmAttributes(germplasm, sourceGid, gnpgs, source.getGermplasm().getGpid1(), source.getGermplasm().getGpid2(),
+				source.getSourceMethod(), breedingMethod);
+
+		// assign grouping based on parentage
+
+		// check to see if a group ID (MGID) exists in the parent for this Germplasm, and set
+		// newly created germplasm if part of a group ( > 0 )
+		if (source.getGermplasm().getMgid() != null && source.getGermplasm().getMgid() > 0) {
+			germplasm.setMgid(source.getGermplasm().getMgid());
+		}
+
+		germplasm.setTrialInstanceNumber(source.getTrialInstanceNumber());
+		germplasm.setReplicationNumber(source.getReplicationNumber());
+		germplasm.setPlotNumber(source.getPlotNumber());
+		germplasm.setLocationId(source.getHarvestLocationId());
+		if (plantNo != null) {
+			germplasm.setPlantNumber(plantNo);
+		}
+
+		list.add(germplasm);
+	}
+
+	private void assignGermplasmAttributes(final ImportedGermplasm germplasm, final Integer sourceGid, final Integer sourceGnpgs,
+										   final Integer sourceGpid1, final Integer sourceGpid2, final Method sourceMethod, final Method breedingMethod) {
+
+		if ((sourceMethod != null && sourceMethod.getMtype() != null
+				&& AppConstants.METHOD_TYPE_GEN.getString().equals(sourceMethod.getMtype())) || sourceGnpgs < 0 &&
+				(sourceGpid1 != null && sourceGpid1.equals(0)) && (sourceGpid2 != null && sourceGpid2.equals(0))) {
+
+			germplasm.setGpid1(sourceGid);
+		} else {
+			germplasm.setGpid1(sourceGpid1);
+		}
+
+		germplasm.setGpid2(sourceGid);
+
+		if (breedingMethod != null) {
+			germplasm.setGnpgs(breedingMethod.getMprgn());
+		}
+	}
+
+	private AdvancingSourceList createAdvancingSourceList(final AdvancingStudy advanceInfo,
+														  final Map<Integer, Method> breedingMethodMap, final Map<String, Method> breedingMethodCodeMap) throws FieldbookException {
+
+		final Study study = advanceInfo.getStudy();
+		Workbook workbook = this.userSelection.getWorkbook();
+		if (workbook == null) {
+			workbook = this.fieldbookMiddlewareService.getStudyDataSet(study.getId());
+		}
+		return this.advancingSourceListFactory
+				.createAdvancingSourceList(workbook, advanceInfo, study, breedingMethodMap, breedingMethodCodeMap);
+				.createAdvancingSourceList(workbook, advanceInfo, study, breedingMethodMap, breedingMethodCodeMap);
+	}
+
+	private void updatePlantsSelectedIfNecessary(final AdvancingSourceList list, final AdvancingStudy info) {
+		boolean lineChoiceSame = info.getLineChoice() != null && "1".equals(info.getLineChoice());
+		final boolean allPlotsChoice = info.getAllPlotsChoice() != null && "1".equals(info.getAllPlotsChoice());
+		int plantsSelected = 0;
+		if (info.getLineSelected() != null && NumberUtils.isNumber(info.getLineSelected())) {
+			plantsSelected = Integer.valueOf(info.getLineSelected());
+		} else {
+			lineChoiceSame = false;
+		}
+		if (list != null && list.getRows() != null && !list.getRows().isEmpty() && (lineChoiceSame && plantsSelected > 0
+				|| allPlotsChoice)) {
+			for (final AdvancingSource row : list.getRows()) {
+				if (!row.isBulk() && lineChoiceSame) {
+					row.setPlantsSelected(plantsSelected);
+				} else if (row.isBulk() && allPlotsChoice) {
+					// set it to 1, it does not matter since it's bulked
+					row.setPlantsSelected(1);
+				}
+			}
+		}
 	}
 
 	@ResponseBody

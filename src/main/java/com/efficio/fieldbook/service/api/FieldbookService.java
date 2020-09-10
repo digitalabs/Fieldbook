@@ -51,15 +51,6 @@ public interface FieldbookService {
 	 */
 	String storeUserWorkbook(InputStream in) throws IOException;
 
-	/**
-	 * Logic for advancing a study following a particular naming convention.
-	 *
-	 * @param advanceInfo the advance info
-	 * @param workbook the workbook
-	 * @return the list
-	 * @throws RuleException
-	 */
-	AdvanceResult advanceStudy(AdvancingStudy advanceInfo, Workbook workbook) throws RuleException, FieldbookException;
 
 	/**
 	 * Filters the variables based on the current setting mode and excludes the selected ones.

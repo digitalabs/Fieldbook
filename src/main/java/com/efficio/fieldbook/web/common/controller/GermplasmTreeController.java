@@ -574,8 +574,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 		// Common germplasm list data fields
 		final Integer listDataId = null;
-		final Integer listDataStatus = 0;
-		final Integer localRecordId = 0;
 
 		// Common name fields
 		final Integer nRef = 0;
@@ -598,12 +596,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			if (importedGermplasm.getGid() != null) {
 				gid = Integer.valueOf(importedGermplasm.getGid());
 			}
-
-			final Integer methodId = importedGermplasm.getBreedingMethodId();
-			final Integer gnpgs = importedGermplasm.getGnpgs();
-			final Integer gpid1 = importedGermplasm.getGpid1();
-			final Integer gpid2 = importedGermplasm.getGpid2();
-			final Integer mgid = importedGermplasm.getMgid() == null ? 0 : importedGermplasm.getMgid();
 
 			Integer locationId = 0;
 			// old manage nursery used to have an input to specify harvest location
@@ -635,32 +627,24 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 			final Integer trueGdate = !"".equals(harvestDate.trim()) ? Integer.valueOf(harvestDate) : gDate;
 			final Germplasm germplasm;
-			germplasm = new Germplasm(gid, methodId, gnpgs, gpid1, gpid2, currentUserID, lgid, locationId, trueGdate, preferredName);
+			germplasm = new Germplasm(gid, importedGermplasm.getBreedingMethodId(), importedGermplasm.getGnpgs(), importedGermplasm.getGpid1(),
+					importedGermplasm.getGpid2(), currentUserID, lgid, locationId, trueGdate, preferredName);
+			final Integer mgid = importedGermplasm.getMgid() == null ? 0 : importedGermplasm.getMgid();
 			germplasm.setMgid(mgid);
 			germplasms.add(new ImmutablePair<>(germplasm, names));
 
 			// Create list data items to save - Map<Germplasm, GermplasmListData>
-			final Integer entryNumber = importedGermplasm.getEntryNumber();
-			final String entryCode = importedGermplasm.getEntryCode();
-			final String seedSource = importedGermplasm.getSource();
-			final String designation = importedGermplasm.getDesig();
-			String groupName = importedGermplasm.getCross();
-
-			if (groupName == null) {
-				// Default value if null
-				groupName = "-";
-			}
+			String groupName = importedGermplasm.getCross() != null? importedGermplasm.getCross() :  "-";
 
 			final GermplasmListData listData =
-				new GermplasmListData(listDataId, germplasmList, gid, entryNumber, entryCode, seedSource, designation, groupName,
-					listDataStatus, localRecordId);
+				new GermplasmListData(listDataId, germplasmList, gid, importedGermplasm.getEntryNumber(), importedGermplasm.getEntryCode(),
+						importedGermplasm.getSource(), importedGermplasm.getDesig(), groupName, 0, 0);
 
 			listDataItems.add(new ImmutablePair<>(germplasm, listData));
 
 			final List<Attribute> attributesPerGermplasm = Lists.newArrayList();
 			// Add the seed source/origin attribute (which is generated based on
 			// format strings configured in crossing.properties) to the
-			// germplasm in FieldbookServiceImpl.advanceStudy().
 			// originAttribute gid will be set when saving once gid is known
 			final Attribute originAttribute =
 				this.createAttributeObject(currentUserID, importedGermplasm.getSource(), plotCodeFldNo, locationId, gDate);

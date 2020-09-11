@@ -19,8 +19,6 @@ import org.generationcp.commons.pojo.AdvancingSource;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.middleware.domain.etl.Workbook;
 
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
 import org.generationcp.commons.pojo.AdvancingSourceList;
 

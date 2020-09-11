@@ -184,6 +184,7 @@ public class AdvancingSourceListFactory {
 					advancingSourceCandidate.setStudyName(studyName);
 					advancingSourceCandidate.setStudyId(workbook.getStudyDetails().getId());
 					advancingSourceCandidate.setEnvironmentDatasetId(workbook.getTrialDatasetId());
+					advancingSourceCandidate.setDesignationIsPreviewOnly(true);
 
 					dataProcessor.processPlotLevelData(advancingSourceCandidate, row);
 

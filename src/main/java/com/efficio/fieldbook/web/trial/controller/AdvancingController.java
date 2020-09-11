@@ -263,29 +263,15 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	@RequestMapping(method = RequestMethod.POST)
 	public Map<String, Object> postAdvanceStudy(@ModelAttribute("advancingStudyForm") AdvancingStudyForm form, BindingResult result,
 			Model model) {
-		
+
 		Map<String, Object> results = new HashMap<>();
-		AdvancingStudy advancingStudy = new AdvancingStudy();
-		
-		Study study = this.fieldbookMiddlewareService.getStudy(Integer.valueOf(form.getStudyId()));
-		advancingStudy.setStudy(study);
-		advancingStudy.setMethodChoice(form.getMethodChoice());
-		advancingStudy.setBreedingMethodId(form.getAdvanceBreedingMethodId());
-		advancingStudy.setLineChoice(form.getLineChoice());
-		advancingStudy.setLineSelected(form.getLineSelected() != null ? form.getLineSelected().trim() : null);
-		advancingStudy.setHarvestDate(form.getHarvestDate());
-		advancingStudy.setHarvestLocationId(form.getHarvestLocationId());
-		advancingStudy
-			.setHarvestLocationAbbreviation(form.getHarvestLocationAbbreviation() != null ? form.getHarvestLocationAbbreviation() : "");
-		advancingStudy.setAllPlotsChoice(form.getAllPlotsChoice());
-		advancingStudy.setLineVariateId(form.getLineVariateId());
-		advancingStudy.setPlotVariateId(form.getPlotVariateId());
-		advancingStudy.setMethodVariateId(form.getMethodVariateId());
-		// Set to false till we figure out a more performat way to do unique name checking
-		advancingStudy.setCheckAdvanceLinesUnique(false);
-        advancingStudy.setSelectedReplications(form.getSelectedReplications());
-        advancingStudy.setSelectedTrialInstances(form.getSelectedTrialInstances());
-        advancingStudy.setAdvanceType(AdvanceType.fromLowerCaseName(form.getAdvanceType()));
+		final Study study = this.fieldbookMiddlewareService.getStudy(Integer.valueOf(form.getStudyId()));
+		final String lineSelected = form.getLineSelected() != null ? form.getLineSelected().trim() : null;
+		final String harvestLocationAbbreviation = form.getHarvestLocationAbbreviation() != null ? form.getHarvestLocationAbbreviation() : "";
+
+		final AdvancingStudy advancingStudy = new AdvancingStudy(study, form.getMethodChoice(), form.getLineChoice(), lineSelected, form.getHarvestDate(), form.getHarvestLocationId(),
+				harvestLocationAbbreviation, form.getAdvanceBreedingMethodId(), form.getAllPlotsChoice(), form.getLineVariateId(), form.getMethodVariateId(), form.getPlotVariateId(),
+				false, form.getSelectedReplications(), form.getSelectedTrialInstances(), AdvanceType.fromLowerCaseName(form.getAdvanceType()));
 		boolean observationsLoaded = this.fieldbookMiddlewareService.loadAllObservations(this.userSelection.getWorkbook());
 
 		try {
@@ -306,21 +292,21 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			}
 
 
-			AdvanceResult advanceResult = this.createAdvanceList(advancingStudy);
-			List<ImportedGermplasm> importedGermplasmList = advanceResult.getAdvanceList();
+			final List<AdvanceGermplasmChangeDetail> changeDetails = new ArrayList<>();
+			final AdvancingSourceList list = getAdvancingSourceList(advancingStudy);
+			List<ImportedGermplasm> importedGermplasmList = this.createAdvanceList(advancingStudy, changeDetails, list);
 			long id = DateUtil.getCurrentDate().getTime();
 			this.getPaginationListSelection().addAdvanceDetails(Long.toString(id), form);
 			this.userSelection.setImportedAdvancedGermplasmList(importedGermplasmList);
 			form.setGermplasmList(importedGermplasmList);
 			form.setEntries(importedGermplasmList.size());
+			form.setAdvancingSourceItems(list.getRows());
 			form.changePage(1);
 			form.setUniqueId(id);
 
-			List<AdvanceGermplasmChangeDetail> advanceGermplasmChangeDetails = advanceResult.getChangeDetails();
-
 			results.put(AdvancingController.IS_SUCCESS, "1");
 			results.put(AdvancingController.LIST_SIZE, importedGermplasmList.size());
-			results.put("advanceGermplasmChangeDetails", advanceGermplasmChangeDetails);
+			results.put("advanceGermplasmChangeDetails", changeDetails);
 			results.put(AdvancingController.UNIQUE_ID, id);
 
 		} catch (MiddlewareException | RuleException | FieldbookException e) {
@@ -342,7 +328,24 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		return results;
 	}
 
-	private AdvanceResult createAdvanceList(final AdvancingStudy advanceInfo) throws FieldbookException, RuleException {
+	private List<ImportedGermplasm> createAdvanceList(final AdvancingStudy advanceInfo, final List<AdvanceGermplasmChangeDetail> changeDetails, final AdvancingSourceList list)
+			throws RuleException {
+		this.updatePlantsSelectedIfNecessary(list, advanceInfo);
+
+
+		for (final AdvancingSource source : list.getRows()) {
+			if (source.getChangeDetail() != null) {
+				changeDetails.add(source.getChangeDetail());
+			}
+		}
+
+		final List<ImportedGermplasm> germplasmList = this.generateGermplasmList(list, advanceInfo);
+		this.namingConventionService.generateAdvanceListNames(list.getRows(), advanceInfo.isCheckAdvanceLinesUnique(), germplasmList);
+
+		return germplasmList;
+	}
+
+	private AdvancingSourceList getAdvancingSourceList(AdvancingStudy advanceInfo) throws FieldbookException {
 		final Map<Integer, Method> breedingMethodMap = new HashMap<>();
 		final Map<String, Method> breedingMethodCodeMap = new HashMap<>();
 		final List<Method> methodList = this.fieldbookMiddlewareService.getAllBreedingMethods(false);
@@ -352,23 +355,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			breedingMethodCodeMap.put(method.getMcode(), method);
 		}
 
-		final AdvancingSourceList list = this.createAdvancingSourceList(advanceInfo, breedingMethodMap, breedingMethodCodeMap);
-		this.updatePlantsSelectedIfNecessary(list, advanceInfo);
-
-		final List<AdvanceGermplasmChangeDetail> changeDetails = new ArrayList<>();
-		for (final AdvancingSource source : list.getRows()) {
-			if (source.getChangeDetail() != null) {
-				changeDetails.add(source.getChangeDetail());
-			}
-		}
-
-		final List<ImportedGermplasm> germplasmList = this.generateGermplasmList(list, advanceInfo);
-		this.namingConventionService.generateAdvanceListNames(list.getRows(), advanceInfo.isCheckAdvanceLinesUnique(), germplasmList);
-		final AdvanceResult result = new AdvanceResult();
-		result.setAdvanceList(germplasmList);
-		result.setChangeDetails(changeDetails);
-
-		return result;
+		return this.createAdvancingSourceList(advanceInfo, breedingMethodMap, breedingMethodCodeMap);
 	}
 
 	List<ImportedGermplasm> generateGermplasmList(final AdvancingSourceList rows, final AdvancingStudy advancingParameters) {
@@ -496,7 +483,6 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			workbook = this.fieldbookMiddlewareService.getStudyDataSet(study.getId());
 		}
 		return this.advancingSourceListFactory
-				.createAdvancingSourceList(workbook, advanceInfo, study, breedingMethodMap, breedingMethodCodeMap);
 				.createAdvancingSourceList(workbook, advanceInfo, study, breedingMethodMap, breedingMethodCodeMap);
 	}
 

@@ -60,10 +60,12 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 		final TimerWatch timer = new TimerWatch("advance");
 
+		Map<String, Integer> keySequenceMap = new HashMap<>();
 		final Iterator<ImportedGermplasm> germplasmIterator = germplasmList.iterator();
 		for (final AdvancingSource row : advancingSourceItems) {
 			if (row.getGermplasm() != null && !row.isCheck() && row.getPlantsSelected() != null && row.getBreedingMethod() != null
 				&& row.getPlantsSelected() > 0 && row.getBreedingMethod().isBulkingMethod() != null) {
+				row.setKeySequenceMap(keySequenceMap);
 
 				final List<String> names;
 				final RuleExecutionContext namingExecutionContext =
@@ -77,6 +79,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 					this.assignNames(germplasm);
 				}
 
+				// Pass the key sequence map to the next entry to process
+				keySequenceMap = row.getKeySequenceMap();
 			}
 		}
 		timer.stop();

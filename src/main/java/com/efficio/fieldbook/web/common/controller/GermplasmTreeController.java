@@ -563,7 +563,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	void populateGermplasmListDataFromAdvanced(final GermplasmList germplasmList, final AdvancingStudyForm form,
 			final List<Pair<Germplasm, List<Name>>> germplasms, final List<Pair<Germplasm, GermplasmListData>> listDataItems,
-			final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes) {
+			final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes) throws RuleException {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 		final String harvestDate = LocalDate.now().format(formatter);
 		final Integer currentUserID = this.getCurrentIbdbUserId();
@@ -589,6 +589,12 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		plantNumberFldNo = this.getPassportAttributeForCode("PLANT_NUMBER");
 
 		final List<ImportedGermplasm> advanceItems = form.getGermplasmList();
+		// TODO provide warning if any of the previewed names are not the same from final ones
+		final List<String> previewedNamesList = advanceItems.stream().map(ImportedGermplasm::getDesig).collect(Collectors.toList());
+		form.getAdvancingSourceItems().forEach(item -> item.setDesignationIsPreviewOnly(false));
+		// Recompute the names
+		this.namingConventionService.generateAdvanceListNames(form.getAdvancingSourceItems(), false, advanceItems);
+
 		// Create germplasms to save - Map<Germplasm, List<Name>>
 		for (final ImportedGermplasm importedGermplasm : advanceItems) {
 			Integer gid = null;

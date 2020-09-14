@@ -143,16 +143,23 @@ public class CrossingServiceImplTest {
 
 	private Integer localUserId;
 
+	private CropType cropType;
+
 	@Before
 	public void setUp() throws InvalidGermplasmNameSettingException {
 		this.importedCrossesList = this.createImportedCrossesList();
 		this.importedCrossesList.setImportedGermplasms(this.createImportedCrosses());
 
+		final Project project = new Project();
+		this.cropType = new CropType("maize");
+		this.cropType.setUseUUID(false);
+		project.setCropType(this.cropType);
+		Mockito.doReturn(project).when(this.contextUtil).getProjectInContext();
+
 		Mockito.doReturn(this.createNameTypes()).when(this.germplasmListManager).getGermplasmNameTypes();
 		Mockito.doReturn(this.createGermplasmIds()).when(this.germplasmDataManager).addGermplasm(
-			ArgumentMatchers.<List<Triple<Germplasm, Name, List<Progenitor>>>>any(), null);
+			ArgumentMatchers.<List<Triple<Germplasm, Name, List<Progenitor>>>>any(), ArgumentMatchers.eq(this.cropType));
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByID(CrossingServiceImplTest.BREEDING_METHOD_ID);
-		Mockito.doReturn(this.createProject()).when(this.contextUtil).getProjectInContext();
 		Mockito.doReturn(new UserDefinedField(PLOT_CODE_FLD_NO)).when(this.germplasmDataManager).getPlotCodeField();
 
 		this.crossSetting = new CrossSetting();
@@ -170,12 +177,6 @@ public class CrossingServiceImplTest {
 
 		this.localUserId = new Random().nextInt(Integer.MAX_VALUE);
 		Mockito.doReturn(this.localUserId).when(this.contextUtil).getCurrentWorkbenchUserId();
-	}
-
-	private Project createProject() {
-		final Project project = new Project();
-		project.setCropType(new CropType("maize"));
-		return project;
 	}
 
 	@Test

@@ -150,7 +150,7 @@ public class CrossingServiceImplTest {
 
 		Mockito.doReturn(this.createNameTypes()).when(this.germplasmListManager).getGermplasmNameTypes();
 		Mockito.doReturn(this.createGermplasmIds()).when(this.germplasmDataManager).addGermplasm(
-			ArgumentMatchers.<List<Triple<Germplasm, Name, List<Progenitor>>>>any());
+			ArgumentMatchers.<List<Triple<Germplasm, Name, List<Progenitor>>>>any(), null);
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByID(CrossingServiceImplTest.BREEDING_METHOD_ID);
 		Mockito.doReturn(this.createProject()).when(this.contextUtil).getProjectInContext();
 		Mockito.doReturn(new UserDefinedField(PLOT_CODE_FLD_NO)).when(this.germplasmDataManager).getPlotCodeField();

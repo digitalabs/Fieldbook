@@ -264,9 +264,9 @@ public class CrossingServiceImpl implements CrossingService {
 	 * @Transactional to make sure Germplasm, Name and Attribute entities save atomically.
 	 */
 	@Transactional
-	private void save(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
+	void save(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
 		final List<Triple<Germplasm, Name, List<Progenitor>>> germplasmTriples) {
-		final List<Integer> savedGermplasmIds = this.germplasmDataManager.addGermplasm(germplasmTriples);
+		final List<Integer> savedGermplasmIds = this.germplasmDataManager.addGermplasm(germplasmTriples, this.contextUtil.getProjectInContext().getCropType());
 		this.saveAttributes(crossSetting, importedCrossesList, savedGermplasmIds);
 	}
 

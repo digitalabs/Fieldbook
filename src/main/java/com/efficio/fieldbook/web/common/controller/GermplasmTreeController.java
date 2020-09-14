@@ -262,7 +262,8 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes = new ArrayList<>();
 			this.populateGermplasmListDataFromAdvanced(germplasmList, advancingStudyForm, germplasms, listDataItems, germplasmAttributes);
 			final Integer germplasmListId = this.fieldbookMiddlewareService
-					.saveNurseryAdvanceGermplasmList(germplasms, listDataItems, germplasmList, germplasmAttributes);
+					.saveNurseryAdvanceGermplasmList(germplasms, listDataItems, germplasmList, germplasmAttributes,
+						this.contextUtil.getProjectInContext().getCropType());
 			this.createGermplasmStudySourcesFromSavedAdvanceListEntries(advancingStudyForm.getGermplasmList(), listDataItems, germplasmStudySourceList);
 			return new GermplasmListResult(germplasmListId, false);
 

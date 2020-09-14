@@ -35,6 +35,8 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.pojos.*;
+import org.generationcp.middleware.pojos.workbench.CropType;
+import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.generationcp.middleware.service.api.study.germplasm.source.GermplasmStudySourceService;
@@ -149,6 +151,9 @@ public class GermplasmTreeControllerTest {
 				.thenReturn(new UserDefinedField(GermplasmTreeControllerTest.PLANT_NUMBER));
 		Mockito.when(this.contextUtil.getCurrentWorkbenchUserId()).thenReturn(GermplasmTreeControllerTest.TEST_USER_ID);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(GermplasmTreeControllerTest.TEST_PROGRAM_UUID);
+		final Project project = new Project();
+		project.setCropType(new CropType());
+		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(project);
 		Mockito.when(this.fieldbookMiddlewareService.getOwnerListName(GermplasmTreeControllerTest.TEST_USER_ID))
 				.thenReturn(GermplasmTreeControllerTest.TEST_USER_NAME);
 	}

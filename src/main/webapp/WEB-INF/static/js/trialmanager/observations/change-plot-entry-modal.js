@@ -262,11 +262,10 @@
 							first: '<<',
 							last: '>>'
 						}
-					})
-					.withDOM('<"pull-left fbk-left-padding"r>' + //
-						'<"clearfix">' + //
-						'<"row add-top-padding-small"<"col-sm-12"t>>' + //
-						'<"row"<"col-sm-12 paginate-float-center"<"pull-left"i><"pull-right"l>p>>')
+					}).withDOM('<"row"<"col-sm-6"l>>' +
+						'<"row"<"col-sm-12"tr>>' +
+						'<"row"<"col-sm-5"i><"col-sm-7">>' +
+						'<"row"<"col-sm-12"p>>')
 					.withPaginationType('full_numbers');
 			}
 

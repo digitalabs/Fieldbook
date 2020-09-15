@@ -114,11 +114,13 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		// PreviousMaxSequence is used is the DEFAULT indexed numbering used for entries.
 		// The [SEQUENCE] code does not read this number but instead queries from the DB the next available number
 		int previousMaxSequence = 0;
+		Map<String, Integer> keySequenceMap = new HashMap<>();
 		for (final AdvancingSource advancingSource : rows.getRows()) {
 
 			final ImportedCross importedCross = importedCrosses.get(index++);
 			final List<String> names;
 			advancingSource.setCurrentMaxSequence(previousMaxSequence);
+			advancingSource.setKeySequenceMap(keySequenceMap);
 
 			final Integer breedingMethodId = advancingSource.getBreedingMethodId();
 			final Method selectedMethod = breedingMethodMap.get(breedingMethodId);
@@ -150,6 +152,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 			for (final String name : names) {
 				importedCross.setDesig(name);
 			}
+			// Pass the key sequence map to the next entry to process
+			keySequenceMap = advancingSource.getKeySequenceMap();
 		}
 		timer.stop();
 		return importedCrosses;

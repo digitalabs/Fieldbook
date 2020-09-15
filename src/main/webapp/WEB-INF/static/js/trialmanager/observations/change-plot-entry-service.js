@@ -25,7 +25,7 @@
 			};
 
 			service.getEntriesTableUrl = function () {
-				return BASE_URL + '/entries/table';
+				return BASE_URL + '/entries';
 			};
 
 			service.getObservationUnitsMetadata = function (observationUnitEntryReplaceRequest, datasetId) {

@@ -262,7 +262,7 @@
 				var displayValue = '';
 
 				if (columnData.possibleValues) {
-					possibleValue = columnData.possibleValuesByName[value] || columnData.possibleValuesById[value];
+					var possibleValue = columnData.possibleValuesByName[value] || columnData.possibleValuesById[value];
 					displayValue = possibleValue.description;
 				}
 				return displayValue;

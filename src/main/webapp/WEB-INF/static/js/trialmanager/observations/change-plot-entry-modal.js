@@ -27,10 +27,16 @@
 
 			$scope.confirm = function () {
 				proceed().then((doProceed) => {
+
 					if (doProceed) {
-
-					}else{
-
+						var observationUnitEntryReplaceRequest= {
+							searchRequest: $scope.$resolve.searchComposite,
+							entryId: $scope.selected.entryId
+						}
+						ChangePlotEntryService.updateObservationUnitsEntry(observationUnitEntryReplaceRequest, $scope.$resolve.datasetId).then(() => {
+							$uibModalInstance.close();
+							showSuccessfulMessage('', $.fieldbookMessages.changingPlotEntrySuccess);
+						}, onError);
 					}
 				});
 			};

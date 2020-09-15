@@ -12,9 +12,9 @@
 
 			var service = {};
 
-			service.updateObservationUnitsEntry = function (ObservationUnitEntryReplaceRequest, datasetId, isCommitOnSaving) {
-				const url = BASE_URL + `/datasets/{datasetId}/observation-units/entries`;
-				return $http.post(url, ObservationUnitEntryReplaceRequest)
+			service.updateObservationUnitsEntry = function (observationUnitEntryReplaceRequest, datasetId) {
+				const url = BASE_URL + `/datasets/${datasetId}/observation-units/entries`;
+				return $http.post(url, observationUnitEntryReplaceRequest)
 					.then(successHandler, failureHandler);
 			};
 

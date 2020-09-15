@@ -28,11 +28,6 @@
 				return BASE_URL + '/entries';
 			};
 
-			service.getObservationUnitsMetadata = function (observationUnitEntryReplaceRequest, datasetId) {
-				const url = BASE_URL + `/datasets/${datasetId}//observation-units/metadata`;
-				return $http.post(url, observationUnitEntryReplaceRequest)
-					.then(successHandler, failureHandler);
-			};
 			return service;
 
 		}

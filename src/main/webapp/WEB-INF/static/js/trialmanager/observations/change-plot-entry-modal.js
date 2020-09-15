@@ -13,8 +13,8 @@
 			});
 
 			$scope.selected = {entryId: ''};
-			$scope.numberOfInstances = 0;
-			$scope.numberOfPlots = 0;
+			$scope.numberOfInstances = $scope.$resolve.numberOfInstances;
+			$scope.numberOfPlots = $scope.$resolve.numberOfPlots;
 
 			var dtColumnsPromise = $q.defer();
 			var dtColumnDefsPromise = $q.defer();
@@ -22,11 +22,6 @@
 			$scope.dtColumns = dtColumnsPromise.promise;
 			$scope.dtColumnDefs = dtColumnDefsPromise.promise;
 			$scope.dtOptions = null;
-
-			ChangePlotEntryService.getObservationUnitsMetadata($scope.$resolve.searchComposite,$scope.$resolve.datasetId).then(function (response) {
-				$scope.numberOfInstances = response.selectedInstances;
-				$scope.numberOfPlots = response.selectedObservationUnits;
-			}, onError);
 
 
 			loadTable();

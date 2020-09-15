@@ -252,27 +252,37 @@
 					if (!$scope.validateSelection()) {
 						return;
 					}
-					$uibModal.open({
-						templateUrl: '/Fieldbook/static/js/trialmanager/observations/change-plot-entry-modal.html',
-						windowClass: 'modal-very-huge',
-						controller: 'ChangePlotEntryModalCtrl',
-						resolve: {
-							searchComposite: function () {
-								return {
-									itemIds: $scope.selectedItems.length ? $scope.selectedItems : null,
-									searchRequest: $scope.selectedItems.length ? null : {
-										instanceId: $scope.nested.selectedEnvironment.instanceId,
-										draftMode: $scope.isPendingView,
-										filter: getFilter()
-									}
-								};
-							},
-							datasetId: function () {
-								return $scope.subObservationSet.dataset.datasetId;
-							}
+					var searchComposite = {
+						itemIds: $scope.selectedItems.length ? $scope.selectedItems : null,
+						searchRequest: $scope.selectedItems.length ? null : {
+							instanceId: $scope.nested.selectedEnvironment.instanceId,
+							draftMode: $scope.isPendingView,
+							filter: getFilter()
 						}
-					}).result.then(() => {
-						loadTable();
+					};
+
+					datasetService.getObservationUnitsMetadata(searchComposite, $scope.subObservationSet.dataset.datasetId).then(function (response) {
+						$uibModal.open({
+							templateUrl: '/Fieldbook/static/js/trialmanager/observations/change-plot-entry-modal.html',
+							windowClass: 'modal-very-huge',
+							controller: 'ChangePlotEntryModalCtrl',
+							resolve: {
+								searchComposite: function () {
+									return searchComposite;
+								},
+								datasetId: function () {
+									return $scope.subObservationSet.dataset.datasetId;
+								},
+								numberOfInstances: function () {
+									return response.selectedInstances;
+								},
+								numberOfPlots: function () {
+									return response.selectedObservationUnits;
+								},
+							}
+						}).result.then(() => {
+							loadTable();
+						});
 					});
 				});
 			});

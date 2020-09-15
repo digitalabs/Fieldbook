@@ -23,6 +23,12 @@
 			$scope.dtColumnDefs = dtColumnDefsPromise.promise;
 			$scope.dtOptions = null;
 
+			ChangePlotEntryService.getObservationUnitsMetadata($scope.$resolve.searchComposite,$scope.$resolve.datasetId).then(function (response) {
+				$scope.numberOfInstances = response.selectedInstances;
+				$scope.numberOfPlots = response.selectedObservationUnits;
+			}, onError);
+
+
 			loadTable();
 
 			$scope.confirm = function () {

@@ -906,6 +906,12 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 				});
 			}
 
+			$scope.ChangePlotEntry = function () {
+				$scope.navigateToSubObsTab(studyContext.measurementDatasetId).then(function () {
+					$rootScope.$broadcast('changePlotEntry');
+				});
+			}
+
 			$scope.showCreateSampleListModal = function () {
 				createSampleModalService.openDatasetOptionModal();
 			}

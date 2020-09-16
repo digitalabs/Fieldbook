@@ -128,4 +128,23 @@ describe('Dataset Service', function () {
 
 	});
 
+	describe('getObservationUnitsMetadata', function () {
+
+		it('should call the correct web api', function () {
+			var datasetId = 2;
+			var searchCompositeRequest = {};
+			var mockData = {};
+
+			$httpBackend.whenGET('/bmsapi/crops/maize/studies/' + studyContext.studyId + '/datasets/' +
+				datasetId + '/observation-units/metadata')
+				.respond(mockData);
+
+			datasetService.getObservationUnitsMetadata(searchCompositeRequest ,datasetId).then(function (response) {
+				expect(response.data).toEqual(mockData);
+			});
+
+		});
+
+	});
+
 });

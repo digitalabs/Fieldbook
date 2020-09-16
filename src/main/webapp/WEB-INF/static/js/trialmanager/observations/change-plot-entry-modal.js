@@ -234,9 +234,12 @@
 				var order = data.order && data.order[0];
 				var pageQuery = '?size=' + data.length
 					+ '&page=' + ((data.length === 0) ? 0 : data.start / data.length);
-				if ($scope.columnsData[order.column]) {
+				// FIXME: Until now the sort works with entryNumber when will implements by specific column we need replace the code by the commented.
+				/*if ($scope.columnsData[order.column]) {
 					pageQuery += '&sort=' + $scope.columnsData[order.column].termId + ',' + order.dir;
-				}
+				}*/
+				pageQuery += '&sort=entryNumber' + ',' + order.dir;
+
 				return pageQuery;
 			}
 

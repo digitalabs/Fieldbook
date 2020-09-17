@@ -51,7 +51,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
-public class ExportStudyGermplasmControllerTest {
+public class ExportStudyEntriesControllerTest {
 
 	private static final int LIST_ID = 105;
 	private static final long LIST_DATE = 20141112L;
@@ -109,7 +109,7 @@ public class ExportStudyGermplasmControllerTest {
 	private ContextUtil contextUtil;
 
 	@InjectMocks
-	private ExportStudyGermplasmController exportStudyGermplasmController;
+	private ExportStudyEntriesController exportStudyEntriesController;
 
 	private final InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
@@ -118,23 +118,23 @@ public class ExportStudyGermplasmControllerTest {
 		MockitoAnnotations.initMocks(this);
 
 		Mockito.when(this.ontologyService.getStandardVariable(TermId.ENTRY_NO.getId(), this.contextUtil.getCurrentProgramUUID()))
-				.thenReturn(this.createStandardVariable(TermId.ENTRY_NO.getId(), ExportStudyGermplasmControllerTest.ENTRY_NO));
+				.thenReturn(this.createStandardVariable(TermId.ENTRY_NO.getId(), ExportStudyEntriesControllerTest.ENTRY_NO));
 		Mockito.when(this.ontologyService.getStandardVariable(TermId.DESIG.getId(), this.contextUtil.getCurrentProgramUUID()))
-				.thenReturn(this.createStandardVariable(TermId.DESIG.getId(), ExportStudyGermplasmControllerTest.DESIGNATION));
+				.thenReturn(this.createStandardVariable(TermId.DESIG.getId(), ExportStudyEntriesControllerTest.DESIGNATION));
 		Mockito.when(this.ontologyService.getStandardVariable(TermId.GID.getId(), this.contextUtil.getCurrentProgramUUID()))
-				.thenReturn(this.createStandardVariable(TermId.GID.getId(), ExportStudyGermplasmControllerTest.GID));
+				.thenReturn(this.createStandardVariable(TermId.GID.getId(), ExportStudyEntriesControllerTest.GID));
 		Mockito.when(this.ontologyService.getStandardVariable(TermId.CROSS.getId(), this.contextUtil.getCurrentProgramUUID()))
-				.thenReturn(this.createStandardVariable(TermId.CROSS.getId(), ExportStudyGermplasmControllerTest.PARENTAGE));
+				.thenReturn(this.createStandardVariable(TermId.CROSS.getId(), ExportStudyEntriesControllerTest.PARENTAGE));
 		Mockito.when(this.ontologyService.getStandardVariable(TermId.SEED_SOURCE.getId(), this.contextUtil.getCurrentProgramUUID()))
-				.thenReturn(this.createStandardVariable(TermId.SEED_SOURCE.getId(), ExportStudyGermplasmControllerTest.SEED_SOURCE));
+				.thenReturn(this.createStandardVariable(TermId.SEED_SOURCE.getId(), ExportStudyEntriesControllerTest.SEED_SOURCE));
 		Mockito.when(this.ontologyService.getStandardVariable(TermId.ENTRY_CODE.getId(), this.contextUtil.getCurrentProgramUUID()))
-				.thenReturn(this.createStandardVariable(TermId.ENTRY_CODE.getId(), ExportStudyGermplasmControllerTest.ENTRY_CODE));
+				.thenReturn(this.createStandardVariable(TermId.ENTRY_CODE.getId(), ExportStudyEntriesControllerTest.ENTRY_CODE));
 		Mockito.when(
 				this.ontologyService.getStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(), this.contextUtil.getCurrentProgramUUID()))
 				.thenReturn(this.createStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(),
-						ExportStudyGermplasmControllerTest.ENTRY_NUMBER_STORAGE));
+						ExportStudyEntriesControllerTest.ENTRY_NUMBER_STORAGE));
 		Mockito.when(this.ontologyService.getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID()))
-				.thenReturn(this.createStandardVariable(TermId.CHECK.getId(), ExportStudyGermplasmControllerTest.CHECK));
+				.thenReturn(this.createStandardVariable(TermId.CHECK.getId(), ExportStudyEntriesControllerTest.CHECK));
 		Mockito.doReturn(this.getPlotLevelList()).when(this.userSelection).getPlotsLevelList();
 
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListById(ArgumentMatchers.anyInt())).thenReturn(this.getGermplasmList());
@@ -142,7 +142,7 @@ public class ExportStudyGermplasmControllerTest {
 		Mockito.when(this.userSelection.getImportedGermplasmMainInfo()).thenReturn(Mockito.mock(ImportedGermplasmMainInfo.class));
 		Mockito.when(this.userSelection.getImportedGermplasmMainInfo().getListId()).thenReturn(LIST_ID);
 		Mockito.when(this.userSelection.getImportedGermplasmMainInfo().getListName())
-				.thenReturn(ExportStudyGermplasmControllerTest.LIST_NAME);
+				.thenReturn(ExportStudyEntriesControllerTest.LIST_NAME);
 
 		Mockito.doReturn(ProjectTestDataInitializer.createProject()).when(this.contextUtil).getProjectInContext();
 	}
@@ -155,7 +155,7 @@ public class ExportStudyGermplasmControllerTest {
 		File outputFile = null;
 		for (final File file : outputDirectoryFile.listFiles()) {
 			System.out.println(file.getName());
-			if (file.getName().startsWith(ExportStudyGermplasmController.EXPORTED_GERMPLASM_LIST)) {
+			if (file.getName().startsWith(ExportStudyEntriesController.EXPORTED_GERMPLASM_LIST)) {
 				outputFile = file;
 			}
 		}
@@ -177,7 +177,7 @@ public class ExportStudyGermplasmControllerTest {
 
 		try {
 			final String output =
-				this.exportStudyGermplasmController.exportStudyGermplasm(form, ExportStudyGermplasmControllerTest.CSV_TYPE, this.response);
+				this.exportStudyEntriesController.exportStudyGermplasm(form, ExportStudyEntriesControllerTest.CSV_TYPE, this.response);
 
 			//  Verify temporary file is created in proper directory and response object is properly set
 			final ArgumentCaptor<String> filenameCaptor = ArgumentCaptor.forClass(String.class);
@@ -187,8 +187,8 @@ public class ExportStudyGermplasmControllerTest {
 			Assert.assertNotNull(outputFile);
 			Assert.assertEquals(outputFile.getAbsolutePath(), filenameCaptor.getValue());
 			final Map<String, Object> result = new ObjectMapper().readValue(output, Map.class);
-			Assert.assertEquals(ExportStudyGermplasmController.EXPORTED_GERMPLASM_LIST + ".csv", result.get(ExportStudyGermplasmController.FILENAME));
-			Assert.assertEquals(outputFile.getAbsolutePath(), result.get(ExportStudyGermplasmController.OUTPUT_FILENAME));
+			Assert.assertEquals(ExportStudyEntriesController.EXPORTED_GERMPLASM_LIST + ".csv", result.get(ExportStudyEntriesController.FILENAME));
+			Assert.assertEquals(outputFile.getAbsolutePath(), result.get(ExportStudyEntriesController.OUTPUT_FILENAME));
 			Mockito.verify(this.response).setContentType(FileUtils.MIME_CSV);
 		} catch (final GermplasmListExporterException e) {
 			Assert.fail();
@@ -215,7 +215,7 @@ public class ExportStudyGermplasmControllerTest {
 		form.setGermplasmListVisibleColumns("0");
 
 		try {
-			this.exportStudyGermplasmController.exportStudyGermplasm(form, ExportStudyGermplasmControllerTest.CSV_TYPE, this.response);
+			this.exportStudyEntriesController.exportStudyGermplasm(form, ExportStudyEntriesControllerTest.CSV_TYPE, this.response);
 			Mockito.verify(this.exportStudyGermplasmService, Mockito.times(0)).exportAsCSVFile(ArgumentMatchers.eq(studyId), ArgumentMatchers.anyString(),
 					ArgumentMatchers.any(Map.class));
 		} catch (final GermplasmListExporterException e) {
@@ -228,7 +228,7 @@ public class ExportStudyGermplasmControllerTest {
 	public void test_getVisibleColumnsMapStudy() {
 
 		final String[] termIds = new String[] {String.valueOf(TermId.CHECK.getId())};
-		final Map<String, Boolean> result = this.exportStudyGermplasmController.getVisibleColumnsMap(termIds);
+		final Map<String, Boolean> result = this.exportStudyEntriesController.getVisibleColumnsMap(termIds);
 
 		Assert.assertTrue(result.get(String.valueOf(TermId.GID.getId())));
 		Assert.assertTrue(result.get(String.valueOf(TermId.DESIG.getId())));
@@ -249,7 +249,7 @@ public class ExportStudyGermplasmControllerTest {
 		final String[] termIds = new String[] {"0"};
 		Mockito.when(this.userSelection.getPlotsLevelList()).thenReturn(WorkbookDataUtil.getPlotLevelList());
 
-		final Map<String, Boolean> result = this.exportStudyGermplasmController.getVisibleColumnsMap(termIds);
+		final Map<String, Boolean> result = this.exportStudyEntriesController.getVisibleColumnsMap(termIds);
 
 		Assert.assertTrue(result.get(String.valueOf(TermId.GID.getId())));
 		Assert.assertTrue(result.get(String.valueOf(TermId.DESIG.getId())));
@@ -267,7 +267,7 @@ public class ExportStudyGermplasmControllerTest {
 
 		final String[] termIds = new String[] {"0"};
 
-		final Map<String, Boolean> result = this.exportStudyGermplasmController.getVisibleColumnsMap(termIds);
+		final Map<String, Boolean> result = this.exportStudyEntriesController.getVisibleColumnsMap(termIds);
 
 		Assert.assertTrue(result.get(String.valueOf(TermId.GID.getId())));
 		Assert.assertTrue(result.get(String.valueOf(TermId.DESIG.getId())));
@@ -336,22 +336,22 @@ public class ExportStudyGermplasmControllerTest {
 		final StandardVariable stdVar = new StandardVariable();
 		stdVar.setId(id);
 		stdVar.setName(name);
-		stdVar.setDescription(ExportStudyGermplasmControllerTest.TEST_DESCRIPTION);
+		stdVar.setDescription(ExportStudyEntriesControllerTest.TEST_DESCRIPTION);
 
 		final Term prop = new Term();
-		prop.setName(ExportStudyGermplasmControllerTest.TEST_PROPERTY);
+		prop.setName(ExportStudyEntriesControllerTest.TEST_PROPERTY);
 		stdVar.setProperty(prop);
 
 		final Term scale = new Term();
-		scale.setName(ExportStudyGermplasmControllerTest.TEST_SCALE);
+		scale.setName(ExportStudyEntriesControllerTest.TEST_SCALE);
 		stdVar.setScale(scale);
 
 		final Term method = new Term();
-		method.setName(ExportStudyGermplasmControllerTest.TEST_METHOD);
+		method.setName(ExportStudyEntriesControllerTest.TEST_METHOD);
 		stdVar.setMethod(method);
 
 		final Term dataType = new Term();
-		dataType.setName(ExportStudyGermplasmControllerTest.NUMERIC_VARIABLE);
+		dataType.setName(ExportStudyEntriesControllerTest.NUMERIC_VARIABLE);
 		stdVar.setDataType(dataType);
 
 		return stdVar;
@@ -359,13 +359,13 @@ public class ExportStudyGermplasmControllerTest {
 
 	private GermplasmList getGermplasmList() {
 		final GermplasmList germplasmList = new GermplasmList();
-		germplasmList.setName(ExportStudyGermplasmControllerTest.SAMPLE_LIST);
-		germplasmList.setUserId(ExportStudyGermplasmControllerTest.CURRENT_USER_ID);
-		germplasmList.setDescription(ExportStudyGermplasmControllerTest.SAMPLE_DESCRIPTION);
-		germplasmList.setType(ExportStudyGermplasmControllerTest.LST);
-		germplasmList.setDate(ExportStudyGermplasmControllerTest.LIST_DATE);
-		germplasmList.setNotes(ExportStudyGermplasmControllerTest.SAMPLE_NOTES);
-		germplasmList.setStatus(ExportStudyGermplasmControllerTest.LIST_STATUS);
+		germplasmList.setName(ExportStudyEntriesControllerTest.SAMPLE_LIST);
+		germplasmList.setUserId(ExportStudyEntriesControllerTest.CURRENT_USER_ID);
+		germplasmList.setDescription(ExportStudyEntriesControllerTest.SAMPLE_DESCRIPTION);
+		germplasmList.setType(ExportStudyEntriesControllerTest.LST);
+		germplasmList.setDate(ExportStudyEntriesControllerTest.LIST_DATE);
+		germplasmList.setNotes(ExportStudyEntriesControllerTest.SAMPLE_NOTES);
+		germplasmList.setStatus(ExportStudyEntriesControllerTest.LIST_STATUS);
 
 		return germplasmList;
 	}

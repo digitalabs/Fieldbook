@@ -225,7 +225,6 @@ public class AdvancingControllerTest {
 		// setup
 		form.setMethodChoice("1");
 		form.setAdvanceBreedingMethodId("10");
-		form.setadva
 
 		Mockito.when(this.fieldbookMiddlewareService.getMethodById(ArgumentMatchers.anyInt())).thenReturn(method);
 		Mockito.when(this.messageSource.getMessage(ArgumentMatchers.eq("study.save.advance.error.generative.method"),

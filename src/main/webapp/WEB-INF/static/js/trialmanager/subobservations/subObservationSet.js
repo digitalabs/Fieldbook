@@ -274,10 +274,10 @@
 									return $scope.subObservationSet.dataset.datasetId;
 								},
 								numberOfInstances: function () {
-									return response.countInstances;
+									return response.instancesCount;
 								},
 								numberOfPlots: function () {
-									return response.countObservationUnits;
+									return response.observationUnitsCount;
 								},
 							}
 						}).result.then(() => {

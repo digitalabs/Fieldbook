@@ -345,7 +345,7 @@ public class CrossingTemplateExcelExporterTest {
 	@SuppressWarnings("unchecked")
 	public void retrieveAndValidateIfHasGermplasmListExceptionHandling() throws Exception {
 		Mockito.when(this.studyGermplasmService.countStudyEntries(CrossingTemplateExcelExporterTest.STUDY_ID)).thenReturn(0l);
-		this.exporter.validateIfStudyHasGermplasm(CrossingTemplateExcelExporterTest.STUDY_ID);
+		this.exporter.validateIfStudyHasEntries(CrossingTemplateExcelExporterTest.STUDY_ID);
 	}
 
 	private List<GermplasmList> initializeCrossesList() {

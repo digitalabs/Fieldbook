@@ -181,7 +181,7 @@
 							targets: columns.length - 1,
 							orderable: false,
 							render: function (data, type, full, meta) {
-								return full.lots;
+								return full.lotCount;
 							}
 						});
 

@@ -294,7 +294,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final Integer germplasmListId = this.fieldbookMiddlewareService
 					.saveGermplasmList(listDataItems, germplasmList, crossSetting.isApplyNewGroupToPreviousCrosses());
 
-			return new GermplasmListResult().withGermplasmListId(germplasmListId).withIsTrimmed(isTrimmed);
+			return new GermplasmListResult().withGermplasmListId(germplasmListId).withIsTrimmed(isTrimmed).withNamesChanged(false);
 		} else {
 			throw new IllegalArgumentException("Unknown germplasm list type supplied when saving germplasm list");
 		}

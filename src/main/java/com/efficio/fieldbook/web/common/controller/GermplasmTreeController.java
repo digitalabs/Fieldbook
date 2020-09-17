@@ -331,7 +331,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final GermplasmList germplasmList, final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList, final List<GermplasmStudySourceInput> germplasmStudySourceList)
 			throws RuleException {
 
-		Boolean isTrimed;
+		boolean isTrimed;
 		if (crossSetting.isUseManualSettingsForNaming()) {
 			// this line of code is where the creation of new germplasm takes place
 			isTrimed = this.crossingService
@@ -487,7 +487,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	private boolean createGermplasmListDataAndGermplasmStudySource(final GermplasmList germplasmList,
 			final List<Pair<Germplasm, GermplasmListData>> listDataItems, final List<ImportedCross> importedGermplasmList, final List<GermplasmStudySourceInput> germplasmStudySourceList) {
 
-		Boolean isTrimed = false;
+		boolean isTrimed = false;
 		final Integer studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
 		// Take the plot of the female parent as the source observation unit. It is possible for female plot #s to be null if source is from another study
 		final Set<Integer> sourcePlotNumbers = importedGermplasmList.stream().filter(g-> Objects.nonNull(g.getFemalePlotNo())).map(ImportedCross::getFemalePlotNo).collect(Collectors.toSet());
@@ -565,7 +565,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	void populateGermplasmListDataFromAdvanced(final GermplasmList germplasmList, final AdvancingStudyForm form,
 			final List<Pair<Germplasm, List<Name>>> germplasms, final List<Pair<Germplasm, GermplasmListData>> listDataItems,
 			final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 		final String harvestDate = LocalDate.now().format(formatter);
 		final Integer currentUserID = this.getCurrentIbdbUserId();
 
@@ -583,13 +583,9 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 		final Integer plotCodeFldNo = this.germplasmDataManager.getPlotCodeField().getFldno();
 		final Integer plotFldNo = this.getPassportAttributeForCode("PLOT_NUMBER");
-		Integer trialInstanceFldNo = 0;
-		Integer repFldNo = 0;
-		Integer plantNumberFldNo = 0;
-		// get FLDNOs for Attribute Objects to be created
-		repFldNo = this.getPassportAttributeForCode("REP_NUMBER");
-		trialInstanceFldNo = this.getPassportAttributeForCode("INSTANCE_NUMBER");
-		plantNumberFldNo = this.getPassportAttributeForCode("PLANT_NUMBER");
+		final Integer trialInstanceFldNo = this.getPassportAttributeForCode("INSTANCE_NUMBER");
+		final Integer repFldNo = this.getPassportAttributeForCode("REP_NUMBER");
+		final Integer plantNumberFldNo = this.getPassportAttributeForCode("PLANT_NUMBER");
 
 		final List<ImportedGermplasm> advanceItems = form.getGermplasmList();
 		// Create germplasms to save - Map<Germplasm, List<Name>>
@@ -811,7 +807,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			throw new IllegalStateException("Add a message");
 		}
 
-		final List<UserDefinedField> listTypes = germplasmDataManager
+		final List<UserDefinedField> listTypes = this.germplasmDataManager
 				.getUserDefinedFieldByFieldTableNameAndType(RowColumnType.LIST_TYPE.getFtable(), RowColumnType.LIST_TYPE.getFtype());
 
 		final List<TreeNode> childNodes = TreeViewUtil.convertGermplasmListToTreeView(rootLists, isFolderOnly, listTypes);
@@ -1045,7 +1041,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	public Map<String, Object> deleteGermplasmFolder(final HttpServletRequest req) {
 		final Map<String, Object> resultsMap = new HashMap<>();
 
-		GermplasmList gpList = null;
+		final GermplasmList gpList;
 		final String folderId = req.getParameter("folderId");
 		try {
 			gpList = this.germplasmListManager.getGermplasmListById(Integer.parseInt(folderId));
@@ -1130,7 +1126,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	public String retrieveTreeState(@PathVariable final String type, @PathVariable final Boolean saveMode) {
 
 		final List<String> stateList;
-		final Integer userID = this.contextUtil.getCurrentWorkbenchUserId();
+		final int userID = this.contextUtil.getCurrentWorkbenchUserId();
 		final String programUUID = this.getCurrentProgramUUID();
 		if (saveMode) {
 			stateList = this.userTreeStateService.getUserProgramTreeStateForSaveList(userID, programUUID);

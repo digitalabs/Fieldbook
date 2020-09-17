@@ -765,13 +765,13 @@ public class CrossingServiceImplTest {
 	@Test
 	public void testSaveAttributes() {
 		final List<Integer> germplasmIds = Arrays.asList(101, 102);
-		this.crossingService.saveAttributes(crossSetting, importedCrossesList, germplasmIds);
-		Mockito.verify(this.germplasmDataManager).addAttributes(attributesListCaptor.capture());
+		this.crossingService.saveAttributes(this.crossSetting, this.importedCrossesList, germplasmIds);
+		Mockito.verify(this.germplasmDataManager).addAttributes(this.attributesListCaptor.capture());
 
-		final List<Attribute> attributesList = attributesListCaptor.getValue();
+		final List<Attribute> attributesList = this.attributesListCaptor.getValue();
 		assertEquals(germplasmIds.size(), attributesList.size());
 		final Iterator<Integer> idsIterator = germplasmIds.iterator();
-		final Iterator<ImportedCross> crossesIterator = importedCrossesList.getImportedCrosses().iterator();
+		final Iterator<ImportedCross> crossesIterator = this.importedCrossesList.getImportedCrosses().iterator();
 		for (final Attribute attribute : attributesList) {
 			final Integer gid = idsIterator.next();
 			final ImportedCross cross = crossesIterator.next();
@@ -788,9 +788,9 @@ public class CrossingServiceImplTest {
 		this.crossSetting.setPreservePlotDuplicates(false);
 
 		final List<Integer> germplasmIds = Arrays.asList(101, 102);
-		this.crossingService.saveAttributes(crossSetting, importedCrossesList, germplasmIds);
-		Mockito.verify(this.germplasmDataManager).addAttributes(attributesListCaptor.capture());
-		final List<Attribute> attributesList = attributesListCaptor.getValue();
+		this.crossingService.saveAttributes(this.crossSetting, this.importedCrossesList, germplasmIds);
+		Mockito.verify(this.germplasmDataManager).addAttributes(this.attributesListCaptor.capture());
+		final List<Attribute> attributesList = this.attributesListCaptor.getValue();
 		assertEquals("Attribute will be saved only for first entry", 1, attributesList.size());
 		final ImportedCross firstCross = this.importedCrossesList.getImportedCrosses().get(0);
 		this.verifyPlotCodeAttributeValues(attributesList.get(0), germplasmIds.get(0),
@@ -810,12 +810,12 @@ public class CrossingServiceImplTest {
 		this.crossSetting.setPreservePlotDuplicates(true);
 
 		final List<Integer> germplasmIds = Arrays.asList(101, 102);
-		this.crossingService.saveAttributes(crossSetting, importedCrossesList, germplasmIds);
-		Mockito.verify(this.germplasmDataManager).addAttributes(attributesListCaptor.capture());
-		final List<Attribute> attributesList = attributesListCaptor.getValue();
+		this.crossingService.saveAttributes(this.crossSetting, this.importedCrossesList, germplasmIds);
+		Mockito.verify(this.germplasmDataManager).addAttributes(this.attributesListCaptor.capture());
+		final List<Attribute> attributesList = this.attributesListCaptor.getValue();
 		assertEquals("Expecting plot duplicate crosses to be preserved", germplasmIds.size(), attributesList.size());
 		final Iterator<Integer> idsIterator = germplasmIds.iterator();
-		final Iterator<ImportedCross> crossesIterator = importedCrossesList.getImportedCrosses().iterator();
+		final Iterator<ImportedCross> crossesIterator = this.importedCrossesList.getImportedCrosses().iterator();
 		for (final Attribute attribute : attributesList) {
 			final Integer gid = idsIterator.next();
 			final ImportedCross cross = crossesIterator.next();
@@ -831,11 +831,11 @@ public class CrossingServiceImplTest {
 		}
 		this.crossSetting.setAdditionalDetailsSetting(this.createAdditionalDetailsSetting());
 
-		this.crossingService.savePedigreeDesignationName(importedCrossesList, gids, crossSetting);
+		this.crossingService.savePedigreeDesignationName(this.importedCrossesList, gids, this.crossSetting);
 		final Iterator<Integer> gidsIterator = gids.iterator();
 		Mockito.verify(this.germplasmDataManager).addGermplasmName(this.namesCaptor.capture());
 		final Iterator<Name> namesIterator = this.namesCaptor.getValue().iterator();
-		for (final ImportedCross cross : importedCrossesList.getImportedCrosses()) {
+		for (final ImportedCross cross : this.importedCrossesList.getImportedCrosses()) {
 			final Integer gid = gidsIterator.next();
 			final Name name = namesIterator.next();
 			assertEquals(gid, name.getGermplasmId());

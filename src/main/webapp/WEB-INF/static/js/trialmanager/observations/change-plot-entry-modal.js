@@ -23,14 +23,13 @@
 			$scope.dtColumnDefs = dtColumnDefsPromise.promise;
 			$scope.dtOptions = null;
 
-
 			loadTable();
 
 			$scope.confirm = function () {
 				proceed().then((doProceed) => {
 
 					if (doProceed) {
-						var observationUnitEntryReplaceRequest= {
+						var observationUnitEntryReplaceRequest = {
 							searchRequest: $scope.$resolve.searchComposite,
 							entryId: $scope.selected.entryId
 						}
@@ -47,7 +46,7 @@
 			};
 
 			$scope.valid = function () {
-				return  $scope.selected.entryId != '' ;
+				return $scope.selected.entryId != '';
 			};
 
 			function proceed() {
@@ -105,26 +104,26 @@
 
 			function getDtOptions() {
 				return addCommonOptions(DTOptionsBuilder.newOptions()
-						.withOption('ajax',
-							function (d, callback) {
-								$.ajax({
-									type: 'GET',
-									url: ChangePlotEntryService.getEntriesTableUrl() + getPageQueryParameters(d),
-									dataSrc: '',
-									success: function (res, status, xhr) {
-										let json = {recordsTotal: 0, recordsFiltered: 0}
-										json.recordsTotal = json.recordsFiltered = xhr.getResponseHeader('X-Total-Count');
-										json.data = res;
-										callback(json);
-									},
-									contentType: 'application/json',
-									beforeSend: function (xhr) {
-										xhr.setRequestHeader('X-Auth-Token', JSON.parse(localStorage['bms.xAuthToken']).token);
-									},
-								});
-							})
-						.withDataProp('data')
-						.withOption('serverSide', true)
+					.withOption('ajax',
+						function (d, callback) {
+							$.ajax({
+								type: 'GET',
+								url: ChangePlotEntryService.getEntriesTableUrl() + getPageQueryParameters(d),
+								dataSrc: '',
+								success: function (res, status, xhr) {
+									let json = {recordsTotal: 0, recordsFiltered: 0}
+									json.recordsTotal = json.recordsFiltered = xhr.getResponseHeader('X-Total-Count');
+									json.data = res;
+									callback(json);
+								},
+								contentType: 'application/json',
+								beforeSend: function (xhr) {
+									xhr.setRequestHeader('X-Auth-Token', JSON.parse(localStorage['bms.xAuthToken']).token);
+								},
+							});
+						})
+					.withDataProp('data')
+					.withOption('serverSide', true)
 				);
 			}
 
@@ -162,7 +161,7 @@
 							targets: columns.length - 1,
 							orderable: false,
 							createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
-								$(td).append($compile('<span><input type="radio" name="rowData.entryId" ng-model="selected.entryId" value=' + rowData.entryId +'></span>')($scope));
+								$(td).append($compile('<span><input type="radio" name="rowData.entryId" ng-model="selected.entryId" value=' + rowData.entryId + '></span>')($scope));
 							}
 						});
 					} else if (columnData.termId === 8240 || columnData.termId === 8250) {
@@ -234,9 +233,12 @@
 				var order = data.order && data.order[0];
 				var pageQuery = '?size=' + data.length
 					+ '&page=' + ((data.length === 0) ? 0 : data.start / data.length);
-				if ($scope.columnsData[order.column]) {
+				// FIXME: Until now the sort works with entryNumber when will implements by specific column we need replace the code by the commented.
+				/*if ($scope.columnsData[order.column]) {
 					pageQuery += '&sort=' + $scope.columnsData[order.column].termId + ',' + order.dir;
-				}
+				}*/
+				pageQuery += '&sort=entryNumber' + ',' + order.dir;
+
 				return pageQuery;
 			}
 

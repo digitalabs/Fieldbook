@@ -17,7 +17,11 @@ import org.generationcp.middleware.service.api.study.StudyGermplasmService;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -28,10 +32,10 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping(ExportStudyGermplasmController.URL)
+@RequestMapping(ExportStudyEntriesController.URL)
 @Configurable
 @Transactional
-public class ExportStudyGermplasmController extends AbstractBaseFieldbookController {
+public class ExportStudyEntriesController extends AbstractBaseFieldbookController {
 
 	public static final String EXPORTED_GERMPLASM_LIST = "Exported Germplasm List";
 	protected static final String FILENAME = "filename";
@@ -102,10 +106,10 @@ public class ExportStudyGermplasmController extends AbstractBaseFieldbookControl
 		String downloadFileName = "";
 
 		final int studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
-		final boolean hasStocks =
-			this.studyGermplasmService.countStudyGermplasm(studyId) > 0l;
+		final boolean studyHasEntries =
+			this.studyGermplasmService.countStudyEntries(studyId) > 0l;
 
-		if (hasStocks) {
+		if (studyHasEntries) {
 
 			try {
 				// TODO Extract export type "1" and "2" to meaningful constants or export type enum

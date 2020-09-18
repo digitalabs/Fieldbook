@@ -220,6 +220,12 @@
 				return request.then(successHandler, failureHandler);
 			};
 
+			datasetService.getObservationUnitsMetadata = function (searchCompositeRequest, datasetId) {
+				const url = BASE_URL + studyContext.studyId + `/datasets/${datasetId}/observation-units/metadata`;
+				return $http.post(url, searchCompositeRequest)
+					.then(successHandler, failureHandler);
+			};
+
 			return datasetService;
 
 		}]);

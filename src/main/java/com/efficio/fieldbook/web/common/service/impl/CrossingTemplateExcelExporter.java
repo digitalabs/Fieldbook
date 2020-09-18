@@ -5,7 +5,11 @@ import com.efficio.fieldbook.web.common.exception.CrossingTemplateExportExceptio
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.parsing.ExcelCellStyleBuilder;
 import org.generationcp.commons.parsing.ExcelWorkbookRow;
@@ -80,7 +84,7 @@ public class CrossingTemplateExcelExporter {
 			final Workbook excelWorkbook = this.fileService.retrieveWorkbookTemplate(this.templateFile);
 
 			// 1. validate if the study has germplasm list (stock)
-			this.validateIfStudyHasGermplasm(studyId);
+			this.validateIfStudyHasEntries(studyId);
 
 			// 3. write details
 			this.writeListDetailsSection(excelWorkbook.getSheetAt(0), 1, new ExcelCellStyleBuilder((HSSFWorkbook) excelWorkbook),
@@ -301,8 +305,8 @@ public class CrossingTemplateExcelExporter {
 		return new FileExportInfo(outputFilepath, downloadFilename + AppConstants.EXPORT_XLS_SUFFIX.getString());
 	}
 
-	void validateIfStudyHasGermplasm(final Integer studyId) throws CrossingTemplateExportException {
-		final long count = this.studyGermplasmService.countStudyGermplasm(studyId);
+	void validateIfStudyHasEntries(final Integer studyId) throws CrossingTemplateExportException {
+		final long count = this.studyGermplasmService.countStudyEntries(studyId);
 		if (count == 0) {
 			throw new CrossingTemplateExportException("study.export.crosses.no.germplasm.list.available");
 		}

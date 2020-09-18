@@ -89,6 +89,8 @@ module.exports = function (config) {
 			'WEB-INF/static/js/trialmanager/inventory/planting-preparation/planting-preparation-modal.js',
 			'WEB-INF/static/js/trialmanager/germplasm-study-source/germplasmStudySource.js',
 			'WEB-INF/static/js/trialmanager/germplasm-study-source/germplasmStudySourceService.js',
+			'WEB-INF/static/js/trialmanager/observations/change-plot-entry-modal.js',
+			'WEB-INF/static/js/trialmanager/observations/change-plot-entry-service.js',
 
 			// unit test files
 			'WEB-INF/static/js/angular-tests/lib/angular-mocks.js',

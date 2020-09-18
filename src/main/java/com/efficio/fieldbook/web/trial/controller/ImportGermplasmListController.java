@@ -285,7 +285,7 @@ public class ImportGermplasmListController extends SettingsController {
 			final List<StudyGermplasmDto> studyGermplasmDtoList = this.studyGermplasmTransformer.transformToStudyGermplasmDto(importedGermplasm);
 			// Delete the existing stocks so that we can replace it with the current list.
 			this.studyGermplasmService.deleteStudyEntries(studyId);
-			this.studyGermplasmService.saveStudyGermplasm(studyId, studyGermplasmDtoList);
+			this.studyGermplasmService.saveStudyEntries(studyId, studyGermplasmDtoList);
 		} else {
 			// we delete the record in the db
 			this.studyGermplasmService.deleteStudyEntries(studyId);

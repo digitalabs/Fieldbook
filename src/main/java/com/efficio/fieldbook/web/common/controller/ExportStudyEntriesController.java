@@ -32,10 +32,10 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping(ExportStudyGermplasmController.URL)
+@RequestMapping(ExportStudyEntriesController.URL)
 @Configurable
 @Transactional
-public class ExportStudyGermplasmController extends AbstractBaseFieldbookController {
+public class ExportStudyEntriesController extends AbstractBaseFieldbookController {
 
 	public static final String EXPORTED_GERMPLASM_LIST = "Exported Germplasm List";
 	protected static final String FILENAME = "filename";
@@ -106,10 +106,10 @@ public class ExportStudyGermplasmController extends AbstractBaseFieldbookControl
 		String downloadFileName = "";
 
 		final int studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
-		final boolean hasStocks =
+		final boolean studyHasEntries =
 			this.studyGermplasmService.countStudyEntries(studyId) > 0l;
 
-		if (hasStocks) {
+		if (studyHasEntries) {
 
 			try {
 				// TODO Extract export type "1" and "2" to meaningful constants or export type enum

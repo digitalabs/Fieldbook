@@ -30,7 +30,6 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -149,33 +148,6 @@ public class ImportGermplasmListControllerTest {
 	}
 
 	@Test
-	public void testHasMeasurementStudyWithMeasurement() {
-
-		this.userSelection.setMeasurementRowList(WorkbookDataUtil.createNewObservations(1));
-		final Boolean result = this.importGermplasmListController.hasMeasurement();
-		Assert.assertTrue(result);
-	}
-
-	@Test
-	public void testHasMeasurementWithNullMeasurementRowList() {
-
-		this.userSelection.setMeasurementRowList(null);
-
-		final Boolean result = this.importGermplasmListController.hasMeasurement();
-		Assert.assertFalse(result);
-	}
-
-	@Test
-	public void testHasMeasurementStudyWithoutMeasurement() {
-
-		this.userSelection.setMeasurementRowList(new ArrayList<MeasurementRow>());
-
-		final Boolean result = this.importGermplasmListController.hasMeasurement();
-		Assert.assertFalse(result);
-
-	}
-
-	@Test
 	public void testHasSavedGermplasm() {
 		// If using a new list, saved germplasm saved flag is reset (thus, false)
 		Assert.assertFalse(this.importGermplasmListController.hasSavedGermplasm(true));
@@ -188,7 +160,7 @@ public class ImportGermplasmListControllerTest {
 		Mockito.doReturn(this.createStudyDetails()).when(this.workbook).getStudyDetails();
 		Assert.assertFalse(this.importGermplasmListController.hasSavedGermplasm(false));
 
-		Mockito.doReturn(10L).when(this.studyGermplasmService).countStudyGermplasm(ImportGermplasmListControllerTest.STUDY_ID);
+		Mockito.doReturn(10L).when(this.studyGermplasmService).countStudyEntries(ImportGermplasmListControllerTest.STUDY_ID);
 		Assert.assertTrue(this.importGermplasmListController.hasSavedGermplasm(false));
 	}
 
@@ -818,7 +790,6 @@ public class ImportGermplasmListControllerTest {
 			this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(),
 			form.getImportedGermplasm());
 		Mockito.verify(model).addAttribute(ImportGermplasmListController.CHECK_LISTS, checkTypes);
-		Mockito.verify(model).addAttribute("hasMeasurement", false);
 
 	}
 

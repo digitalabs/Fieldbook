@@ -167,7 +167,7 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 
 	// do not switch tab if we have newly imported measurements
 	function isTabChangeDisabled() {
-		return  $('.import-study-data').data('data-import') === '1';
+		return $('.import-study-data').data('data-import') === '1';
 	}
 
 	manageTrialApp.run(
@@ -282,9 +282,7 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 			});
 
 			function loadCrossesAndSelectionsTab() {
-				germplasmStudySourceService.searchGermplasmStudySources({
-					sortedRequest: {pageNumber: 1, pageSize: 1}
-				}).then((germplasmStudySourceTable) => {
+				germplasmStudySourceService.searchGermplasmStudySources({}, 0, 1).then((germplasmStudySourceTable) => {
 					if (germplasmStudySourceTable.data.length) {
 						$scope.crossesAndSelectionsTab.hidden = false;
 					}
@@ -292,13 +290,11 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 			}
 
 			function loadInventoryTab() {
-				InventoryService.searchStudyTransactions({
-					sortedPageRequest: {pageNumber: 1, pageSize: 1}
-				}).then((transactionsTable) => {
+				InventoryService.searchStudyTransactions({}, 0, 1).then((transactionsTable) => {
 					$scope.safeApply(function () {
 						$scope.inventoryTab.hidden = !transactionsTable.data.length;
 						// If the Inventory tab becomes hidden, if no transactions left, navigate to Observations tab to show its content
-						if ($scope.inventoryTab.hidden) {
+						if ($scope.inventoryTab.hidden && $scope.tabSelected === 'inventory') {
 							$scope.navigateToSubObsTab(studyContext.measurementDatasetId);
 						}
 					});
@@ -907,6 +903,12 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 			$scope.preparePlanting = function () {
 				$scope.navigateToSubObsTab(studyContext.measurementDatasetId).then(function () {
 					$rootScope.$broadcast('startPlantingPreparation');
+				});
+			}
+
+			$scope.ChangePlotEntry = function () {
+				$scope.navigateToSubObsTab(studyContext.measurementDatasetId).then(function () {
+					$rootScope.$broadcast('changePlotEntry');
 				});
 			}
 

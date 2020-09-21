@@ -313,7 +313,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			AdvancingController.LOG.error(e.getMessage(), e);
 			form.setErrorInAdvance(this.messageSource.getMessage(e.getMessage(),
 					new String[] {}, LocaleContextHolder.getLocale()));
-			form.setGermplasmList(new ArrayList<ImportedGermplasm>());
+			form.setGermplasmList(new ArrayList<>());
 			form.setEntries(0);
 			results.put(AdvancingController.IS_SUCCESS, "0");
 			results.put(AdvancingController.LIST_SIZE, 0);

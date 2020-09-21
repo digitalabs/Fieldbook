@@ -6,10 +6,13 @@ import com.efficio.fieldbook.web.common.bean.ChoiceKeyVal;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.bean.TableHeader;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.naming.impl.AdvancingSourceListFactory;
+import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
 import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.google.common.collect.Lists;
+import org.apache.commons.lang.math.RandomUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.pojo.AdvanceGermplasmChangeDetail;
@@ -20,6 +23,7 @@ import org.generationcp.commons.ruleengine.generator.SeedSourceGenerator;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.DatasetDTO;
+import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -30,9 +34,9 @@ import org.generationcp.middleware.domain.ontology.*;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
+import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
@@ -56,10 +60,7 @@ import org.springframework.ui.Model;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AdvancingControllerTest {
@@ -69,6 +70,9 @@ public class AdvancingControllerTest {
 
 	@Mock
 	private FieldbookService fieldbookMiddlewareService;
+
+	@Mock
+	private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
 
 	@Mock
 	private PaginationListSelection paginationListSelection;
@@ -102,6 +106,15 @@ public class AdvancingControllerTest {
 
 	@Mock
 	private SeedSourceGenerator seedSourceGenerator;
+
+	@Mock
+	private AdvancingSourceListFactory advancingSourceListFactory;
+
+	@Mock
+	private StudyDataManager studyDataManager;
+
+	@Mock
+	private NamingConventionService namingConventionService;
 
 	@InjectMocks
 	private final AdvancingController advancingController = Mockito.spy(new AdvancingController());
@@ -155,43 +168,77 @@ public class AdvancingControllerTest {
 	}
 
 	@Test
-	public void testPostAdvanceNursery() throws RuleException, MiddlewareException, FieldbookException {
-		// setup
-
-		final AdvancingStudyForm form = new AdvancingStudyForm();
-		form.setStudyId("1");
-		final ArrayList<ImportedGermplasm> importedGermplasm = new ArrayList<>();
-		importedGermplasm.add(Mockito.mock(ImportedGermplasm.class));
-
+	public void testPostAdvanceStudy() throws MiddlewareException, FieldbookException, RuleException {
 		final Method method = new Method();
 		method.setMtype("DER");
-
-		this.preparePostAdvanceNursery(form, method, importedGermplasm);
+		final AdvancingStudyForm form = this.preparePostAdvanceStudy(method);
 
 		// scenario 1, has a method choice and breeding method not a Generative
 		Map<String, Object> output = this.advancingController.postAdvanceStudy(form, null, null);
 
 		Assert.assertEquals("should be successful", "1", output.get("isSuccess"));
-		Assert.assertEquals("should have at least 1 imported germplasm list", importedGermplasm.size(), output.get("listSize"));
+		Assert.assertEquals("should have at least 1 imported germplasm list",3, output.get("listSize"));
 		Assert.assertNotNull("should have advance germplasm change details", output.get("advanceGermplasmChangeDetails"));
 		Assert.assertNotNull("should have generated unique id", output.get("uniqueId"));
 
 		form.setMethodChoice(null);
 		output = this.advancingController.postAdvanceStudy(form, null, null);
 		Assert.assertEquals("should be successful", "1", output.get("isSuccess"));
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(2)).loadAllObservations(Mockito.any());
+		Mockito.verify(this.namingConventionService, Mockito.times(2)).generateAdvanceListNames(ArgumentMatchers.anyList(), ArgumentMatchers.eq(false), ArgumentMatchers.anyList());
 
 	}
 
+	private AdvancingSourceList createTestAdvancingSourceList() {
+		final List<AdvancingSource> rows = new ArrayList<>();
+		final Method breedingMethod = new Method();
+		breedingMethod.setGeneq(TermId.NON_BULKING_BREEDING_METHOD_CLASS.getId());
+		for (int i = 1; i <= 3; i++) {
+			final AdvancingSource row = new AdvancingSource(this.createImportedGermplasm(i));
+			row.setPlotNumber(String.valueOf(i));
+			row.setTrialInstanceNumber("1");
+			row.setPlantsSelected(1);
+			row.setBreedingMethod(breedingMethod);
+			rows.add(row);
+
+		}
+		final AdvancingSourceList list = new AdvancingSourceList();
+		list.setRows(rows);
+		return list;
+	}
+
+	private ImportedGermplasm createImportedGermplasm(final int gid) {
+		final String gidString = String.valueOf(gid);
+		final String desig = "ABC" + gid;
+
+		final ImportedGermplasm germplasm = new ImportedGermplasm();
+		germplasm.setGid(gidString);
+		germplasm.setEntryNumber(gid);
+		germplasm.setEntryCode(gidString);
+		germplasm.setDesig(desig);
+		germplasm.setSource("XYZ:" + gid);
+		germplasm.setCross(gid + "/" + (gid + 1));
+		germplasm.setSource("Import file");
+		germplasm.setLocationId(RandomUtils.nextInt());
+		germplasm.setTrialInstanceNumber("1");
+		germplasm.setPlotNumber(gidString);
+
+		final Name name = new Name();
+		name.setGermplasmId(gid);
+		name.setNval(desig);
+		name.setNstat(1);
+		germplasm.setNames(Collections.singletonList(name));
+		return germplasm;
+	}
+
 	@Test
-	public void testPostAdvanceNurseryThrowsRuleException() throws MiddlewareException {
-		// setup
-		final AdvancingStudyForm form = new AdvancingStudyForm();
-		form.setStudyId("1");
-		final ArrayList<ImportedGermplasm> importedGermplasm = new ArrayList<>();
+	public void testPostAdvanceStudy_ThrowsRuleException() throws MiddlewareException, FieldbookException, RuleException {
 		final Method method = new Method();
 		method.setMtype("DER");
+		final AdvancingStudyForm form = this.preparePostAdvanceStudy(method);
+		Mockito.doThrow(new RuleException("RULE ERROR")).when(this.namingConventionService).generateAdvanceListNames(ArgumentMatchers.anyList(),
+				ArgumentMatchers.eq(false), ArgumentMatchers.anyList());
 
-		this.preparePostAdvanceNursery(form, method, importedGermplasm);
 
 		// scenario 2, has a method throwing exception
 		final Map<String, Object> output = this.advancingController.postAdvanceStudy(form, null, null);
@@ -201,16 +248,10 @@ public class AdvancingControllerTest {
 	}
 
 	@Test
-	public void testPostAdvanceNurseryGenerativeMethodError() throws MiddlewareException {
-		// setup
-		final AdvancingStudyForm form = new AdvancingStudyForm();
-		form.setStudyId("1");
-		final ArrayList<ImportedGermplasm> importedGermplasm = new ArrayList<>();
-
+	public void testPostAdvanceStudy_GenerativeMethodError() throws MiddlewareException, FieldbookException {
 		final Method method = new Method();
 		method.setMtype("GEN");
-
-		this.preparePostAdvanceNursery(form, method, importedGermplasm);
+		final AdvancingStudyForm form = this.preparePostAdvanceStudy(method);
 
 		// scenario 2, has a method throwing exception
 		final Map<String, Object> output = this.advancingController.postAdvanceStudy(form, null, null);
@@ -220,11 +261,28 @@ public class AdvancingControllerTest {
 		Assert.assertEquals("should have error message", "error.message", output.get("message"));
 	}
 
-	private void preparePostAdvanceNursery(final AdvancingStudyForm form, final Method method, final ArrayList<ImportedGermplasm> importedGermplasm)
-			throws MiddlewareException {
+	private AdvancingStudyForm preparePostAdvanceStudy(final Method method)
+			throws MiddlewareException, FieldbookException {
+
+		final AdvancingStudyForm form = new AdvancingStudyForm();
+		form.setStudyId("1");
 		// setup
 		form.setMethodChoice("1");
 		form.setAdvanceBreedingMethodId("10");
+
+		final Integer studyId = new Random().nextInt();
+
+		form.setStudyId(studyId.toString());
+		final Study study = new Study();
+		study.setId(studyId);
+		Mockito.doReturn(study).when(this.fieldbookMiddlewareService).getStudy(studyId);
+		Mockito.doReturn(this.createTestAdvancingSourceList()).when(this.advancingSourceListFactory).createAdvancingSourceList(ArgumentMatchers.any(),
+				ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.anyMap(), ArgumentMatchers.anyMap());
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(10, StudyTypeDto.getTrialDto());
+		WorkbookTestDataInitializer.setTrialObservations(workbook);
+		workbook.getStudyDetails().setId(studyId);
+		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
+
 
 		Mockito.when(this.fieldbookMiddlewareService.getMethodById(ArgumentMatchers.anyInt())).thenReturn(method);
 		Mockito.when(this.messageSource.getMessage(ArgumentMatchers.eq("study.save.advance.error.generative.method"),
@@ -232,6 +290,7 @@ public class AdvancingControllerTest {
 
 		Mockito.doNothing().when(this.paginationListSelection).addAdvanceDetails(ArgumentMatchers.anyString(), ArgumentMatchers.eq(form));
 
+		return form;
 	}
 
 	@Test
@@ -612,15 +671,15 @@ public class AdvancingControllerTest {
 		advancingSource.getNames().add(sourceGermplasmName);
 
 		final Method breedingMethod =
-				new Method(40, "DER", "G", "SLF", "Self and Bulk", "Selfing a Single Plant or population and bulk seed", 0, -1, 1, 0, 1490,
-						1, 0, 19980708, "");
+				new Method(40, "DER", "G", "SLF", "Self and Bulk", "Selfing a Single Plant or population and bulk seed", 0, -1, 1, 0,
+						TermId.NON_BULKING_BREEDING_METHOD_CLASS.getId(), 1, 0, 19980708, "");
 		breedingMethod.setSnametype(5);
 		breedingMethod.setSeparator("-");
 		breedingMethod.setPrefix("B");
 		breedingMethod.setCount("");
 
 		advancingSource.setBreedingMethod(breedingMethod);
-		advancingSource.setPlantsSelected(1);
+		advancingSource.setPlantsSelected(2);
 		advancingSource.setBulk(false);
 		advancingSource.setCheck(false);
 		advancingSource.setStudyName("Test One");
@@ -629,12 +688,19 @@ public class AdvancingControllerTest {
 		advancingSource.setTrialInstanceNumber("1");
 		rows.getRows().add(advancingSource);
 
-	final String testSeedSource = "MEX-DrySeason-N1-1-2";
+		final String testSeedSource = "MEX-DrySeason-N1-1-2";
+		final String studyName = "STUDY:ABC";
 		Mockito.when(this.seedSourceGenerator.
 				generateSeedSource(ArgumentMatchers.any(),
 						ArgumentMatchers.any(),
-						ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.eq("STUDY:ABC"),
+						ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.eq(studyName),
 						ArgumentMatchers.any(), ArgumentMatchers.isNull(), ArgumentMatchers.anyList())).thenReturn(testSeedSource);
+
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(10, StudyTypeDto.getTrialDto());
+		WorkbookTestDataInitializer.setTrialObservations(workbook);
+		workbook.getStudyDetails().setId(new Random().nextInt());
+		workbook.getStudyDetails().setStudyName(studyName);
+		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
 
 
 		final AdvancingStudy advancingParameters = new AdvancingStudy();
@@ -656,16 +722,6 @@ public class AdvancingControllerTest {
 		org.junit.Assert.assertEquals(new Integer(133), advanceResult1.getGpid1());
 		org.junit.Assert.assertEquals(new Integer(133), advanceResult1.getGpid2());
 
-		// germplasm1 names
-		org.junit.Assert.assertEquals(new Integer(-1), advanceResult1.getGnpgs());
-		org.junit.Assert.assertEquals(1, advanceResult1.getNames().size());
-		final Name resultName1 = advanceResult1.getNames().get(0);
-		org.junit.Assert.assertNull(resultName1.getNid());
-		org.junit.Assert.assertNull(resultName1.getGermplasmId());
-		org.junit.Assert.assertEquals(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID(), resultName1.getTypeId().intValue());
-		org.junit.Assert.assertEquals(new Integer(1), resultName1.getNstat());
-		org.junit.Assert.assertEquals("1", resultName1.getNval());
-
 		// germplasm2
 		final ImportedGermplasm advanceResult2 = igList.get(1);
 		org.junit.Assert.assertEquals(new Integer(2), advanceResult2.getEntryNumber());
@@ -678,14 +734,5 @@ public class AdvancingControllerTest {
 		org.junit.Assert.assertEquals(new Integer(133), advanceResult2.getGpid1());
 		org.junit.Assert.assertEquals(new Integer(133), advanceResult2.getGpid2());
 
-		// germplasm2 names
-		org.junit.Assert.assertEquals(new Integer(-1), advanceResult2.getGnpgs());
-		org.junit.Assert.assertEquals(1, advanceResult2.getNames().size());
-		final Name resultName2 = advanceResult2.getNames().get(0);
-		org.junit.Assert.assertNull(resultName2.getNid());
-		org.junit.Assert.assertNull(resultName2.getGermplasmId());
-		org.junit.Assert.assertEquals(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID(), resultName2.getTypeId().intValue());
-		org.junit.Assert.assertEquals(new Integer(1), resultName2.getNstat());
-		org.junit.Assert.assertEquals("2", resultName2.getNval());
 	}
 }

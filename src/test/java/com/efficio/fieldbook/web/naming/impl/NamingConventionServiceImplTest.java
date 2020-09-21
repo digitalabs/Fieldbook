@@ -1,10 +1,10 @@
 
 package com.efficio.fieldbook.web.naming.impl;
 
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.trial.bean.AdvanceType;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
 import com.google.common.collect.Lists;
+import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.math.RandomUtils;
 import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
@@ -13,30 +13,28 @@ import org.generationcp.commons.pojo.AdvancingSourceList;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.ruleengine.RuleExecutionContext;
 import org.generationcp.commons.ruleengine.RuleFactory;
-import org.generationcp.commons.ruleengine.generator.SeedSourceGenerator;
 import org.generationcp.commons.ruleengine.naming.service.ProcessCodeService;
 import org.generationcp.commons.ruleengine.service.RulesService;
-import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
-import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
-import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
-import java.util.*;
-
-import static org.mockito.ArgumentMatchers.anyInt;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 public class NamingConventionServiceImplTest {
 
@@ -72,6 +70,7 @@ public class NamingConventionServiceImplTest {
 		this.breedingMethodSnameType = 5;
 		this.breedingMethod = new Method();
 		this.breedingMethod.setSnametype(this.breedingMethodSnameType);
+		this.breedingMethod.setGeneq(TermId.NON_BULKING_BREEDING_METHOD_CLASS.getId());
 		this.row = new AdvancingSource();
 		this.row.setBreedingMethod(this.breedingMethod);
 		this.workbook = new Workbook();
@@ -84,56 +83,10 @@ public class NamingConventionServiceImplTest {
 	}
 
     @Test
-    public void testAdvanceStudyForNurserySuccess() throws MiddlewareQueryException, RuleException, FieldbookException {
-        final Method breedingMethod =
-                new Method(40, "DER", "G", "SLF", "Self and Bulk", "Selfing a Single Plant or population and bulk seed", 0, -1, 1, 0, 1490,
-                        1, 0, 19980708, "");
-        breedingMethod.setSnametype(5);
-        breedingMethod.setSeparator("-");
-        breedingMethod.setPrefix("B");
-        breedingMethod.setCount("");
-
-        final List<Method> methodList = Lists.newArrayList();
-        methodList.add(breedingMethod);
-
-        Mockito.when(this.fieldbookMiddlewareService.getAllBreedingMethods(ArgumentMatchers.anyBoolean())).thenReturn(methodList);
-		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(anyInt())).thenReturn(this.workbook);
-
-		final Workbook workbook = new Workbook();
-		final StudyDetails studyDetails = new StudyDetails();
-		studyDetails.setStudyName("Test1");
-		studyDetails.setStudyType(StudyTypeDto.getNurseryDto());
-		workbook.setStudyDetails(studyDetails);
-
-        final AdvancingSourceList rows = new AdvancingSourceList();
-        rows.setRows(new ArrayList<AdvancingSource>());
-
+    public void testGenerateAdvanceListNames() throws MiddlewareQueryException, RuleException  {
+		final List<AdvancingSource> rows = new ArrayList<>();
         final AdvancingSource as1 = new AdvancingSource();
-        as1.setNames(new ArrayList<Name>());
-
-        final ImportedGermplasm ig = new ImportedGermplasm();
-        ig.setEntryNumber(1);
-        ig.setDesig("BARRA DE ORO DULCE");
-        ig.setGid("133");
-        ig.setCross("BARRA DE ORO DULCE");
-        ig.setBreedingMethodId(31);
-        ig.setGpid1(0);
-        ig.setGpid2(0);
-        ig.setGnpgs(-1);
-        as1.setGermplasm(ig);
-
-        final Name name1 = new Name(133);
-        name1.setGermplasmId(133);
-        name1.setTypeId(6);
-        name1.setNstat(1);
-        name1.setUserId(3);
-        name1.setNval("BARRA DE ORO DULCE");
-        name1.setLocationId(9);
-        name1.setNdate(19860501);
-        name1.setReferenceId(1);
-        as1.getNames().add(name1);
-
-
+        as1.setNames(new ArrayList<>());
         as1.setBreedingMethod(breedingMethod);
         as1.setPlantsSelected(1);
         as1.setBulk(false);
@@ -142,47 +95,22 @@ public class NamingConventionServiceImplTest {
         as1.setSeason("201412");
         as1.setCurrentMaxSequence(0);
         as1.setTrialInstanceNumber("1");
-        rows.getRows().add(as1);
+       	rows.add(as1);
 
-        final String ruleGeneratedName = name1.getNval() + "-B";
+		Mockito.when(this.rulesService.runRules(ArgumentMatchers.any(RuleExecutionContext.class))).thenReturn(Collections.singletonList("name"));
+		Mockito.when(this.ruleFactory.getRuleSequenceForNamespace("naming")).thenReturn(new String[] {"[COUNT]"});
+        final String ruleGeneratedName = RandomStringUtils.randomAlphabetic(20);
         Mockito.when(this.rulesService.runRules(ArgumentMatchers.any(RuleExecutionContext.class))).thenReturn(
                 Lists.newArrayList(ruleGeneratedName));
-		final String testSeedSource = "MEX-DrySeason-N1-1-2";
 
-		final AdvancingStudy info = new AdvancingStudy();
-        info.setMethodChoice("1");
-        info.setLineChoice("1");
-        info.setLineSelected("1");
-        info.setAllPlotsChoice("1");
-        info.setLineSelected("1");
-		info.setAdvanceType(AdvanceType.STUDY);
+		final List<ImportedGermplasm> germplasmList = new ArrayList<>();
+		germplasmList.add(this.createImportedGermplasm(100));
+		as1.setGermplasm(germplasmList.get(0));
+        this.namingConventionService.generateAdvanceListNames(rows, new Random().nextBoolean(), germplasmList);
 
-        final Study study = new Study();
-        study.setId(2345);
-        info.setStudy(study);
-
-//		final AdvanceResult advanceResult = new AdvanceResult(); // this.namingConventionService.advanceStudy(info, this.workbook);
-//
-//        Assert.assertNotNull(advanceResult);
-//        Assert.assertNotNull(advanceResult.getChangeDetails());
-//        Assert.assertEquals(0,advanceResult.getChangeDetails().size());
-//
-//        Assert.assertNotNull(advanceResult.getAdvanceList());
-//        Assert.assertEquals(1, advanceResult.getAdvanceList().size());
-
-        final ImportedGermplasm resultIG = new ImportedGermplasm(); // = advanceResult.getAdvanceList().get(0);
-        Assert.assertEquals(new Integer(1), resultIG.getEntryNumber());
+        Mockito.verify(this.rulesService).runRules(ArgumentMatchers.any());
+        final ImportedGermplasm resultIG = germplasmList.get(0);
         Assert.assertEquals(ruleGeneratedName, resultIG.getDesig());
-        Assert.assertNull(resultIG.getGid());
-        Assert.assertEquals(ig.getCross(), resultIG.getCross());
-		Assert.assertEquals(testSeedSource, resultIG.getSource());
-        Assert.assertEquals("E0001", resultIG.getEntryCode());
-        Assert.assertEquals(new Integer(40), resultIG.getBreedingMethodId());
-        Assert.assertEquals(new Integer(133), resultIG.getGpid1());
-        Assert.assertEquals(new Integer(133), resultIG.getGpid2());
-
-        Assert.assertEquals(new Integer(-1), resultIG.getGnpgs());
-        Assert.assertEquals(1, resultIG.getNames().size());
         final Name resultName = resultIG.getNames().get(0);
         Assert.assertNull(resultName.getNid());
         Assert.assertNull(resultName.getGermplasmId());
@@ -227,4 +155,24 @@ public class NamingConventionServiceImplTest {
 		Mockito.verify(this.ruleFactory).getRuleSequenceForNamespace("naming");
 		Assert.assertEquals(0, advancingSource.getCurrentMaxSequence());
 	}
+
+	private ImportedGermplasm createImportedGermplasm(final int gid) {
+		final String gidString = String.valueOf(gid);
+		final String desig = "ABC" + gid;
+
+		final ImportedGermplasm germplasm = new ImportedGermplasm();
+		germplasm.setGid(gidString);
+		germplasm.setEntryNumber(gid);
+		germplasm.setEntryCode(gidString);
+		germplasm.setDesig(desig);
+		germplasm.setSource("XYZ:" + gid);
+		germplasm.setCross(gid + "/" + (gid + 1));
+		germplasm.setSource("Import file");
+		germplasm.setLocationId(RandomUtils.nextInt());
+		germplasm.setTrialInstanceNumber("1");
+		germplasm.setPlotNumber(gidString);
+
+		return germplasm;
+	}
+
 }

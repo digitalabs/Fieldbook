@@ -53,6 +53,7 @@ public class SettingsUtilTest {
 	public static final String NFERT_KG = "NFERT_KG";
 	public static final int NFERT_NO_ID = 1001;
 	public static final int NFERT_KG_ID = 1002;
+
 	@Mock
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 	
@@ -98,7 +99,7 @@ public class SettingsUtilTest {
 		variate.setVariableType(VariableType.TRAIT.getName());
 		dataset.getVariates().add(variate);
 
-		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, SettingsUtilTest.PROGRAM_UUID);
+		final Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset, SettingsUtilTest.PROGRAM_UUID, this.getVariableTypes());
 
 		final Dataset newDataset = (Dataset) SettingsUtil.convertWorkbookToXmlDataset(workbook);
 		Assert.assertEquals(dataset.getConditions().get(0).getName(), newDataset.getConditions().get(0).getName());
@@ -1087,6 +1088,15 @@ public class SettingsUtilTest {
 		Assert.assertEquals(VariableType.ENVIRONMENT_CONDITION, measurementVariable.getVariableType());
 		Assert.assertFalse(measurementVariable.isFactor());
 
+	}
+
+	private List<Term> getVariableTypes() {
+		final List<Term> terms = new ArrayList<>();
+		for (final VariableType variableType: VariableType.values()) {
+			final Term term = new Term(variableType.getId(), variableType.getName(), variableType.getDescription());
+			terms.add(term);
+		}
+		return terms;
 	}
 
 }

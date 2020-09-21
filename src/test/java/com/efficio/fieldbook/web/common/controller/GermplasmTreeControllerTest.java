@@ -35,6 +35,8 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.pojos.*;
+import org.generationcp.middleware.pojos.workbench.CropType;
+import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.generationcp.middleware.service.api.study.germplasm.source.GermplasmStudySourceService;
@@ -149,6 +151,9 @@ public class GermplasmTreeControllerTest {
 				.thenReturn(new UserDefinedField(GermplasmTreeControllerTest.PLANT_NUMBER));
 		Mockito.when(this.contextUtil.getCurrentWorkbenchUserId()).thenReturn(GermplasmTreeControllerTest.TEST_USER_ID);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(GermplasmTreeControllerTest.TEST_PROGRAM_UUID);
+		final Project project = new Project();
+		project.setCropType(new CropType());
+		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(project);
 		Mockito.when(this.fieldbookMiddlewareService.getOwnerListName(GermplasmTreeControllerTest.TEST_USER_ID))
 				.thenReturn(GermplasmTreeControllerTest.TEST_USER_NAME);
 	}
@@ -158,7 +163,7 @@ public class GermplasmTreeControllerTest {
 		final PaginationListSelection paginationListSelection = new PaginationListSelection();
 		paginationListSelection.addAdvanceDetails(GermplasmTreeControllerTest.LIST_IDENTIFIER, this.createAdvancingStudyForm(true));
 
-		final SaveListForm form = createSaveListForm();
+		final SaveListForm form = this.createSaveListForm();
 		form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_ADVANCE);
 
 		this.controller.setPaginationListSelection(paginationListSelection);
@@ -209,7 +214,7 @@ public class GermplasmTreeControllerTest {
 
 	@Test
 	public void testSaveCrossesListPostSuccessful() {
-		final SaveListForm form = createSaveListForm();
+		final SaveListForm form = this.createSaveListForm();
 		form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS);
 
 		final Map<String, Object> result = this.controller.savePost(form, Mockito.mock(Model.class));
@@ -225,7 +230,7 @@ public class GermplasmTreeControllerTest {
 
 	@Test
 	public void testSaveListPostWithExistingGermplasmList() throws MiddlewareQueryException {
-		final SaveListForm form = createSaveListForm();
+		final SaveListForm form = this.createSaveListForm();
 		form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS);
 
 		Mockito.doReturn(this.createGermplasmList()).when(this.fieldbookMiddlewareService)
@@ -239,7 +244,7 @@ public class GermplasmTreeControllerTest {
 
 	@Test
 	public void testSaveListPostExistingListNameWithTrailingSpaces() throws MiddlewareQueryException {
-		final SaveListForm form = createSaveListForm();
+		final SaveListForm form = this.createSaveListForm();
 		form.setListName(GermplasmTreeControllerTest.LIST_NAME + "   ");
 		form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS);
 
@@ -259,7 +264,7 @@ public class GermplasmTreeControllerTest {
 
 	@Test
 	public void testCreateGermplasmListUsingNameWithTrailingSpaces() throws MiddlewareQueryException {
-		final SaveListForm form = createSaveListForm();
+		final SaveListForm form = this.createSaveListForm();
 		form.setListName(GermplasmTreeControllerTest.LIST_NAME + "   ");
 		form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS);
 
@@ -290,7 +295,7 @@ public class GermplasmTreeControllerTest {
 
 	@Test
 	public void testSaveListPostWithError() throws MiddlewareQueryException {
-		final SaveListForm form = createSaveListForm();
+		final SaveListForm form = this.createSaveListForm();
 		form.setGermplasmListType(GermplasmTreeController.GERMPLASM_LIST_TYPE_CROSS);
 
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListByName(ArgumentMatchers.anyString(), ArgumentMatchers.anyString()))
@@ -341,7 +346,7 @@ public class GermplasmTreeControllerTest {
 
 	@Test
 	public void testLoadTreeStateSaveDialog() throws MiddlewareQueryException {
-		final List<String> response = new ArrayList<String>();
+		final List<String> response = new ArrayList<>();
 		response.add("1");
 		response.add("2");
 		Mockito.doReturn(response).when(this.userTreeStateService)
@@ -552,11 +557,11 @@ public class GermplasmTreeControllerTest {
 	@Test
 	public void testCreateGermplasmListParentDoesntExist() {
 
-		final SaveListForm saveListForm = createSaveListForm();
+		final SaveListForm saveListForm = this.createSaveListForm();
 		final GermplasmList parentListFolder = new GermplasmList();
 		parentListFolder.setType(GermplasmList.FOLDER_TYPE);
 
-		final GermplasmList germplasmList = controller.createGermplasmList(saveListForm, TEST_USER_ID);
+		final GermplasmList germplasmList = this.controller.createGermplasmList(saveListForm, TEST_USER_ID);
 
 		Assert.assertNull(germplasmList.getId());
 		Assert.assertEquals(LIST_NAME, germplasmList.getName());
@@ -574,12 +579,12 @@ public class GermplasmTreeControllerTest {
 	@Test
 	public void testCreateGermplasmListParentIsFolder() {
 
-		final SaveListForm saveListForm = createSaveListForm();
+		final SaveListForm saveListForm = this.createSaveListForm();
 		final GermplasmList parentListFolder = new GermplasmList();
 		parentListFolder.setType(GermplasmList.FOLDER_TYPE);
 		Mockito.when(this.germplasmListManager.getGermplasmListById(Integer.valueOf(LIST_PARENT_ID))).thenReturn(parentListFolder);
 
-		final GermplasmList germplasmList = controller.createGermplasmList(saveListForm, TEST_USER_ID);
+		final GermplasmList germplasmList = this.controller.createGermplasmList(saveListForm, TEST_USER_ID);
 
 		Assert.assertNull(germplasmList.getId());
 		Assert.assertEquals(LIST_NAME, germplasmList.getName());
@@ -597,9 +602,9 @@ public class GermplasmTreeControllerTest {
 	@Test
 	public void testCreateGermplasmListListParentIsCropList() {
 
-		final SaveListForm saveListForm = createSaveListForm();
+		final SaveListForm saveListForm = this.createSaveListForm();
 		saveListForm.setParentId(GermplasmTreeController.CROP_LISTS);
-		final GermplasmList germplasmList = controller.createGermplasmList(saveListForm, TEST_USER_ID);
+		final GermplasmList germplasmList = this.controller.createGermplasmList(saveListForm, TEST_USER_ID);
 
 		Assert.assertNull(germplasmList.getId());
 		Assert.assertEquals(LIST_NAME, germplasmList.getName());
@@ -617,9 +622,9 @@ public class GermplasmTreeControllerTest {
 	@Test
 	public void testCreateGermplasmListListParentIsProgramList() {
 
-		final SaveListForm saveListForm = createSaveListForm();
+		final SaveListForm saveListForm = this.createSaveListForm();
 		saveListForm.setParentId(GermplasmTreeController.PROGRAM_LISTS);
-		final GermplasmList germplasmList = controller.createGermplasmList(saveListForm, TEST_USER_ID);
+		final GermplasmList germplasmList = this.controller.createGermplasmList(saveListForm, TEST_USER_ID);
 
 		Assert.assertNull(germplasmList.getId());
 		Assert.assertEquals(LIST_NAME, germplasmList.getName());
@@ -638,16 +643,16 @@ public class GermplasmTreeControllerTest {
 	public void testMoveStudyFolderMoveToCropListsFolder() {
 
 		final String germplasmListId = "1";
-		Mockito.when(request.getParameter("sourceId")).thenReturn(germplasmListId);
-		Mockito.when(request.getParameter("targetId")).thenReturn(GermplasmTreeController.CROP_LISTS);
+		Mockito.when(this.request.getParameter("sourceId")).thenReturn(germplasmListId);
+		Mockito.when(this.request.getParameter("targetId")).thenReturn(GermplasmTreeController.CROP_LISTS);
 
 		final GermplasmList germplasmListToBeMoved = new GermplasmList(Integer.valueOf(germplasmListId));
-		Mockito.when(germplasmListManager.getGermplasmListById(Integer.valueOf(germplasmListId))).thenReturn(germplasmListToBeMoved);
+		Mockito.when(this.germplasmListManager.getGermplasmListById(Integer.valueOf(germplasmListId))).thenReturn(germplasmListToBeMoved);
 
-		controller.moveStudyFolder(request);
+		this.controller.moveStudyFolder(this.request);
 
 		final ArgumentCaptor<GermplasmList> captor = ArgumentCaptor.forClass(GermplasmList.class);
-		Mockito.verify(germplasmListManager).updateGermplasmList(captor.capture());
+		Mockito.verify(this.germplasmListManager).updateGermplasmList(captor.capture());
 
 		final GermplasmList germplasmList = captor.getValue();
 
@@ -661,16 +666,16 @@ public class GermplasmTreeControllerTest {
 	public void testMoveStudyFolderMoveToProgramListsFolder() {
 
 		final String germplasmListId = "1";
-		Mockito.when(request.getParameter("sourceId")).thenReturn(germplasmListId);
-		Mockito.when(request.getParameter("targetId")).thenReturn(GermplasmTreeController.PROGRAM_LISTS);
+		Mockito.when(this.request.getParameter("sourceId")).thenReturn(germplasmListId);
+		Mockito.when(this.request.getParameter("targetId")).thenReturn(GermplasmTreeController.PROGRAM_LISTS);
 
 		final GermplasmList germplasmListToBeMoved = new GermplasmList(Integer.valueOf(germplasmListId));
-		Mockito.when(germplasmListManager.getGermplasmListById(Integer.valueOf(germplasmListId))).thenReturn(germplasmListToBeMoved);
+		Mockito.when(this.germplasmListManager.getGermplasmListById(Integer.valueOf(germplasmListId))).thenReturn(germplasmListToBeMoved);
 
-		controller.moveStudyFolder(request);
+		this.controller.moveStudyFolder(this.request);
 
 		final ArgumentCaptor<GermplasmList> captor = ArgumentCaptor.forClass(GermplasmList.class);
-		Mockito.verify(germplasmListManager).updateGermplasmList(captor.capture());
+		Mockito.verify(this.germplasmListManager).updateGermplasmList(captor.capture());
 
 		final GermplasmList germplasmList = captor.getValue();
 
@@ -684,18 +689,18 @@ public class GermplasmTreeControllerTest {
 
 		final String germplasmListId = "1";
 		final String folderId = "2";
-		Mockito.when(request.getParameter("sourceId")).thenReturn(germplasmListId);
-		Mockito.when(request.getParameter("targetId")).thenReturn(folderId);
+		Mockito.when(this.request.getParameter("sourceId")).thenReturn(germplasmListId);
+		Mockito.when(this.request.getParameter("targetId")).thenReturn(folderId);
 
 		final GermplasmList germplasmListToBeMoved = new GermplasmList(Integer.valueOf(germplasmListId));
 		final GermplasmList folderGermplasmList = new GermplasmList(Integer.valueOf(folderId));
-		Mockito.when(germplasmListManager.getGermplasmListById(Integer.valueOf(germplasmListId))).thenReturn(germplasmListToBeMoved);
-		Mockito.when(germplasmListManager.getGermplasmListById(Integer.valueOf(folderId))).thenReturn(folderGermplasmList);
+		Mockito.when(this.germplasmListManager.getGermplasmListById(Integer.valueOf(germplasmListId))).thenReturn(germplasmListToBeMoved);
+		Mockito.when(this.germplasmListManager.getGermplasmListById(Integer.valueOf(folderId))).thenReturn(folderGermplasmList);
 
-		controller.moveStudyFolder(request);
+		this.controller.moveStudyFolder(this.request);
 
 		final ArgumentCaptor<GermplasmList> captor = ArgumentCaptor.forClass(GermplasmList.class);
-		Mockito.verify(germplasmListManager).updateGermplasmList(captor.capture());
+		Mockito.verify(this.germplasmListManager).updateGermplasmList(captor.capture());
 
 		final GermplasmList germplasmList = captor.getValue();
 
@@ -710,17 +715,17 @@ public class GermplasmTreeControllerTest {
 		final ImportedCrossesList importedCrossesList = this.createImportedCrossesList();
 		final Workbook workbook = this.userSelection.getWorkbook();
 
-		controller.applyNamingRules(importedCrossesList);
+		this.controller.applyNamingRules(importedCrossesList);
 
 		final ArgumentCaptor<List> argumentCaptor1 = ArgumentCaptor.forClass(List.class);
 		final ArgumentCaptor<AdvancingSourceList> argumentCaptor2 = ArgumentCaptor.forClass(AdvancingSourceList.class);
 		final ArgumentCaptor<AdvancingStudy> argumentCaptor3 = ArgumentCaptor.forClass(AdvancingStudy.class);
 		final ArgumentCaptor<List> argumentCaptor4 = ArgumentCaptor.forClass(List.class);
 
-		Mockito.verify(namingConventionService)
+		Mockito.verify(this.namingConventionService)
 				.generateCrossesList(argumentCaptor1.capture(), argumentCaptor2.capture(), argumentCaptor3.capture(), Mockito.eq(workbook),
 						argumentCaptor4.capture());
-		Mockito.verify(userSelection).setImportedCrossesList(importedCrossesList);
+		Mockito.verify(this.userSelection).setImportedCrossesList(importedCrossesList);
 
 		final List<ImportedCross> importedCrossArgument1 = argumentCaptor1.getValue();
 		final AdvancingSourceList importedCrossesArgument2 = argumentCaptor2.getValue();
@@ -740,7 +745,7 @@ public class GermplasmTreeControllerTest {
 		final List<ImportedCross> importedCrossList = this.createImportedCrossesList().getImportedCrosses();
 		final ImportedCross importedCross = importedCrossList.get(0);
 
-		controller.assignCrossNames(importedCross);
+		this.controller.assignCrossNames(importedCross);
 
 		Assert.assertFalse(importedCross.getNames().isEmpty());
 		Assert.assertEquals(1, importedCross.getNames().get(0).getNstat().intValue());
@@ -755,7 +760,7 @@ public class GermplasmTreeControllerTest {
 		final ImportedCross importedCross = importedCrossList.get(0);
 		final Workbook workbook = this.userSelection.getWorkbook();
 
-		final AdvancingSource advancingSource = controller.createAdvancingSource(importedCross);
+		final AdvancingSource advancingSource = this.controller.createAdvancingSource(importedCross);
 
 		Assert.assertEquals(1, advancingSource.getStudyId().intValue());
 		Assert.assertEquals(workbook.getConditions(), advancingSource.getConditions());

@@ -264,9 +264,9 @@ public class CrossingServiceImpl implements CrossingService {
 	 * @Transactional to make sure Germplasm, Name and Attribute entities save atomically.
 	 */
 	@Transactional
-	private void save(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
+	void save(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
 		final List<Triple<Germplasm, Name, List<Progenitor>>> germplasmTriples) {
-		final List<Integer> savedGermplasmIds = this.germplasmDataManager.addGermplasm(germplasmTriples);
+		final List<Integer> savedGermplasmIds = this.germplasmDataManager.addGermplasm(germplasmTriples, this.contextUtil.getProjectInContext().getCropType());
 		this.saveAttributes(crossSetting, importedCrossesList, savedGermplasmIds);
 	}
 
@@ -433,7 +433,7 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	Integer getFormattedHarvestDate(final String harvestDate) {
-		Integer dateIntValue = 0;
+		int dateIntValue = 0;
 		if (harvestDate != null && !StringUtil.isEmpty(harvestDate)) {
 			String replacedDateString = harvestDate.replace("-", "");
 			if (replacedDateString.length() == 6) {
@@ -507,7 +507,7 @@ public class CrossingServiceImpl implements CrossingService {
 	Germplasm createGermplasm(final ImportedCross cross, final Integer userId, final Integer harvestLocationId,
 		final String harvestDate) {
 
-		Germplasm germplasm = null;
+		Germplasm germplasm;
 
 		// Retrieve the germplasm (cross) from database: In case of Study
 		// -> Crossing workflows, we expect the GID to always
@@ -540,7 +540,7 @@ public class CrossingServiceImpl implements CrossingService {
 
 	Name createName(final Germplasm germplasm, final ImportedCross cross, final Integer userId, final Integer harvestLocationId) {
 
-		Name name = null;
+		Name name;
 
 		// In case of Study
 		// -> Crossing workflows, we expect the GID to always

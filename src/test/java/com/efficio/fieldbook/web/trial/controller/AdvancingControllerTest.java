@@ -2,10 +2,7 @@
 package com.efficio.fieldbook.web.trial.controller;
 
 import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.common.bean.ChoiceKeyVal;
-import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
-import com.efficio.fieldbook.web.common.bean.TableHeader;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.common.bean.*;
 import com.efficio.fieldbook.web.naming.impl.AdvancingSourceListFactory;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
@@ -27,6 +24,7 @@ import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -64,6 +62,8 @@ import java.util.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AdvancingControllerTest {
+
+	private static final String STUDY_NAME = "STUDY:ABC";
 
 	@Mock
 	private OntologyDataManager ontologyDataManager;
@@ -278,10 +278,7 @@ public class AdvancingControllerTest {
 		Mockito.doReturn(study).when(this.fieldbookMiddlewareService).getStudy(studyId);
 		Mockito.doReturn(this.createTestAdvancingSourceList()).when(this.advancingSourceListFactory).createAdvancingSourceList(ArgumentMatchers.any(),
 				ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.anyMap(), ArgumentMatchers.anyMap());
-		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(10, StudyTypeDto.getTrialDto());
-		WorkbookTestDataInitializer.setTrialObservations(workbook);
-		workbook.getStudyDetails().setId(studyId);
-		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
+		this.prepareMockWorkbook();
 
 
 		Mockito.when(this.fieldbookMiddlewareService.getMethodById(ArgumentMatchers.anyInt())).thenReturn(method);
@@ -680,6 +677,7 @@ public class AdvancingControllerTest {
 
 		advancingSource.setBreedingMethod(breedingMethod);
 		advancingSource.setPlantsSelected(2);
+		advancingSource.setPlotNumber("2");
 		advancingSource.setBulk(false);
 		advancingSource.setCheck(false);
 		advancingSource.setStudyName("Test One");
@@ -688,20 +686,20 @@ public class AdvancingControllerTest {
 		advancingSource.setTrialInstanceNumber("1");
 		rows.getRows().add(advancingSource);
 
-		final String testSeedSource = "MEX-DrySeason-N1-1-2";
-		final String studyName = "STUDY:ABC";
+		final String testSeedSource1 = "MEX-DrySeason-N1-1-1";
 		Mockito.when(this.seedSourceGenerator.
 				generateSeedSource(ArgumentMatchers.any(),
 						ArgumentMatchers.any(),
-						ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.eq(studyName),
-						ArgumentMatchers.any(), ArgumentMatchers.isNull(), ArgumentMatchers.anyList())).thenReturn(testSeedSource);
+						ArgumentMatchers.eq("1"), ArgumentMatchers.eq("2"), ArgumentMatchers.eq(STUDY_NAME),
+						ArgumentMatchers.isNull(), ArgumentMatchers.isNull(), ArgumentMatchers.anyList())).thenReturn(testSeedSource1);
+		final String testSeedSource2 = "MEX-DrySeason-N1-1-2";
+		Mockito.when(this.seedSourceGenerator.
+				generateSeedSource(ArgumentMatchers.any(),
+						ArgumentMatchers.anyList(),
+						ArgumentMatchers.eq("2"), ArgumentMatchers.eq("2"), ArgumentMatchers.eq(STUDY_NAME),
+						ArgumentMatchers.isNull(), ArgumentMatchers.isNull(), ArgumentMatchers.anyList())).thenReturn(testSeedSource2);
 
-		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(10, StudyTypeDto.getTrialDto());
-		WorkbookTestDataInitializer.setTrialObservations(workbook);
-		workbook.getStudyDetails().setId(new Random().nextInt());
-		workbook.getStudyDetails().setStudyName(studyName);
-		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
-
+		this.prepareMockWorkbook();
 
 		final AdvancingStudy advancingParameters = new AdvancingStudy();
 		advancingParameters.setCheckAdvanceLinesUnique(false);
@@ -716,7 +714,7 @@ public class AdvancingControllerTest {
 		org.junit.Assert.assertEquals("1", advanceResult1.getDesig());
 		org.junit.Assert.assertNull(advanceResult1.getGid());
 		org.junit.Assert.assertEquals(ig.getCross(), advanceResult1.getCross());
-		org.junit.Assert.assertEquals(testSeedSource, advanceResult1.getSource());
+		org.junit.Assert.assertEquals(testSeedSource1, advanceResult1.getSource());
 		org.junit.Assert.assertEquals("E0001", advanceResult1.getEntryCode());
 		org.junit.Assert.assertEquals(new Integer(40), advanceResult1.getBreedingMethodId());
 		org.junit.Assert.assertEquals(new Integer(133), advanceResult1.getGpid1());
@@ -728,11 +726,23 @@ public class AdvancingControllerTest {
 		org.junit.Assert.assertEquals("2", advanceResult2.getDesig());
 		org.junit.Assert.assertNull(advanceResult2.getGid());
 		org.junit.Assert.assertEquals(ig.getCross(), advanceResult2.getCross());
-		org.junit.Assert.assertEquals(testSeedSource, advanceResult2.getSource());
+		org.junit.Assert.assertEquals(testSeedSource2, advanceResult2.getSource());
 		org.junit.Assert.assertEquals("E0002", advanceResult2.getEntryCode());
 		org.junit.Assert.assertEquals(new Integer(40), advanceResult2.getBreedingMethodId());
 		org.junit.Assert.assertEquals(new Integer(133), advanceResult2.getGpid1());
 		org.junit.Assert.assertEquals(new Integer(133), advanceResult2.getGpid2());
+
+	}
+
+	private void prepareMockWorkbook() {
+		final Workbook workbook = Mockito.mock(Workbook.class);
+		final StudyDetails studyDetails = Mockito.mock(StudyDetails.class);
+		Mockito.doReturn(new Random().nextInt()).when(studyDetails).getId();
+		Mockito.doReturn(STUDY_NAME).when(workbook).getStudyName();
+		final MeasurementRow row = Mockito.mock(MeasurementRow.class);
+		Mockito.when(workbook.getStudyDetails()).thenReturn(studyDetails);
+		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
+		Mockito.when(workbook.getTrialObservationByTrialInstanceNo(1)).thenReturn(row);
 
 	}
 }

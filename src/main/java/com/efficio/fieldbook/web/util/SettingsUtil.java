@@ -20,7 +20,6 @@ import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.TreatmentFactorData;
-import com.hazelcast.util.StringUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.MapUtils;
@@ -40,7 +39,6 @@ import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
-import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.Method;
@@ -748,7 +746,7 @@ public class SettingsUtil {
 		mvar.setFactor(false);
 		mvar.setDataTypeId(constant.getDataTypeId());
 		mvar.setPossibleValues(constant.getPossibleValues());
-		mvar.setVariableType(VariableType.STUDY_CONDITION);
+		mvar.setVariableType(VariableType.ENVIRONMENT_CONDITION);
 		return mvar;
 	}
 

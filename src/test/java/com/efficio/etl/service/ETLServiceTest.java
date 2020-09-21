@@ -19,6 +19,7 @@ import org.generationcp.middleware.data.initializer.MeasurementDataTestDataIniti
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.ValueReferenceTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
+import org.generationcp.middleware.domain.dms.DMSVariableType;
 import org.generationcp.middleware.domain.dms.DataSet;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -64,6 +65,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -284,7 +286,7 @@ public class ETLServiceTest {
 		}
 
 		Assert.assertNotNull(workbook.getVariates());
-		Assert.assertEquals("The number of variates must be 2", 2, workbook.getVariates().size());
+		Assert.assertEquals("The number of variates must be 1. ", 1, workbook.getVariates().size());
 		for (final MeasurementVariable measurementVariable : workbook.getVariates()) {
 			Assert.assertSame("A variate should have a variate role", measurementVariable.getRole(), PhenotypicType.VARIATE);
 		}
@@ -551,6 +553,15 @@ public class ETLServiceTest {
 		Mockito.doReturn(trialDataset).when(this.studyDataManager).findOneDataSetByType(
 			this.userSelection.getStudyId(),
 			DatasetTypeEnum.SUMMARY_DATA.getId());
+
+		final DataSet meansDataset = DataSetTestDataInitializer
+			.createMeansDatasetTestData(this.userSelection.getStudyName() + "-MEANS");
+		final List<DMSVariableType> meansDatasetIds = meansDataset.getVariableTypes().getVariableTypes().stream().filter(dmsVariableType -> dmsVariableType.getRole() == PhenotypicType.VARIATE).collect(
+			Collectors.toList());
+		Mockito.doReturn(meansDataset).when(this.studyDataManager).findOneDataSetByType(
+			this.userSelection.getStudyId(),
+			DatasetTypeEnum.MEANS_DATA.getId());
+
 		final org.generationcp.middleware.domain.etl.Workbook wb = WorkbookTestDataInitializer.getTestWorkbook();
 		wb.setFactors(null);
 		wb.setVariates(null);
@@ -563,6 +574,48 @@ public class ETLServiceTest {
 		Assert.assertNotNull(wb.getConditions());
 		Assert.assertNotNull(wb.getVariates());
 		Assert.assertNotNull(wb.getConstants());
+		Assert.assertEquals(meansDatasetIds.size(), wb.getVariates().size());
+		Assert.assertEquals(meansDatasetIds.get(0).getId(),wb.getVariates().get(0).getTermId());
+	}
+
+	@Test
+	public void testFillDetailsOfDatasetsInWorkbookIsMeansDatasetTrue() {
+		this.fillStudyDetailsOfUserSelection(this.userSelection);
+		this.userSelection.setDatasetType(DatasetTypeEnum.PLOT_DATA.getId());
+
+		final DataSet plotDataset = DataSetTestDataInitializer
+			.createPlotDatasetTestData(this.userSelection.getStudyName() + "-PLOTDATA");
+		Mockito.doReturn(plotDataset).when(this.studyDataManager).findOneDataSetByType(
+			this.userSelection.getStudyId(),
+			DatasetTypeEnum.PLOT_DATA.getId());
+
+		final DataSet trialDataset = DataSetTestDataInitializer
+			.createStudyDatasetTestData(this.userSelection.getStudyName() + "-ENVIRONMENT");
+		Mockito.doReturn(trialDataset).when(this.studyDataManager).findOneDataSetByType(
+			this.userSelection.getStudyId(),
+			DatasetTypeEnum.SUMMARY_DATA.getId());
+
+		final DataSet meansDataset = DataSetTestDataInitializer
+			.createMeansDatasetTestData(this.userSelection.getStudyName() + "-MEANS");
+
+		Mockito.doReturn(meansDataset).when(this.studyDataManager).findOneDataSetByType(
+			this.userSelection.getStudyId(),
+			DatasetTypeEnum.MEANS_DATA.getId());
+
+		final org.generationcp.middleware.domain.etl.Workbook wb = WorkbookTestDataInitializer.getTestWorkbook();
+		wb.setFactors(null);
+		wb.setVariates(null);
+		wb.setConditions(null);
+		wb.setConstants(null);
+
+		this.etlService.fillDetailsOfDatasetsInWorkbook(wb, this.userSelection.getStudyId(), true);
+
+		Assert.assertNotNull(wb.getFactors());
+		Assert.assertNotNull(wb.getConditions());
+		Assert.assertNotNull(wb.getVariates());
+		Assert.assertNotNull(wb.getConstants());
+		Assert.assertEquals(meansDataset.getVariableTypes().size(), wb.getVariates().size());
+
 	}
 
 	@Test

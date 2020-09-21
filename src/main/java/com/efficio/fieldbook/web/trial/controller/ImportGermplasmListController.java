@@ -52,11 +52,21 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * This controller handles the 2nd step in the study manager process.
@@ -274,11 +284,11 @@ public class ImportGermplasmListController extends SettingsController {
 			final List<ImportedGermplasm> importedGermplasm = importedGermplasmList.getImportedGermplasms();
 			final List<StudyGermplasmDto> studyGermplasmDtoList = this.studyGermplasmTransformer.transformToStudyGermplasmDto(importedGermplasm);
 			// Delete the existing stocks so that we can replace it with the current list.
-			this.studyGermplasmService.deleteStudyGermplasm(studyId);
-			this.studyGermplasmService.saveStudyGermplasm(studyId, studyGermplasmDtoList);
+			this.studyGermplasmService.deleteStudyEntries(studyId);
+			this.studyGermplasmService.saveStudyEntries(studyId, studyGermplasmDtoList);
 		} else {
 			// we delete the record in the db
-			this.studyGermplasmService.deleteStudyGermplasm(studyId);
+			this.studyGermplasmService.deleteStudyEntries(studyId);
 		}
 
 	}
@@ -537,7 +547,7 @@ public class ImportGermplasmListController extends SettingsController {
 		if (!isNewList) {
 			final Integer studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
 			if (studyId != null) {
-				return this.studyGermplasmService.countStudyGermplasm(studyId) > 0;
+				return this.studyGermplasmService.countStudyEntries(studyId) > 0;
 			}
 		}
 

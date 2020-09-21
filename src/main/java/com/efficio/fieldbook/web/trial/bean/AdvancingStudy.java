@@ -49,8 +49,6 @@ public class AdvancingStudy implements Serializable {
 	/** The breeding method id. */
 	private String breedingMethodId;
 
-	private String putBrackets;
-
 	private String allPlotsChoice;
 
 	private Integer lineVariateId;
@@ -66,6 +64,29 @@ public class AdvancingStudy implements Serializable {
     private Set<String> selectedReplications;
 
 	private AdvanceType advanceType;
+
+	public AdvancingStudy() {
+
+	}
+
+	public AdvancingStudy(Study study, String methodChoice, String lineChoice, String lineSelected, String harvestDate, String harvestLocationId, String harvestLocationAbbreviation, String breedingMethodId, String allPlotsChoice, Integer lineVariateId, Integer methodVariateId, Integer plotVariateId, boolean isCheckAdvanceLinesUnique, Set<String> selectedTrialInstances, Set<String> selectedReplications, AdvanceType advanceType) {
+		this.study = study;
+		this.methodChoice = methodChoice;
+		this.lineChoice = lineChoice;
+		this.lineSelected = lineSelected;
+		this.harvestDate = harvestDate;
+		this.harvestLocationId = harvestLocationId;
+		this.harvestLocationAbbreviation = harvestLocationAbbreviation;
+		this.breedingMethodId = breedingMethodId;
+		this.allPlotsChoice = allPlotsChoice;
+		this.lineVariateId = lineVariateId;
+		this.methodVariateId = methodVariateId;
+		this.plotVariateId = plotVariateId;
+		this.isCheckAdvanceLinesUnique = isCheckAdvanceLinesUnique;
+		this.selectedTrialInstances = selectedTrialInstances;
+		this.selectedReplications = selectedReplications;
+		this.advanceType = advanceType;
+	}
 
 	public Set<String> getSelectedTrialInstances() {
 		return this.selectedTrialInstances;
@@ -206,14 +227,6 @@ public class AdvancingStudy implements Serializable {
 	 */
 	public String getLineSelected() {
 		return this.lineSelected;
-	}
-
-	public String getPutBrackets() {
-		return this.putBrackets;
-	}
-
-	public void setPutBrackets(String putBrackets) {
-		this.putBrackets = putBrackets;
 	}
 
 	/**

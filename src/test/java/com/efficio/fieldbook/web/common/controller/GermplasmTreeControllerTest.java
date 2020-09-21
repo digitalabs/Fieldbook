@@ -173,6 +173,7 @@ public class GermplasmTreeControllerTest {
 		Assert.assertEquals("isSuccess Value should be 1", 1, result.get("isSuccess"));
 		Assert.assertEquals("Unique ID should be LIST IDENTIFIER", form.getListIdentifier(), result.get("uniqueId"));
 		Assert.assertEquals("List Name should be LIST 1", form.getListName(), result.get("listName"));
+		Assert.assertNotNull(result.get("isNamesChanged"));
 		Mockito.verify(this.germplasmStudySourceService).saveGermplasmStudySources(ArgumentMatchers.anyList());
 	}
 
@@ -187,7 +188,7 @@ public class GermplasmTreeControllerTest {
 
 
 	@Test
-	public void saveCrossesList() {
+	public void testSaveCrossesList() {
 		this.userSelection.getImportedCrossesList().setDate(DateUtil.getCurrentDate());
 		this.userSelection.getImportedCrossesList().setTitle("");
 		this.userSelection.getImportedCrossesList().setType(AppConstants.GERMPLASM_LIST_TYPE_GENERIC_LIST.getString());
@@ -222,6 +223,7 @@ public class GermplasmTreeControllerTest {
 		Assert.assertEquals("germplasmListId should be 1", 1, result.get("germplasmListId"));
 		Assert.assertEquals("Unique ID should be LIST IDENTIFIER", form.getListIdentifier(), result.get("uniqueId"));
 		Assert.assertEquals("List Name should be LIST 1", form.getListName(), result.get("listName"));
+		Assert.assertEquals("isNamesChanged should be 0", 0, result.get("isNamesChanged"));
 		Mockito.verify(this.crossingService).applyCrossSetting(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any());
 		Mockito.verify(this.germplasmStudySourceService).saveGermplasmStudySources(ArgumentMatchers.anyList());
 	}
@@ -376,7 +378,7 @@ public class GermplasmTreeControllerTest {
 	}
 
 	@Test
-	public void testPopulateGermplasmListDataFromAdvancedForTrialWithGeneratedDesign() {
+	public void testPopulateGermplasmListDataFromAdvancedForTrialWithGeneratedDesign() throws RuleException {
 		final List<Pair<Germplasm, GermplasmListData>> listDataItems = new ArrayList<>();
 		final List<Pair<Germplasm, List<Name>>> germplasmNames = new ArrayList<>();
 		final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes = new ArrayList<>();
@@ -453,10 +455,12 @@ public class GermplasmTreeControllerTest {
 					instanceAttribute.getAval());
 		}
 
+		Mockito.verify(this.namingConventionService).generateAdvanceListNames(Mockito.any(), Mockito.eq(false), Mockito.anyList());
+
 	}
 
 	@Test
-	public void testPopulateGermplasmListDataFromAdvancedForTrialWithImportedBasicDesign() {
+	public void testPopulateGermplasmListDataFromAdvancedForTrialWithImportedBasicDesign() throws RuleException {
 		final List<Pair<Germplasm, GermplasmListData>> listDataItems = new ArrayList<>();
 		final List<Pair<Germplasm, List<Name>>> germplasmNames = new ArrayList<>();
 		final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes = new ArrayList<>();
@@ -524,7 +528,7 @@ public class GermplasmTreeControllerTest {
 	}
 
 	@Test
-	public void testPopulateGermplasmListDataFromAdvancedNoHarvestLocationId() {
+	public void testPopulateGermplasmListDataFromAdvancedNoHarvestLocationId() throws RuleException {
 		final List<Pair<Germplasm, GermplasmListData>> listDataItems = new ArrayList<>();
 		final List<Pair<Germplasm, List<Name>>> germplasmNames = new ArrayList<>();
 		final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes = new ArrayList<>();
@@ -840,13 +844,17 @@ public class GermplasmTreeControllerTest {
 	private AdvancingStudyForm createAdvancingStudyForm(final boolean withReplicationNumber) {
 		final AdvancingStudyForm advancingStudyForm = new AdvancingStudyForm();
 		final List<ImportedGermplasm> importedGermplasmList = new ArrayList<>();
+		final List<AdvancingSource> advancingSourceList = new ArrayList<>();
 		for (int i = 1; i <= 3; i++) {
-			importedGermplasmList.add(this.createImportedGermplasm(i, withReplicationNumber));
+			final ImportedGermplasm importedGermplasm = this.createImportedGermplasm(i, withReplicationNumber);
+			importedGermplasmList.add(importedGermplasm);
+			advancingSourceList.add(new AdvancingSource(importedGermplasm));
 		}
 		advancingStudyForm.setHarvestYear("2015");
 		advancingStudyForm.setHarvestMonth("08");
 		advancingStudyForm.setHarvestLocationId("252");
 		advancingStudyForm.setGermplasmList(importedGermplasmList);
+		advancingStudyForm.setAdvancingSourceItems(advancingSourceList);
 		return advancingStudyForm;
 	}
 

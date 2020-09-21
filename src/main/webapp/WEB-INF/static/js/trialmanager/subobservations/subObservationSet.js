@@ -7,6 +7,8 @@
 	};
 	var startPlantingPreparationDeRegister = () => {
 	};
+	var changingPlotEntryDeRegister = () => {
+	};
 
 	var subObservationModule = angular.module('subObservation', ['visualization']);
 	var TRIAL_INSTANCE = 8170,
@@ -240,6 +242,47 @@
 						}
 					}).result.then(() => {
 						loadTable();
+					});
+				});
+			});
+
+			changingPlotEntryDeRegister();
+			changingPlotEntryDeRegister = $rootScope.$on('changePlotEntry', function (event) {
+				$scope.tableRenderedPromise.then(function () {
+					if (!$scope.validateSelection()) {
+						return;
+					}
+					var searchComposite = {
+						itemIds: $scope.selectedItems.length ? $scope.selectedItems : null,
+						searchRequest: $scope.selectedItems.length ? null : {
+							instanceId: $scope.nested.selectedEnvironment.instanceId,
+							draftMode: $scope.isPendingView,
+							filter: getFilter()
+						}
+					};
+
+					datasetService.getObservationUnitsMetadata(searchComposite, $scope.subObservationSet.dataset.datasetId).then(function (response) {
+						$uibModal.open({
+							templateUrl: '/Fieldbook/static/js/trialmanager/observations/change-plot-entry-modal.html',
+							windowClass: 'modal-very-huge',
+							controller: 'ChangePlotEntryModalCtrl',
+							resolve: {
+								searchComposite: function () {
+									return searchComposite;
+								},
+								datasetId: function () {
+									return $scope.subObservationSet.dataset.datasetId;
+								},
+								numberOfInstances: function () {
+									return response.instancesCount;
+								},
+								numberOfPlots: function () {
+									return response.observationUnitsCount;
+								},
+							}
+						}).result.then(() => {
+							loadTable();
+						});
 					});
 				});
 			});

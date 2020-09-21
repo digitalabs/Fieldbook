@@ -30,7 +30,6 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -161,7 +160,7 @@ public class ImportGermplasmListControllerTest {
 		Mockito.doReturn(this.createStudyDetails()).when(this.workbook).getStudyDetails();
 		Assert.assertFalse(this.importGermplasmListController.hasSavedGermplasm(false));
 
-		Mockito.doReturn(10L).when(this.studyGermplasmService).countStudyGermplasm(ImportGermplasmListControllerTest.STUDY_ID);
+		Mockito.doReturn(10L).when(this.studyGermplasmService).countStudyEntries(ImportGermplasmListControllerTest.STUDY_ID);
 		Assert.assertTrue(this.importGermplasmListController.hasSavedGermplasm(false));
 	}
 

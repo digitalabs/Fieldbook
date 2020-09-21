@@ -3,7 +3,7 @@ package com.efficio.fieldbook.web.common.service.impl;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.common.controller.ExportStudyGermplasmController;
+import com.efficio.fieldbook.web.common.controller.ExportStudyEntriesController;
 import com.efficio.fieldbook.web.common.service.ExportStudyGermplasmService;
 import com.efficio.fieldbook.web.study.germplasm.StudyGermplasmTransformer;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -312,7 +312,7 @@ public class ExportStudyGermplasmServiceImpl implements ExportStudyGermplasmServ
 				if (origList.getStatus() != null && origList.getStatus().intValue() != GermplasmListDAO.STATUS_DELETED.intValue()) {
 					list.setType(origList.getType());
 				} else {
-					list.setType(ExportStudyGermplasmController.GERPLASM_TYPE_LST);
+					list.setType(ExportStudyEntriesController.GERPLASM_TYPE_LST);
 				}
 			}
 		}

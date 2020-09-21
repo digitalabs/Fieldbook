@@ -776,7 +776,7 @@ public class ETLServiceImpl implements ETLService {
 
 		// set variables
 		wb.setFactors(this.getFactorsFromDatasets(trialDataset, datasetForImport));
-		wb.setVariates(this.getVariatesFromDatasets(trialDataset, datasetForImport));
+		wb.setVariates(this.getVariatesFromDatasets(trialDataset, datasetForImport, isMeansDataImport));
 		wb.setConditions(new ArrayList<MeasurementVariable>());
 		wb.setConstants(new ArrayList<MeasurementVariable>());
 	}
@@ -802,10 +802,14 @@ public class ETLServiceImpl implements ETLService {
 
 	private List<MeasurementVariable> getVariatesFromDatasets(
 		final DataSet trialDataset,
-		final DataSet nonTrialDataset) {
+		final DataSet nonTrialDataset,
+		final boolean isImportDataSet) {
 		final List<MeasurementVariable> variates = new ArrayList<>();
 		final List<DMSVariableType> variables = new ArrayList<>();
-		variables.addAll(trialDataset.getVariableTypes().getVariableTypes());
+		if (isImportDataSet) {
+			// Include means variable
+			variables.addAll(trialDataset.getVariableTypes().getVariableTypes());
+		}
 		variables.addAll(nonTrialDataset.getVariableTypes().getVariableTypes());
 		for (final DMSVariableType variableType : variables) {
 			final PhenotypicType pheno = variableType.getStandardVariable().getPhenotypicType();

@@ -1,0 +1,31 @@
+<div class="modal-body">
+	<div class="row form-group">
+		<div class="col-xs-10 col-md-11">
+			<h3 class="modal-title fbk-modal-title" id="heading-change-plot-entry-modal">Change plot entry</h3>
+		</div>
+		<div class="col-xs-1 col-md-1">
+			<button type="button" class="close pull-right glyphicon glyphicon-remove" data-dismiss="modal" ng-click="cancel()"/>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<label class="label-bold" style="padding-bottom: 15px;">{{numberOfPlots}} plots selected for {{numberOfInstances}} instances</label>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<table id="change-plot-entry-table"
+				   datatable=""
+				   dt-instance="nested.dtInstance"
+				   dt-options="dtOptions"
+				   dt-columns="dtColumns"
+				   dt-column-defs="dtColumnDefs"
+				   class="table table-curved table-condensed table-no-wrap" style="width: 100%">
+			</table>
+		</div>
+	</div>
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" ng-click="cancel()">Cancel</button>
+	<button type="button" class="btn btn-primary" aria-hidden="true" ng-click="confirm()" ng-disabled="!valid()">Confirm</button>
+</div>

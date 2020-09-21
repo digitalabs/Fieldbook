@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.commons.pojo.AdvancingSource;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 
 /**
@@ -143,6 +144,8 @@ public class AdvancingStudyForm {
     private Set<String> selectedReplications;
 
 	private String advanceType;
+
+	private List<AdvancingSource> advancingSourceItems;
 
     
 	public Set<String> getSelectedTrialInstances() {
@@ -894,6 +897,14 @@ public class AdvancingStudyForm {
 
 	public void setAdvanceType(String advanceType) {
 		this.advanceType = advanceType;
+	}
+
+	public List<AdvancingSource> getAdvancingSourceItems() {
+		return advancingSourceItems;
+	}
+
+	public void setAdvancingSourceItems(List<AdvancingSource> advancingSourceItems) {
+		this.advancingSourceItems = advancingSourceItems;
 	}
 
 	@Override

@@ -64,8 +64,13 @@
 								if (data.isTrimed === 1) {
 									showAlertMessage('page-save-list-message-modal', crossesWarningMessage, 10000);
 								}
+							} else if (data.isNamesChanged === 1) {
+									showAlertMessage('page-save-list-message-modal', namesChangedWarningMessage, 10000);
 							}
 							showSuccessfulMessage('', saveListSuccessfullyMessage);
+
+
+
 
 							// Notify the application that germplasm has been saved. This will display the 'Crosses and Selections'
 							// tab if germplasm is already created within the study.

@@ -12,21 +12,16 @@
 package com.efficio.fieldbook.service;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.util.FieldbookUtil;
-import com.efficio.fieldbook.web.common.bean.AdvanceResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.naming.service.NamingConventionService;
-import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
 import com.efficio.fieldbook.web.trial.bean.PossibleValuesCache;
 import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.constant.AppConstants;
-import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.service.FileService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
@@ -59,16 +54,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 
 /**
  * The Class FieldbookServiceImpl.
@@ -94,9 +80,6 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	@Resource
 	private PossibleValuesCache possibleValuesCache;
-
-	@Resource
-	private NamingConventionService namingConventionService;
 
 	@Resource
 	private ContextUtil contextUtil;
@@ -145,19 +128,6 @@ public class FieldbookServiceImpl implements FieldbookService {
 	 */
 	public FileService getFileService() {
 		return this.fileService;
-	}
-
-	/**
-	 * Advance Study
-	 *
-	 * @throws RuleException
-	 * @throws FieldbookException
-	 */
-	@Override
-	public AdvanceResult advanceStudy(final AdvancingStudy advanceInfo, final Workbook workbook)
-		throws RuleException, FieldbookException {
-
-		return this.namingConventionService.advanceStudy(advanceInfo, workbook);
 	}
 
 	@Override

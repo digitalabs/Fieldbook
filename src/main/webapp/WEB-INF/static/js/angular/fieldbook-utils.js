@@ -436,7 +436,7 @@
 
 						// lets fix current val if its an object so that it only contains the id
 						if($scope.isBreedingMethod){
-							if (typeof currentVal !== 'undefined' && currentVal !== null && typeof currentVal.key !== 'undefined' && currentVal.key) {
+							if (currentVal && currentVal.key) {
 								currentVal = currentVal.key;
 							}
 						}else{

@@ -6,6 +6,8 @@ import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.interfaces.GermplasmExportSource;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.generationcp.middleware.service.api.study.StudyEntryDto;
+import org.generationcp.middleware.service.api.study.StudyEntryPropertyData;
 import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -164,19 +166,21 @@ public class StudyGermplasmTransformer {
 		return germplasmExportSourceList;
 	}
 
-	public List<StudyGermplasmDto> transformToStudyGermplasmDto( final List<ImportedGermplasm> importedGermplasmList) {
+	public List<StudyEntryDto> transformToStudyGermplasmDto(final List<ImportedGermplasm> importedGermplasmList) {
 
-		final List<StudyGermplasmDto> list = new ArrayList<>();
+		final List<StudyEntryDto> list = new ArrayList<>();
 		for (final ImportedGermplasm importedGermplasm : importedGermplasmList) {
-			final StudyGermplasmDto dto = new StudyGermplasmDto();
+			final StudyEntryDto dto = new StudyEntryDto();
 			dto.setDesignation(importedGermplasm.getDesig());
-			dto.setGermplasmId(Integer.valueOf(importedGermplasm.getGid()));
+			dto.setGid(Integer.valueOf(importedGermplasm.getGid()));
 			dto.setEntryCode(importedGermplasm.getEntryCode());
 			dto.setEntryNumber(importedGermplasm.getEntryNumber());
-			dto.setEntryType(String.valueOf(importedGermplasm.getEntryTypeCategoricalID()));
-			dto.setSeedSource(importedGermplasm.getSource());
-			dto.setCross(importedGermplasm.getCross());
-			dto.setGroupId(importedGermplasm.getGroupId());
+			dto.getVariables().put("ENTRY_TYPE",
+				new StudyEntryPropertyData(null, TermId.ENTRY_TYPE.getId(), String.valueOf(importedGermplasm.getEntryTypeCategoricalID())));
+			dto.getVariables().put("SEED_SOURCE",
+				new StudyEntryPropertyData(null, TermId.SEED_SOURCE.getId(), importedGermplasm.getSource()));
+			dto.getVariables().put("GROUPGID",
+				new StudyEntryPropertyData(null, TermId.GROUPGID.getId(), String.valueOf(importedGermplasm.getGroupId())));
 			list.add(dto);
 		}
 		return list;

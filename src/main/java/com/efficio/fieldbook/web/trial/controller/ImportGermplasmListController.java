@@ -41,6 +41,7 @@ import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.generationcp.middleware.service.api.study.StudyEntryDto;
 import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
 import org.generationcp.middleware.service.api.study.StudyGermplasmService;
 import org.generationcp.middleware.util.FieldbookListUtil;
@@ -282,10 +283,10 @@ public class ImportGermplasmListController extends SettingsController {
 
 		if (importedGermplasmList != null && !Collections.isEmpty(importedGermplasmList.getImportedGermplasms())) {
 			final List<ImportedGermplasm> importedGermplasm = importedGermplasmList.getImportedGermplasms();
-			final List<StudyGermplasmDto> studyGermplasmDtoList = this.studyGermplasmTransformer.transformToStudyGermplasmDto(importedGermplasm);
+			final List<StudyEntryDto> studyEntryDtoList = this.studyGermplasmTransformer.transformToStudyGermplasmDto(importedGermplasm);
 			// Delete the existing stocks so that we can replace it with the current list.
 			this.studyGermplasmService.deleteStudyEntries(studyId);
-			this.studyGermplasmService.saveStudyEntries(studyId, studyGermplasmDtoList);
+			this.studyGermplasmService.saveStudyEntries(studyId, studyEntryDtoList);
 		} else {
 			// we delete the record in the db
 			this.studyGermplasmService.deleteStudyEntries(studyId);

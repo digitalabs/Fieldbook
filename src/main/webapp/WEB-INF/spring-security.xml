@@ -15,7 +15,7 @@
 
 		<!--MANAGE_STUDIES-->
 		<intercept-url pattern="/TrialManager/**" access="hasAnyAuthority('ROLE_ADMIN',
-		 	'ROLE_BREEDING_ACTIVITIES',
+		 	'ROLE_STUDIES',
 		 	'ROLE_MANAGE_STUDIES',
 		 	'ROLE_MS_MANAGE_OBSERVATION_UNITS',
 		 	'ROLE_MS_WITHDRAW_INVENTORY',
@@ -24,7 +24,7 @@
 		 	'ROLE_MS_CREATE_CONFIRMED_WITHDRAWALS'
 		)"/>
 		<!--IMPORT_DATASETS-->
-		<intercept-url pattern="/etl" access="hasAnyAuthority('ROLE_ADMIN', 'ROLE_INFORMATION_MANAGEMENT', 'ROLE_IMPORT_DATASETS')"/>
+		<intercept-url pattern="/etl" access="hasAnyAuthority('ROLE_ADMIN', 'ROLE_STUDIES', 'ROLE_IMPORT_DATASETS')"/>
 
 		<intercept-url pattern="/**" access="isAuthenticated()" />
 		<custom-filter position="PRE_AUTH_FILTER" ref="bmsPreAuthenticationFilter" />

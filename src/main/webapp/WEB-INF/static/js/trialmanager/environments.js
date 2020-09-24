@@ -5,9 +5,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', '$q', 'TrialManagerDataService', '$uibModal', '$stateParams',
 		'$http', 'DTOptionsBuilder', 'LOCATION_ID', 'UNSPECIFIED_LOCATION_ID', '$timeout', 'studyInstanceService', 'studyStateService', 'derivedVariableService', 'studyContext',
-		'datasetService', '$compile',
+		'datasetService', '$compile', '$rootScope',
 		function ($scope, $q, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, UNSPECIFIED_LOCATION_ID, $timeout, studyInstanceService,
-				  studyStateService, derivedVariableService, studyContext, datasetService, $compile) {
+				  studyStateService, derivedVariableService, studyContext, datasetService, $compile, $rootScope) {
 
 			var ctrl = this;
 			var tableId = '#environment-table';
@@ -447,6 +447,19 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				$scope.instanceInfo.numberOfInstances -= 1;
 
 				TrialManagerDataService.deleteInstance(index + 1);
+				updateExpermentalDesign();
+			}
+
+			function updateExpermentalDesign() {
+				studyInstanceService.getStudyInstances().then(function(instances) {
+					angular.forEach(instances, function (instance){
+						if (instance.hasExperimentalDesign) {
+							return;
+						}
+						studyStateService.updateGeneratedDesign(instance.hasExperimentalDesign);
+						TrialManagerDataService.currentData.experimentalDesign.designType = '';
+					});
+				});
 			}
 
 			function addCellClickHandler() {

@@ -42,9 +42,12 @@ public class StudyGermplasmTransformer {
 			for (final StudyGermplasmDto studyGermplasmDto : studyGermplasmDtoList) {
 				final ImportedGermplasm importedGermplasm = new ImportedGermplasm();
 				importedGermplasm.setId(studyGermplasmDto.getEntryId());
-				importedGermplasm.setEntryTypeName(checkTypesDescriptionMap.getOrDefault(studyGermplasmDto.getCheckType(), ""));
-				importedGermplasm.setEntryTypeValue(studyGermplasmDto.getCheckType().toString());
-				importedGermplasm.setEntryTypeCategoricalID(studyGermplasmDto.getCheckType());
+				final Integer entryType = studyGermplasmDto.getCheckType();
+				if (entryType != null) {
+					importedGermplasm.setEntryTypeName(checkTypesDescriptionMap.getOrDefault(entryType, ""));
+					importedGermplasm.setEntryTypeValue(entryType.toString());
+					importedGermplasm.setEntryTypeCategoricalID(entryType);
+				}
 				importedGermplasm.setCross(studyGermplasmDto.getCross());
 				importedGermplasm.setDesig(studyGermplasmDto.getDesignation());
 				importedGermplasm.setEntryCode(studyGermplasmDto.getEntryCode());

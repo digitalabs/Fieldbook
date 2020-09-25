@@ -400,7 +400,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return possibleValuesFavorite;
 	}
 
-	private List<ValueReference> getFavoriteBreedingMethods(
+	public List<ValueReference> getFavoriteBreedingMethods(
 		final List<Integer> methodIDList,
 		final Boolean isFilterOutGenerative) {
 		final List<Method> methods = this.fieldbookMiddlewareService.getFavoriteMethods(
@@ -414,8 +414,10 @@ public class FieldbookServiceImpl implements FieldbookService {
 		if (methods != null && !methods.isEmpty()) {
 			for (final Method method : methods) {
 				if (method != null) {
-					list.add(new ValueReference(method.getMid(), method.getMdesc(),
-						method.getMname() + " - " + method.getMcode()));
+					final ValueReference valueReference = new ValueReference(method.getMid(), method.getMdesc(),
+						method.getMname() + " - " + method.getMcode());
+					valueReference.setKey(method.getMcode());
+					list.add(valueReference);
 				}
 			}
 		}
@@ -429,8 +431,10 @@ public class FieldbookServiceImpl implements FieldbookService {
 		if (methods != null && !methods.isEmpty()) {
 			for (final Method method : methods) {
 				if (method != null && (method.getUniqueID() == null || method.getUniqueID().equals(programUUID))) {
-					list.add(new ValueReference(method.getMid(), method.getMdesc(),
-						method.getMname() + " - " + method.getMcode()));
+					final ValueReference valueReference = new ValueReference(method.getMid(), method.getMdesc(),
+						method.getMname() + " - " + method.getMcode());
+					valueReference.setKey(method.getMcode());
+					list.add(valueReference);
 				}
 			}
 		}
@@ -632,6 +636,26 @@ public class FieldbookServiceImpl implements FieldbookService {
 	}
 
 	@Override
+	public Map<String, List<String>> getIdCodeNamePairForRetrieveAndSave() {
+		final String idCodeNamePairs = AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString();
+		final StringTokenizer tokenizer = new StringTokenizer(idCodeNamePairs, ",");
+		final Map<String, List<String>> idCodeNameMap = new HashMap<>();
+		if (tokenizer.hasMoreTokens()) {
+			final String pair = tokenizer.nextToken();
+			final StringTokenizer tokenizerPair = new StringTokenizer(pair, "|");
+			final String idTermId = tokenizerPair.nextToken();
+			final String codeTermId = tokenizerPair.nextToken();
+			final String nameTermId = tokenizerPair.nextToken();
+			List<String> list = new ArrayList<>();
+			list.add(codeTermId);
+			list.add(nameTermId);
+			idCodeNameMap.put(idTermId, list);
+		}
+
+		return idCodeNameMap;
+	}
+
+	@Override
 	public MeasurementVariable createMeasurementVariable(
 		final String idToCreate, final String value,
 		final Operation operation, final PhenotypicType role) {
@@ -710,8 +734,8 @@ public class FieldbookServiceImpl implements FieldbookService {
 								Double.valueOf(studyConditionMap.get(idTermId).getValue()).intValue());
 						} else {
 							method = studyConditionMap.get(codeTermId).getValue().isEmpty() ? null
-								: this.fieldbookMiddlewareService.getMethodById(
-								Integer.parseInt(studyConditionMap.get(codeTermId).getValue()));
+								: this.fieldbookMiddlewareService.getMethodByCode(
+									studyConditionMap.get(codeTermId).getValue(), this.contextUtil.getCurrentProgramUUID());
 						}
 
 						// add name variable if it is not yet in the list

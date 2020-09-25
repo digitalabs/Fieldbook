@@ -164,6 +164,13 @@ public interface FieldbookService {
 	Map<String, String> getIdNamePairForRetrieveAndSave();
 
 	/**
+	 * Gets the id code name pair for retrieve and save.
+	 *
+	 * @return the id code name pair for retrieve and save
+	 */
+	Map<String, List<String>> getIdCodeNamePairForRetrieveAndSave();
+
+	/**
 	 * Gets the variable possible values.
 	 *
 	 * @param var the var

@@ -148,7 +148,7 @@
 						title: columnData.alias,
 						name: columnData.alias,
 						data: function (row) {
-							return row.variables[columnData.name];
+							return row.variables[columnData.termId];
 						},
 						defaultContent: '',
 						className: 'factors dt-head-nowrap',

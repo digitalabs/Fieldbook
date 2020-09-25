@@ -113,7 +113,7 @@ public class StudyGermplasmTransformer {
 
 					@Override
 					public String getGroupName() {
-						return studyGermplasmDto.getCross().toString();
+						return studyGermplasmDto.getCross();
 					}
 
 					@Override
@@ -178,11 +178,11 @@ public class StudyGermplasmTransformer {
 			dto.setGid(Integer.valueOf(importedGermplasm.getGid()));
 			dto.setEntryCode(importedGermplasm.getEntryCode());
 			dto.setEntryNumber(importedGermplasm.getEntryNumber());
-			dto.getVariables().put("ENTRY_TYPE",
+			dto.getVariables().put(TermId.ENTRY_TYPE.getId(),
 				new StudyEntryPropertyData(null, TermId.ENTRY_TYPE.getId(), String.valueOf(importedGermplasm.getEntryTypeCategoricalID())));
-			dto.getVariables().put("SEED_SOURCE",
+			dto.getVariables().put(TermId.SEED_SOURCE.getId(),
 				new StudyEntryPropertyData(null, TermId.SEED_SOURCE.getId(), importedGermplasm.getSource()));
-			dto.getVariables().put("GROUPGID",
+			dto.getVariables().put(TermId.GROUPGID.getId(),
 				new StudyEntryPropertyData(null, TermId.GROUPGID.getId(), String.valueOf(importedGermplasm.getGroupId())));
 			list.add(dto);
 		}

@@ -442,12 +442,14 @@ function createHeader(hasFieldMap) {
 
 	if (!hasFieldMap) {
 		newRow = newRow + '<th style="width:35%">' + studyName + '</th>' +
+			'<th style="width:15%">' + locationLabel+ '</th>' +
 			'<th style="width:15%">' + entryLabel + '</th>' +
 			'<th style="width:10%">' + repLabel + '</th>' +
 			'<th style="width:20%">' + plotLabel + '</th>';
 		newRow = newRow + '<th style="width:15%">' + fieldmapLabel + '</th>';
 	} else {
 		newRow = newRow + '<th style="width:40%"></th>' +
+			'<th style="width:15%">' + locationLabel+ '</th>' +
 			'<th style="width:20%">' + entryLabel + '</th>' +
 			'<th style="width:20%">' + repLabel + '</th>' +
 			'<th style="width:20%">' + plotLabel + '</th>';
@@ -473,7 +475,7 @@ function createRow(id, parentClass, value, realId, withFieldMap, hasOneInstance)
 	if (id.indexOf('study') > -1 || id.indexOf('dataset') > -1) {
 		// Study and dataset level
 		newRow = '<tr id="' + realId + '" class="tr-expander ' + genClassName + id + ' ' + genParentClassName + '">';
-		newCell = newCell + '<td>' + value + '</td><td></td><td></td><td></td>';
+		newCell = newCell + '<td>' + value + '</td><td></td><td></td><td></td><td></td>';
 
 		if (!withFieldMap) {
 			newCell = newCell + '<td></td>';
@@ -483,7 +485,7 @@ function createRow(id, parentClass, value, realId, withFieldMap, hasOneInstance)
 		if (withFieldMap) {
 			// For view fieldmap
 			newRow = '<tr id="' + realId + '" class="data-row trialInstance ' + genClassName + id + ' ' + genParentClassName + '">';
-			newCell = '<td>' + value.trialInstanceNo + '</td><td>' + value.entryCount + '</td>';
+			newCell = '<td>' + value.trialInstanceNo + '</td><td>' + value.locationName + '</td><td>' + value.entryCount + '</td>';
 			newCell = newCell + '<td>' + value.repCount + '</td><td>' + value.plotCount + '</td>';
 		} else {
 			// For create new fieldmap
@@ -493,7 +495,7 @@ function createRow(id, parentClass, value, realId, withFieldMap, hasOneInstance)
 
 			newRow = '<tr class="data-row trialInstance ' + genClassName + id + ' ' + genParentClassName + '">';
 			checkBox = '<input ' + disabledString + ' class="checkInstance" type="checkbox" id="' + realId + '" ' + checked + ' /> &nbsp;&nbsp;';
-			newCell = '<td>' + checkBox + '&nbsp;' + value.trialInstanceNo + '</td><td>' + value.entryCount + '</td>';
+			newCell = '<td>' + checkBox + '&nbsp;' + value.trialInstanceNo + '</td><td>' + value.locationName + '</td><td>' + value.entryCount + '</td>';
 			newCell = newCell + '<td>' + value.repCount + '</td><td>' + value.plotCount + '</td>';
 			newCell = newCell + '<td class="hasFieldMap">' + hasFieldMap + '</td>';
 		}

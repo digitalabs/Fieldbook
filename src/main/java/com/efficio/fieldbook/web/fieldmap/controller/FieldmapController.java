@@ -172,7 +172,6 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 		String size = "0";
 		String datasetId = null;
 		String environmentId = null;
-		String locationName = null;
 		final String fieldMapInfoJson;
 		for (final FieldMapInfo fieldMapInfo : fieldMapInfoList) {
 			// for viewing of fieldmaps
@@ -184,7 +183,6 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 					if (trials.size() == 1) {
 						datasetId = datasetList.get(0).getDatasetId().toString();
 						environmentId = trials.get(0).getInstanceId().toString();
-						locationName = trials.get(0).getLocationName();
 					}
 				}
 			}
@@ -199,10 +197,6 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 		}
 		if (environmentId != null) {
 			result.put("environmentId", environmentId);
-		}
-
-		if (locationName != null) {
-			result.put("locationName", locationName);
 		}
 		return result;
 	}

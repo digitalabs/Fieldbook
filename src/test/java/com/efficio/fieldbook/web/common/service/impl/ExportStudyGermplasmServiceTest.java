@@ -27,7 +27,8 @@ import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataMana
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
-import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
+import org.generationcp.middleware.service.api.study.StudyEntryDto;
+import org.generationcp.middleware.service.api.study.StudyEntryPropertyData;
 import org.generationcp.middleware.service.api.study.StudyGermplasmService;
 import org.junit.After;
 import org.junit.Assert;
@@ -53,7 +54,6 @@ public class ExportStudyGermplasmServiceTest {
 	private static final String ENTRY_CODE_VALUE = "9742";
 	private static final String ENTRY_NO_VALUE = "1";
 	private static final String GID_VALUE = "12345";
-	private static final String CHECK_VALUE = "1";
 	private static final String NUMERIC_VARIABLE = "NUMERIC VARIABLE";
 	private static final String TEST_METHOD = "TEST METHOD";
 	private static final String TEST_SCALE = "TEST SCALE";
@@ -156,7 +156,7 @@ public class ExportStudyGermplasmServiceTest {
 		Mockito.doReturn(this.getPlotLevelList()).when(this.userSelection).getPlotsLevelList();
 		Mockito.doReturn(this.getGermplasmList()).when(this.fieldbookMiddlewareService)
 			.getGermplasmListById(ExportStudyGermplasmServiceTest.LIST_ID);
-		Mockito.doReturn(this.createStudyGermplasmDto()).when(this.studyGermplasmService)
+		Mockito.doReturn(this.createStudyEntry()).when(this.studyGermplasmService)
 			.getStudyEntries(1);
 		Mockito.doReturn(ExportStudyGermplasmServiceTest.CURRENT_USER_NAME).when(this.fieldbookMiddlewareService)
 			.getOwnerListName(ExportStudyGermplasmServiceTest.CURRENT_USER_ID);
@@ -453,18 +453,15 @@ public class ExportStudyGermplasmServiceTest {
 		return germplasmList;
 	}
 
-	private List<StudyGermplasmDto> createStudyGermplasmDto() {
-		final List<StudyGermplasmDto> studyGermplasmDtoList = new ArrayList<>();
-		final StudyGermplasmDto studyGermplasmDto = new StudyGermplasmDto();
-		studyGermplasmDto.setGermplasmId(Integer.valueOf(ExportStudyGermplasmServiceTest.GID_VALUE));
-		studyGermplasmDto.setEntryCode(ExportStudyGermplasmServiceTest.ENTRY_CODE_VALUE);
-		studyGermplasmDto.setEntryId(Integer.valueOf(ExportStudyGermplasmServiceTest.ENTRY_NO_VALUE));
-		studyGermplasmDto.setSeedSource(ExportStudyGermplasmServiceTest.SOURCE_VALUE);
-		studyGermplasmDto.setDesignation(ExportStudyGermplasmServiceTest.DESIG_VALUE);
-		studyGermplasmDto.setEntryNumber(Integer.valueOf(ENTRY_NO_VALUE));
-		studyGermplasmDto.setCross(CROSS_VALUE);
-		studyGermplasmDtoList.add(studyGermplasmDto);
-		return studyGermplasmDtoList;
+	private List<StudyEntryDto> createStudyEntry() {
+		final List<StudyEntryDto> studyEntries = new ArrayList<>();
+		final StudyEntryDto studyEntry = new StudyEntryDto(Integer.valueOf(ExportStudyGermplasmServiceTest.ENTRY_NO_VALUE),
+				Integer.valueOf(ExportStudyGermplasmServiceTest.ENTRY_NO_VALUE), ExportStudyGermplasmServiceTest.ENTRY_CODE_VALUE,
+				Integer.valueOf(ExportStudyGermplasmServiceTest.GID_VALUE), ExportStudyGermplasmServiceTest.DESIGNATION);
+		studyEntry.getVariables().put(TermId.SEED_SOURCE.getId(), new StudyEntryPropertyData(ExportStudyGermplasmServiceTest.SOURCE_VALUE));
+		studyEntry.getVariables().put(TermId.CROSS.getId(), new StudyEntryPropertyData(ExportStudyGermplasmServiceTest.CROSS_VALUE));
+		studyEntries.add(studyEntry);
+		return studyEntries;
 	}
 
 	private List<ImportedGermplasm> setUpImportedGermplasm() {

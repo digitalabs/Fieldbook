@@ -42,7 +42,7 @@ import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.service.api.study.StudyEntryDto;
-import org.generationcp.middleware.service.api.study.StudyGermplasmService;
+import org.generationcp.middleware.service.api.study.StudyEntryService;
 import org.generationcp.middleware.util.FieldbookListUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -141,7 +141,7 @@ public class ImportGermplasmListController extends SettingsController {
 	private InventoryDataManager inventoryDataManager;
 
 	@Resource
-	private StudyGermplasmService studyGermplasmService;
+	private StudyEntryService studyEntryService;
 
 	@Resource
 	private StudyGermplasmTransformer studyGermplasmTransformer;
@@ -274,11 +274,11 @@ public class ImportGermplasmListController extends SettingsController {
 			final List<ImportedGermplasm> importedGermplasm = importedGermplasmList.getImportedGermplasms();
 			final List<StudyEntryDto> studyEntryDtoList = this.studyGermplasmTransformer.transformToStudyEntryDto(importedGermplasm);
 			// Delete the existing stocks so that we can replace it with the current list.
-			this.studyGermplasmService.deleteStudyEntries(studyId);
-			this.studyGermplasmService.saveStudyEntries(studyId, studyEntryDtoList);
+			this.studyEntryService.deleteStudyEntries(studyId);
+			this.studyEntryService.saveStudyEntries(studyId, studyEntryDtoList);
 		} else {
 			// we delete the record in the db
-			this.studyGermplasmService.deleteStudyEntries(studyId);
+			this.studyEntryService.deleteStudyEntries(studyId);
 		}
 
 	}
@@ -334,7 +334,7 @@ public class ImportGermplasmListController extends SettingsController {
 			final Integer studyIdFromWorkbook = this.userSelection.getWorkbook().getStudyDetails().getId();
 			final int studyId = studyIdFromWorkbook == null ? ImportGermplasmListController.NO_ID : studyIdFromWorkbook;
 
-			final List<StudyEntryDto> studyEntries = this.studyGermplasmService.getStudyEntries(studyIdFromWorkbook);
+			final List<StudyEntryDto> studyEntries = this.studyEntryService.getStudyEntries(studyIdFromWorkbook);
 
 			List<ImportedGermplasm> importedGermplasmList = new ArrayList<>();
 			if (!studyEntries.isEmpty()) {
@@ -537,7 +537,7 @@ public class ImportGermplasmListController extends SettingsController {
 		if (!isNewList) {
 			final Integer studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
 			if (studyId != null) {
-				return this.studyGermplasmService.countStudyEntries(studyId) > 0;
+				return this.studyEntryService.countStudyEntries(studyId) > 0;
 			}
 		}
 

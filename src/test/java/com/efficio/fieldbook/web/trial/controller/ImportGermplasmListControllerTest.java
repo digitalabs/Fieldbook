@@ -47,7 +47,7 @@ import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.service.api.study.StudyEntryDto;
 import org.generationcp.middleware.service.api.study.StudyEntryPropertyData;
-import org.generationcp.middleware.service.api.study.StudyGermplasmService;
+import org.generationcp.middleware.service.api.study.StudyEntryService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -109,7 +109,7 @@ public class ImportGermplasmListControllerTest {
 	private StudyGermplasmTransformer studyGermplasmTransformer;
 
 	@Mock
-	private StudyGermplasmService studyGermplasmService;
+	private StudyEntryService studyEntryService;
 
 	private UserSelection userSelection;
 
@@ -161,7 +161,7 @@ public class ImportGermplasmListControllerTest {
 		Mockito.doReturn(this.createStudyDetails()).when(this.workbook).getStudyDetails();
 		Assert.assertFalse(this.importGermplasmListController.hasSavedGermplasm(false));
 
-		Mockito.doReturn(10L).when(this.studyGermplasmService).countStudyEntries(ImportGermplasmListControllerTest.STUDY_ID);
+		Mockito.doReturn(10L).when(this.studyEntryService).countStudyEntries(ImportGermplasmListControllerTest.STUDY_ID);
 		Assert.assertTrue(this.importGermplasmListController.hasSavedGermplasm(false));
 	}
 
@@ -294,7 +294,7 @@ public class ImportGermplasmListControllerTest {
 
 		final List<StudyEntryDto> studyEntries = this.createStudyEntries();
 		final List<ImportedGermplasm> importedGermplasmList = this.createImportedGermplasmList();
-		Mockito.doReturn(studyEntries).when(this.studyGermplasmService)
+		Mockito.doReturn(studyEntries).when(this.studyEntryService)
 			.getStudyEntries(STUDY_ID);
 		Mockito.when(this.studyGermplasmTransformer.tranformToImportedGermplasm(studyEntries)).thenReturn(importedGermplasmList);
 
@@ -393,7 +393,7 @@ public class ImportGermplasmListControllerTest {
 
 		final List<StudyEntryDto> studyEntries = this.createStudyEntries();
 		final List<ImportedGermplasm> importedGermplasmList = this.createImportedGermplasmList();
-		Mockito.doReturn(studyEntries).when(this.studyGermplasmService)
+		Mockito.doReturn(studyEntries).when(this.studyEntryService)
 			.getStudyEntries(STUDY_ID);
 		Mockito.when(this.studyGermplasmTransformer.tranformToImportedGermplasm(studyEntries)).thenReturn(importedGermplasmList);
 

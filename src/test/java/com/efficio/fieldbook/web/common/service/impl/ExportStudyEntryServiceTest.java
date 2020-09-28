@@ -29,7 +29,7 @@ import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.service.api.study.StudyEntryDto;
 import org.generationcp.middleware.service.api.study.StudyEntryPropertyData;
-import org.generationcp.middleware.service.api.study.StudyGermplasmService;
+import org.generationcp.middleware.service.api.study.StudyEntryService;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -41,7 +41,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 
-public class ExportStudyGermplasmServiceTest {
+public class ExportStudyEntryServiceTest {
 
 	private static final long LIST_DATE = 20141112L;
 	private static final String SAMPLE_NOTES = "Sample Notes";
@@ -109,7 +109,7 @@ public class ExportStudyGermplasmServiceTest {
 	private ImportedGermplasmList importedGermplasmList;
 
 	@Mock
-	private StudyGermplasmService studyGermplasmService;
+	private StudyEntryService studyEntryService;
 
 	@Mock
 	GermplasmList germplasmList;
@@ -128,26 +128,26 @@ public class ExportStudyGermplasmServiceTest {
 
 		this.testFileName = "test.csv";
 
-		Mockito.doReturn(ExportStudyGermplasmServiceTest.CURRENT_USER_ID).when(this.contextUtil).getCurrentWorkbenchUserId();
+		Mockito.doReturn(ExportStudyEntryServiceTest.CURRENT_USER_ID).when(this.contextUtil).getCurrentWorkbenchUserId();
 
 		Mockito.when(this.ontologyService.getStandardVariable(TermId.ENTRY_NO.getId(), this.contextUtil.getCurrentProgramUUID()))
-			.thenReturn(this.createStandardVariable(TermId.ENTRY_NO.getId(), ExportStudyGermplasmServiceTest.ENTRY_NO));
+			.thenReturn(this.createStandardVariable(TermId.ENTRY_NO.getId(), ExportStudyEntryServiceTest.ENTRY_NO));
 		Mockito.when(this.ontologyService.getStandardVariable(TermId.DESIG.getId(), this.contextUtil.getCurrentProgramUUID()))
-			.thenReturn(this.createStandardVariable(TermId.DESIG.getId(), ExportStudyGermplasmServiceTest.DESIGNATION));
+			.thenReturn(this.createStandardVariable(TermId.DESIG.getId(), ExportStudyEntryServiceTest.DESIGNATION));
 		Mockito.when(this.ontologyService.getStandardVariable(TermId.GID.getId(), this.contextUtil.getCurrentProgramUUID()))
-			.thenReturn(this.createStandardVariable(TermId.GID.getId(), ExportStudyGermplasmServiceTest.GID));
+			.thenReturn(this.createStandardVariable(TermId.GID.getId(), ExportStudyEntryServiceTest.GID));
 		Mockito.when(this.ontologyService.getStandardVariable(TermId.CROSS.getId(), this.contextUtil.getCurrentProgramUUID()))
-			.thenReturn(this.createStandardVariable(TermId.CROSS.getId(), ExportStudyGermplasmServiceTest.PARENTAGE));
+			.thenReturn(this.createStandardVariable(TermId.CROSS.getId(), ExportStudyEntryServiceTest.PARENTAGE));
 		Mockito.when(this.ontologyService.getStandardVariable(TermId.SEED_SOURCE.getId(), this.contextUtil.getCurrentProgramUUID()))
-			.thenReturn(this.createStandardVariable(TermId.SEED_SOURCE.getId(), ExportStudyGermplasmServiceTest.SEED_SOURCE));
+			.thenReturn(this.createStandardVariable(TermId.SEED_SOURCE.getId(), ExportStudyEntryServiceTest.SEED_SOURCE));
 		Mockito.when(this.ontologyService.getStandardVariable(TermId.ENTRY_CODE.getId(), this.contextUtil.getCurrentProgramUUID()))
-			.thenReturn(this.createStandardVariable(TermId.ENTRY_CODE.getId(), ExportStudyGermplasmServiceTest.ENTRY_CODE));
+			.thenReturn(this.createStandardVariable(TermId.ENTRY_CODE.getId(), ExportStudyEntryServiceTest.ENTRY_CODE));
 		Mockito.when(
 			this.ontologyService.getStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(), this.contextUtil.getCurrentProgramUUID()))
 			.thenReturn(this.createStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(),
-				ExportStudyGermplasmServiceTest.ENTRY_NUMBER_STORAGE));
+				ExportStudyEntryServiceTest.ENTRY_NUMBER_STORAGE));
 		Mockito.when(this.ontologyService.getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID()))
-			.thenReturn(this.createStandardVariable(TermId.CHECK.getId(), ExportStudyGermplasmServiceTest.CHECK));
+			.thenReturn(this.createStandardVariable(TermId.CHECK.getId(), ExportStudyEntryServiceTest.CHECK));
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(this.workbook);
 		Mockito.when(this.workbook.getStudyDetails()).thenReturn(this.studyDetails);
 		Mockito.when(this.userSelection.getImportedGermplasmMainInfo()).thenReturn(this.importedGermplasmMainInfo);
@@ -155,11 +155,11 @@ public class ExportStudyGermplasmServiceTest {
 		Mockito.when(this.importedGermplasmList.getImportedGermplasms()).thenReturn(importedGermplasms);
 		Mockito.doReturn(this.getPlotLevelList()).when(this.userSelection).getPlotsLevelList();
 		Mockito.doReturn(this.getGermplasmList()).when(this.fieldbookMiddlewareService)
-			.getGermplasmListById(ExportStudyGermplasmServiceTest.LIST_ID);
-		Mockito.doReturn(this.createStudyEntry()).when(this.studyGermplasmService)
+			.getGermplasmListById(ExportStudyEntryServiceTest.LIST_ID);
+		Mockito.doReturn(this.createStudyEntry()).when(this.studyEntryService)
 			.getStudyEntries(1);
-		Mockito.doReturn(ExportStudyGermplasmServiceTest.CURRENT_USER_NAME).when(this.fieldbookMiddlewareService)
-			.getOwnerListName(ExportStudyGermplasmServiceTest.CURRENT_USER_ID);
+		Mockito.doReturn(ExportStudyEntryServiceTest.CURRENT_USER_NAME).when(this.fieldbookMiddlewareService)
+			.getOwnerListName(ExportStudyEntryServiceTest.CURRENT_USER_ID);
 		Mockito.doReturn("1010").when(this.fieldbookMiddlewareService).getOwnerListName(ArgumentMatchers.anyInt());
 
 		final StandardVariable checkStandardVariable = new StandardVariable();
@@ -226,12 +226,12 @@ public class ExportStudyGermplasmServiceTest {
 		Assert.assertTrue(exportColumnHeaders.get(4).isDisplay());
 		Assert.assertTrue(exportColumnHeaders.get(5).isDisplay());
 
-		Assert.assertEquals(ExportStudyGermplasmServiceTest.GID, exportColumnHeaders.get(0).getName());
-		Assert.assertEquals(ExportStudyGermplasmServiceTest.PARENTAGE, exportColumnHeaders.get(1).getName());
-		Assert.assertEquals(ExportStudyGermplasmServiceTest.ENTRY_NO, exportColumnHeaders.get(2).getName());
-		Assert.assertEquals(ExportStudyGermplasmServiceTest.DESIGNATION, exportColumnHeaders.get(3).getName());
-		Assert.assertEquals(ExportStudyGermplasmServiceTest.SEED_SOURCE, exportColumnHeaders.get(4).getName());
-		Assert.assertEquals(ExportStudyGermplasmServiceTest.ENTRY_CODE, exportColumnHeaders.get(5).getName());
+		Assert.assertEquals(ExportStudyEntryServiceTest.GID, exportColumnHeaders.get(0).getName());
+		Assert.assertEquals(ExportStudyEntryServiceTest.PARENTAGE, exportColumnHeaders.get(1).getName());
+		Assert.assertEquals(ExportStudyEntryServiceTest.ENTRY_NO, exportColumnHeaders.get(2).getName());
+		Assert.assertEquals(ExportStudyEntryServiceTest.DESIGNATION, exportColumnHeaders.get(3).getName());
+		Assert.assertEquals(ExportStudyEntryServiceTest.SEED_SOURCE, exportColumnHeaders.get(4).getName());
+		Assert.assertEquals(ExportStudyEntryServiceTest.ENTRY_CODE, exportColumnHeaders.get(5).getName());
 
 	}
 
@@ -249,12 +249,12 @@ public class ExportStudyGermplasmServiceTest {
 		Assert.assertTrue(exportColumnHeaders.get(4).isDisplay());
 		Assert.assertTrue(exportColumnHeaders.get(5).isDisplay());
 
-		Assert.assertEquals(ExportStudyGermplasmServiceTest.GID, exportColumnHeaders.get(0).getName());
-		Assert.assertEquals(ExportStudyGermplasmServiceTest.PARENTAGE, exportColumnHeaders.get(1).getName());
-		Assert.assertEquals(ExportStudyGermplasmServiceTest.ENTRY_NO, exportColumnHeaders.get(2).getName());
-		Assert.assertEquals(ExportStudyGermplasmServiceTest.DESIGNATION, exportColumnHeaders.get(3).getName());
-		Assert.assertEquals(ExportStudyGermplasmServiceTest.SEED_SOURCE, exportColumnHeaders.get(4).getName());
-		Assert.assertEquals(ExportStudyGermplasmServiceTest.ENTRY_CODE, exportColumnHeaders.get(5).getName());
+		Assert.assertEquals(ExportStudyEntryServiceTest.GID, exportColumnHeaders.get(0).getName());
+		Assert.assertEquals(ExportStudyEntryServiceTest.PARENTAGE, exportColumnHeaders.get(1).getName());
+		Assert.assertEquals(ExportStudyEntryServiceTest.ENTRY_NO, exportColumnHeaders.get(2).getName());
+		Assert.assertEquals(ExportStudyEntryServiceTest.DESIGNATION, exportColumnHeaders.get(3).getName());
+		Assert.assertEquals(ExportStudyEntryServiceTest.SEED_SOURCE, exportColumnHeaders.get(4).getName());
+		Assert.assertEquals(ExportStudyEntryServiceTest.ENTRY_CODE, exportColumnHeaders.get(5).getName());
 
 	}
 
@@ -268,12 +268,12 @@ public class ExportStudyGermplasmServiceTest {
 
 		final ExportRow row = exportColumnValues.get(0);
 
-		Assert.assertEquals(ExportStudyGermplasmServiceTest.DESIG_VALUE, row.getValueForColumn(TermId.DESIG.getId()));
-		Assert.assertEquals(ExportStudyGermplasmServiceTest.SOURCE_VALUE, row.getValueForColumn(TermId.SEED_SOURCE.getId()));
-		Assert.assertEquals(ExportStudyGermplasmServiceTest.ENTRY_CODE_VALUE, row.getValueForColumn(TermId.ENTRY_CODE.getId()));
-		Assert.assertEquals(ExportStudyGermplasmServiceTest.CROSS_VALUE, row.getValueForColumn(TermId.CROSS.getId()));
-		Assert.assertEquals(ExportStudyGermplasmServiceTest.ENTRY_NO_VALUE, row.getValueForColumn(TermId.ENTRY_NO.getId()));
-		Assert.assertEquals(ExportStudyGermplasmServiceTest.GID_VALUE, row.getValueForColumn(TermId.GID.getId()));
+		Assert.assertEquals(ExportStudyEntryServiceTest.DESIG_VALUE, row.getValueForColumn(TermId.DESIG.getId()));
+		Assert.assertEquals(ExportStudyEntryServiceTest.SOURCE_VALUE, row.getValueForColumn(TermId.SEED_SOURCE.getId()));
+		Assert.assertEquals(ExportStudyEntryServiceTest.ENTRY_CODE_VALUE, row.getValueForColumn(TermId.ENTRY_CODE.getId()));
+		Assert.assertEquals(ExportStudyEntryServiceTest.CROSS_VALUE, row.getValueForColumn(TermId.CROSS.getId()));
+		Assert.assertEquals(ExportStudyEntryServiceTest.ENTRY_NO_VALUE, row.getValueForColumn(TermId.ENTRY_NO.getId()));
+		Assert.assertEquals(ExportStudyEntryServiceTest.GID_VALUE, row.getValueForColumn(TermId.GID.getId()));
 
 	}
 
@@ -287,12 +287,12 @@ public class ExportStudyGermplasmServiceTest {
 
 		final ExportRow row = exportRows.get(0);
 
-		Assert.assertEquals(ExportStudyGermplasmServiceTest.DESIG_VALUE, row.getValueForColumn(TermId.DESIG.getId()));
-		Assert.assertEquals(ExportStudyGermplasmServiceTest.SOURCE_VALUE, row.getValueForColumn(TermId.SEED_SOURCE.getId()));
-		Assert.assertEquals(ExportStudyGermplasmServiceTest.ENTRY_CODE_VALUE, row.getValueForColumn(TermId.ENTRY_CODE.getId()));
-		Assert.assertEquals(ExportStudyGermplasmServiceTest.CROSS_VALUE, row.getValueForColumn(TermId.CROSS.getId()));
-		Assert.assertEquals(ExportStudyGermplasmServiceTest.ENTRY_NO_VALUE, row.getValueForColumn(TermId.ENTRY_NO.getId()));
-		Assert.assertEquals(ExportStudyGermplasmServiceTest.GID_VALUE, row.getValueForColumn(TermId.GID.getId()));
+		Assert.assertEquals(ExportStudyEntryServiceTest.DESIG_VALUE, row.getValueForColumn(TermId.DESIG.getId()));
+		Assert.assertEquals(ExportStudyEntryServiceTest.SOURCE_VALUE, row.getValueForColumn(TermId.SEED_SOURCE.getId()));
+		Assert.assertEquals(ExportStudyEntryServiceTest.ENTRY_CODE_VALUE, row.getValueForColumn(TermId.ENTRY_CODE.getId()));
+		Assert.assertEquals(ExportStudyEntryServiceTest.CROSS_VALUE, row.getValueForColumn(TermId.CROSS.getId()));
+		Assert.assertEquals(ExportStudyEntryServiceTest.ENTRY_NO_VALUE, row.getValueForColumn(TermId.ENTRY_NO.getId()));
+		Assert.assertEquals(ExportStudyEntryServiceTest.GID_VALUE, row.getValueForColumn(TermId.GID.getId()));
 
 	}
 
@@ -420,22 +420,22 @@ public class ExportStudyGermplasmServiceTest {
 		final StandardVariable stdVar = new StandardVariable();
 		stdVar.setId(id);
 		stdVar.setName(name);
-		stdVar.setDescription(ExportStudyGermplasmServiceTest.TEST_DESCRIPTION);
+		stdVar.setDescription(ExportStudyEntryServiceTest.TEST_DESCRIPTION);
 
 		final Term prop = new Term();
-		prop.setName(ExportStudyGermplasmServiceTest.TEST_PROPERTY);
+		prop.setName(ExportStudyEntryServiceTest.TEST_PROPERTY);
 		stdVar.setProperty(prop);
 
 		final Term scale = new Term();
-		scale.setName(ExportStudyGermplasmServiceTest.TEST_SCALE);
+		scale.setName(ExportStudyEntryServiceTest.TEST_SCALE);
 		stdVar.setScale(scale);
 
 		final Term method = new Term();
-		method.setName(ExportStudyGermplasmServiceTest.TEST_METHOD);
+		method.setName(ExportStudyEntryServiceTest.TEST_METHOD);
 		stdVar.setMethod(method);
 
 		final Term dataType = new Term();
-		dataType.setName(ExportStudyGermplasmServiceTest.NUMERIC_VARIABLE);
+		dataType.setName(ExportStudyEntryServiceTest.NUMERIC_VARIABLE);
 		stdVar.setDataType(dataType);
 
 		return stdVar;
@@ -443,23 +443,23 @@ public class ExportStudyGermplasmServiceTest {
 
 	private GermplasmList getGermplasmList() {
 		final GermplasmList germplasmList = new GermplasmList();
-		germplasmList.setName(ExportStudyGermplasmServiceTest.SAMPLE_LIST);
-		germplasmList.setUserId(ExportStudyGermplasmServiceTest.CURRENT_USER_ID);
-		germplasmList.setDescription(ExportStudyGermplasmServiceTest.SAMPLE_DESCRIPTION);
-		germplasmList.setType(ExportStudyGermplasmServiceTest.LST);
-		germplasmList.setDate(ExportStudyGermplasmServiceTest.LIST_DATE);
-		germplasmList.setNotes(ExportStudyGermplasmServiceTest.SAMPLE_NOTES);
+		germplasmList.setName(ExportStudyEntryServiceTest.SAMPLE_LIST);
+		germplasmList.setUserId(ExportStudyEntryServiceTest.CURRENT_USER_ID);
+		germplasmList.setDescription(ExportStudyEntryServiceTest.SAMPLE_DESCRIPTION);
+		germplasmList.setType(ExportStudyEntryServiceTest.LST);
+		germplasmList.setDate(ExportStudyEntryServiceTest.LIST_DATE);
+		germplasmList.setNotes(ExportStudyEntryServiceTest.SAMPLE_NOTES);
 
 		return germplasmList;
 	}
 
 	private List<StudyEntryDto> createStudyEntry() {
 		final List<StudyEntryDto> studyEntries = new ArrayList<>();
-		final StudyEntryDto studyEntry = new StudyEntryDto(Integer.valueOf(ExportStudyGermplasmServiceTest.ENTRY_NO_VALUE),
-				Integer.valueOf(ExportStudyGermplasmServiceTest.ENTRY_NO_VALUE), ExportStudyGermplasmServiceTest.ENTRY_CODE_VALUE,
-				Integer.valueOf(ExportStudyGermplasmServiceTest.GID_VALUE), ExportStudyGermplasmServiceTest.DESIGNATION);
-		studyEntry.getProperties().put(TermId.SEED_SOURCE.getId(), new StudyEntryPropertyData(ExportStudyGermplasmServiceTest.SOURCE_VALUE));
-		studyEntry.getProperties().put(TermId.CROSS.getId(), new StudyEntryPropertyData(ExportStudyGermplasmServiceTest.CROSS_VALUE));
+		final StudyEntryDto studyEntry = new StudyEntryDto(Integer.valueOf(ExportStudyEntryServiceTest.ENTRY_NO_VALUE),
+				Integer.valueOf(ExportStudyEntryServiceTest.ENTRY_NO_VALUE), ExportStudyEntryServiceTest.ENTRY_CODE_VALUE,
+				Integer.valueOf(ExportStudyEntryServiceTest.GID_VALUE), ExportStudyEntryServiceTest.DESIGNATION);
+		studyEntry.getProperties().put(TermId.SEED_SOURCE.getId(), new StudyEntryPropertyData(ExportStudyEntryServiceTest.SOURCE_VALUE));
+		studyEntry.getProperties().put(TermId.CROSS.getId(), new StudyEntryPropertyData(ExportStudyEntryServiceTest.CROSS_VALUE));
 		studyEntries.add(studyEntry);
 		return studyEntries;
 	}
@@ -468,12 +468,12 @@ public class ExportStudyGermplasmServiceTest {
 		final List<ImportedGermplasm> importedGermplasms = new ArrayList<>();
 		final ImportedGermplasm importedGermplasm = new ImportedGermplasm();
 
-		importedGermplasm.setGid(ExportStudyGermplasmServiceTest.GID_VALUE);
-		importedGermplasm.setEntryCode(ExportStudyGermplasmServiceTest.ENTRY_CODE_VALUE);
+		importedGermplasm.setGid(ExportStudyEntryServiceTest.GID_VALUE);
+		importedGermplasm.setEntryCode(ExportStudyEntryServiceTest.ENTRY_CODE_VALUE);
 		importedGermplasm.setEntryNumber(1);
-		importedGermplasm.setSource(ExportStudyGermplasmServiceTest.SOURCE_VALUE);
-		importedGermplasm.setCross(ExportStudyGermplasmServiceTest.CROSS_VALUE);
-		importedGermplasm.setDesig(ExportStudyGermplasmServiceTest.DESIG_VALUE);
+		importedGermplasm.setSource(ExportStudyEntryServiceTest.SOURCE_VALUE);
+		importedGermplasm.setCross(ExportStudyEntryServiceTest.CROSS_VALUE);
+		importedGermplasm.setDesig(ExportStudyEntryServiceTest.DESIG_VALUE);
 		importedGermplasms.add(importedGermplasm);
 
 		return importedGermplasms;

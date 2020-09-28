@@ -34,7 +34,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
-import org.generationcp.middleware.service.api.study.StudyGermplasmService;
+import org.generationcp.middleware.service.api.study.StudyEntryService;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,7 +89,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 	private UserService userService;
 
 	@Resource
-	private StudyGermplasmService studyGermplasmService;
+	private StudyEntryService studyEntryService;
 
 	@Override
 	public String getContentName() {
@@ -128,7 +128,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		}
 
 		model.addAttribute("trialDetails", details);
-		model.addAttribute("numberOfChecks", this.studyGermplasmService.countStudyGermplasmByEntryTypeIds(id, getAllCheckEntryTypeIds()));
+		model.addAttribute("numberOfChecks", this.studyEntryService.countStudyGermplasmByEntryTypeIds(id, getAllCheckEntryTypeIds()));
 		this.setIsSuperAdminAttribute(model);
 		return this.showAjaxPage(model, this.getContentName());
 	}
@@ -274,7 +274,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	}
 
-	public void setStudyGermplasmService(final StudyGermplasmService studyGermplasmService) {
-		this.studyGermplasmService = studyGermplasmService;
+	public void setStudyEntryService(final StudyEntryService studyEntryService) {
+		this.studyEntryService = studyEntryService;
 	}
 }

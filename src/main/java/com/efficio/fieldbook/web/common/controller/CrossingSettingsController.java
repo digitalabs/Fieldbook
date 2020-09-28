@@ -36,7 +36,7 @@ import org.generationcp.middleware.pojos.presets.ProgramPreset;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.pojos.workbench.WorkbenchUser;
 import org.generationcp.middleware.service.api.study.StudyEntryDto;
-import org.generationcp.middleware.service.api.study.StudyGermplasmService;
+import org.generationcp.middleware.service.api.study.StudyEntryService;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.slf4j.Logger;
@@ -118,7 +118,7 @@ public class CrossingSettingsController extends SettingsController {
 	private GermplasmListManager germplasmListManager;
 
 	@Resource
-	private StudyGermplasmService studyGermplasmService;
+	private StudyEntryService studyEntryService;
 
 	@Override
 	public String getContentName() {
@@ -500,7 +500,7 @@ public class CrossingSettingsController extends SettingsController {
 		final Integer crossesListId = Integer.parseInt(createdCrossesListId);
 		final List<GermplasmListData> germplasmListDataList = this.germplasmListManager.retrieveGermplasmListDataWithParents(crossesListId);
 		final Integer studyId = this.studySelection.getWorkbook().getStudyDetails().getId();
-		final Map<Integer, StudyEntryDto> plotEntriesMap = this.studyGermplasmService.getPlotEntriesMap(studyId, Collections.emptySet());
+		final Map<Integer, StudyEntryDto> plotEntriesMap = this.studyEntryService.getPlotEntriesMap(studyId, Collections.emptySet());
 		final String studyName = this.studySelection.getWorkbook().getStudyDetails().getStudyName();
 		final List<String> tableHeaderList = this.crossesListUtil.getTableHeaders();
 		for (final GermplasmListData listData : germplasmListDataList) {

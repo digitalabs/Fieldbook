@@ -49,7 +49,7 @@ import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.SampleListService;
 import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.generationcp.middleware.service.api.dataset.DatasetTypeService;
-import org.generationcp.middleware.service.api.study.StudyGermplasmService;
+import org.generationcp.middleware.service.api.study.StudyEntryService;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.generationcp.middleware.util.Util;
 import org.generationcp.middleware.utils.test.UnitTestDaoIDGenerator;
@@ -152,7 +152,7 @@ public class OpenTrialControllerTest {
 	private TermDataManager termDataManager;
 
 	@Mock
-	private StudyGermplasmService studyGermplasmService;
+	private StudyEntryService studyEntryService;
 
 	@Before
 	public void setUp() {
@@ -1107,7 +1107,7 @@ public class OpenTrialControllerTest {
 		final int germplasmListId = 111;
 		final int studyId = 1;
 
-		Mockito.verify(this.studyGermplasmService, Mockito.times(0)).countStudyGermplasmByEntryTypeIds(studyId,
+		Mockito.verify(this.studyEntryService, Mockito.times(0)).countStudyGermplasmByEntryTypeIds(studyId,
 			Arrays.asList(String.valueOf(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId())));
 
 		Assert.assertNull(this.userSelection.getImportedGermplasmMainInfo());
@@ -1129,7 +1129,7 @@ public class OpenTrialControllerTest {
 		final List<GermplasmList> listOfGermplasmList = new ArrayList<>();
 		listOfGermplasmList.add(germplasmList);
 
-		Mockito.verify(this.studyGermplasmService, Mockito.times(0)).countStudyGermplasmByEntryTypeIds(studyId,
+		Mockito.verify(this.studyEntryService, Mockito.times(0)).countStudyGermplasmByEntryTypeIds(studyId,
 			Arrays.asList(String.valueOf(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId())));
 
 		Assert.assertNull(this.userSelection.getImportedGermplasmMainInfo());

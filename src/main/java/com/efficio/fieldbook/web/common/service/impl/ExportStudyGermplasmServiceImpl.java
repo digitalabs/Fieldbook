@@ -25,7 +25,7 @@ import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.service.api.study.StudyEntryDto;
-import org.generationcp.middleware.service.api.study.StudyGermplasmService;
+import org.generationcp.middleware.service.api.study.StudyEntryService;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import javax.annotation.Resource;
@@ -55,7 +55,7 @@ public class ExportStudyGermplasmServiceImpl implements ExportStudyGermplasmServ
 	private GermplasmExportService germplasmExportService;
 
 	@Resource
-	private StudyGermplasmService studyGermplasmService;
+	private StudyEntryService studyEntryService;
 
 	@Resource
 	private StudyGermplasmTransformer studyGermplasmTransformer;
@@ -70,7 +70,7 @@ public class ExportStudyGermplasmServiceImpl implements ExportStudyGermplasmServ
 
 		try {
 
-			final List<StudyEntryDto> studyEntryDtoList = this.studyGermplasmService.getStudyEntries(studyId);
+			final List<StudyEntryDto> studyEntryDtoList = this.studyEntryService.getStudyEntries(studyId);
 			final List<GermplasmExportSource> germplasmlistData =
 				this.studyGermplasmTransformer.tranformToGermplasmExportSource(studyEntryDtoList);
 
@@ -229,7 +229,7 @@ public class ExportStudyGermplasmServiceImpl implements ExportStudyGermplasmServ
 
 		// FIXME: Find a way to get the germplasm factors by not using userSelection
 		final List<SettingDetail> factorsList = this.userSelection.getPlotsLevelList();
-		final List<StudyEntryDto> studyGermplasmDtoList = this.studyGermplasmService.getStudyEntries(studyId);
+		final List<StudyEntryDto> studyGermplasmDtoList = this.studyEntryService.getStudyEntries(studyId);
 		final Map<Integer, String> checkTypesNameMap =
 			this.ontologyService.getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID())
 				.getEnumerations().stream().collect(Collectors.toMap(Enumeration::getId, Enumeration::getName));

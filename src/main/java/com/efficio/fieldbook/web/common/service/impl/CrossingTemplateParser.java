@@ -19,7 +19,7 @@ import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.study.StudyEntryDto;
-import org.generationcp.middleware.service.api.study.StudyGermplasmService;
+import org.generationcp.middleware.service.api.study.StudyEntryService;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +61,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	private CrossingService crossingService;
 
 	@Resource
-	private StudyGermplasmService studyGermplasmService;
+	private StudyEntryService studyEntryService;
 
 	@Resource
 	private UserService userService;
@@ -260,7 +260,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 			throw new FileParsingException(this.messageSource.getMessage("no.such.study.exists", new String[] {studyName},
 				LocaleContextHolder.getLocale()));
 		}
-		return this.studyGermplasmService.getPlotEntriesMap(studyId, plotNos);
+		return this.studyEntryService.getPlotEntriesMap(studyId, plotNos);
 	}
 
 

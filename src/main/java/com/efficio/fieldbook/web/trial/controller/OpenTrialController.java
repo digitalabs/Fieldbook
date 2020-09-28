@@ -35,7 +35,7 @@ import org.generationcp.middleware.service.api.SampleListService;
 import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.generationcp.middleware.service.api.dataset.DatasetTypeService;
 import org.generationcp.middleware.service.api.study.StudyEntryDto;
-import org.generationcp.middleware.service.api.study.StudyGermplasmService;
+import org.generationcp.middleware.service.api.study.StudyEntryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -85,7 +85,7 @@ public class OpenTrialController extends BaseTrialController {
 	private InventoryDataManager inventoryDataManager;
 
 	@Resource
-	private StudyGermplasmService studyGermplasmService;
+	private StudyEntryService studyEntryService;
 
 	@Resource
 	private StudyGermplasmTransformer studyGermplasmTransformer;
@@ -260,11 +260,11 @@ public class OpenTrialController extends BaseTrialController {
 
 	void setUserSelectionImportedGermplasmMainInfo(final UserSelection userSelection, final Integer studyId, final Model model) {
 
-		final List<StudyEntryDto> studyEntries = this.studyGermplasmService.getStudyEntries(studyId);
+		final List<StudyEntryDto> studyEntries = this.studyEntryService.getStudyEntries(studyId);
 		if (!studyEntries.isEmpty()) {
 
 			final long germplasmListChecksSize =
-				this.studyGermplasmService.countStudyGermplasmByEntryTypeIds(studyId, this.getAllCheckEntryTypeIds());
+				this.studyEntryService.countStudyGermplasmByEntryTypeIds(studyId, this.getAllCheckEntryTypeIds());
 			final List<ImportedGermplasm> list = this.studyGermplasmTransformer.tranformToImportedGermplasm(studyEntries);
 			final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
 			importedGermplasmList.setImportedGermplasms(list);

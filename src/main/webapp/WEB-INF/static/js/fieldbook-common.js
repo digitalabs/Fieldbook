@@ -643,6 +643,11 @@ function showCreateFieldMap() {
 		studyId,
 		hasFieldMap;
 
+	if (!validateLocationMatch()) {
+		showMessage(msgLocationNotMatched);
+		return ;
+	}
+
 	if ($('#studyFieldMapTree .checkInstance:checked').attr('id')) {
 		selectedWithFieldMap = false;
 		fieldmapIds = [];
@@ -3225,4 +3230,16 @@ function getDatasetInstances(cropName, currentProgramId, studyId, datasetId) {
 		success: function (data) {
 		}
 	});
+}
+
+function validateLocationMatch() {
+	var isMatched = true;
+	var prev = '';
+	$('#studyFieldMapTree tr:has(:checkbox:checked) td:nth-child(2)').each(function () {
+		if (prev != '') {
+			isMatched = prev == $(this).text();
+		}
+		prev = $(this).text();
+	});
+	return isMatched;
 }

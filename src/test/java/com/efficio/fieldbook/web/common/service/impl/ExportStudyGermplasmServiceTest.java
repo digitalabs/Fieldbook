@@ -458,8 +458,8 @@ public class ExportStudyGermplasmServiceTest {
 		final StudyEntryDto studyEntry = new StudyEntryDto(Integer.valueOf(ExportStudyGermplasmServiceTest.ENTRY_NO_VALUE),
 				Integer.valueOf(ExportStudyGermplasmServiceTest.ENTRY_NO_VALUE), ExportStudyGermplasmServiceTest.ENTRY_CODE_VALUE,
 				Integer.valueOf(ExportStudyGermplasmServiceTest.GID_VALUE), ExportStudyGermplasmServiceTest.DESIGNATION);
-		studyEntry.getVariables().put(TermId.SEED_SOURCE.getId(), new StudyEntryPropertyData(ExportStudyGermplasmServiceTest.SOURCE_VALUE));
-		studyEntry.getVariables().put(TermId.CROSS.getId(), new StudyEntryPropertyData(ExportStudyGermplasmServiceTest.CROSS_VALUE));
+		studyEntry.getProperties().put(TermId.SEED_SOURCE.getId(), new StudyEntryPropertyData(ExportStudyGermplasmServiceTest.SOURCE_VALUE));
+		studyEntry.getProperties().put(TermId.CROSS.getId(), new StudyEntryPropertyData(ExportStudyGermplasmServiceTest.CROSS_VALUE));
 		studyEntries.add(studyEntry);
 		return studyEntries;
 	}

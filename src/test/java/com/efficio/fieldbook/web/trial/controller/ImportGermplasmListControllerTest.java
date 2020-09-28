@@ -632,10 +632,10 @@ public class ImportGermplasmListControllerTest {
 		for (int x = 1; x <= 5; x++) {
 			final StudyEntryDto data = new StudyEntryDto(x, x, "DESIGNATION" + x);
 			data.setEntryCode(String.valueOf(x));
-			data.getVariables().put(TermId.CROSS.getId(), new StudyEntryPropertyData("GROUPNAME " +x));
-			data.getVariables().put(TermId.SEED_SOURCE.getId(), new StudyEntryPropertyData("SEEDSOURCE " +x));
-			data.getVariables().put(TermId.ENTRY_TYPE.getId(), new StudyEntryPropertyData(String.valueOf(ImportGermplasmListControllerTest.CHECK_TYPE)));
-			data.getVariables().put(TermId.GROUPGID.getId(), new StudyEntryPropertyData("0"));
+			data.getProperties().put(TermId.CROSS.getId(), new StudyEntryPropertyData("GROUPNAME " +x));
+			data.getProperties().put(TermId.SEED_SOURCE.getId(), new StudyEntryPropertyData("SEEDSOURCE " +x));
+			data.getProperties().put(TermId.ENTRY_TYPE.getId(), new StudyEntryPropertyData(String.valueOf(ImportGermplasmListControllerTest.CHECK_TYPE)));
+			data.getProperties().put(TermId.GROUPGID.getId(), new StudyEntryPropertyData("0"));
 			list.add(data);
 		}
 		return list;

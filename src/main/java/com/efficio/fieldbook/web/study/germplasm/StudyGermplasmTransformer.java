@@ -186,11 +186,11 @@ public class StudyGermplasmTransformer {
 			dto.setGid(Integer.valueOf(importedGermplasm.getGid()));
 			dto.setEntryCode(importedGermplasm.getEntryCode());
 			dto.setEntryNumber(importedGermplasm.getEntryNumber());
-			dto.getVariables().put(TermId.ENTRY_TYPE.getId(),
+			dto.getProperties().put(TermId.ENTRY_TYPE.getId(),
 				new StudyEntryPropertyData(null, TermId.ENTRY_TYPE.getId(), String.valueOf(importedGermplasm.getEntryTypeCategoricalID())));
-			dto.getVariables().put(TermId.SEED_SOURCE.getId(),
+			dto.getProperties().put(TermId.SEED_SOURCE.getId(),
 				new StudyEntryPropertyData(null, TermId.SEED_SOURCE.getId(), importedGermplasm.getSource()));
-			dto.getVariables().put(TermId.GROUPGID.getId(),
+			dto.getProperties().put(TermId.GROUPGID.getId(),
 				new StudyEntryPropertyData(null, TermId.GROUPGID.getId(), String.valueOf(importedGermplasm.getGroupId())));
 			list.add(dto);
 		}

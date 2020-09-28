@@ -74,7 +74,7 @@
 									<span class="orderNo"></span>
 								</td>
 								<td th:text="${map.fieldbookName}"></td>
-								<td th:text="${trial.trialInstanceNo}"></td>
+								<td th:text="${trial.trialInstanceNo}+'-'+${trial.locationName}"></td>
 								<td th:text="${trial.entryCount}"></td>
 								<td th:text="${trial.repCount}"></td>
 								<td th:text="${trial.plotCount}"></td>
@@ -243,6 +243,7 @@
 <script type='text/javascript' th:inline="javascript">
 //<![CDATA[
 var msgLocation = /*[[#{fieldmap.location.error}]]*/;
+var msgLocationNotMatched = /*[[#{fieldmap.different.location.names.error}]]*/;
 var msgFieldName = /*[[#{fieldmap.field.name.error}]]*/;
 var msgBlockName = /*[[#{fieldmap.block.name.error}]]*/;
 var msgRowsInBlock = /*[[#{fieldmap.row.in.block.error}]]*/;

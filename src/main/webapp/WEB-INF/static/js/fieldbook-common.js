@@ -467,6 +467,7 @@ function createRow(id, parentClass, value, realId, withFieldMap, hasOneInstance)
 		hasFieldMap,
 		disabledString,
 		checkBox;
+	var locationName = value.trialInstanceNo +"-"+value.locationName;
 
 	if (parentClass !== '') {
 		genParentClassName = 'treegrid-parent-' + parentClass;
@@ -485,7 +486,7 @@ function createRow(id, parentClass, value, realId, withFieldMap, hasOneInstance)
 		if (withFieldMap) {
 			// For view fieldmap
 			newRow = '<tr id="' + realId + '" class="data-row trialInstance ' + genClassName + id + ' ' + genParentClassName + '">';
-			newCell = '<td>' + value.trialInstanceNo + '</td><td>' + value.locationName + '</td><td>' + value.entryCount + '</td>';
+			newCell = '<td>' + value.trialInstanceNo + '</td><td>' + locationName + '</td><td>' + value.entryCount + '</td>';
 			newCell = newCell + '<td>' + value.repCount + '</td><td>' + value.plotCount + '</td>';
 		} else {
 			// For create new fieldmap
@@ -495,7 +496,7 @@ function createRow(id, parentClass, value, realId, withFieldMap, hasOneInstance)
 
 			newRow = '<tr class="data-row trialInstance ' + genClassName + id + ' ' + genParentClassName + '">';
 			checkBox = '<input ' + disabledString + ' class="checkInstance" type="checkbox" id="' + realId + '" ' + checked + ' /> &nbsp;&nbsp;';
-			newCell = '<td>' + checkBox + '&nbsp;' + value.trialInstanceNo + '</td><td>' + value.locationName + '</td><td>' + value.entryCount + '</td>';
+			newCell = '<td>' + checkBox + '&nbsp;' + value.trialInstanceNo + '</td><td>' + locationName + '</td><td>' + value.entryCount + '</td>';
 			newCell = newCell + '<td>' + value.repCount + '</td><td>' + value.plotCount + '</td>';
 			newCell = newCell + '<td class="hasFieldMap">' + hasFieldMap + '</td>';
 		}

@@ -8,17 +8,18 @@ import org.generationcp.middleware.interfaces.GermplasmExportSource;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.service.api.study.StudyEntryDto;
 import org.generationcp.middleware.service.api.study.StudyEntryPropertyData;
-import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Configurable
 // FIXME: IBP-3697 Is it possible to use ModelMapper instead???
+// TODO IBP-4062: Rename to StudyEntryTransformer
 public class StudyGermplasmTransformer {
 
 	public StudyGermplasmTransformer() {
@@ -31,89 +32,95 @@ public class StudyGermplasmTransformer {
 	@Resource
 	private ContextUtil contextUtil;
 
-	public List<ImportedGermplasm> tranformToImportedGermplasm(final List<StudyGermplasmDto> studyGermplasmDtoList) {
+	public List<ImportedGermplasm> tranformToImportedGermplasm(final List<StudyEntryDto> studyEntries) {
 
 		final Map<Integer, String> checkTypesDescriptionMap =
 			this.ontologyService.getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID())
 				.getEnumerations().stream().collect(Collectors.toMap(Enumeration::getId, Enumeration::getDescription));
 
 		final List<ImportedGermplasm> importedGermplasmList = new ArrayList<>();
-		if (studyGermplasmDtoList != null && !studyGermplasmDtoList.isEmpty()) {
-			for (final StudyGermplasmDto studyGermplasmDto : studyGermplasmDtoList) {
+		if (studyEntries != null && !studyEntries.isEmpty()) {
+			for (final StudyEntryDto studyEntryDto : studyEntries) {
 				final ImportedGermplasm importedGermplasm = new ImportedGermplasm();
-				importedGermplasm.setId(studyGermplasmDto.getEntryId());
-				final Integer entryType = studyGermplasmDto.getCheckType();
-				if (entryType != null) {
-					importedGermplasm.setEntryTypeName(checkTypesDescriptionMap.getOrDefault(entryType, ""));
-					importedGermplasm.setEntryTypeValue(entryType.toString());
-					importedGermplasm.setEntryTypeCategoricalID(entryType);
+				importedGermplasm.setId(studyEntryDto.getEntryId());
+				final Optional<String> entryType = studyEntryDto.getStudyEntryPropertyValue(TermId.ENTRY_TYPE.getId());
+				if (entryType.isPresent()) {
+					final Integer entryTypeCategoricalId = Integer.valueOf(entryType.get());
+					importedGermplasm.setEntryTypeName(checkTypesDescriptionMap.getOrDefault(entryTypeCategoricalId, ""));
+					importedGermplasm.setEntryTypeValue(entryType.get());
+					importedGermplasm.setEntryTypeCategoricalID(entryTypeCategoricalId);
 				}
-				importedGermplasm.setCross(studyGermplasmDto.getCross());
-				importedGermplasm.setDesig(studyGermplasmDto.getDesignation());
-				importedGermplasm.setEntryCode(studyGermplasmDto.getEntryCode());
-				importedGermplasm.setEntryNumber(studyGermplasmDto.getEntryNumber());
-				importedGermplasm.setGid(studyGermplasmDto.getGermplasmId().toString());
-				importedGermplasm.setMgid(studyGermplasmDto.getGroupId());
-				importedGermplasm.setSource(studyGermplasmDto.getSeedSource());
-				importedGermplasm.setGroupName(studyGermplasmDto.getCross());
-				importedGermplasm.setGroupId(studyGermplasmDto.getGroupId());
-				importedGermplasm.setStockIDs(studyGermplasmDto.getStockIds());
-				importedGermplasm.setIndex(Integer.valueOf(studyGermplasmDto.getPosition()));
+				importedGermplasm.setCross(studyEntryDto.getStudyEntryPropertyValue(TermId.CROSS.getId()).orElse(""));
+				importedGermplasm.setDesig(studyEntryDto.getDesignation());
+				importedGermplasm.setEntryCode(studyEntryDto.getEntryCode());
+				importedGermplasm.setEntryNumber(studyEntryDto.getEntryNumber());
+				importedGermplasm.setGid(studyEntryDto.getGid().toString());
+				final Optional<String> groupGid = studyEntryDto.getStudyEntryPropertyValue(TermId.GROUPGID.getId());
+				if (groupGid.isPresent()) {
+					final Integer mgid = Integer.valueOf(groupGid.get());
+					importedGermplasm.setMgid(mgid);
+					importedGermplasm.setGroupId(mgid);
+				}
+				importedGermplasm.setSource(studyEntryDto.getStudyEntryPropertyValue(TermId.SEED_SOURCE.getId()).orElse(""));
+				importedGermplasm.setGroupName(studyEntryDto.getStudyEntryPropertyValue(TermId.CROSS.getId()).orElse(""));
+				importedGermplasm.setStockIDs(studyEntryDto.getStudyEntryPropertyValue(TermId.STOCKID.getId()).orElse(""));
+				importedGermplasm.setIndex(studyEntryDto.getEntryNumber());
 				importedGermplasmList.add(importedGermplasm);
 			}
 		}
 		return importedGermplasmList;
 	}
 
-	public List<GermplasmExportSource> tranformToGermplasmExportSource(final List<StudyGermplasmDto> studyGermplasmDtoList) {
+	public List<GermplasmExportSource> tranformToGermplasmExportSource(final List<StudyEntryDto> studyEntries) {
 
 		final Map<Integer, String> checkTypesDescriptionMap =
 			this.ontologyService.getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID())
 				.getEnumerations().stream().collect(Collectors.toMap(Enumeration::getId, Enumeration::getDescription));
 
 		final List<GermplasmExportSource> germplasmExportSourceList = new ArrayList<>();
-		if (studyGermplasmDtoList != null && !studyGermplasmDtoList.isEmpty()) {
-			for (final StudyGermplasmDto studyGermplasmDto : studyGermplasmDtoList) {
+		if (studyEntries != null && !studyEntries.isEmpty()) {
+			for (final StudyEntryDto studyEntryDto : studyEntries) {
 				final GermplasmExportSource germplasmExportSource = new GermplasmExportSource() {
 
 					@Override
 					public Integer getGermplasmId() {
-						return studyGermplasmDto.getGermplasmId();
+						return studyEntryDto.getGid();
 					}
 
 					@Override
 					public Integer getCheckType() {
-						return studyGermplasmDto.getCheckType();
+						final Optional<String> entryType = studyEntryDto.getStudyEntryPropertyValue(TermId.ENTRY_TYPE.getId());
+						return  entryType.isPresent()? Integer.valueOf(entryType.get()) : 0;
 					}
 
 					@Override
 					public String getCheckTypeDescription() {
-						return checkTypesDescriptionMap.getOrDefault(studyGermplasmDto.getCheckType(), "");
+						return checkTypesDescriptionMap.getOrDefault(getCheckType(), "");
 					}
 
 					@Override
 					public Integer getEntryId() {
-						return studyGermplasmDto.getEntryNumber();
+						return studyEntryDto.getEntryNumber();
 					}
 
 					@Override
 					public String getEntryCode() {
-						return studyGermplasmDto.getEntryCode();
+						return studyEntryDto.getEntryCode();
 					}
 
 					@Override
 					public String getSeedSource() {
-						return studyGermplasmDto.getSeedSource();
+						return studyEntryDto.getStudyEntryPropertyValue(TermId.SEED_SOURCE.getId()).orElse("");
 					}
 
 					@Override
 					public String getDesignation() {
-						return studyGermplasmDto.getDesignation();
+						return studyEntryDto.getDesignation();
 					}
 
 					@Override
 					public String getGroupName() {
-						return studyGermplasmDto.getCross();
+						return studyEntryDto.getStudyEntryPropertyValue(TermId.CROSS.getId()).orElse("");
 					}
 
 					@Override
@@ -138,7 +145,7 @@ public class StudyGermplasmTransformer {
 
 					@Override
 					public String getStockIDs() {
-						return studyGermplasmDto.getStockIds();
+						return studyEntryDto.getStudyEntryPropertyValue(TermId.STOCKID.getId()).orElse("");
 					}
 
 					@Override
@@ -148,7 +155,8 @@ public class StudyGermplasmTransformer {
 
 					@Override
 					public Integer getGroupId() {
-						return Integer.valueOf(studyGermplasmDto.getGroupId());
+						final Optional<String> groupGid = studyEntryDto.getStudyEntryPropertyValue(TermId.GROUPGID.getId());
+						return  groupGid.isPresent()? Integer.valueOf(groupGid.get()) : 0;
 					}
 
 					@Override
@@ -169,7 +177,7 @@ public class StudyGermplasmTransformer {
 		return germplasmExportSourceList;
 	}
 
-	public List<StudyEntryDto> transformToStudyGermplasmDto(final List<ImportedGermplasm> importedGermplasmList) {
+	public List<StudyEntryDto> transformToStudyEntryDto(final List<ImportedGermplasm> importedGermplasmList) {
 
 		final List<StudyEntryDto> list = new ArrayList<>();
 		for (final ImportedGermplasm importedGermplasm : importedGermplasmList) {

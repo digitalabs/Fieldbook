@@ -24,7 +24,7 @@ import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataMana
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
-import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
+import org.generationcp.middleware.service.api.study.StudyEntryDto;
 import org.generationcp.middleware.service.api.study.StudyGermplasmService;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -70,9 +70,9 @@ public class ExportStudyGermplasmServiceImpl implements ExportStudyGermplasmServ
 
 		try {
 
-			final List<StudyGermplasmDto> studyGermplasmDtoList = this.studyGermplasmService.getGermplasm(studyId);
+			final List<StudyEntryDto> studyEntryDtoList = this.studyGermplasmService.getStudyEntries(studyId);
 			final List<GermplasmExportSource> germplasmlistData =
-				this.studyGermplasmTransformer.tranformToGermplasmExportSource(studyGermplasmDtoList);
+				this.studyGermplasmTransformer.tranformToGermplasmExportSource(studyEntryDtoList);
 
 			final GermplasmListExportInputValues input = new GermplasmListExportInputValues();
 			final GermplasmList germplasmList = new GermplasmList();
@@ -112,7 +112,7 @@ public class ExportStudyGermplasmServiceImpl implements ExportStudyGermplasmServ
 	public void exportAsCSVFile(final int studyId, final String fileNamePath, final Map<String, Boolean> visibleColumns)
 		throws GermplasmListExporterException {
 
-		final List<ExportRow> exportRows = this.getExportColumnValuesFromTable(studyId, visibleColumns);
+		final List<ExportRow> exportRows = this.getExportColumnValuesFromTable(studyId);
 		final List<ExportColumnHeader> exportColumnHeaders = this.getExportColumnHeadersFromTable(visibleColumns);
 
 		try {
@@ -223,18 +223,18 @@ public class ExportStudyGermplasmServiceImpl implements ExportStudyGermplasmServ
 		return exportColumnHeaders;
 	}
 
-	protected List<ExportRow> getExportColumnValuesFromTable(final int studyId, final Map<String, Boolean> visibleColumns) {
+	protected List<ExportRow> getExportColumnValuesFromTable(final int studyId) {
 
 		final List<ExportRow> exportColumnValues = new ArrayList<>();
 
 		// FIXME: Find a way to get the germplasm factors by not using userSelection
 		final List<SettingDetail> factorsList = this.userSelection.getPlotsLevelList();
-		final List<StudyGermplasmDto> studyGermplasmDtoList = this.studyGermplasmService.getGermplasm(studyId);
+		final List<StudyEntryDto> studyGermplasmDtoList = this.studyGermplasmService.getStudyEntries(studyId);
 		final Map<Integer, String> checkTypesNameMap =
 			this.ontologyService.getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID())
 				.getEnumerations().stream().collect(Collectors.toMap(Enumeration::getId, Enumeration::getName));
 
-		for (final StudyGermplasmDto studyGermplasmDto : studyGermplasmDtoList) {
+		for (final StudyEntryDto studyGermplasmDto : studyGermplasmDtoList) {
 			final ExportRow row = new ExportRow();
 
 			for (final SettingDetail settingDetail : factorsList) {
@@ -250,30 +250,32 @@ public class ExportStudyGermplasmServiceImpl implements ExportStudyGermplasmServ
 		return exportColumnValues;
 	}
 
-	protected String getGermplasmPropertyValue(final String termId, final StudyGermplasmDto studyGermplasmDto,
+	protected String getGermplasmPropertyValue(final String termId, final StudyEntryDto studyEntryDto,
 		final Map<Integer, String> checkTypesNameMap) {
 		String value = "";
 		if (termId != null && NumberUtils.isNumber(termId)) {
 			final Integer term = Integer.valueOf(termId);
 			if (term.intValue() == TermId.GID.getId()) {
-				value = studyGermplasmDto.getGermplasmId().toString();
+				value = studyEntryDto.getGid().toString();
 			} else if (term.intValue() == TermId.ENTRY_CODE.getId()) {
-				value = studyGermplasmDto.getEntryCode();
+				value = studyEntryDto.getEntryCode();
 			} else if (term.intValue() == TermId.ENTRY_NO.getId()) {
-				value = studyGermplasmDto.getEntryNumber().toString();
+				value = studyEntryDto.getEntryNumber().toString();
 			} else if (term.intValue() == TermId.SOURCE.getId() || term.intValue() == TermId.GERMPLASM_SOURCE.getId()) {
-				value = studyGermplasmDto.getSeedSource();
+				value = studyEntryDto.getStudyEntryPropertyValue(TermId.SEED_SOURCE.getId()).orElse("");
 			} else if (term.intValue() == TermId.CROSS.getId()) {
-				value = studyGermplasmDto.getCross();
+				value = studyEntryDto.getStudyEntryPropertyValue(TermId.CROSS.getId()).orElse("");
 			} else if (term.intValue() == TermId.DESIG.getId()) {
-				value = studyGermplasmDto.getDesignation();
+				value = studyEntryDto.getDesignation();
 			} else if (term.intValue() == TermId.CHECK.getId()) {
 				// get the code of ENTRY_TYPE - CATEGORICAL FACTOR
-				value = checkTypesNameMap.getOrDefault(studyGermplasmDto.getCheckType(), "");
+				final Optional<String> entryTypeString = studyEntryDto.getStudyEntryPropertyValue(TermId.SEED_SOURCE.getId());
+				final Integer entryTypeCategoricalId = entryTypeString.isPresent()? Integer.valueOf(entryTypeString.get()) : 0;
+				value = checkTypesNameMap.getOrDefault(entryTypeCategoricalId, "");
 			} else if (term == TermId.GROUPGID.getId()) {
-				value = String.valueOf(studyGermplasmDto.getGroupId());
+				value = studyEntryDto.getStudyEntryPropertyValue(TermId.GROUPGID.getId()).orElse("");
 			} else if (term == TermId.STOCKID.getId()) {
-				value = studyGermplasmDto.getStockIds();
+				value = studyEntryDto.getStudyEntryPropertyValue(TermId.STOCKID.getId()).orElse("");
 			}
 		}
 		return value;

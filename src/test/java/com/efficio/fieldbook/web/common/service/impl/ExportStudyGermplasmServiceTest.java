@@ -1,15 +1,9 @@
 
 package com.efficio.fieldbook.web.common.service.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
@@ -41,9 +35,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
 
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class ExportStudyGermplasmServiceTest {
 
@@ -162,7 +157,7 @@ public class ExportStudyGermplasmServiceTest {
 		Mockito.doReturn(this.getGermplasmList()).when(this.fieldbookMiddlewareService)
 			.getGermplasmListById(ExportStudyGermplasmServiceTest.LIST_ID);
 		Mockito.doReturn(this.createStudyGermplasmDto()).when(this.studyGermplasmService)
-			.getGermplasm(1);
+			.getStudyEntries(1);
 		Mockito.doReturn(ExportStudyGermplasmServiceTest.CURRENT_USER_NAME).when(this.fieldbookMiddlewareService)
 			.getOwnerListName(ExportStudyGermplasmServiceTest.CURRENT_USER_ID);
 		Mockito.doReturn("1010").when(this.fieldbookMiddlewareService).getOwnerListName(ArgumentMatchers.anyInt());
@@ -267,7 +262,7 @@ public class ExportStudyGermplasmServiceTest {
 	public void testGetExportColumnValuesFromTableStudy() {
 
 		final List<ExportRow> exportColumnValues =
-			this.exportStudyGermplasmListServiceImpl.getExportColumnValuesFromTable(1, this.getVisibleColumnMap());
+			this.exportStudyGermplasmListServiceImpl.getExportColumnValuesFromTable(1);
 
 		Assert.assertEquals(1, exportColumnValues.size());
 
@@ -286,7 +281,7 @@ public class ExportStudyGermplasmServiceTest {
 	public void testGetExportColumnValuesFromTableNursery() {
 
 		final List<ExportRow> exportRows =
-			this.exportStudyGermplasmListServiceImpl.getExportColumnValuesFromTable(1, this.getVisibleColumnMap());
+			this.exportStudyGermplasmListServiceImpl.getExportColumnValuesFromTable(1);
 
 		Assert.assertEquals(1, exportRows.size());
 

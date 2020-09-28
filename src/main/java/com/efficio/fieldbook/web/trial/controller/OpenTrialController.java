@@ -34,30 +34,20 @@ import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.SampleListService;
 import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.generationcp.middleware.service.api.dataset.DatasetTypeService;
-import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
+import org.generationcp.middleware.service.api.study.StudyEntryDto;
 import org.generationcp.middleware.service.api.study.StudyGermplasmService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping(OpenTrialController.URL)
@@ -270,12 +260,12 @@ public class OpenTrialController extends BaseTrialController {
 
 	void setUserSelectionImportedGermplasmMainInfo(final UserSelection userSelection, final Integer studyId, final Model model) {
 
-		final List<StudyGermplasmDto> studyGermplasmDtoList = this.studyGermplasmService.getGermplasm(studyId);
-		if (!studyGermplasmDtoList.isEmpty()) {
+		final List<StudyEntryDto> studyEntries = this.studyGermplasmService.getStudyEntries(studyId);
+		if (!studyEntries.isEmpty()) {
 
 			final long germplasmListChecksSize =
 				this.studyGermplasmService.countStudyGermplasmByEntryTypeIds(studyId, this.getAllCheckEntryTypeIds());
-			final List<ImportedGermplasm> list = this.studyGermplasmTransformer.tranformToImportedGermplasm(studyGermplasmDtoList);
+			final List<ImportedGermplasm> list = this.studyGermplasmTransformer.tranformToImportedGermplasm(studyEntries);
 			final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
 			importedGermplasmList.setImportedGermplasms(list);
 			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
@@ -285,7 +275,7 @@ public class OpenTrialController extends BaseTrialController {
 			userSelection.setImportedGermplasmMainInfo(mainInfo);
 			userSelection.setImportValid(true);
 
-			model.addAttribute("germplasmListSize", studyGermplasmDtoList.size());
+			model.addAttribute("germplasmListSize", studyEntries.size());
 			model.addAttribute("germplasmChecksSize", germplasmListChecksSize);
 
 		}

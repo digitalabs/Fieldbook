@@ -45,7 +45,8 @@ import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.DataImportService;
-import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
+import org.generationcp.middleware.service.api.study.StudyEntryDto;
+import org.generationcp.middleware.service.api.study.StudyEntryPropertyData;
 import org.generationcp.middleware.service.api.study.StudyGermplasmService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -291,11 +292,11 @@ public class ImportGermplasmListControllerTest {
 	@Test
 	public void testDisplayGermplasmDetailsOfCurrentStudyForNursery() throws MiddlewareException {
 
-		final List<StudyGermplasmDto> studyGermplasmDtoList = this.createStudyGermplasmDtoList();
+		final List<StudyEntryDto> studyEntries = this.createStudyEntries();
 		final List<ImportedGermplasm> importedGermplasmList = this.createImportedGermplasmList();
-		Mockito.doReturn(studyGermplasmDtoList).when(this.studyGermplasmService)
-			.getGermplasm(STUDY_ID);
-		Mockito.when(this.studyGermplasmTransformer.tranformToImportedGermplasm(studyGermplasmDtoList)).thenReturn(importedGermplasmList);
+		Mockito.doReturn(studyEntries).when(this.studyGermplasmService)
+			.getStudyEntries(STUDY_ID);
+		Mockito.when(this.studyGermplasmTransformer.tranformToImportedGermplasm(studyEntries)).thenReturn(importedGermplasmList);
 
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ExtendedModelMap model = new ExtendedModelMap();
@@ -390,11 +391,11 @@ public class ImportGermplasmListControllerTest {
 	@Test
 	public void testDisplayGermplasmDetailsOfCurrentStudyForStudy() throws MiddlewareException {
 
-		final List<StudyGermplasmDto> studyGermplasmDtoList = this.createStudyGermplasmDtoList();
+		final List<StudyEntryDto> studyEntries = this.createStudyEntries();
 		final List<ImportedGermplasm> importedGermplasmList = this.createImportedGermplasmList();
-		Mockito.doReturn(studyGermplasmDtoList).when(this.studyGermplasmService)
-			.getGermplasm(STUDY_ID);
-		Mockito.when(this.studyGermplasmTransformer.tranformToImportedGermplasm(studyGermplasmDtoList)).thenReturn(importedGermplasmList);
+		Mockito.doReturn(studyEntries).when(this.studyGermplasmService)
+			.getStudyEntries(STUDY_ID);
+		Mockito.when(this.studyGermplasmTransformer.tranformToImportedGermplasm(studyEntries)).thenReturn(importedGermplasmList);
 
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ExtendedModelMap model = new ExtendedModelMap();
@@ -626,18 +627,15 @@ public class ImportGermplasmListControllerTest {
 		return list;
 	}
 
-	private List<StudyGermplasmDto> createStudyGermplasmDtoList() {
-		final List<StudyGermplasmDto> list = new ArrayList<>();
+	private List<StudyEntryDto> createStudyEntries() {
+		final List<StudyEntryDto> list = new ArrayList<>();
 		for (int x = 1; x <= 5; x++) {
-			final StudyGermplasmDto data = new StudyGermplasmDto();
-			data.setEntryId(x);
-			data.setDesignation("DESIGNATION" + x);
+			final StudyEntryDto data = new StudyEntryDto(x, x, "DESIGNATION" + x);
 			data.setEntryCode(String.valueOf(x));
-			data.setCross("GROUPNAME" + x);
-			data.setSeedSource("SEEDSOURCE" + x);
-			data.setGermplasmId(x);
-			data.setCheckType(ImportGermplasmListControllerTest.CHECK_TYPE);
-			data.setGroupId(0);
+			data.getVariables().put(TermId.CROSS.getId(), new StudyEntryPropertyData("GROUPNAME " +x));
+			data.getVariables().put(TermId.SEED_SOURCE.getId(), new StudyEntryPropertyData("SEEDSOURCE " +x));
+			data.getVariables().put(TermId.ENTRY_TYPE.getId(), new StudyEntryPropertyData(String.valueOf(ImportGermplasmListControllerTest.CHECK_TYPE)));
+			data.getVariables().put(TermId.GROUPGID.getId(), new StudyEntryPropertyData("0"));
 			list.add(data);
 		}
 		return list;

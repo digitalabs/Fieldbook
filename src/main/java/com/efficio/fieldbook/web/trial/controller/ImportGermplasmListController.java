@@ -42,7 +42,6 @@ import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.service.api.study.StudyEntryDto;
-import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
 import org.generationcp.middleware.service.api.study.StudyGermplasmService;
 import org.generationcp.middleware.util.FieldbookListUtil;
 import org.slf4j.Logger;
@@ -53,21 +52,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * This controller handles the 2nd step in the study manager process.
@@ -283,7 +272,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 		if (importedGermplasmList != null && !Collections.isEmpty(importedGermplasmList.getImportedGermplasms())) {
 			final List<ImportedGermplasm> importedGermplasm = importedGermplasmList.getImportedGermplasms();
-			final List<StudyEntryDto> studyEntryDtoList = this.studyGermplasmTransformer.transformToStudyGermplasmDto(importedGermplasm);
+			final List<StudyEntryDto> studyEntryDtoList = this.studyGermplasmTransformer.transformToStudyEntryDto(importedGermplasm);
 			// Delete the existing stocks so that we can replace it with the current list.
 			this.studyGermplasmService.deleteStudyEntries(studyId);
 			this.studyGermplasmService.saveStudyEntries(studyId, studyEntryDtoList);
@@ -330,7 +319,7 @@ public class ImportGermplasmListController extends SettingsController {
 	}
 
 	/**
-	 * Displays the assigned Germplasm List of the study
+	 * Displays the Germplasm entries of the study
 	 *
 	 * @param form - the form
 	 * @param model - the model
@@ -345,11 +334,11 @@ public class ImportGermplasmListController extends SettingsController {
 			final Integer studyIdFromWorkbook = this.userSelection.getWorkbook().getStudyDetails().getId();
 			final int studyId = studyIdFromWorkbook == null ? ImportGermplasmListController.NO_ID : studyIdFromWorkbook;
 
-			final List<StudyGermplasmDto> studyGermplasmDtoList = this.studyGermplasmService.getGermplasm(studyIdFromWorkbook);
+			final List<StudyEntryDto> studyEntries = this.studyGermplasmService.getStudyEntries(studyIdFromWorkbook);
 
 			List<ImportedGermplasm> importedGermplasmList = new ArrayList<>();
-			if (!studyGermplasmDtoList.isEmpty()) {
-				importedGermplasmList = this.studyGermplasmTransformer.tranformToImportedGermplasm(studyGermplasmDtoList);
+			if (!studyEntries.isEmpty()) {
+				importedGermplasmList = this.studyGermplasmTransformer.tranformToImportedGermplasm(studyEntries);
 			}
 			form.setImportedGermplasm(importedGermplasmList);
 			final String defaultTestCheckId =

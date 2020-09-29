@@ -9,13 +9,11 @@ function validateEnterFieldPage() {
 	}
 
 	if ($('#' + getJquerySafeId('userFieldmap.fieldId')).val() == '') {
-		showInvalidInputMessage(msgFieldName);
-		return false;
+		$('#' + getJquerySafeId('userFieldmap.fieldId')).val('0');
 	}
 
 	if ($('#' + getJquerySafeId('userFieldmap.blockId')).val() == '') {
-		showInvalidInputMessage(msgBlockName);
-		return false;
+		$('#' + getJquerySafeId('userFieldmap.blockId')).val('0');
 	}
 
 	if ($('#' + getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val() == '' ||
@@ -59,8 +57,6 @@ function validateEnterFieldPage() {
 		$('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('enable', true);
 		$('#' + getJquerySafeId('numberOfRowsPerPlot')).val($('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('data').id);
 		$('#' + getJquerySafeId('userFieldmap.new')).val(isNewBlock ? 'true' : 'false');
-		$('#' + getJquerySafeId('userFieldmap.fieldName')).val($('#' + getJquerySafeId('userFieldmap.fieldId')).select2('data').text);
-		$('#' + getJquerySafeId('userFieldmap.blockName')).val($('#' + getJquerySafeId('userFieldmap.blockId')).select2('data').text);
 		$('#enterFieldDetailsForm').submit();
 	}
 
@@ -805,7 +801,8 @@ function doEnterFieldDetailsPageLoad() {
 		prevFieldId = $('#' + getJquerySafeId('userFieldmap.fieldId')).val(),
 		prevBlockId = $('#' + getJquerySafeId('userFieldmap.blockId')).val();
 
-	$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val('');
+	$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val(defaultLocationId);
+	$('#' + getJquerySafeId('userFieldmap.locationName')).val(defaultLocationName)
 	programLocationUrl = $('#programLocationUrl').val();
 	setSelectedTrialsAsDraggable();
 	calculateTotalPlots();
@@ -814,8 +811,6 @@ function doEnterFieldDetailsPageLoad() {
 
 	initializeFieldSelect2({}, [], true);
 	initializeBlockSelect2({}, [], true);
-
-	showBlockDetails(true, null);
 
 	// remove any other listeners for the location update
 	$(document).off('location-update');
@@ -879,9 +874,9 @@ function doEnterFieldDetailsPageLoad() {
 		}
 	}
 
-	if (prevFieldId != '') {
-		loadFieldsDropdown($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val());
-	}
+	// if (prevFieldId != '') {
+		// loadFieldsDropdown($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val());
+	// }
 
 	$('#addFieldsModal').on('hidden.bs.modal', function(e) {
 		if ($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val() != '' && $('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val() == $('#parentLocationId').val()) {
@@ -963,8 +958,8 @@ function doPreselectValues(locationId, fieldId, blockId) {
 		prevNumberOfRangesInBlock = $('#' + getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val();
 
 	if (locationId !== '' && locationId !== '0') {
-		loadFieldsDropdown(locationId, fieldId);
-		loadBlockDropdown(fieldId, blockId);
+		// loadFieldsDropdown(locationId, fieldId);
+		// loadBlockDropdown(fieldId, blockId);
 		$('body').data('previousFmapData', '1');
 		var rowsPerPlotData = {'id': prevNumberOfRowsPerPlot, 'text': prevNumberOfRowsPerPlot};
 		$('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('data', rowsPerPlotData);

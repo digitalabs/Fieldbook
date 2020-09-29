@@ -269,7 +269,7 @@ public class ExportStudyGermplasmServiceImpl implements ExportStudyGermplasmServ
 				value = studyEntryDto.getDesignation();
 			} else if (term.intValue() == TermId.CHECK.getId()) {
 				// get the code of ENTRY_TYPE - CATEGORICAL FACTOR
-				final Optional<String> entryTypeString = studyEntryDto.getStudyEntryPropertyValue(TermId.SEED_SOURCE.getId());
+				final Optional<String> entryTypeString = studyEntryDto.getStudyEntryPropertyValue(TermId.ENTRY_TYPE.getId());
 				final Integer entryTypeCategoricalId = entryTypeString.isPresent()? Integer.valueOf(entryTypeString.get()) : 0;
 				value = checkTypesNameMap.getOrDefault(entryTypeCategoricalId, "");
 			} else if (term == TermId.GROUPGID.getId()) {

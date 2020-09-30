@@ -18,7 +18,7 @@
         studyGermplasmService.replaceStudyGermplasm = function (entryId, newGid) {
             var request = $http.put(BASE_STUDY_URL + studyContext.studyId + '/entries/' + entryId,
                 {
-                    germplasmId: newGid
+                    gid: newGid
                 });
             return request.then(successHandler, failureHandler);
         };

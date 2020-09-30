@@ -876,10 +876,6 @@ function doEnterFieldDetailsPageLoad() {
 		}
 	}
 
-	// if (prevFieldId != '') {
-		// loadFieldsDropdown($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val());
-	// }
-
 	$('#addFieldsModal').on('hidden.bs.modal', function(e) {
 		if ($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val() != '' && $('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val() == $('#parentLocationId').val()) {
 			loadFieldsDropdown($('#parentLocationId').val(), $('#' + getJquerySafeId('userFieldmap.fieldId')).val());
@@ -960,8 +956,6 @@ function doPreselectValues(locationId, fieldId, blockId) {
 		prevNumberOfRangesInBlock = $('#' + getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val();
 
 	if (locationId !== '' && locationId !== '0') {
-		// loadFieldsDropdown(locationId, fieldId);
-		// loadBlockDropdown(fieldId, blockId);
 		$('body').data('previousFmapData', '1');
 		var rowsPerPlotData = {'id': prevNumberOfRowsPerPlot, 'text': prevNumberOfRowsPerPlot};
 		$('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('data', rowsPerPlotData);

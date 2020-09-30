@@ -38,7 +38,7 @@ import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 public class GenerateFieldmapControllerTest {
 
 	private static final String XLS_EXT = ".xls";
-	public static final String BLOCK_NAME = "block semi-colon;";
+	public static final String LOCATION_NAME = "location semi-colon;";
 	@Mock
 	private FieldmapForm fieldmapForm;
 
@@ -53,22 +53,22 @@ public class GenerateFieldmapControllerTest {
 
 	@Mock
 	private ExportFieldmapService exportExcelService;
-	
+
 	@Mock
 	protected ContextUtil contextUtil;
 
 	@InjectMocks
 	private GenerateFieldmapController generateFieldmapCtrlToTest;
-	
+
 	private InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
 	@Before
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
 		Mockito.doReturn(ProjectTestDataInitializer.createProject()).when(this.contextUtil).getProjectInContext();
-		Mockito.when(this.userFieldmap.getBlockName()).thenReturn(GenerateFieldmapControllerTest.BLOCK_NAME);
+		Mockito.when(this.userFieldmap.getLocationName()).thenReturn(GenerateFieldmapControllerTest.LOCATION_NAME);
 	}
-	
+
 	@Test
 	public void testExportExcel() throws Exception {
 		Mockito.when(this.exportExcelService.exportFieldMapToExcel(Matchers.anyString(), Matchers.eq(this.userFieldmap))).thenReturn(
@@ -97,7 +97,7 @@ public class GenerateFieldmapControllerTest {
 	}
 
 	private String getExpectedFilenamePrefix() {
-		return GenerateFieldmapControllerTest.BLOCK_NAME.replace(" ", "") + "-" + DateUtil.getCurrentDateAsStringValue();
+		return GenerateFieldmapControllerTest.LOCATION_NAME.replace(" ", "") + "-" + DateUtil.getCurrentDateAsStringValue();
 	}
 
 	@Test(expected=FieldbookException.class)
@@ -115,12 +115,12 @@ public class GenerateFieldmapControllerTest {
 
 	@Test
 	public void testMakeSafeFileName() throws Exception {
-		FileExportInfo exportInfo = this.generateFieldmapCtrlToTest.makeSafeFileName(GenerateFieldmapControllerTest.BLOCK_NAME);
-		
+		FileExportInfo exportInfo = this.generateFieldmapCtrlToTest.makeSafeFileName(GenerateFieldmapControllerTest.LOCATION_NAME);
+
 		Assert.assertTrue("Contains the BLOCK_NAME without spaces",
-				exportInfo.getDownloadFileName().contains(GenerateFieldmapControllerTest.BLOCK_NAME.replace(" ", "")));
+				exportInfo.getDownloadFileName().contains(GenerateFieldmapControllerTest.LOCATION_NAME.replace(" ", "")));
 		Assert.assertEquals("No spaces, ends with \"-<current_date>.xls\"", this.getExpectedFilenamePrefix() + XLS_EXT, exportInfo.getDownloadFileName());
-		
+
 		final String outputDirectoryPath = this.installationDirectoryUtil.getOutputDirectoryForProjectAndTool(this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
 		final File outputDirectoryFile = new File(outputDirectoryPath);
 		Assert.assertTrue(outputDirectoryFile.exists());
@@ -129,12 +129,12 @@ public class GenerateFieldmapControllerTest {
 		Assert.assertTrue(outputFile.getName().startsWith(this.getExpectedFilenamePrefix()));
 		Assert.assertTrue(outputFile.getName().endsWith(XLS_EXT));
 	}
-	
+
 	@After
 	public void cleanup() {
 		this.deleteTestInstallationDirectory();
 	}
-	
+
 	private void deleteTestInstallationDirectory() {
 		// Delete test installation directory and its contents as part of cleanup
 		final File testInstallationDirectory = new File(InstallationDirectoryUtil.WORKSPACE_DIR);

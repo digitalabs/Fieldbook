@@ -802,92 +802,15 @@ function doEnterFieldDetailsPageLoad() {
 		prevBlockId = $('#' + getJquerySafeId('userFieldmap.blockId')).val();
 
 	$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val(defaultLocationId);
-	$('#' + getJquerySafeId('userFieldmap.locationName')).val(defaultLocationName)
+	$('#' + getJquerySafeId('userFieldmap.locationName')).val(defaultLocationName);
+	$('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val(defaultRowsPerPlot);
+
 	programLocationUrl = $('#programLocationUrl').val();
 	setSelectedTrialsAsDraggable();
 	calculateTotalPlots();
 
-	recreateLocationCombo();
-
-	initializeFieldSelect2({}, [], true);
-	initializeBlockSelect2({}, [], true);
-
 	showBlockDetails(false, null);
 
-	// remove any other listeners for the location update
-	$(document).off('location-update');
-	$(document).on('location-update', recreateLocationCombo);
-
-	$('#showFavoriteLocation, #showAllLocationRadio, #showBreedingLocationOnlyRadio').on('change', function() {
-		showCorrectFieldLocationCombo();
-		initializeFieldSelect2({}, [], true);
-		initializeBlockSelect2({}, [], true);
-		showBlockDetails(true, null);
-	});
-
-	var numRowPerPlot = $('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val();
-	$('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val(defaultRowsPerPlot);
-
-	if (prevFieldId != '') {
-		var favLocationChkElem =  $('#showFavoriteLocation');
-		var isChecked = favLocationChkElem.is(':checked');
-
-		$('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val(numRowPerPlot);
-
-		if (isChecked) {
-
-			if ($("#showBreedingLocationOnlyRadio").is(':checked')) {
-				$('#s2id_fieldLocationIdBreedingFavorites').show();
-				$('#s2id_fieldLocationIdFavorite').hide();
-				$('#s2id_fieldLocationIdAll').hide();
-				$('#s2id_fieldLocationIdBreeding').hide();
-				setCorrectValueToFieldCombo (locationSuggestionsBreedingFav_obj, prevFieldLocationId, 'fieldLocationIdBreedingFavorite')
-			} else {
-				$('#s2id_fieldLocationIdBreedingFavorites').hide();
-				$('#s2id_fieldLocationIdFavorite').show();
-				$('#s2id_fieldLocationIdAll').hide();
-				$('#s2id_fieldLocationIdBreeding').hide();
-				setCorrectValueToFieldCombo (locationSuggestionsFav_obj, prevFieldLocationId, 'fieldLocationIdFavorite');
-			};
-
-		} else {
-
-			if ($("#showBreedingLocationOnlyRadio").is(':checked')) {
-				$('#s2id_fieldLocationIdBreedingFavorites').hide();
-				$('#s2id_fieldLocationIdFavorite').hide();
-				$('#s2id_fieldLocationIdAll').hide();
-				$('#s2id_fieldLocationIdBreeding').show();
-				setCorrectValueToFieldCombo (locationSuggestionsBreeding_obj, prevFieldLocationId, 'fieldLocationIdBreeding')
-			} else {
-				$('#s2id_fieldLocationIdBreedingFavorites').hide();
-				$('#s2id_fieldLocationIdFavorite').hide();
-				$('#s2id_fieldLocationIdAll').show();
-				$('#s2id_fieldLocationIdBreeding').hide();
-				setCorrectValueToFieldCombo (locationSuggestions, prevFieldLocationId, 'fieldLocationIdAll');
-			};
-		}
-	} else {
-		if (Object.keys(locationSuggestionsBreedingFav_obj).length > 0) {
-			$('#showFavoriteLocation').prop('checked', true);
-			$('#s2id_fieldLocationIdFavorite').hide();
-			$('#s2id_fieldLocationIdAll').hide();
-			$('#s2id_fieldLocationIdBreedingFavorites').show();
-			$('#s2id_fieldLocationIdBreeding').hide();
-		}
-	}
-
-	$('#addFieldsModal').on('hidden.bs.modal', function(e) {
-		if ($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val() != '' && $('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val() == $('#parentLocationId').val()) {
-			loadFieldsDropdown($('#parentLocationId').val(), $('#' + getJquerySafeId('userFieldmap.fieldId')).val());
-		}
-
-	});
-	$('#addBlocksModal').on('hidden.bs.modal', function(e) {
-		if ($('#' + getJquerySafeId('userFieldmap.fieldId')).val() != '' && $('#' + getJquerySafeId('userFieldmap.fieldId')).val() == $('#parentFieldId').val()) {
-			loadBlockDropdown($('#parentFieldId').val(), $('#' + getJquerySafeId('userFieldmap.blockId')).val());
-		}
-
-	});
 
 	doPreselectValues(prevFieldLocationId, prevFieldId, prevBlockId);
 }

@@ -168,7 +168,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController 
 		final FileExportInfo exportInfo;
 		try {
 			// changed selected name to block name for now
-			exportInfo = this.makeSafeFileName(this.userFieldmap.getBlockName());
+			exportInfo = this.makeSafeFileName(this.userFieldmap.getLocationName());
 			this.exportFieldmapService.exportFieldMapToExcel(exportInfo.getFilePath(), this.userFieldmap);
 
 			return FieldbookUtil.createResponseEntityForFileDownload(exportInfo.getFilePath(), exportInfo.getDownloadFileName());

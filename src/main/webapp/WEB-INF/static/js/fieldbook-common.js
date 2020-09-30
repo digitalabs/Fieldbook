@@ -662,7 +662,7 @@ function showCreateFieldMap() {
 				studyId = $(this).parent().parent().treegrid('getParentNode').treegrid('getParentNode').attr('id');
 			}
 			// Get value hasfieldmap column
-			hasFieldMap = $(this).parent().next().next().next().next().html();
+			hasFieldMap = $(this).parent().next().next().next().next().next().html();
 			// Build id list of selected trials instances
 			fieldmapIds.push(studyId + '|' + datasetId + '|' + id);
 

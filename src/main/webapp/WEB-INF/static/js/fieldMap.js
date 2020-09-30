@@ -761,7 +761,7 @@ function showBlockDetails(isHide, blockInfo) {
 				}
 				return;
 			}
-			if (blockInfo.newBlock == false) {
+			if (blockInfo && blockInfo.newBlock == false) {
 				var rowsPerPlotData = {'id': blockInfo.numberOfRowsInPlot, 'text': blockInfo.numberOfRowsInPlot};
 				$('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('data', rowsPerPlotData);
 				$('#' + getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val(blockInfo.rowsInBlock);
@@ -811,6 +811,8 @@ function doEnterFieldDetailsPageLoad() {
 
 	initializeFieldSelect2({}, [], true);
 	initializeBlockSelect2({}, [], true);
+
+	showBlockDetails(false, null);
 
 	// remove any other listeners for the location update
 	$(document).off('location-update');

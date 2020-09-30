@@ -702,6 +702,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 		this.userFieldmap.setFieldName(form.getUserFieldmap().getFieldName());
 		this.userFieldmap.setBlockName(form.getUserFieldmap().getBlockName());
 		this.userFieldmap.setStudyId(form.getUserFieldmap().getStudyId());
+		this.userFieldmap.setOrder(form.getUserFieldmap().getOrder());
 	}
 
 	/**

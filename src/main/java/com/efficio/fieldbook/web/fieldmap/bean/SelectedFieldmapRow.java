@@ -51,6 +51,9 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 	/** The instance id. */
 	private Integer instanceId;
 
+	/** The locationName. */
+	private String locationName;
+
 	/**
 	 * Gets the order.
 	 *
@@ -196,6 +199,24 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 	}
 
 	/**
+	 * Gets the locationName.
+	 *
+	 * @return the locationName
+	 */
+	public String getLocationName() {
+		return this.locationName;
+	}
+
+	/**
+	 * Sets the locationName.
+	 *
+	 * @param locationName the locationName to set
+	 * */
+	public void setLocationName(final String locationName) {
+		this.locationName = locationName;
+	}
+
+	/**
 	 * Gets the instance id.
 	 *
 	 * @return the instanceId
@@ -233,7 +254,7 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override

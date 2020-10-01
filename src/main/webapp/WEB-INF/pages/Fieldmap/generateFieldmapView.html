@@ -71,7 +71,7 @@
 									<tr th:each="row, rowInd : *{userFieldmap.selectedFieldmapList.rows}">
 										<td th:class="${rowInd.even}? 'even ordering' : 'odd ordering'" th:text="${row.order}"></td>
 										<td th:class="${rowInd.even}? 'even' : 'odd'" th:text="${row.studyName}"></td>
-										<td th:class="${rowInd.even}? 'even' : 'odd'" th:text="${row.trialInstanceNo}"></td>
+										<td th:class="${rowInd.even}? 'even' : 'odd'" th:text="${row.trialInstanceNo}+'-'+${row.locationName}"></td>
 										<td th:class="${rowInd.even}? 'even' : 'odd'" th:text="${row.entryCount}"></td>
 										<td th:class="${rowInd.even}? 'even' : 'odd'" th:text="${row.repCount}"></td>
 										<td th:class="${rowInd.even}? 'even' : 'odd'" th:text="${row.plotCount}"></td>

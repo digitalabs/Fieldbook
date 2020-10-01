@@ -68,7 +68,7 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 	 *
 	 * @param order the order to set
 	 */
-	public void setOrder(Integer order) {
+	public void setOrder(final Integer order) {
 		this.order = order;
 	}
 
@@ -86,7 +86,7 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 	 *
 	 * @param studyName the studyName to set
 	 */
-	public void setStudyName(String studyName) {
+	public void setStudyName(final String studyName) {
 		this.studyName = studyName;
 	}
 
@@ -104,7 +104,7 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 	 *
 	 * @param trialInstanceNo the trialInstanceNo to set
 	 */
-	public void setTrialInstanceNo(String trialInstanceNo) {
+	public void setTrialInstanceNo(final String trialInstanceNo) {
 		this.trialInstanceNo = trialInstanceNo;
 	}
 
@@ -122,7 +122,7 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 	 *
 	 * @param repCount the repCount to set
 	 */
-	public void setRepCount(Long repCount) {
+	public void setRepCount(final Long repCount) {
 		this.repCount = repCount;
 	}
 
@@ -140,7 +140,7 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 	 *
 	 * @param entryCount the entryCount to set
 	 */
-	public void setEntryCount(Long entryCount) {
+	public void setEntryCount(final Long entryCount) {
 		this.entryCount = entryCount;
 	}
 
@@ -158,7 +158,7 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 	 *
 	 * @param plotCount the plotCount to set
 	 */
-	public void setPlotCount(Long plotCount) {
+	public void setPlotCount(final Long plotCount) {
 		this.plotCount = plotCount;
 	}
 
@@ -176,7 +176,7 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 	 *
 	 * @param studyId the studyId to set
 	 */
-	public void setStudyId(Integer studyId) {
+	public void setStudyId(final Integer studyId) {
 		this.studyId = studyId;
 	}
 
@@ -194,7 +194,7 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 	 *
 	 * @param datasetId the datasetId to set
 	 */
-	public void setDatasetId(Integer datasetId) {
+	public void setDatasetId(final Integer datasetId) {
 		this.datasetId = datasetId;
 	}
 
@@ -230,7 +230,7 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 	 *
 	 * @param instanceId the instanceId to set
 	 */
-	public void setInstanceId(Integer instanceId) {
+	public void setInstanceId(final Integer instanceId) {
 		this.instanceId = instanceId;
 	}
 
@@ -248,7 +248,7 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 	 *
 	 * @param datasetName the datasetName to set
 	 */
-	public void setDatasetName(String datasetName) {
+	public void setDatasetName(final String datasetName) {
 		this.datasetName = datasetName;
 	}
 
@@ -258,7 +258,7 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(SelectedFieldmapRow o) {
+	public int compareTo(final SelectedFieldmapRow o) {
 		if (this.order != null && o != null) {
 			return this.getOrder().compareTo(o.getOrder());
 		}

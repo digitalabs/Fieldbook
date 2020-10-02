@@ -1786,22 +1786,6 @@ function recreateLocationCombo(possibleFavorite) {
 						}
 						refreshLocationComboInSettings(data);
 
-					} else if (fieldmapScreen === true) {
-						recreateFieldLocationComboAfterClose('fieldLocationIdAll', data.allLocations);
-						recreateFieldLocationComboAfterClose('fieldLocationIdFavorite', data.favoriteLocations);
-						recreateFieldLocationComboAfterClose('fieldLocationIdBreeding', data.allBreedingLocations);
-						recreateFieldLocationComboAfterClose('fieldLocationIdBreedingFavorites', data.allBreedingFavoritesLocations);
-						showCorrectFieldLocationCombo();
-						//set previously selected value of location
-						if ($('#showFavoriteLocation').prop('checked') && $('#showBreedingLocationOnlyRadio').prop('checked')) {
-							setComboValues(locationSuggestionsBreedingFav_obj, $('#fieldLocationIdBreedingFavorites').val(), 'fieldLocationIdBreedingFavorites');
-						} else if ($('#showFavoriteLocation').prop('checked')) {
-							setComboValues(locationSuggestionsFav_obj, $('#fieldLocationIdFavorite').val(), 'fieldLocationIdFavorite');
-						} else if ($('#showAllLocationRadio').prop('checked')) {
-							setComboValues(locationSuggestions_obj, $('#fieldLocationIdAll').val(), 'fieldLocationIdAll');
-						} else {
-							setComboValues(locationSuggestionsBreeding_obj, $('#fieldLocationIdBreeding').val(), 'fieldLocationIdBreeding');
-						}
 					} else {
 						if (hasCreateGermplasm) {
 							refreshLocationComboInSettings(data);
@@ -1928,38 +1912,6 @@ function recreateLocationComboAfterClose(comboName, data) {
 		locationSuggestionsFav = data;
 		initializeHarvestLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFavObj);
 		//	locSug = [];
-	}
-}
-
-function recreateFieldLocationComboAfterClose(comboName, data) {
-	if (comboName == 'fieldLocationIdAll') {
-		locationSuggestions = [];
-		locationSuggestions_obj = [];
-		initializeFieldLocationsSelect2(locationSuggestions, locationSuggestions_obj,comboName);
-		//reload the data retrieved
-		locationSuggestions = data;
-		initializeFieldLocationsSelect2(locationSuggestions, locationSuggestions_obj,comboName);
-	} else if (comboName == 'fieldLocationIdBreeding') {
-		locationSuggestionsBreeding = [];
-		locationSuggestionsBreeding_obj = [];
-		initializeFieldLocationsSelect2(locationSuggestionsBreeding, locationSuggestionsBreeding_obj, comboName);
-		//reload the data retrieved
-		locationSuggestionsBreeding = data;
-		initializeFieldLocationsSelect2(locationSuggestionsBreeding, locationSuggestionsBreeding_obj, comboName);
-	} else if (comboName == 'fieldLocationIdBreedingFavorites') {
-		locationSuggestionsBreedingFav = [];
-		locationSuggestionsBreedingFav_obj = [];
-		initializeFieldLocationsSelect2(locationSuggestionsBreedingFav, locationSuggestionsBreedingFav_obj,comboName);
-		//reload the data retrieved
-		locationSuggestionsBreedingFav = data;
-		initializeFieldLocationsSelect2(locationSuggestionsBreedingFav, locationSuggestionsBreedingFav_obj,comboName);
-	} else if (comboName=="fieldLocationIdFavorite") {
-		locationSuggestionsFav = [];
-		locationSuggestionsFav_obj = [];
-		initializeFieldLocationsSelect2(locationSuggestionsFav, locationSuggestionsFav_obj,comboName);
-		//reload the data retrieved
-		locationSuggestionsFav = data;
-		initializeFieldLocationsSelect2(locationSuggestionsFav, locationSuggestionsFav_obj,comboName);
 	}
 }
 

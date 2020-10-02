@@ -219,7 +219,7 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController {
 			final int datasetId = Integer.parseInt(id[2]);
 			final int instanceId = Integer.parseInt(id[3]);
 
-			final List<FieldMapInfo> fieldMapInfos = this.fieldbookMiddlewareService.getAllFieldMapsInBlockByTrialInstanceId(datasetId, instanceId, null);
+			final List<FieldMapInfo> fieldMapInfos = this.fieldbookMiddlewareService.getAllFieldMapsByTrialInstanceId(datasetId, instanceId, null);
 			if (fieldMapInfoList != null) {
 				fieldMapInfoList.addAll(fieldMapInfos);
 			}

@@ -47,7 +47,7 @@ function validateEnterFieldPage() {
 
 	totalNoOfPlots = totalNumberOfSelectedPlots;
 
-	if (isNewBlock == true && totalNoOfPlots > totalNoOfBlocks) {
+	if (totalNoOfPlots > totalNoOfBlocks) {
 		showEnterFieldDetailsMessage(msgBlockSizeError);
 		return false;
 	} else {
@@ -118,41 +118,6 @@ function setValuesForCounts() {
 function showEnterFieldDetailsMessage(msg) {
 	'use strict';
 	createErrorNotification(errorMsgHeader, msg);
-}
-
-function initializeFieldLocationsSelect2(_locationSuggestions, _locationSuggestions_obj, fieldName) {
-	'use strict';
-	fieldName = '#' + fieldName;
-	$.each(_locationSuggestions, function(index, value) {
-		var locNameDisplay = value.lname;
-		if (value.labbr != null && value.labbr != '') {
-			locNameDisplay  += ' - (' + value.labbr + ')';
-		}
-		_locationSuggestions_obj.push({
-			'id': value.locid,
-			'text': locNameDisplay
-		});
-
-	});
-
-	$(fieldName).select2({
-		minimumResultsForSearch: _locationSuggestions_obj.length == 0 ? -1 : 20,
-		query: function(query) {
-			var data = {results: _locationSuggestions_obj}, i, j, s;
-			// return the array that matches
-			data.results = $.grep(data.results, function(item, index) {
-				return ($.fn.select2.defaults.matcher(query.term, item.text));
-
-			});
-			query.callback(data);
-		}
-	}).on('change', function() {
-		$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val($(fieldName).select2('data').id);
-		$('#' + getJquerySafeId('userFieldmap.locationName')).val($(fieldName).select2('data').text);
-		$('#' + getJquerySafeId('userFieldmap.locationAbbreviation')).val($(fieldName).select2('data').abbr);
-		loadFieldsDropdown($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val(), '');
-	});
-
 }
 
 function validatePlantingDetails() {
@@ -575,217 +540,6 @@ function setComboValues(suggestions_obj, id, name) {
 	$('#' + name).select2('data', dataVal);
 }
 
-function initializeFieldSelect2(suggestions, suggestions_obj, addOnChange, currentFieldId) {
-	'use strict';
-	var defaultData = null;
-
-	var newlyAddedField = $('#newFieldName').val();
-
-	$.each(suggestions, function(index, value) {
-		var locNameDisplay = value.lname;
-		if (value.labbr != null && value.labbr != '' && value.labbr != '-') {
-			locNameDisplay  += ' - (' + value.labbr + ')';
-		}
-		var dataObj = {
-			'id': value.locid,
-			'text': locNameDisplay
-		};
-		suggestions_obj.push(dataObj);
-
-		if (newlyAddedField == '' && currentFieldId != '' && currentFieldId == value.locid) {
-			defaultData = dataObj;
-		} else if (newlyAddedField != '' && newlyAddedField == value.lname) {
-			defaultData = dataObj;
-		}
-	});
-	var defaulData = {'id': 0, 'text': ''};
-	$('#' + getJquerySafeId('userFieldmap.fieldId')).select2('data', defaulData);
-	$('#' + getJquerySafeId('userFieldmap.fieldId')).val('');
-	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
-	$('#' + getJquerySafeId('userFieldmap.fieldId')).select2({
-		minimumResultsForSearch: suggestions_obj.length == 0 ? -1 : 20,
-		query: function(query) {
-			var data = {results: suggestions_obj}, i, j, s;
-			// return the array that matches
-			data.results = $.grep(data.results, function(item, index) {
-				return ($.fn.select2.defaults.matcher(query.term, item.text));
-
-			});
-			query.callback(data);
-
-		}
-
-	});
-
-	if (addOnChange) {
-		$('#' + getJquerySafeId('userFieldmap.fieldId')).on('change', function() {
-			loadBlockDropdown($('#' + getJquerySafeId('userFieldmap.fieldId')).val(), $('#' + getJquerySafeId('userFieldmap.blockId')).val());
-		});
-	}
-	if (defaultData != null) {
-		$('#' + getJquerySafeId('userFieldmap.fieldId')).select2('data', defaultData).trigger('change');
-	}
-}
-
-function initializeBlockSelect2(suggestions, suggestions_obj, addOnChange, currentBlockId) {
-	'use strict';
-	var defaultData = null;
-	var newlyAddedBlock = $('#newBlockName').val();
-	$.each(suggestions, function(index, value) {
-		var locNameDisplay = value.lname;
-		if (value.labbr != null && value.labbr != '' && value.labbr != '-') {
-			locNameDisplay  += ' - (' + value.labbr + ')';
-		}
-		var dataObj = {
-			'id': value.locid,
-			'text': locNameDisplay
-		};
-
-		suggestions_obj.push(dataObj);
-
-		if (newlyAddedBlock == '' && currentBlockId != '' && currentBlockId == value.locid) {
-			defaultData = dataObj;
-		} else if (newlyAddedBlock != '' && newlyAddedBlock == value.lname) {
-			defaultData = dataObj;
-		}
-	});
-
-	var defaulData = {'id': 0, 'text': ''};
-	$('#' + getJquerySafeId('userFieldmap.blockId')).select2('data', defaulData);
-	$('#' + getJquerySafeId('userFieldmap.blockId')).val('');
-	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
-	$('#' + getJquerySafeId('userFieldmap.blockId')).select2({
-		minimumResultsForSearch: suggestions_obj.length == 0 ? -1 : 20,
-		query: function(query) {
-			var data = {results: suggestions_obj}, i, j, s;
-			// return the array that matches
-			data.results = $.grep(data.results, function(item, index) {
-				return ($.fn.select2.defaults.matcher(query.term, item.text));
-
-			});
-			query.callback(data);
-
-		}
-
-	});
-
-	if (addOnChange) {
-		$('#' + getJquerySafeId('userFieldmap.blockId')).on('change', function() {
-
-			loadBlockInformation($('#' + getJquerySafeId('userFieldmap.blockId')).val());
-		});
-	}
-
-	if (defaultData != null) {
-		$('#' + getJquerySafeId('userFieldmap.blockId')).select2('data', defaultData).trigger('change');
-	}
-}
-function loadFieldsDropdown(locationId, currentFieldId) {
-	'use strict';
-	showBlockDetails(true, null);
-
-	$.ajax(
-		{ url: '/Fieldbook/Fieldmap/enterFieldDetails/getFields/' + locationId,
-			type: 'GET',
-			cache: false,
-			data: '',
-			async: false,
-			success: function(data) {
-					//recreate the select2 combos to get updated list of locations
-				$('#' + getJquerySafeId('userFieldmap.fieldId')).select2('destroy');
-				if (locationId != '') {
-					initializeFieldSelect2($.parseJSON(data.allFields), [], false, currentFieldId);
-				} else {
-					initializeFieldSelect2({}, [], false, '');
-				}
-				initializeBlockSelect2({}, [], false, '');
-
-			}
-		}
-	);
-
-}
-function loadBlockDropdown(fieldId, currentBlockId) {
-	showBlockDetails(true, null);
-
-	$.ajax({
-		url: '/Fieldbook/Fieldmap/enterFieldDetails/getBlocks/' + fieldId,
-		type: 'GET',
-		cache: false,
-		data: '',
-		async: false,
-		success: function(data) {
-			$('#' + getJquerySafeId('userFieldmap.blockId')).select2('destroy');
-			initializeBlockSelect2($.parseJSON(data.allBlocks), [], false, currentBlockId);
-
-		}
-	}
-	);
-}
-
-function loadBlockInformation(blockId) {
-	'use strict';
-	$.ajax({
-		url: '/Fieldbook/Fieldmap/enterFieldDetails/getBlockInformation/' + blockId,
-		type: 'GET',
-		cache: false,
-		data: '',
-		async: false,
-		success: function(data) {
-			var blockInfo = $.parseJSON(data.blockInfo);
-			showBlockDetails(false, blockInfo);
-			$('body').data('previousFmapData', '0');
-		}
-	}
-	);
-}
-function showBlockDetails(isHide, blockInfo) {
-	'use strict';
-	if (isHide) {
-		$('.block-details').slideUp('slow', function() {
-			// Animation complete.
-
-		});
-	} else {
-		$('.block-details').slideDown('slow', function() {
-			// Animation complete.
-			if ($('body').data('previousFmapData') === '1') {
-				if (blockInfo.newBlock == false) {
-					isNewBlock = false;
-					$('.block-details input').attr('disabled', true);
-					$('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('enable', false);
-				} else {
-					isNewBlock = true;
-					$('.block-details input').attr('disabled', false);
-					$('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('enable', true);
-				}
-				return;
-			}
-			if (blockInfo && blockInfo.newBlock == false) {
-				var rowsPerPlotData = {'id': blockInfo.numberOfRowsInPlot, 'text': blockInfo.numberOfRowsInPlot};
-				$('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('data', rowsPerPlotData);
-				$('#' + getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val(blockInfo.rowsInBlock);
-				$('#' + getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val(blockInfo.rangesInBlock);
-
-				$('.block-details input').attr('disabled', true);
-				$('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('enable', false);
-				isNewBlock = false;
-
-			} else {
-				//has fieldmap already
-				var rowsPerPlotData = {'id': 1, 'text': 1};
-				$('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('data', rowsPerPlotData);
-				$('#' + getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val(0);
-				$('#' + getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val(0);
-				$('.block-details input').attr('disabled', false);
-				$('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('enable', true);
-				isNewBlock = true;
-			}
-			calculateTotalPlots();
-		});
-	}
-}
-
 /* The following is needed by enterFieldDetails.html */
 function doEnterFieldDetailsPageLoad() {
 	'use strict';
@@ -808,10 +562,6 @@ function doEnterFieldDetailsPageLoad() {
 	programLocationUrl = $('#programLocationUrl').val();
 	setSelectedTrialsAsDraggable();
 	calculateTotalPlots();
-
-	showBlockDetails(false, null);
-
-
 	doPreselectValues(prevFieldLocationId, prevFieldId, prevBlockId);
 }
 

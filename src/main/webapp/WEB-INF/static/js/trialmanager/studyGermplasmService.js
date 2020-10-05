@@ -49,6 +49,16 @@
             });
         };
 
+		studyGermplasmService.getStudyEntries = function() {
+			return BASE_STUDY_URL + studyContext.studyId + '/entries';
+        }
+
+		studyGermplasmService.getEntryTableColumns = function() {
+			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/entries/table/columns');
+			return request.then(successHandler, failureHandler);
+		}
+
+
         return studyGermplasmService;
 
     }

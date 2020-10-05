@@ -13,7 +13,7 @@ import org.generationcp.commons.util.InstallationDirectoryUtil;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.FieldbookService;
-import org.generationcp.middleware.service.api.study.StudyGermplasmService;
+import org.generationcp.middleware.service.api.study.StudyEntryService;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,7 +55,7 @@ public class ExportStudyEntriesController extends AbstractBaseFieldbookControlle
 	private ExportStudyGermplasmService exportStudyGermplasmService;
 
 	@Resource
-	private StudyGermplasmService studyGermplasmService;
+	private StudyEntryService studyEntryService;
 
 	private final InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
@@ -107,7 +107,7 @@ public class ExportStudyEntriesController extends AbstractBaseFieldbookControlle
 
 		final int studyId = this.userSelection.getWorkbook().getStudyDetails().getId();
 		final boolean studyHasEntries =
-			this.studyGermplasmService.countStudyEntries(studyId) > 0l;
+			this.studyEntryService.countStudyEntries(studyId) > 0l;
 
 		if (studyHasEntries) {
 

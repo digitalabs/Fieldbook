@@ -1,8 +1,6 @@
 
 package com.efficio.fieldbook.web.util;
 
-import java.util.*;
-
 import org.apache.commons.lang3.RandomStringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedCross;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmParent;
@@ -13,13 +11,15 @@ import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.germplasm.GermplasmParent;
-import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
+import org.generationcp.middleware.service.api.study.StudyEntryDto;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+
+import java.util.*;
 
 
 public class CrossesListUtilTest {
@@ -152,7 +152,7 @@ public class CrossesListUtilTest {
 		germplasmListData.setSeedSource(CrossesListUtilTest.TEST_SEED_SOURCE_VALUE);
 
 		final ImportedCross
-			testImportedCross = this.crossesListUtil.convertGermplasmListDataToImportedCrosses(germplasmListData, RandomStringUtils.random(20), Collections.emptyList());
+			testImportedCross = this.crossesListUtil.convertGermplasmListDataToImportedCrosses(germplasmListData, RandomStringUtils.random(20), Collections.emptyMap());
 		Assert.assertEquals(Integer.valueOf(CrossesListUtilTest.TEST_ENTRY_ID_VALUE), testImportedCross.getEntryNumber());
 		Assert.assertEquals(CrossesListUtilTest.TEST_ENTRY_CODE_VALUE, testImportedCross.getEntryCode());
 		Assert.assertEquals(CrossesListUtilTest.TEST_FEMALE_PARENT_VALUE, testImportedCross.getFemaleDesignation());
@@ -180,7 +180,7 @@ public class CrossesListUtilTest {
 		germplasmListData.setSeedSource(CrossesListUtilTest.TEST_SEED_SOURCE_VALUE);
 
 		final String studyName = RandomStringUtils.random(20);
-		final ImportedCross testImportedCross = this.crossesListUtil.convertGermplasmListDataToImportedCrosses(germplasmListData, studyName, Collections.emptyList());
+		final ImportedCross testImportedCross = this.crossesListUtil.convertGermplasmListDataToImportedCrosses(germplasmListData, studyName, Collections.emptyMap());
 		Assert.assertEquals(Integer.valueOf(CrossesListUtilTest.TEST_ENTRY_ID_VALUE), testImportedCross.getEntryNumber());
 		Assert.assertEquals(CrossesListUtilTest.TEST_ENTRY_CODE_VALUE, testImportedCross.getEntryCode());
 		Assert.assertEquals(CrossesListUtilTest.TEST_FEMALE_PARENT_VALUE, testImportedCross.getFemaleDesignation());
@@ -204,23 +204,23 @@ public class CrossesListUtilTest {
 
 	@Test
 	public void testGetParentPlotNumber() {
-		final List<StudyGermplasmDto> studyList = this.createStudyGermplasmList(10);
-		Assert.assertEquals(10, this.crossesListUtil.getParentPlotNo(101, studyList).intValue());
-		Assert.assertEquals(3, this.crossesListUtil.getParentPlotNo(108, studyList).intValue());
-		Assert.assertNull(this.crossesListUtil.getParentPlotNo(0, studyList));
-		Assert.assertNull(this.crossesListUtil.getParentPlotNo(99, studyList));
+		final Map<Integer, StudyEntryDto> plotEntriesMap = this.createPlotEntriesMap(10);
+		Assert.assertEquals(10, this.crossesListUtil.getParentPlotNo(101, plotEntriesMap).intValue());
+		Assert.assertEquals(3, this.crossesListUtil.getParentPlotNo(108, plotEntriesMap).intValue());
+		Assert.assertNull(this.crossesListUtil.getParentPlotNo(0, plotEntriesMap));
+		Assert.assertNull(this.crossesListUtil.getParentPlotNo(99, plotEntriesMap));
 	}
 
-	private List<StudyGermplasmDto> createStudyGermplasmList(final Integer numberOfEntries) {
-		final List<StudyGermplasmDto> studyList = new ArrayList<>();
+	private Map<Integer, StudyEntryDto> createPlotEntriesMap(final Integer numberOfEntries) {
+		final Map<Integer, StudyEntryDto> map = new HashMap<>();
 		for (int i = 0; i < numberOfEntries; i++) {
-			final StudyGermplasmDto germplasmDto = new StudyGermplasmDto();
-			germplasmDto.setGermplasmId(100 + i + 1);
-			germplasmDto.setEntryNumber(i + 1);
-			germplasmDto.setPosition(String.valueOf(numberOfEntries - i));
-			studyList.add(germplasmDto);
+			final int gid = 100 + i + 1;
+			final String designation = "DESIG " + gid;
+			final StudyEntryDto entry = new StudyEntryDto(i+1, gid, designation);
+			final int plot = numberOfEntries - i;
+			map.put(plot, entry);
 		}
-		return studyList;
+		return map;
 
 	}
 

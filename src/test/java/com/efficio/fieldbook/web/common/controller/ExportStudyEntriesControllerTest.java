@@ -28,7 +28,7 @@ import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
-import org.generationcp.middleware.service.api.study.StudyGermplasmService;
+import org.generationcp.middleware.service.api.study.StudyEntryService;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -103,7 +103,7 @@ public class ExportStudyEntriesControllerTest {
 	private ExportStudyGermplasmService exportStudyGermplasmService;
 
 	@Mock
-	private StudyGermplasmService studyGermplasmService;
+	private StudyEntryService studyEntryService;
 
 	@Mock
 	private ContextUtil contextUtil;
@@ -173,7 +173,7 @@ public class ExportStudyEntriesControllerTest {
 		studyDetails.setId(studyId);
 		workbook.setStudyDetails(studyDetails);
 		Mockito.doReturn(workbook).when(this.userSelection).getWorkbook();
-		Mockito.doReturn(10L).when(this.studyGermplasmService).countStudyEntries(studyId);
+		Mockito.doReturn(10L).when(this.studyEntryService).countStudyEntries(studyId);
 
 		try {
 			final String output =

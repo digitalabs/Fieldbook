@@ -32,7 +32,7 @@ import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.pojos.workbench.WorkbenchUser;
-import org.generationcp.middleware.service.api.study.StudyGermplasmService;
+import org.generationcp.middleware.service.api.study.StudyEntryService;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.generationcp.middleware.util.PoiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +74,7 @@ public class CrossingTemplateExcelExporter {
 	private GermplasmDataManager germplasmDataManager;
 
 	@Resource
-	private StudyGermplasmService studyGermplasmService;
+	private StudyEntryService studyEntryService;
 
 	private final InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 	private String templateFile;
@@ -306,7 +306,7 @@ public class CrossingTemplateExcelExporter {
 	}
 
 	void validateIfStudyHasEntries(final Integer studyId) throws CrossingTemplateExportException {
-		final long count = this.studyGermplasmService.countStudyEntries(studyId);
+		final long count = this.studyEntryService.countStudyEntries(studyId);
 		if (count == 0) {
 			throw new CrossingTemplateExportException("study.export.crosses.no.germplasm.list.available");
 		}

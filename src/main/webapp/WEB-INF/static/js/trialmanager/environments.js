@@ -447,10 +447,10 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				$scope.instanceInfo.numberOfInstances -= 1;
 
 				TrialManagerDataService.deleteInstance(index + 1);
-				updateExpermentalDesign();
+				deleteExperimentalDesignIfApplicable();
 			}
 
-			function updateExpermentalDesign() {
+			function deleteExperimentalDesignIfApplicable() {
 
 				var instanceIds = [];
 				angular.forEach($scope.instanceInfo.instances, function (instance){

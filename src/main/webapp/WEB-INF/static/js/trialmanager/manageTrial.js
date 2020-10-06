@@ -76,10 +76,9 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 				views: {
 					germplasm: {
 						controller: 'GermplasmCtrl',
-						templateUrl: '/Fieldbook/TrialManager/createTrial/germplasm'
+						templateUrl: '/Fieldbook/static/js/trialmanager/study-entries/germplasmTab.html'
 					}
 				},
-				deepStateRedirect: true, sticky: true
 			})
 
 			.state('germplasmStudySource', {

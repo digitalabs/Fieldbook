@@ -451,14 +451,19 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			}
 
 			function updateExpermentalDesign() {
-				studyInstanceService.getStudyInstances().then(function(instances) {
-					angular.forEach(instances, function (instance){
-						if (instance.hasExperimentalDesign) {
-							return;
-						}
-						studyStateService.updateGeneratedDesign(instance.hasExperimentalDesign);
+
+				var instanceIds = [];
+				angular.forEach($scope.instanceInfo.instances, function (instance){
+					instanceIds.push(instance.instanceId);
+				});
+
+				datasetService.checkIfLocationHasExperiments(studyContext.measurementDatasetId, instanceIds).then(function (response) {
+					var exists = response.headers('X-Has-Experiments');
+
+					if (exists == '0') {
+						studyStateService.updateGeneratedDesign(false);
 						TrialManagerDataService.currentData.experimentalDesign.designType = '';
-					});
+					}
 				});
 			}
 

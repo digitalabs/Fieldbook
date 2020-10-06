@@ -226,6 +226,15 @@
 					.then(successHandler, failureHandler);
 			};
 
+			datasetService.checkIfLocationHasExperiments = function (datasetId, instanceId) {
+
+				if (datasetId && instanceId) {
+					return $http.head(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/experiments/' + instanceId);
+				}
+
+				return $q.reject('instanceId and datasetId are not defined.');
+			};
+
 			return datasetService;
 
 		}]);

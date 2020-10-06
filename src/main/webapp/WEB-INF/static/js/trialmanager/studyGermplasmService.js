@@ -58,6 +58,14 @@
 			return request.then(successHandler, failureHandler);
 		}
 
+		studyGermplasmService.saveStudyEntries = function(listId) {
+			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/entries/generation/', {
+				germplasmListId: listId
+            });
+
+			return request.then(successHandler, failureHandler);
+        }
+
 
         return studyGermplasmService;
 

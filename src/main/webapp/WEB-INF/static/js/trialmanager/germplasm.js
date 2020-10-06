@@ -438,9 +438,6 @@
 				$scope.disableAddButton = function () {
 					return studyStateService.hasGeneratedDesign();
 				};
-				$scope.displayUpdateButton = function () {
-					return $scope.updateOccurred && $scope.listAvailable();
-				};
 
 				$scope.listAvailable = function () {
 					var entryHtml = $('#numberOfEntries').html();
@@ -449,31 +446,6 @@
 
 				$scope.getTotalListNo = function () {
 					return (parseInt($('#totalGermplasms').val())) ? parseInt($('#totalGermplasms').val()) : 0;
-				};
-
-				$scope.updateDataTable = function () {
-					$.ajax({
-						url: '/Fieldbook/ListManager/GermplasmList/refreshListDetails',
-						type: 'GET',
-						cache: false,
-						data: ''
-					}).success(function (html) {
-						$('#liExportList').removeClass('fbk-dropdown-select-fade');
-						$('#imported-germplasm-list').html(html);
-						window.ImportGermplasm.initialize(dataGermplasmList);
-						$('#entries-details').css('display', 'block');
-						$('#numberOfEntries').html($('#totalGermplasms').val());
-						$('#imported-germplasm-list-reset-button').css('opacity', '1');
-						$scope.updateOccurred = false;
-						TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount = $scope.getTotalListNo();
-						$scope.germplasmChangesOccurred();
-
-						if (!$scope.$$phase) {
-							$scope.$apply();
-						}
-
-					});
-
 				};
 
 				$scope.validateGermplasmForReplacement = function() {
@@ -512,6 +484,14 @@
 						studyGermplasmService.openReplaceGermplasmModal();
 					}
 
+				};
+
+				$scope.saveStudyEntries = function (listId) {
+					studyGermplasmService.saveStudyEntries(listId).then(function(res){
+						loadTable();
+						$scope.showImportListBrowser = false;
+						$scope.showStudyEntriesTable = true;
+					});
 				};
 
 			}]);

@@ -384,7 +384,7 @@
 						parseInt(BREEDING_METHOD_CODE, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);
 
 					$scope.localData = {};
-					var showAll = $scope.valuecontainer[$scope.targetkey];
+					var showAll = $scope.isBreedingMethod ? true : $scope.valuecontainer[$scope.targetkey];
 					$scope.localData.useFavorites = !showAll;
 					$scope.lookupLocation =  showAll ? 2 : 1;
 
@@ -420,7 +420,12 @@
 						if (currentVal) {
 							return false;
 						} else if ($scope.variableDefinition.possibleValuesFavorite) {
-							return $scope.variableDefinition.possibleValuesFavorite.length > 0;
+							if($scope.isBreedingMethod){
+								//If isBreedingMethod returns false
+								false;
+							}else{
+								return $scope.variableDefinition.possibleValuesFavorite.length > 0;
+							}
 						}
 
 						return $scope.localData.useFavorites;
@@ -430,9 +435,16 @@
                         var currentVal = $scope.valuecontainer[$scope.targetkey];
 
 						// lets fix current val if its an object so that it only contains the id
-						if (typeof currentVal !== 'undefined' && currentVal !== null && typeof currentVal.id !== 'undefined' && currentVal.id) {
-							currentVal = currentVal.id;
+						if($scope.isBreedingMethod){
+							if (currentVal && currentVal.key) {
+								currentVal = currentVal.key;
+							}
+						}else{
+							if (typeof currentVal !== 'undefined' && currentVal !== null && typeof currentVal.id !== 'undefined' && currentVal.id) {
+								currentVal = currentVal.id;
+							}
 						}
+
 
 						$scope.localData.useFavorites = useFavorites(currentVal);
 
@@ -441,13 +453,24 @@
 
 						angular.forEach($scope.dropdownValues, function(value) {
 							var idNumber;
-							if (!isNaN($scope.valuecontainer[$scope.targetkey])) {
-								idNumber = parseInt($scope.valuecontainer[$scope.targetkey]);
+							var curVal;
+							if($scope.isBreedingMethod){
+								if ($scope.valuecontainer[$scope.targetkey]) {
+									idNumber = $scope.valuecontainer[$scope.targetkey];
+								}
+								$scope.lookUpValues[value.key] = value;
+								curVal = value.key;
+							}else{
+								if (!isNaN($scope.valuecontainer[$scope.targetkey])) {
+									idNumber = parseInt($scope.valuecontainer[$scope.targetkey]);
+								}
+								$scope.lookUpValues[value.id] = value;
+								curVal = value.id;
 							}
-							$scope.lookUpValues[value.id] = value;
+
 							$scope.lookUpValues[value.description] = value;
 							if (value.description === $scope.valuecontainer[$scope.targetkey] ||
-								value.id === idNumber) {
+								curVal === idNumber) {
 								$scope.valuecontainer[$scope.targetkey] = value;
 							}
 						});

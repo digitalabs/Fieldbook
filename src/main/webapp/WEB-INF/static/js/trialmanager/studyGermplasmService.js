@@ -66,6 +66,16 @@
 			return request.then(successHandler, failureHandler);
         }
 
+		studyGermplasmService.deleteEntries = function() {
+			var request = $http.delete(BASE_STUDY_URL + studyContext.studyId + '/entries');
+			return request.then(successHandler, failureHandler);
+		}
+
+		studyGermplasmService.hasStudyEntries = function() {
+			var request = $http.delete(BASE_STUDY_URL + studyContext.studyId + '/hasStudyEntries');
+			return request.then(successHandler, failureHandler);
+		}
+
 
         return studyGermplasmService;
 

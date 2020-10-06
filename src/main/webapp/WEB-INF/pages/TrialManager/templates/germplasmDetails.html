@@ -67,8 +67,25 @@
 
 
 <div class="collapse in germplasmListDetails">
-	<!-- Germplasm List Table View -->
-	<div id="imported-germplasm-list" class="primary"></div>
+	<div class="row">
+		<div class="col-xs-12" ng-show="showStudyTable()">
+			<table id="germplasm-table"
+				   datatable=""
+				   dt-instance="nested.dtInstance"
+				   dt-options="dtOptions"
+				   dt-columns="dtColumns"
+				   dt-column-defs="dtColumnDefs"
+				   width="100%"
+				   class="table table-curved table-condensed table-sorted">
+			</table>
+			<div class="row col-xs-12 col-md-12">
+				<div id="imported-germplasm-list-reset-button" class="pull-left">
+					<a style="margin-top: 5px;" href="javascript: resetGermplasmList()" class="btn btn-default"
+					   th:text="#{common.clear.list}"></a>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <input type="hidden" id="keyForOverwrite" value=""/>

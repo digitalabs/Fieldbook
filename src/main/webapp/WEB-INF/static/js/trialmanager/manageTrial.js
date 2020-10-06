@@ -213,10 +213,6 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 				{
 					name: 'Settings',
 					state: 'trialSettings'
-				},
-				{
-					name: 'Germplasm & Checks',
-					state: 'germplasm'
 				}
 			];
 			$scope.subObservationTabs = [];
@@ -246,6 +242,11 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 			$scope.PERMISSIONS = PERMISSIONS;
 
 			if ($scope.isOpenStudy()) {
+				$scope.trialTabs.push({
+						name: 'Germplasm & Checks',
+						state: 'germplasm'
+
+				});
 				$scope.trialTabs.push({
 					name: 'Treatment Factors',
 					state: 'treatment'

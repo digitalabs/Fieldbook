@@ -3188,10 +3188,15 @@ function validateLocationMatch() {
 	var isMatched = true;
 	var prev = '';
 	$('#studyFieldMapTree tr:has(:checkbox:checked) td:nth-child(2)').each(function () {
-		if (prev != '') {
-			isMatched = prev == $(this).text();
+		let temp = $(this).text().split('-');
+		let txt =  $(this).text();
+		if (temp.length > 1) {
+			txt = temp[1];
 		}
-		prev = $(this).text();
+		if (prev != '') {
+			isMatched = prev == txt;
+		}
+		prev = txt;
 	});
 	return isMatched;
 }

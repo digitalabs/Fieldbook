@@ -71,16 +71,6 @@ public class ExportFieldmapServiceImpl implements ExportFieldmapService {
 		final String totalPlotsHeader = this.messageSource.getMessage("fieldmap.study.total.number.of.plots", null, locale);
 		final String datasetNameHeader = this.messageSource.getMessage("fieldmap.study.dataset", null, locale);
 
-		// Field And Block Details
-		final String fieldAndBlockDetailsLabel = this.messageSource.getMessage("fieldmap.study.field.and.block.details", null, locale);
-		// FIELD AND BLOCK DETAILS
-		final String fieldLocationLabel = this.messageSource.getMessage("fieldmap.label.field.location", null, locale); // Field Location
-		final String fieldLocationValue = userFieldMap.getLocationName();
-		final String fieldNameLabel = this.messageSource.getMessage("fieldmap.label.field.name", null, locale); // Field Name
-		final String fieldNameValue = userFieldMap.getFieldName();
-		final String blockNameLabel = this.messageSource.getMessage("fieldmap.label.block.name", null, locale); // Block Name
-		final String blockNameValue = userFieldMap.getBlockName();
-
 		// Row, Range & Plot Details
 		final String rowRangePlotDetailsLabel = this.messageSource.getMessage("fieldmap.study.row.and.range.and.plot.details", null, locale);
 		// ROW, RANGE AND PLOT DETAILS
@@ -229,17 +219,7 @@ public class ExportFieldmapServiceImpl implements ExportFieldmapService {
 			// Row 5: Header - Details Heading
 			row = summarySheet.createRow(rowIndex++);
 			columnIndex = 0;
-			labelCell = row.createCell(columnIndex++);
-			labelCell.setCellValue(fieldAndBlockDetailsLabel);
-			labelCell.setCellStyle(headerLabelStyle);
 
-			summarySheet.addMergedRegion(new CellRangeAddress(rowIndex - 1, // first row (0-based)
-					rowIndex - 1, // last row (0-based)
-					columnIndex - 1, // first column (0-based)
-					columnIndex // last column (0-based)
-					));
-
-			row.createCell(columnIndex++);
 			labelCell = row.createCell(columnIndex++);
 			labelCell.setCellValue(rowRangePlotDetailsLabel);
 			labelCell.setCellStyle(headerLabelStyle);
@@ -266,11 +246,7 @@ public class ExportFieldmapServiceImpl implements ExportFieldmapService {
 			// Row 6: Field Location, Block Capacity, Starting Coordinates
 			row = summarySheet.createRow(rowIndex++);
 			columnIndex = 0;
-			labelCell = row.createCell(columnIndex++);
-			labelCell.setCellValue(fieldLocationLabel);
-			labelCell.setCellStyle(labelStyle);
 
-			row.createCell(columnIndex++).setCellValue(fieldLocationValue);
 			labelCell = row.createCell(columnIndex++);
 			labelCell.setCellValue(blockCapacityLabel);
 			labelCell.setCellStyle(labelStyle);
@@ -286,11 +262,7 @@ public class ExportFieldmapServiceImpl implements ExportFieldmapService {
 			// Row 7: Field Name, Rows Per Plot, Planting Order
 			row = summarySheet.createRow(rowIndex++);
 			columnIndex = 0;
-			labelCell = row.createCell(columnIndex++);
-			labelCell.setCellValue(fieldNameLabel);
-			labelCell.setCellStyle(labelStyle);
 
-			row.createCell(columnIndex++).setCellValue(fieldNameValue);
 			labelCell = row.createCell(columnIndex++);
 			labelCell.setCellValue(rowsPerPlotLabel);
 			labelCell.setCellStyle(labelStyle);
@@ -305,11 +277,7 @@ public class ExportFieldmapServiceImpl implements ExportFieldmapService {
 			// Row 8: Block Name, Columns
 			row = summarySheet.createRow(rowIndex++);
 			columnIndex = 0;
-			labelCell = row.createCell(columnIndex++);
-			labelCell.setCellValue(blockNameLabel);
-			labelCell.setCellStyle(labelStyle);
 
-			row.createCell(columnIndex++).setCellValue(blockNameValue);
 			labelCell = row.createCell(columnIndex++);
 			labelCell.setCellValue(columnsLabel);
 			labelCell.setCellStyle(labelStyle);

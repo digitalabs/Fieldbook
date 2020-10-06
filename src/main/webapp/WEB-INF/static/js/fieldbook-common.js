@@ -442,12 +442,14 @@ function createHeader(hasFieldMap) {
 
 	if (!hasFieldMap) {
 		newRow = newRow + '<th style="width:35%">' + studyName + '</th>' +
+			'<th style="width:15%">' + locationLabel+ '</th>' +
 			'<th style="width:15%">' + entryLabel + '</th>' +
 			'<th style="width:10%">' + repLabel + '</th>' +
 			'<th style="width:20%">' + plotLabel + '</th>';
 		newRow = newRow + '<th style="width:15%">' + fieldmapLabel + '</th>';
 	} else {
 		newRow = newRow + '<th style="width:40%"></th>' +
+			'<th style="width:15%">' + locationLabel+ '</th>' +
 			'<th style="width:20%">' + entryLabel + '</th>' +
 			'<th style="width:20%">' + repLabel + '</th>' +
 			'<th style="width:20%">' + plotLabel + '</th>';
@@ -465,6 +467,7 @@ function createRow(id, parentClass, value, realId, withFieldMap, hasOneInstance)
 		hasFieldMap,
 		disabledString,
 		checkBox;
+	var locationName = value.trialInstanceNo +"-"+value.locationName;
 
 	if (parentClass !== '') {
 		genParentClassName = 'treegrid-parent-' + parentClass;
@@ -473,7 +476,7 @@ function createRow(id, parentClass, value, realId, withFieldMap, hasOneInstance)
 	if (id.indexOf('study') > -1 || id.indexOf('dataset') > -1) {
 		// Study and dataset level
 		newRow = '<tr id="' + realId + '" class="tr-expander ' + genClassName + id + ' ' + genParentClassName + '">';
-		newCell = newCell + '<td>' + value + '</td><td></td><td></td><td></td>';
+		newCell = newCell + '<td>' + value + '</td><td></td><td></td><td></td><td></td>';
 
 		if (!withFieldMap) {
 			newCell = newCell + '<td></td>';
@@ -483,7 +486,7 @@ function createRow(id, parentClass, value, realId, withFieldMap, hasOneInstance)
 		if (withFieldMap) {
 			// For view fieldmap
 			newRow = '<tr id="' + realId + '" class="data-row trialInstance ' + genClassName + id + ' ' + genParentClassName + '">';
-			newCell = '<td>' + value.trialInstanceNo + '</td><td>' + value.entryCount + '</td>';
+			newCell = '<td>' + value.trialInstanceNo + '</td><td>' + locationName + '</td><td>' + value.entryCount + '</td>';
 			newCell = newCell + '<td>' + value.repCount + '</td><td>' + value.plotCount + '</td>';
 		} else {
 			// For create new fieldmap
@@ -493,7 +496,7 @@ function createRow(id, parentClass, value, realId, withFieldMap, hasOneInstance)
 
 			newRow = '<tr class="data-row trialInstance ' + genClassName + id + ' ' + genParentClassName + '">';
 			checkBox = '<input ' + disabledString + ' class="checkInstance" type="checkbox" id="' + realId + '" ' + checked + ' /> &nbsp;&nbsp;';
-			newCell = '<td>' + checkBox + '&nbsp;' + value.trialInstanceNo + '</td><td>' + value.entryCount + '</td>';
+			newCell = '<td>' + checkBox + '&nbsp;' + value.trialInstanceNo + '</td><td>' + locationName + '</td><td>' + value.entryCount + '</td>';
 			newCell = newCell + '<td>' + value.repCount + '</td><td>' + value.plotCount + '</td>';
 			newCell = newCell + '<td class="hasFieldMap">' + hasFieldMap + '</td>';
 		}
@@ -640,6 +643,11 @@ function showCreateFieldMap() {
 		studyId,
 		hasFieldMap;
 
+	if (!validateLocationMatch()) {
+		showMessage(msgLocationNotMatched);
+		return ;
+	}
+
 	if ($('#studyFieldMapTree .checkInstance:checked').attr('id')) {
 		selectedWithFieldMap = false;
 		fieldmapIds = [];
@@ -654,7 +662,7 @@ function showCreateFieldMap() {
 				studyId = $(this).parent().parent().treegrid('getParentNode').treegrid('getParentNode').attr('id');
 			}
 			// Get value hasfieldmap column
-			hasFieldMap = $(this).parent().next().next().next().next().html();
+			hasFieldMap = $(this).parent().next().next().next().next().next().html();
 			// Build id list of selected trials instances
 			fieldmapIds.push(studyId + '|' + datasetId + '|' + id);
 
@@ -1778,22 +1786,6 @@ function recreateLocationCombo(possibleFavorite) {
 						}
 						refreshLocationComboInSettings(data);
 
-					} else if (fieldmapScreen === true) {
-						recreateFieldLocationComboAfterClose('fieldLocationIdAll', data.allLocations);
-						recreateFieldLocationComboAfterClose('fieldLocationIdFavorite', data.favoriteLocations);
-						recreateFieldLocationComboAfterClose('fieldLocationIdBreeding', data.allBreedingLocations);
-						recreateFieldLocationComboAfterClose('fieldLocationIdBreedingFavorites', data.allBreedingFavoritesLocations);
-						showCorrectFieldLocationCombo();
-						//set previously selected value of location
-						if ($('#showFavoriteLocation').prop('checked') && $('#showBreedingLocationOnlyRadio').prop('checked')) {
-							setComboValues(locationSuggestionsBreedingFav_obj, $('#fieldLocationIdBreedingFavorites').val(), 'fieldLocationIdBreedingFavorites');
-						} else if ($('#showFavoriteLocation').prop('checked')) {
-							setComboValues(locationSuggestionsFav_obj, $('#fieldLocationIdFavorite').val(), 'fieldLocationIdFavorite');
-						} else if ($('#showAllLocationRadio').prop('checked')) {
-							setComboValues(locationSuggestions_obj, $('#fieldLocationIdAll').val(), 'fieldLocationIdAll');
-						} else {
-							setComboValues(locationSuggestionsBreeding_obj, $('#fieldLocationIdBreeding').val(), 'fieldLocationIdBreeding');
-						}
 					} else {
 						if (hasCreateGermplasm) {
 							refreshLocationComboInSettings(data);
@@ -1920,38 +1912,6 @@ function recreateLocationComboAfterClose(comboName, data) {
 		locationSuggestionsFav = data;
 		initializeHarvestLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFavObj);
 		//	locSug = [];
-	}
-}
-
-function recreateFieldLocationComboAfterClose(comboName, data) {
-	if (comboName == 'fieldLocationIdAll') {
-		locationSuggestions = [];
-		locationSuggestions_obj = [];
-		initializeFieldLocationsSelect2(locationSuggestions, locationSuggestions_obj,comboName);
-		//reload the data retrieved
-		locationSuggestions = data;
-		initializeFieldLocationsSelect2(locationSuggestions, locationSuggestions_obj,comboName);
-	} else if (comboName == 'fieldLocationIdBreeding') {
-		locationSuggestionsBreeding = [];
-		locationSuggestionsBreeding_obj = [];
-		initializeFieldLocationsSelect2(locationSuggestionsBreeding, locationSuggestionsBreeding_obj, comboName);
-		//reload the data retrieved
-		locationSuggestionsBreeding = data;
-		initializeFieldLocationsSelect2(locationSuggestionsBreeding, locationSuggestionsBreeding_obj, comboName);
-	} else if (comboName == 'fieldLocationIdBreedingFavorites') {
-		locationSuggestionsBreedingFav = [];
-		locationSuggestionsBreedingFav_obj = [];
-		initializeFieldLocationsSelect2(locationSuggestionsBreedingFav, locationSuggestionsBreedingFav_obj,comboName);
-		//reload the data retrieved
-		locationSuggestionsBreedingFav = data;
-		initializeFieldLocationsSelect2(locationSuggestionsBreedingFav, locationSuggestionsBreedingFav_obj,comboName);
-	} else if (comboName=="fieldLocationIdFavorite") {
-		locationSuggestionsFav = [];
-		locationSuggestionsFav_obj = [];
-		initializeFieldLocationsSelect2(locationSuggestionsFav, locationSuggestionsFav_obj,comboName);
-		//reload the data retrieved
-		locationSuggestionsFav = data;
-		initializeFieldLocationsSelect2(locationSuggestionsFav, locationSuggestionsFav_obj,comboName);
 	}
 }
 
@@ -3222,4 +3182,16 @@ function getDatasetInstances(cropName, currentProgramId, studyId, datasetId) {
 		success: function (data) {
 		}
 	});
+}
+
+function validateLocationMatch() {
+	var isMatched = true;
+	var prev = '';
+	$('#studyFieldMapTree tr:has(:checkbox:checked) td:nth-child(2)').each(function () {
+		if (prev != '') {
+			isMatched = prev == $(this).text();
+		}
+		prev = $(this).text();
+	});
+	return isMatched;
 }

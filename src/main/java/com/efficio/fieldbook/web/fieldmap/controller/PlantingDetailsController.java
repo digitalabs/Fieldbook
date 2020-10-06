@@ -71,18 +71,18 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController {
 	 * @return the string
 	 */
 	@RequestMapping(method = RequestMethod.GET)
-	public String show(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model, HttpSession session) {
+	public String show(@ModelAttribute("fieldmapForm") final FieldmapForm form, final Model model, final HttpSession session) {
 		try {
 			this.setPrevValues(form);
 
-			List<FieldMapInfo> infos = this.fieldbookMiddlewareService.getAllFieldMapsInBlockByBlockId(this.userFieldmap.getBlockId());
+			final List<FieldMapInfo> infos = this.getFieldMapInfo();
 			if (this.userFieldmap.getSelectedFieldMapsToBeAdded() == null) {
 				this.userFieldmap.setSelectedFieldMapsToBeAdded(new ArrayList<FieldMapInfo>(this.userFieldmap.getSelectedFieldMaps()));
 			}
 
 			// this is to add the new nusery
-			List<FieldMapInfo> fieldmapInfoList = new ArrayList<FieldMapInfo>();
-			List<FieldMapInfo> toBeAdded = this.userFieldmap.getSelectedFieldMapsToBeAdded();
+			final List<FieldMapInfo> fieldmapInfoList = new ArrayList<FieldMapInfo>();
+			final List<FieldMapInfo> toBeAdded = this.userFieldmap.getSelectedFieldMapsToBeAdded();
 			fieldmapInfoList.addAll(toBeAdded);
 
 			if (infos != null && !infos.isEmpty()) {
@@ -95,9 +95,9 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController {
 			this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(this.userFieldmap.getSelectedFieldMaps()));
 			this.userFieldmap.setSelectedFieldmapListToBeAdded(new SelectedFieldmapList(this.userFieldmap.getSelectedFieldMapsToBeAdded()));
 			this.userFieldmap.setFieldMapLabels(this.userFieldmap.getAllSelectedFieldMapLabels(false));
-			FieldPlotLayoutIterator plotIterator = this.horizontalFieldMapLayoutIterator;
+			final FieldPlotLayoutIterator plotIterator = this.horizontalFieldMapLayoutIterator;
 
-			FieldMapTrialInstanceInfo trialInfo = this.userFieldmap.getAnySelectedTrialInstance();
+			final FieldMapTrialInstanceInfo trialInfo = this.userFieldmap.getAnySelectedTrialInstance();
 
 			if (this.userFieldmap.getFieldmap() != null) {
 				this.plotCleanup();
@@ -134,17 +134,17 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController {
 
 			form.setUserFieldmap(this.userFieldmap);
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			PlantingDetailsController.LOG.error("Accessing the user field map was not successful", e);
 		}
 		return super.show(model);
 	}
 
 	private void plotCleanup() {
-		Plot[][] currentPlot = this.userFieldmap.getFieldmap();
+		final Plot[][] currentPlot = this.userFieldmap.getFieldmap();
 		for (int i = 0; i < currentPlot.length; i++) {
 			for (int j = 0; j < currentPlot[i].length; j++) {
-				Plot plot = currentPlot[i][j];
+				final Plot plot = currentPlot[i][j];
 				if (!plot.isSavedAlready()) {
 					// we reset the the plot
 					if (plot.isPlotDeleted()) {
@@ -157,8 +157,8 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController {
 		}
 	}
 
-	private void setPrevValues(FieldmapForm form) {
-		UserFieldmap info = new UserFieldmap();
+	private void setPrevValues(final FieldmapForm form) {
+		final UserFieldmap info = new UserFieldmap();
 		info.setNumberOfRangesInBlock(this.userFieldmap.getNumberOfRangesInBlock());
 		info.setNumberOfRowsInBlock(this.userFieldmap.getNumberOfRowsInBlock());
 		info.setNumberOfRowsPerPlot(this.userFieldmap.getNumberOfRowsPerPlot());
@@ -173,7 +173,7 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
 	 */
 	@Override
@@ -190,16 +190,16 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController {
 		return this.userFieldmap;
 	}
 
-	private void setOrder(List<FieldMapInfo> info) {
+	private void setOrder(final List<FieldMapInfo> info) {
 		this.setOrder(info, -1);
 	}
 
-	private void setOrder(List<FieldMapInfo> info, int offset) {
+	private void setOrder(final List<FieldMapInfo> info, final int offset) {
 		int order = 1;
 		if (info != null && !info.isEmpty()) {
-			for (FieldMapInfo rec : info) {
-				for (FieldMapDatasetInfo dataset : rec.getDatasets()) {
-					for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
+			for (final FieldMapInfo rec : info) {
+				for (final FieldMapDatasetInfo dataset : rec.getDatasets()) {
+					for (final FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
 						if (offset >= 0 && trial.getOrder() != null) {
 							trial.setOrder(trial.getOrder() + offset);
 						} else {
@@ -209,6 +209,22 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController {
 				}
 			}
 		}
+	}
+
+	private List<FieldMapInfo> getFieldMapInfo() {
+		final List<FieldMapInfo> fieldMapInfoList = new ArrayList<>();
+		final String[] orderList = this.userFieldmap.getOrder().split(",");
+		for (final String orders : orderList) {
+			final String[] id = orders.split("\\|");
+			final int datasetId = Integer.parseInt(id[2]);
+			final int instanceId = Integer.parseInt(id[3]);
+
+			final List<FieldMapInfo> fieldMapInfos = this.fieldbookMiddlewareService.getAllFieldMapsByTrialInstanceId(datasetId, instanceId, null);
+			if (fieldMapInfoList != null) {
+				fieldMapInfoList.addAll(fieldMapInfos);
+			}
+		}
+		return fieldMapInfoList;
 	}
 
 }

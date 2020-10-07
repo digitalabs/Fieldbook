@@ -1,0 +1,65 @@
+<div class="modal-body">
+	<div class="row form-group">
+		<div class="col-xs-10 col-md-11">
+			<h3 class="modal-title fbk-modal-title" id="heading-calculate-cop-modal">Calculate COP</h3>
+		</div>
+		<div class="col-xs-1 col-md-1">
+			<button type="button" class="close pull-right glyphicon glyphicon-remove" data-dismiss="modal" ng-click="cancel()"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<div class="col-sm-1" style="padding-right: 0px;">
+			<label class="control-label label-bold"> Breeder email:</label>
+		</div>
+		<div class="col-sm-2" style="padding-left: 0px;">
+			<input type="text" name="email" ng-model="model.breedermail" class="form-control" required="true"/>
+		</div>
+		<div class="col-sm-1" style="padding-right: 0px;">
+			<label class="control-label label-bold"> BMS url:</label>
+		</div>
+		<div class="col-sm-2" style="padding-left: 0px;">
+			<input type="text" name="endpoint" ng-model="model.platform_url" class="form-control" required="true"/>
+		</div>
+		<div class="col-sm-1" style="padding-right: 0px;">
+			<label class="control-label label-bold"> Generations:</label>
+		</div>
+		<div class="col-sm-1" style="padding-left: 0px;">
+			<input type="number" name="generations" ng-model="model.generations" class="form-control" required="true"/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<div class="col-xs-12 col-md-12">
+			<label class="label-bold" style="padding-top: 15px;">Pollination type:</label>
+		</div>
+
+		<div class="col-xs-12 col-md-12">
+			<label class="radio-inline non-maize-control">
+				<input type="radio" name="pollination_type" ng-model="model.pollination_type" class="radio" value="self" checked="checked"/>Self
+			</label>
+			<label class="radio-inline non-maize-control">
+				<input type="radio" name="pollination_type" ng-model="model.pollination_type" class="radio" value="cross"/>Cross
+			</label>
+		</div>
+		<div class="col-xs-12 col-md-12">
+			<label class="label-bold" style="padding-top: 15px;">Select the Gids to Calculate them the COP</label>
+		</div>
+
+	</div>
+
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<table id="calculate-cop-table"
+				   datatable=""
+				   dt-instance="nested.dtInstance"
+				   dt-options="dtOptions"
+				   dt-columns="dtColumns"
+				   dt-column-defs="dtColumnDefs"
+				   class="table table-curved table-condensed table-no-wrap" style="width: 100%">
+			</table>
+		</div>
+	</div>
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" ng-click="cancel()">Cancel</button>
+	<button type="button" class="btn btn-primary" aria-hidden="true" ng-click="confirm()" ng-disabled="!valid()">Confirm</button>
+</div>

@@ -7,11 +7,14 @@
 
 	manageTrialAppModule.controller('GermplasmCtrl',
 		['$scope', '$q', '$compile', 'TrialManagerDataService', 'DTOptionsBuilder', 'studyStateService', 'studyGermplasmService', 'germplasmStudySourceService',
-			function ($scope, $q, $compile, TrialManagerDataService, DTOptionsBuilder, studyStateService, studyGermplasmService, germplasmStudySourceService) {
+			'datasetService',
+			function ($scope, $q, $compile, TrialManagerDataService, DTOptionsBuilder, studyStateService, studyGermplasmService, germplasmStudySourceService, datasetService) {
 
 				$scope.settings = TrialManagerDataService.settings.germplasm;
 				$scope.isOpenStudy = TrialManagerDataService.isOpenStudy;
 				$scope.trialMeasurement = {hasMeasurement: studyStateService.hasGeneratedDesign()};
+				$scope.isHideDelete = false;
+				$scope.addVariable = true;
 				$scope.selectedItems = [];
 
 				var tableLoadedResolve;
@@ -483,6 +486,30 @@
 						}
 					});
 				}
+
+				$scope.onRemoveVariable = function (variableIds, settings) {
+				};
+
+				$scope.onAddVariable = function(result, variableType) {
+					var variable = undefined;
+					angular.forEach(result, function (val) {
+						variable = val.variable;
+					});
+					var plotDataset = null;
+					datasetService.getDatasets([4]).then(function (data) {
+						angular.forEach(data, function (dataset) {
+							plotDataset = dataset;
+							datasetService.addVariables(plotDataset.datasetId, {
+								variableTypeId: variableType,
+								variableId: variable.cvTermId,
+								studyAlias: variable.alias ? variable.alias : variable.name
+							}).then(function () {
+								loadTable();
+							});
+						});
+					});
+
+				};
 
 			}]);
 

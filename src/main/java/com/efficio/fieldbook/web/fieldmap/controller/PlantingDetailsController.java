@@ -75,7 +75,7 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController {
 		try {
 			this.setPrevValues(form);
 
-			final List<FieldMapInfo> infos = this.getFieldMapInfo();
+			final List<FieldMapInfo> infos = this.fieldbookMiddlewareService.getAllFieldMapsInBlockByLocationId(this.userFieldmap.getFieldLocationId());
 			if (this.userFieldmap.getSelectedFieldMapsToBeAdded() == null) {
 				this.userFieldmap.setSelectedFieldMapsToBeAdded(new ArrayList<FieldMapInfo>(this.userFieldmap.getSelectedFieldMaps()));
 			}
@@ -209,22 +209,6 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController {
 				}
 			}
 		}
-	}
-
-	private List<FieldMapInfo> getFieldMapInfo() {
-		final List<FieldMapInfo> fieldMapInfoList = new ArrayList<>();
-		final String[] orderList = this.userFieldmap.getOrder().split(",");
-		for (final String orders : orderList) {
-			final String[] id = orders.split("\\|");
-			final int datasetId = Integer.parseInt(id[2]);
-			final int instanceId = Integer.parseInt(id[3]);
-
-			final List<FieldMapInfo> fieldMapInfos = this.fieldbookMiddlewareService.getAllFieldMapsByTrialInstanceId(datasetId, instanceId, null);
-			if (fieldMapInfoList != null) {
-				fieldMapInfoList.addAll(fieldMapInfos);
-			}
-		}
-		return fieldMapInfoList;
 	}
 
 }

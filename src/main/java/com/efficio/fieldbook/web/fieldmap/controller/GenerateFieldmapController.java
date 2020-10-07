@@ -132,7 +132,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController 
 			this.userFieldmap.setSelectedInstanceId(instanceId);
 
 			this.userFieldmap.setSelectedFieldMaps(this.fieldbookMiddlewareService
-					.getAllFieldMapsByTrialInstanceId(datasetId, instanceId, this.crossExpansionProperties));
+					.getAllFieldMapsInBlockByTrialInstanceId(datasetId, instanceId, this.crossExpansionProperties));
 
 			final FieldMapTrialInstanceInfo trialInfo =
 					this.userFieldmap.getSelectedTrialInstanceByDatasetIdAndEnvironmentId(datasetId, instanceId);

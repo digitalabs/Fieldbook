@@ -487,7 +487,23 @@
 					});
 				}
 
-				$scope.onRemoveVariable = function (variableIds, settings) {
+				$scope.onRemoveVariable = function (variableType, variableIds) {
+					var deferred = $q.defer();
+					datasetService.getDatasets([4]).then(function (data) {
+						angular.forEach(data, function (dataset) {
+							datasetService.removeVariables(dataset.datasetId, variableIds).then(function () {
+								deferred.resolve(true);
+								loadTable();
+							}, function (response) {
+								if (response.errors && response.errors.length) {
+									showErrorMessage('', response.errors[0].message);
+								} else {
+									showErrorMessage('', ajaxGenericErrorMsg);
+								}
+							});
+						});
+					});
+					return deferred.promise;
 				};
 
 				$scope.onAddVariable = function(result, variableType) {
@@ -495,11 +511,9 @@
 					angular.forEach(result, function (val) {
 						variable = val.variable;
 					});
-					var plotDataset = null;
 					datasetService.getDatasets([4]).then(function (data) {
 						angular.forEach(data, function (dataset) {
-							plotDataset = dataset;
-							datasetService.addVariables(plotDataset.datasetId, {
+							datasetService.addVariables(dataset.datasetId, {
 								variableTypeId: variableType,
 								variableId: variable.cvTermId,
 								studyAlias: variable.alias ? variable.alias : variable.name

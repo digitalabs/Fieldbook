@@ -22,47 +22,17 @@
 				$scope.tableRenderedPromise = new Promise(function (resolve) {
 					tableRenderedResolve = resolve;
 				});
-				$scope.nested = {};
-				$scope.nested.dtInstance = null;
 
-				$scope.columnsData = {};
-				$scope.columnsObj = {};
-				if ($scope.isOpenStudy()) {
-					var tableId = '#germplasm-table';
-					var dtColumnsPromise = $q.defer();
-					var dtColumnDefsPromise = $q.defer();
-					$scope.dtColumns = dtColumnsPromise.promise;
-					$scope.dtColumnDefs = dtColumnDefsPromise.promise;
-					$scope.dtOptions = null;
+				var dtColumnsPromise = $q.defer();
+				var dtColumnDefsPromise = $q.defer();
+				$scope.dtColumns = dtColumnsPromise.promise;
+				$scope.dtColumnDefs = dtColumnDefsPromise.promise;
+				$scope.dtOptions = null;
 
-					$scope.totalItems = 0;
-					$scope.selectedItems = [];
-					$scope.isAllPagesSelected = false;
-					$scope.columnFilter = {
-						selectAll: function () {
-							this.columnData.possibleValues.forEach(function (value) {
-								value.isSelectedInFilters = this.columnData.isSelectAll;
-							}.bind(this));
-						},
-						selectOption: function (selected) {
-							if (!selected) {
-								this.columnData.isSelectAll = false;
-							}
-						},
-						search: function (item) {
-							var query = $scope.columnFilter.columnData.query;
-							if (!query) {
-								return true;
-							}
-							if (item.name.indexOf(query) !== -1 || item.displayDescription.indexOf(query) !== -1) {
-								return true;
-							}
-							return false;
-						}
-					};
+				$scope.totalItems = 0;
+				$scope.isAllPagesSelected = false;
 
-					loadTable();
-				}
+				loadTable();
 
 				function table() {
 					return $scope.nested.dtInstance.DataTable;
@@ -108,6 +78,7 @@
 						.withOption('lengthMenu', [[50, 75, 100], [50, 75, 100]])
 						.withOption('scrollY', '500px')
 						.withOption('scrollCollapse', true)
+						.withOption('destroy', true)
 						.withOption('scrollX', '100%')
 						.withOption('order', [[2, 'desc']]) //gid
 						.withOption('language', {
@@ -135,25 +106,6 @@
 				}
 
 				function initCompleteCallback() {
-					table().columns().every(function () {
-						$(this.header())
-							.prepend($compile('<span class="glyphicon glyphicon-bookmark" style="margin-right: 10px; color:#1b95b2;"' +
-								' ng-if="isVariableBatchActionSelected(' + this.index() + ')"> </span>')($scope))
-							.append($compile('<span ng-if="!isCheckBoxColumn(' + this.index() + ')" class="glyphicon glyphicon-filter" ' +
-								' style="cursor:pointer; padding-left: 5px;"' +
-								' popover-placement="bottom"' +
-								' ng-class="getFilteringByClass(' + this.index() + ')"' +
-								' popover-append-to-body="true"' +
-								' popover-trigger="\'outsideClick\'"' +
-								// does not work with outsideClick
-								// ' popover-is-open="columnFilter.isOpen"' +
-								' ng-if="isVariableFilter(' + this.index() + ')"' +
-								' ng-click="openColumnFilter(' + this.index() + ')"' +
-								' uib-popover-template="\'columnFilterPopoverTemplate.html\'"></span>')($scope))
-							.prepend($compile('<span ng-if="isCheckBoxColumn(' + this.index() + ')">'
-								+ '<input type="checkbox" title="select current page" ng-checked="isPageSelected()"  ng-click="onSelectPage()">'
-								+ '</span>')($scope));
-					});
 					adjustColumns();
 					tableRenderedResolve();
 				}
@@ -202,6 +154,12 @@
 					 * datatables is breaking with error:
 					 * Cannot read property 'clientWidth' of null
 					 */
+
+					$scope.nested = {};
+					$scope.nested.dtInstance = null;
+
+					$scope.columnsData = {};
+					$scope.columnsObj = {};
 					var dtColumnsPromise = $q.defer();
 					var dtColumnDefsPromise = $q.defer();
 					$scope.dtColumns = dtColumnsPromise.promise;
@@ -214,6 +172,7 @@
 						dtColumnsPromise.resolve(columnsObj.columns);
 						dtColumnDefsPromise.resolve(columnsObj.columnsDef);
 
+						$scope.selectedItems = [];
 						tableLoadedResolve();
 					});
 				}
@@ -281,7 +240,7 @@
 								targets: columns.length - 1,
 								orderable: false,
 								createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
-									$(td).append($compile('<span><input type="checkbox" ng-checked="isSelected(' + rowData.observationUnitId + ')" ng-click="toggleSelect(' + rowData.observationUnitId + ')"></span>')($scope));
+									$(td).append($compile('<span><input type="checkbox")></span>')($scope));
 								}
 							});
 						} else if (columnData.termId === 8240 || columnData.termId === 8250) {
@@ -472,6 +431,19 @@
 				});
 				};
 
+				$scope.isSelected = function (itemId) {
+					return itemId && $scope.selectedItems.length > 0 && $scope.selectedItems.find((item) => item === itemId);
+				};
+
+				$scope.toggleSelect = function (data) {
+					var idx = $scope.selectedItems.indexOf(data);
+					if (idx > -1) {
+						$scope.selectedItems.splice(idx, 1)
+					} else {
+						$scope.selectedItems.push(data);
+					}
+				};
+
 				$scope.replaceGermplasm = function() {
 					if (studyStateService.hasGeneratedDesign()) {
 						var modalConfirmReplacement = $scope.openConfirmModal($.germplasmMessages.replaceGermplasmWarning, 'Yes','No');
@@ -487,12 +459,30 @@
 				};
 
 				$scope.saveStudyEntries = function (listId) {
-					studyGermplasmService.saveStudyEntries(listId).then(function(res){
-						loadTable();
-						$scope.showImportListBrowser = false;
-						$scope.showStudyEntriesTable = true;
+
+					studyGermplasmService.deleteEntries().then(function () {
+						studyGermplasmService.saveStudyEntries(listId).then(function(res){
+							table().ajax.reload();
+							$scope.showImportListBrowser = false;
+							$scope.showStudyEntriesTable = true;
+						});
 					});
 				};
+
+				$scope.resetStudyEntries = function() {
+					var modalConfirmCancellation = $scope.openConfirmModal($.fieldbookMessages.confirmResetStudyEntries, 'Confirm', 'Cancel');
+					modalConfirmCancellation.result.then(function (shouldContinue) {
+						if (shouldContinue) {
+							studyGermplasmService.deleteEntries().then(function () {
+								$scope.showImportListBrowser = true;
+								$scope.showStudyEntriesTable = false;
+								$('#imported-germplasm-list-reset-button').css('opacity', '0');
+								$('#entries-details').css('display', 'none');
+								$('#numberOfEntries').text('');
+							});
+						}
+					});
+				}
 
 			}]);
 

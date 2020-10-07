@@ -162,13 +162,7 @@
 
 		function displayGermplasmDetails(listIdTemp){
 			'use strict';
-			if (lastDraggedChecksList === 0 && $('.check-germplasm-list-items tbody tr').length > 0){
-				$('#confirmReplaceListModal #replaceListId').val(listIdTemp);
-				$('#confirmReplaceListModal').modal({ backdrop: 'static', keyboard: true });
-			}else {
-				angular.element(document.getElementById('germplasm-table')).scope().saveStudyEntries(listIdTemp);
-			}
-
+			angular.element(document.getElementById('germplasm-table')).scope().saveStudyEntries(listIdTemp);
 		}
 
 		function hideFolderDiv(selector) {

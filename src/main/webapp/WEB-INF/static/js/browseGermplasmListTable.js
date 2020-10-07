@@ -23,33 +23,8 @@ var germplasmDataTable = null,
 
 function resetGermplasmList() {
 	'use strict';
-	$('#imported-germplasm-list').html('<h3></h3>');
-	$('#imported-germplasm-list-reset-button').css('opacity', '0');
-	$('#entries-details').css('display', 'none');
-	$('#numberOfEntries').text('');
-	listId = 0;
-	lastDraggedPrimaryList = 0;
 
-	$.ajax({
-		url: '/Fieldbook/StudyManager/importGermplasmList/resetStudyGermplasmDetails',
-		type: 'GET',
-		cache: false,
-		async: false,
-		success: function() {
-		}
-	});
-	if (angular && angular.element("#manage-study-tabs [ui-view='germplasm']").length === 1) {
-		var _scope = angular.element("#manage-study-tabs [ui-view='germplasm']").scope();
-
-		setTimeout(function () {
-			_scope.$apply(function () {
-				_scope.germplasmListCleared();
-				_scope.updateOccurred = false;
-			});
-		}, 1);
-
-	}
-
+	angular.element(document.getElementById('germplasm-table')).scope().resetStudyEntries();
 
 }
 

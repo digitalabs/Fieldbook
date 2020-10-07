@@ -906,9 +906,15 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 				});
 			}
 
-			$scope.ChangePlotEntry = function () {
+			$scope.changePlotEntry = function () {
 				$scope.navigateToSubObsTab(studyContext.measurementDatasetId).then(function () {
 					$rootScope.$broadcast('changePlotEntry');
+				});
+			}
+
+			$scope.calculateCOP = function () {
+				$scope.navigateToSubObsTab(studyContext.measurementDatasetId).then(function () {
+					$rootScope.$broadcast('calculateCOP');
 				});
 			}
 

@@ -9,6 +9,8 @@
 	};
 	var changingPlotEntryDeRegister = () => {
 	};
+	var calculateCOPDeRegister = () => {
+	};
 
 	var subObservationModule = angular.module('subObservation', ['visualization']);
 	var TRIAL_INSTANCE = 8170,
@@ -278,6 +280,35 @@
 								},
 								numberOfPlots: function () {
 									return response.observationUnitsCount;
+								},
+							}
+						}).result.then(() => {
+							loadTable();
+						});
+					});
+				});
+			});
+
+			calculateCOPDeRegister();
+			calculateCOPDeRegister = $rootScope.$on('calculateCOP', function (event) {
+				$scope.tableRenderedPromise.then(function () {
+					var searchComposite = {
+						itemIds: $scope.selectedItems.length ? $scope.selectedItems : null,
+						searchRequest: $scope.selectedItems.length ? null : {
+							instanceId: $scope.nested.selectedEnvironment.instanceId,
+							draftMode: $scope.isPendingView,
+							filter: getFilter()
+						}
+					};
+
+					datasetService.getObservationUnitsMetadata(searchComposite, $scope.subObservationSet.dataset.datasetId).then(function (response) {
+						$uibModal.open({
+							templateUrl: '/Fieldbook/static/js/trialmanager/observations/calculate-cop-modal.html',
+							windowClass: 'modal-very-huge',
+							controller: 'CalculateCOPModalCtrl',
+							resolve: {
+								datasetId: function () {
+									return $scope.subObservationSet.dataset.datasetId;
 								},
 							}
 						}).result.then(() => {

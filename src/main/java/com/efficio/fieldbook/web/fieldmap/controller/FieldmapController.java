@@ -541,17 +541,17 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	/**
 	 * Gets the block info.
 	 *
-	 * @param blockId the block id
+	 * @param locationId the location Id
 	 * @return the block info
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/getBlockInformation/{blockId}", method = RequestMethod.GET)
-	public Map<String, String> getBlockInfo(@PathVariable final int blockId) {
+	@RequestMapping(value = "/getBlockInformation/{locationId}", method = RequestMethod.GET)
+	public Map<String, String> getBlockInfo(@PathVariable final int locationId) {
 		final Map<String, String> result = new HashMap<>();
 
 		try {
 
-			final FieldmapBlockInfo blockInfo = this.fieldbookMiddlewareService.getBlockInformation(blockId);
+			final FieldmapBlockInfo blockInfo = this.fieldbookMiddlewareService.getBlockInformation(locationId);
 			result.put("success", "1");
 			result.put("blockInfo", this.convertObjectToJson(blockInfo));
 

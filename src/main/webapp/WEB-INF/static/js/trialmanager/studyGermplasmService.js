@@ -72,7 +72,7 @@
 		}
 
 		studyGermplasmService.hasStudyEntries = function() {
-			var request = $http.delete(BASE_STUDY_URL + studyContext.studyId + '/hasStudyEntries');
+			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/hasStudyEntries');
 			return request.then(successHandler, failureHandler);
 		}
 

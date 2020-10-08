@@ -5,7 +5,7 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.ExportGermplasmListForm;
-import com.efficio.fieldbook.web.common.service.ExportStudyGermplasmService;
+import com.efficio.fieldbook.web.common.service.ExportStudyEntriesService;
 import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
 import org.generationcp.commons.util.FileUtils;
@@ -52,7 +52,7 @@ public class ExportStudyEntriesController extends AbstractBaseFieldbookControlle
 	private FieldbookService fieldbookMiddlewareService;
 
 	@Resource
-	private ExportStudyGermplasmService exportStudyGermplasmService;
+	private ExportStudyEntriesService exportStudyEntriesService;
 
 	@Resource
 	private StudyEntryService studyEntryService;
@@ -61,8 +61,8 @@ public class ExportStudyEntriesController extends AbstractBaseFieldbookControlle
 
 	@ResponseBody
 	@RequestMapping(value = "/exportGermplasmList/{exportType}", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
-	public String exportStudyGermplasm(@ModelAttribute("exportGermplasmListForm") ExportGermplasmListForm exportGermplasmListForm,
-		@PathVariable int exportType, HttpServletResponse response) throws GermplasmListExporterException {
+	public String exportStudyEntries(@ModelAttribute("exportGermplasmListForm") ExportGermplasmListForm exportGermplasmListForm,
+									 @PathVariable int exportType, HttpServletResponse response) throws GermplasmListExporterException {
 
 		final String[] clientVisibleColumnTermIds = exportGermplasmListForm.getGermplasmListVisibleColumns().split(",");
 		final Map<String, Boolean> visibleColumnsMap = this.getVisibleColumnsMap(clientVisibleColumnTermIds);
@@ -119,7 +119,7 @@ public class ExportStudyEntriesController extends AbstractBaseFieldbookControlle
 						this.installationDirectoryUtil.getTempFileInOutputDirectoryForProjectAndTool(EXPORTED_GERMPLASM_LIST,
 							AppConstants.EXPORT_XLS_SUFFIX.getString(), this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
 
-					this.exportStudyGermplasmService.exportAsExcelFile(studyId, outputFileNamePath, visibleColumnsMap);
+					this.exportStudyEntriesService.exportAsExcelFile(studyId, outputFileNamePath, visibleColumnsMap);
 					response.setContentType(FileUtils.MIME_MS_EXCEL);
 
 				} else if (exportType == 2) {
@@ -127,7 +127,7 @@ public class ExportStudyEntriesController extends AbstractBaseFieldbookControlle
 					outputFileNamePath = this.installationDirectoryUtil.getTempFileInOutputDirectoryForProjectAndTool(
 						EXPORTED_GERMPLASM_LIST,
 						AppConstants.EXPORT_CSV_SUFFIX.getString(), this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
-					this.exportStudyGermplasmService.exportAsCSVFile(studyId, outputFileNamePath, visibleColumnsMap);
+					this.exportStudyEntriesService.exportAsCSVFile(studyId, outputFileNamePath, visibleColumnsMap);
 					response.setContentType(FileUtils.MIME_CSV);
 				}
 			} catch (final IOException e) {
@@ -157,12 +157,12 @@ public class ExportStudyEntriesController extends AbstractBaseFieldbookControlle
 		this.userSelection = userSelection;
 	}
 
-	protected ExportStudyGermplasmService getExportStudyGermplasmService() {
-		return this.exportStudyGermplasmService;
+	protected ExportStudyEntriesService getExportStudyEntriesService() {
+		return this.exportStudyEntriesService;
 	}
 
-	protected void setExportStudyGermplasmService(final ExportStudyGermplasmService exportStudyGermplasmService) {
-		this.exportStudyGermplasmService = exportStudyGermplasmService;
+	protected void setExportStudyEntriesService(final ExportStudyEntriesService exportStudyEntriesService) {
+		this.exportStudyEntriesService = exportStudyEntriesService;
 	}
 
 	protected FieldbookService getFieldbookMiddlewareService() {

@@ -233,7 +233,7 @@ public class ImportGermplasmListController extends SettingsController {
 				this.getCurrentProject().getCropType());
 
 		// for saving the stocks
-		this.saveStudyGermplasm(studyId);
+		this.saveStudyEntries(studyId);
 
 		this.fieldbookService.saveStudyColumnOrdering(studyId,
 			form.getColumnOrders(), this.userSelection.getWorkbook());
@@ -262,10 +262,10 @@ public class ImportGermplasmListController extends SettingsController {
 	}
 
 	/**
-	 * Saves the study germplasm associated to the study.
+	 * Saves the germplasm entries associated to the study.
 	 * @param studyId
 	 */
-	private void saveStudyGermplasm(final int studyId) {
+	private void saveStudyEntries(final int studyId) {
 
 		final ImportedGermplasmMainInfo germplasmMainInfo = this.getUserSelection().getImportedGermplasmMainInfo();
 		final ImportedGermplasmList importedGermplasmList = germplasmMainInfo != null ? germplasmMainInfo.getImportedGermplasmList() : null;
@@ -606,7 +606,7 @@ public class ImportGermplasmListController extends SettingsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/resetStudyGermplasmDetails", method = RequestMethod.GET)
-	public String resetStudyGermplasmDetails(final Model model) {
+	public String resetStudyEntryDetails(final Model model) {
 
 		try {
 			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();

@@ -4,7 +4,7 @@ package com.efficio.fieldbook.web.common.service.impl;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.controller.ExportStudyEntriesController;
-import com.efficio.fieldbook.web.common.service.ExportStudyGermplasmService;
+import com.efficio.fieldbook.web.common.service.ExportStudyEntriesService;
 import com.efficio.fieldbook.web.study.germplasm.StudyEntryTransformer;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
@@ -34,7 +34,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Configurable
-public class ExportStudyGermplasmServiceImpl implements ExportStudyGermplasmService {
+public class ExportStudyEntriesServiceImpl implements ExportStudyEntriesService {
 
 	@Resource
 	private OntologyService ontologyService;
@@ -60,7 +60,7 @@ public class ExportStudyGermplasmServiceImpl implements ExportStudyGermplasmServ
 	@Resource
 	private StudyEntryTransformer studyEntryTransformer;
 
-	public ExportStudyGermplasmServiceImpl() {
+	public ExportStudyEntriesServiceImpl() {
 
 	}
 
@@ -229,18 +229,18 @@ public class ExportStudyGermplasmServiceImpl implements ExportStudyGermplasmServ
 
 		// FIXME: Find a way to get the germplasm factors by not using userSelection
 		final List<SettingDetail> factorsList = this.userSelection.getPlotsLevelList();
-		final List<StudyEntryDto> studyGermplasmDtoList = this.studyEntryService.getStudyEntries(studyId);
+		final List<StudyEntryDto> studyEntries = this.studyEntryService.getStudyEntries(studyId);
 		final Map<Integer, String> checkTypesNameMap =
 			this.ontologyService.getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID())
 				.getEnumerations().stream().collect(Collectors.toMap(Enumeration::getId, Enumeration::getName));
 
-		for (final StudyEntryDto studyGermplasmDto : studyGermplasmDtoList) {
+		for (final StudyEntryDto studyEntryDto : studyEntries) {
 			final ExportRow row = new ExportRow();
 
 			for (final SettingDetail settingDetail : factorsList) {
 				final Integer termId = settingDetail.getVariable().getCvTermId();
 				row.addColumnValue(termId,
-					this.getGermplasmPropertyValue(settingDetail.getVariable().getCvTermId().toString(), studyGermplasmDto,
+					this.getGermplasmPropertyValue(settingDetail.getVariable().getCvTermId().toString(), studyEntryDto,
 						checkTypesNameMap));
 			}
 

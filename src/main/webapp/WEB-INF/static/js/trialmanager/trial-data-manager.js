@@ -5,11 +5,11 @@
 	'use strict';
 	angular.module('manageTrialApp').service('TrialManagerDataService', ['GERMPLASM_LIST_SIZE','GERMPLASM_CHECKS_SIZE', 'TRIAL_SETTINGS_INITIAL_DATA',
 		'SAMPLE_LIST_DATA','ENVIRONMENTS_INITIAL_DATA', 'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA',
-		'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA', 'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_MANAGEMENT_MODE', 'UNSPECIFIED_LOCATION_ID', '$q',
+		'EXPERIMENTAL_DESIGN_SPECIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA', 'BASIC_DETAILS_DATA', '$http', '$resource', 'TRIAL_MANAGEMENT_MODE', 'UNSPECIFIED_LOCATION_ID', 'BREEDING_METHOD_CODE', '$q',
 		'TrialSettingsManager','studyStateService', '_', '$localStorage','$rootScope', 'studyContext', 'derivedVariableService', 'experimentDesignService',
 		function(GERMPLASM_LIST_SIZE, GERMPLASM_CHECKS_SIZE, TRIAL_SETTINGS_INITIAL_DATA, SAMPLE_LIST_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA,
 					EXPERIMENTAL_DESIGN_INITIAL_DATA, EXPERIMENTAL_DESIGN_SPECIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http, $resource,
-					TRIAL_MANAGEMENT_MODE, UNSPECIFIED_LOCATION_ID, $q, TrialSettingsManager, studyStateService, _, $localStorage, $rootScope, studyContext, derivedVariableService, experimentDesignService) {
+					TRIAL_MANAGEMENT_MODE, UNSPECIFIED_LOCATION_ID, BREEDING_METHOD_CODE, $q, TrialSettingsManager, studyStateService, _, $localStorage, $rootScope, studyContext, derivedVariableService, experimentDesignService) {
 
 
 			// TODO: clean up data service, at the very least arrange the functions in alphabetical order
@@ -176,9 +176,16 @@
 			var cleanupData = function(values) {
 				if (values) {
 					angular.forEach(values, function(value, key) {
-						if (value && (value.id || value.id === 0)) {
-							values[key] = value.id;
+						if(key === BREEDING_METHOD_CODE){
+							if (value && (value.key || value.key === 0)) {
+								values[key] = value.key;
+							}
+						}else{
+							if (value && (value.id || value.id === 0)) {
+								values[key] = value.id;
+							}
 						}
+
 					});
 				}
 			};

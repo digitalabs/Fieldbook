@@ -30,7 +30,7 @@ import org.generationcp.middleware.pojos.ErrorCode;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
-import org.generationcp.middleware.service.api.study.StudyGermplasmService;
+import org.generationcp.middleware.service.api.study.StudyEntryService;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -68,7 +68,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 	private AuthorizationService authorizationService;
 
 	@Mock
-	private StudyGermplasmService studyGermplasmService;
+	private StudyEntryService studyEntryService;
 
 	private Workbook workbook;
 
@@ -82,7 +82,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		this.reviewStudyDetailsController.setFieldbookMiddlewareService(this.fieldbookMWService);
 		this.reviewStudyDetailsController.setFieldbookService(this.fieldbookService);
 		this.reviewStudyDetailsController.setUserService(this.userService);
-		this.reviewStudyDetailsController.setStudyGermplasmService(this.studyGermplasmService);
+		this.reviewStudyDetailsController.setStudyEntryService(this.studyEntryService);
 		Mockito.doReturn(this.workbook).when(this.fieldbookMWService).getStudyVariableSettings(ArgumentMatchers.anyInt());
 		this.mockStandardVariables(this.workbook.getAllVariables(), this.fieldbookMWService, this.fieldbookService);
 
@@ -137,7 +137,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		final int id = new Random().nextInt(100);
 		final CreateTrialForm form = new CreateTrialForm();
 		final Model model = new ExtendedModelMap();
-		Mockito.doReturn(2L).when(this.studyGermplasmService).countStudyGermplasmByEntryTypeIds(ArgumentMatchers.eq(id), ArgumentMatchers.anyList());
+		Mockito.doReturn(2L).when(this.studyEntryService).countStudyGermplasmByEntryTypeIds(ArgumentMatchers.eq(id), ArgumentMatchers.anyList());
 		this.reviewStudyDetailsController.show(id, form, model);
 
 		final StudyDetails details = (StudyDetails) model.asMap().get("trialDetails");

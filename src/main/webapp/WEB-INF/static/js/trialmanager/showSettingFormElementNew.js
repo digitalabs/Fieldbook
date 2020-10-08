@@ -156,13 +156,23 @@
 						$scope.dropdownOptions.initSelection = function (element, callback) {
 							angular.forEach($scope.dropdownValues, function (value) {
 								var idNumber;
-
-								if (!isNaN($scope.valuecontainer[$scope.targetkey])) {
-									idNumber = parseInt($scope.valuecontainer[$scope.targetkey]);
+								var key;
+								if($scope.isBreedingMethod){
+									if (!isNaN($scope.valuecontainer[$scope.targetkey])) {
+										idNumber = parseInt($scope.valuecontainer[$scope.targetkey]);
+									}
+									//use value.key as reference
+									key = value.key;
+								}else{
+									if (!isNaN($scope.valuecontainer[$scope.targetkey])) {
+										idNumber = parseInt($scope.valuecontainer[$scope.targetkey]);
+									}
+									// use value.id as reference
+									key = value.id;
 								}
 
 								if (value.description === $scope.valuecontainer[$scope.targetkey] ||
-									value.id === idNumber) {
+									key === idNumber) {
 									callback(value);
 									return false;
 								}

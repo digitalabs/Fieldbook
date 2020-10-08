@@ -45,8 +45,9 @@ import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.DataImportService;
-import org.generationcp.middleware.service.api.study.StudyGermplasmDto;
-import org.generationcp.middleware.service.api.study.StudyGermplasmService;
+import org.generationcp.middleware.service.api.study.StudyEntryDto;
+import org.generationcp.middleware.service.api.study.StudyEntryPropertyData;
+import org.generationcp.middleware.service.api.study.StudyEntryService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -108,7 +109,7 @@ public class ImportGermplasmListControllerTest {
 	private StudyGermplasmTransformer studyGermplasmTransformer;
 
 	@Mock
-	private StudyGermplasmService studyGermplasmService;
+	private StudyEntryService studyEntryService;
 
 	private UserSelection userSelection;
 
@@ -160,7 +161,7 @@ public class ImportGermplasmListControllerTest {
 		Mockito.doReturn(this.createStudyDetails()).when(this.workbook).getStudyDetails();
 		Assert.assertFalse(this.importGermplasmListController.hasSavedGermplasm(false));
 
-		Mockito.doReturn(10L).when(this.studyGermplasmService).countStudyEntries(ImportGermplasmListControllerTest.STUDY_ID);
+		Mockito.doReturn(10L).when(this.studyEntryService).countStudyEntries(ImportGermplasmListControllerTest.STUDY_ID);
 		Assert.assertTrue(this.importGermplasmListController.hasSavedGermplasm(false));
 	}
 
@@ -291,11 +292,11 @@ public class ImportGermplasmListControllerTest {
 	@Test
 	public void testDisplayGermplasmDetailsOfCurrentStudyForNursery() throws MiddlewareException {
 
-		final List<StudyGermplasmDto> studyGermplasmDtoList = this.createStudyGermplasmDtoList();
+		final List<StudyEntryDto> studyEntries = this.createStudyEntries();
 		final List<ImportedGermplasm> importedGermplasmList = this.createImportedGermplasmList();
-		Mockito.doReturn(studyGermplasmDtoList).when(this.studyGermplasmService)
-			.getGermplasm(STUDY_ID);
-		Mockito.when(this.studyGermplasmTransformer.tranformToImportedGermplasm(studyGermplasmDtoList)).thenReturn(importedGermplasmList);
+		Mockito.doReturn(studyEntries).when(this.studyEntryService)
+			.getStudyEntries(STUDY_ID);
+		Mockito.when(this.studyGermplasmTransformer.tranformToImportedGermplasm(studyEntries)).thenReturn(importedGermplasmList);
 
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ExtendedModelMap model = new ExtendedModelMap();
@@ -390,11 +391,11 @@ public class ImportGermplasmListControllerTest {
 	@Test
 	public void testDisplayGermplasmDetailsOfCurrentStudyForStudy() throws MiddlewareException {
 
-		final List<StudyGermplasmDto> studyGermplasmDtoList = this.createStudyGermplasmDtoList();
+		final List<StudyEntryDto> studyEntries = this.createStudyEntries();
 		final List<ImportedGermplasm> importedGermplasmList = this.createImportedGermplasmList();
-		Mockito.doReturn(studyGermplasmDtoList).when(this.studyGermplasmService)
-			.getGermplasm(STUDY_ID);
-		Mockito.when(this.studyGermplasmTransformer.tranformToImportedGermplasm(studyGermplasmDtoList)).thenReturn(importedGermplasmList);
+		Mockito.doReturn(studyEntries).when(this.studyEntryService)
+			.getStudyEntries(STUDY_ID);
+		Mockito.when(this.studyGermplasmTransformer.tranformToImportedGermplasm(studyEntries)).thenReturn(importedGermplasmList);
 
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ExtendedModelMap model = new ExtendedModelMap();
@@ -626,18 +627,15 @@ public class ImportGermplasmListControllerTest {
 		return list;
 	}
 
-	private List<StudyGermplasmDto> createStudyGermplasmDtoList() {
-		final List<StudyGermplasmDto> list = new ArrayList<>();
+	private List<StudyEntryDto> createStudyEntries() {
+		final List<StudyEntryDto> list = new ArrayList<>();
 		for (int x = 1; x <= 5; x++) {
-			final StudyGermplasmDto data = new StudyGermplasmDto();
-			data.setEntryId(x);
-			data.setDesignation("DESIGNATION" + x);
+			final StudyEntryDto data = new StudyEntryDto(x, x, "DESIGNATION" + x);
 			data.setEntryCode(String.valueOf(x));
-			data.setCross("GROUPNAME" + x);
-			data.setSeedSource("SEEDSOURCE" + x);
-			data.setGermplasmId(x);
-			data.setCheckType(ImportGermplasmListControllerTest.CHECK_TYPE);
-			data.setGroupId(0);
+			data.getProperties().put(TermId.CROSS.getId(), new StudyEntryPropertyData("GROUPNAME " +x));
+			data.getProperties().put(TermId.SEED_SOURCE.getId(), new StudyEntryPropertyData("SEEDSOURCE " +x));
+			data.getProperties().put(TermId.ENTRY_TYPE.getId(), new StudyEntryPropertyData(String.valueOf(ImportGermplasmListControllerTest.CHECK_TYPE)));
+			data.getProperties().put(TermId.GROUPGID.getId(), new StudyEntryPropertyData("0"));
 			list.add(data);
 		}
 		return list;

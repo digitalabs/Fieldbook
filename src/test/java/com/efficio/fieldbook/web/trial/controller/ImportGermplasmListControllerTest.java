@@ -19,7 +19,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
 import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
 import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmMainInfoInitializer;
-import com.efficio.fieldbook.web.study.germplasm.StudyGermplasmTransformer;
+import com.efficio.fieldbook.web.study.germplasm.StudyEntryTransformer;
 import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 import com.google.common.collect.Lists;
 import org.generationcp.commons.data.initializer.ImportedGermplasmTestDataInitializer;
@@ -106,7 +106,7 @@ public class ImportGermplasmListControllerTest {
 	private InventoryDataManager inventoryDataManager;
 
 	@Mock
-	private StudyGermplasmTransformer studyGermplasmTransformer;
+	private StudyEntryTransformer studyEntryTransformer;
 
 	@Mock
 	private StudyEntryService studyEntryService;
@@ -296,7 +296,7 @@ public class ImportGermplasmListControllerTest {
 		final List<ImportedGermplasm> importedGermplasmList = this.createImportedGermplasmList();
 		Mockito.doReturn(studyEntries).when(this.studyEntryService)
 			.getStudyEntries(STUDY_ID);
-		Mockito.when(this.studyGermplasmTransformer.tranformToImportedGermplasm(studyEntries)).thenReturn(importedGermplasmList);
+		Mockito.when(this.studyEntryTransformer.tranformToImportedGermplasm(studyEntries)).thenReturn(importedGermplasmList);
 
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ExtendedModelMap model = new ExtendedModelMap();
@@ -395,7 +395,7 @@ public class ImportGermplasmListControllerTest {
 		final List<ImportedGermplasm> importedGermplasmList = this.createImportedGermplasmList();
 		Mockito.doReturn(studyEntries).when(this.studyEntryService)
 			.getStudyEntries(STUDY_ID);
-		Mockito.when(this.studyGermplasmTransformer.tranformToImportedGermplasm(studyEntries)).thenReturn(importedGermplasmList);
+		Mockito.when(this.studyEntryTransformer.tranformToImportedGermplasm(studyEntries)).thenReturn(importedGermplasmList);
 
 		final ImportGermplasmListForm form = new ImportGermplasmListForm();
 		final ExtendedModelMap model = new ExtendedModelMap();

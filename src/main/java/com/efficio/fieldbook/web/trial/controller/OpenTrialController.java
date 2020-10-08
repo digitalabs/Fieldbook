@@ -3,7 +3,7 @@ package com.efficio.fieldbook.web.trial.controller;
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.study.germplasm.StudyGermplasmTransformer;
+import com.efficio.fieldbook.web.study.germplasm.StudyEntryTransformer;
 import com.efficio.fieldbook.web.trial.bean.TrialData;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
@@ -88,7 +88,7 @@ public class OpenTrialController extends BaseTrialController {
 	private StudyEntryService studyEntryService;
 
 	@Resource
-	private StudyGermplasmTransformer studyGermplasmTransformer;
+	private StudyEntryTransformer studyEntryTransformer;
 
 	@Resource
 	private SampleListService sampleListService;
@@ -265,7 +265,7 @@ public class OpenTrialController extends BaseTrialController {
 
 			final long germplasmListChecksSize =
 				this.studyEntryService.countStudyGermplasmByEntryTypeIds(studyId, this.getAllCheckEntryTypeIds());
-			final List<ImportedGermplasm> list = this.studyGermplasmTransformer.tranformToImportedGermplasm(studyEntries);
+			final List<ImportedGermplasm> list = this.studyEntryTransformer.tranformToImportedGermplasm(studyEntries);
 			final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
 			importedGermplasmList.setImportedGermplasms(list);
 			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();

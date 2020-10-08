@@ -183,8 +183,8 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 
 		final Map<Integer, StudyEntryDto> femalePlotMap =
 			this.getPlotNoToStudyEntryMapForStudy(femaleStudyName, femalePlotNos);
-		// Create map of male studies to its plotToStudyGermplasmDtoMap lookup
-		// for each male study, lookup the associated StudyGermplasmDto of specified male plot #s
+		// Create map of male studies to its plotToStudyEntryMap lookup
+		// for each male study, lookup the associated study entry of specified male plot #s
 		final Map<String, Map<Integer, StudyEntryDto>> maleStudiesPlotMap = new HashMap<>();
 		for (final Map.Entry<String, Set<Integer>> entry : maleStudiesWithPlotNos.entrySet()) {
 			final String maleStudyName = entry.getKey();
@@ -244,7 +244,7 @@ public class CrossingTemplateParser extends AbstractExcelFileParser<ImportedCros
 	}
 
 	/**
-	 * Returns map of plot numbers to corresponding StudyGermplasmDto record from specified plot numbers
+	 * Returns map of plot numbers to corresponding StudyEntryDto record from specified plot numbers
 	 * of given study
 	 *
 	 * @param studyName

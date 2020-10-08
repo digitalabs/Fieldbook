@@ -19,10 +19,9 @@ import java.util.stream.Collectors;
 
 @Configurable
 // FIXME: IBP-3697 Is it possible to use ModelMapper instead???
-// TODO IBP-4062: Rename to StudyEntryTransformer
-public class StudyGermplasmTransformer {
+public class StudyEntryTransformer {
 
-	public StudyGermplasmTransformer() {
+	public StudyEntryTransformer() {
 		// this constructor is necessary for aop proxy
 	}
 
@@ -190,6 +189,8 @@ public class StudyGermplasmTransformer {
 				new StudyEntryPropertyData(null, TermId.ENTRY_TYPE.getId(), String.valueOf(importedGermplasm.getEntryTypeCategoricalID())));
 			dto.getProperties().put(TermId.SEED_SOURCE.getId(),
 				new StudyEntryPropertyData(null, TermId.SEED_SOURCE.getId(), importedGermplasm.getSource()));
+			dto.getProperties().put(TermId.CROSS.getId(),
+					new StudyEntryPropertyData(null, TermId.CROSS.getId(), String.valueOf(importedGermplasm.getCross())));
 			dto.getProperties().put(TermId.GROUPGID.getId(),
 				new StudyEntryPropertyData(null, TermId.GROUPGID.getId(), String.valueOf(importedGermplasm.getGroupId())));
 			list.add(dto);

@@ -58,6 +58,11 @@
 			return request.then(successHandler, failureHandler);
 		}
 
+		studyGermplasmService.getEntryTypes = function() {
+			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/entryTypes');
+			return request.then(successHandler, failureHandler);
+		}
+
 		studyGermplasmService.saveStudyEntries = function(listId) {
 			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/entries/generation/', {
 				germplasmListId: listId
@@ -73,6 +78,15 @@
 
 		studyGermplasmService.hasStudyEntries = function() {
 			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/hasStudyEntries');
+			return request.then(successHandler, failureHandler);
+		}
+
+		studyGermplasmService.updateStudyEntry = function (entryId, newValue, studyEntryPropertyId) {
+			var request = $http.put(BASE_STUDY_URL + studyContext.studyId + '/entries/' + entryId + '/properties/' + 8255, {
+				"studyEntryPropertyId": studyEntryPropertyId,
+				"value": newValue,
+				"variableId": 8255
+			});
 			return request.then(successHandler, failureHandler);
 		}
 

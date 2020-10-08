@@ -6,9 +6,10 @@
 	var manageTrialAppModule = angular.module('manageTrialApp');
 
 	manageTrialAppModule.controller('GermplasmCtrl',
-		['$scope', '$q', '$compile', 'TrialManagerDataService', 'DTOptionsBuilder', 'studyStateService', 'studyGermplasmService', 'germplasmStudySourceService',
-			'datasetService',
-			function ($scope, $q, $compile, TrialManagerDataService, DTOptionsBuilder, studyStateService, studyGermplasmService, germplasmStudySourceService, datasetService) {
+		['$scope', '$rootScope', '$q', '$compile', 'TrialManagerDataService', 'DTOptionsBuilder', 'studyStateService', 'studyGermplasmService', 'germplasmStudySourceService',
+			'datasetService', '$timeout', '$uibModal',
+			function ($scope, $rootScope, $q, $compile, TrialManagerDataService, DTOptionsBuilder, studyStateService, studyGermplasmService, germplasmStudySourceService,
+					  datasetService, $timeout, $uibModal) {
 
 				$scope.settings = TrialManagerDataService.settings.germplasm;
 				$scope.isOpenStudy = TrialManagerDataService.isOpenStudy;
@@ -36,6 +37,10 @@
 				$scope.isAllPagesSelected = false;
 
 				loadTable();
+
+				$rootScope.$on("reloadData", function(){
+					$scope.reloadData();
+				});
 
 				function table() {
 					return $scope.nested.dtInstance.DataTable;
@@ -127,26 +132,9 @@
 				}
 
 				function adjustColumns() {
-					if ($scope.hasInstances) {
-						$timeout(function () {
-							table().columns.adjust();
-						});
-					}
-				}
-
-				function getCategoricalValueId(cellDataValue, columnData) {
-					if (columnData.possibleValues
-						&& cellDataValue !== 'missing') {
-
-						var categoricalValue = columnData.possibleValues.find(function (possibleValue) {
-							return possibleValue.name === cellDataValue;
-						});
-						if (categoricalValue !== undefined) {
-							return categoricalValue.id;
-						}
-
-					}
-					return null;
+					$timeout(function () {
+						table().columns.adjust();
+					});
 				}
 
 				function loadTable() {
@@ -263,7 +251,8 @@
 								targets: columns.length - 1,
 								orderable: false,
 								render: function (data, type, full, meta) {
-									return renderCategoricalValue(data.value, columnData);
+									return '<a class="check-href edit-check' + full.entryId + '" href="javascript: void(0)" ' +
+										'onclick="showChangeEntryTypeModal(\'' + full.entryId + '\',\'' + data.value + '\',\'' + data.studyEntryPropertyId + '\')">' + EscapeHTML.escape(getCategoricalValue(data.value, columnData)) + '</a>';
 								}
 							});
 						} else {
@@ -311,6 +300,26 @@
 
 						value = '<span class="fbk-measurement-categorical-desc">'
 							+ EscapeHTML.escape(possibleValue.description) + '</span>';
+					}
+					return value;
+				}
+
+				function getCategoricalValue(value, columnData) {
+					var possibleValue = null;
+
+					if (columnData.possibleValues) {
+						/* FIXME fix data model
+						 *  Some variables don't store the cvterm.name (like traits in phenotype)
+						 *  but the cvterm.cvterm_id (like treatment factors in nd_experimentprop).
+						 *  This workaround will work most of the time with exception of out-of-bound categorical values that coincides
+						 *  with the cvterm_id, though it's unlikely because the ids are not small numbers and it's not possible now to insert
+						 *  outliers for categorical variables.
+						 */
+						possibleValue = columnData.possibleValuesByName[value] || columnData.possibleValuesById[value];
+					}
+
+					if (possibleValue && possibleValue.displayDescription) {
+						return possibleValue.description;
 					}
 					return value;
 				}
@@ -525,6 +534,29 @@
 
 				};
 
+				$scope.showPopOverCheck = function(entryId, currentValue, studyEntryPropertyId) {
+					$uibModal.open({
+						templateUrl: '/Fieldbook/static/angular-templates/germplasm/changeStudyEntryCheckTypeModal.html',
+						controller: "editEntryTypeCtrl",
+						size: 'md',
+						resolve: {
+							entryId: function () {
+								return entryId;
+							},
+							currentValue: function () {
+								return currentValue;
+							},
+							studyEntryPropertyId: function () {
+								return studyEntryPropertyId;
+							}
+						},
+						controllerAs: 'ctrl'
+					});
+				};
+
+				$scope.reloadData = function() {
+					table().ajax.reload();
+				}
 			}]);
 
 	manageTrialAppModule.controller('replaceGermplasmCtrl', ['$scope', '$uibModalInstance', 'studyContext', 'studyGermplasmService',
@@ -558,6 +590,42 @@
 				}
 
 			};
+		}
+	]);
+
+	manageTrialAppModule.controller('editEntryTypeCtrl', ['$scope', '$rootScope', '$uibModalInstance', 'studyContext', 'studyGermplasmService', 'entryId', 'currentValue',
+		'studyEntryPropertyId',	function ($scope, $rootScope, $uibModalInstance, studyContext, studyGermplasmService, entryId, currentValue, studyEntryPropertyId) {
+
+			$scope.selected = {};
+			$scope.entryTypes = [];
+			$scope.init = function () {
+				studyGermplasmService.getEntryTypes().then(function (entryTypes) {
+					buildEntryTypes(entryTypes);
+				})
+			};
+
+			$scope.cancel = function () {
+				$uibModalInstance.dismiss();
+			};
+
+
+			$scope.editEntryType = function () {
+				studyGermplasmService.updateStudyEntry(entryId, $scope.selected.entryType.id, studyEntryPropertyId).then(function () {
+					$uibModalInstance.close();
+					$rootScope.$emit("reloadData", {});
+				});
+			};
+
+			function buildEntryTypes(entryTypes) {
+				entryTypes.forEach(function (entryType) {
+					$scope.entryTypes.push(entryType);
+					if(entryType.id === parseInt(currentValue)) {
+						$scope.selected.entryType = entryType;
+					}
+				});
+			}
+
+			$scope.init();
 		}
 	]);
 

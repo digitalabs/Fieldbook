@@ -23,50 +23,13 @@ var germplasmDataTable = null,
 
 function resetGermplasmList() {
 	'use strict';
-
 	angular.element(document.getElementById('germplasm-table')).scope().resetStudyEntries();
 
 }
 
-function showPopoverCheck(index, sectionContainer, bodyContainer) {
+function showChangeEntryTypeModal(entryId, currentValue, studyEntryPropertyId) {
 	'use strict';
-	//if replace has been clicked or if new study or if there are no measurement rows saved yet for study
-	var isShowPopOver =
-		(!isOpenStudy()) || (isOpenStudy() && !hasGeneratedDesign());
-	if (isShowPopOver) {
-		var currentCheckVal = $(sectionContainer + ' #selectedCheck' + index).val(),
-			realIndex = index,
-			popoverOptions = {},
-			listDataTable = germplasmDataTable;
-		//we need to get the real index of the check
-
-		if (listDataTable != null) {
-			listDataTable.getDataTable().$('.check-hidden').each(function(indexCount) {
-				if ($(this).attr('id') === 'selectedCheck' + index) {
-					realIndex = indexCount;
-					return;
-				}
-			});
-		}
-		$.ajax({
-			url: '/Fieldbook/TrialManager/GermplasmList/edit/check/' + index + '/' + realIndex,
-			type: 'GET',
-			data: 'currentVal=' + currentCheckVal,
-			cache: false,
-			success: function(data) {
-				popoverOptions = {
-					html: true,
-					title: 'Edit Check',
-					content: data,
-					trigger: 'manual',
-					placement: 'right',
-					container: 'body'
-				};
-				$('body .popover').remove();
-				$(sectionContainer + ' .edit-check' + index).popover('destroy');
-				$(sectionContainer + ' .edit-check' + index).popover(popoverOptions);
-				$(sectionContainer + ' .edit-check' + index).popover('show');
-			}
-		});
+	if ((!isOpenStudy()) || (isOpenStudy() && !hasGeneratedDesign())) {
+		angular.element(document.getElementById('germplasm-table')).scope().showPopOverCheck(entryId, currentValue, studyEntryPropertyId);
 	}
 }

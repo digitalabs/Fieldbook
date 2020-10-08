@@ -54,23 +54,6 @@ describe('Study Germplasm Service', function () {
 
 	});
 
-	describe('Open Replace Germplasm Modal Service', function () {
-
-		it('should open the Replace Germplasm modal window', function () {
-			studyGermplasmService.openReplaceGermplasmModal();
-			expect($uibModal.open).toHaveBeenCalled();
-
-			var capturedArgument = $uibModal.open.calls.mostRecent().args[0];
-
-			expect(capturedArgument.templateUrl).toEqual('/Fieldbook/static/angular-templates/germplasm/replaceGermplasm.html');
-			expect(capturedArgument.controller).toEqual('replaceGermplasmCtrl');
-			expect(capturedArgument.size).toEqual('md');
-
-		});
-
-
-	});
-
 	describe('Manage Selected Germplasm Entries', function () {
 
 		it('should toggle selected germplasm entries', function () {

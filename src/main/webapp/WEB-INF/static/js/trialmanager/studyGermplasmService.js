@@ -9,7 +9,6 @@
 
         var BASE_STUDY_URL = '/bmsapi/crops/' + studyContext.cropName + '/programs/' + studyContext.programId + '/studies/';
 
-        var selectedEntries = [];
         var studyGermplasmService = {};
 
         var successHandler = serviceUtilities.restSuccessHandler,
@@ -21,32 +20,6 @@
                     gid: newGid
                 });
             return request.then(successHandler, failureHandler);
-        };
-
-
-        studyGermplasmService.toggleSelect = function (entryId) {
-            var idx = selectedEntries.indexOf(entryId);
-            if (idx > -1) {
-                selectedEntries.splice(idx, 1)
-            } else {
-                selectedEntries.push(entryId);
-            }
-        };
-
-        studyGermplasmService.getSelectedEntries = function() {
-            return selectedEntries;
-        };
-
-        studyGermplasmService.resetSelectedEntries = function() {
-            selectedEntries = [];
-        };
-
-        studyGermplasmService.openReplaceGermplasmModal = function() {
-            $uibModal.open({
-                templateUrl: '/Fieldbook/static/angular-templates/germplasm/replaceGermplasm.html',
-                controller: "replaceGermplasmCtrl",
-                size: 'md'
-            });
         };
 
 		studyGermplasmService.getStudyEntries = function() {

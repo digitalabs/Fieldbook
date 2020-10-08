@@ -231,7 +231,7 @@
 								targets: columns.length - 1,
 								orderable: false,
 								createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
-									$(td).append($compile('<span><input type="checkbox")></span>')($scope));
+									$(td).append($compile('<span><input type="checkbox" ng-click="toggleSelect(' + rowData.entryId + ')"></span>')($scope));
 								}
 							});
 						} else if (columnData.termId === 8240 || columnData.termId === 8250) {
@@ -426,25 +426,15 @@
 						if (germplasmStudySourceTable.data.length > 0) {
 						showAlertMessage('', $.germplasmMessages.studyHasCrossesOrSelections);
 					} else {
-						// Validate entry for replacement
-						studyGermplasmService.resetSelectedEntries();
-						$.each($("input[name='entryId']:checked"), function(){
-							studyGermplasmService.toggleSelect($(this).val());
-						});
-						var selectedEntries = studyGermplasmService.getSelectedEntries();
-						if (selectedEntries.length === 0) {
+						if ($scope.selectedItems.length === 0) {
 							showAlertMessage('', $.germplasmMessages.selectEntryForReplacement);
-						} else if (selectedEntries.length !== 1) {
+						} else if ($scope.selectedItems.length !== 1) {
 							showAlertMessage('', $.germplasmMessages.selectOnlyOneEntryForReplacement);
 						} else {
-							$scope.replaceGermplasm();
+							$scope.replaceGermplasm($scope.selectedItems[0]);
 						}
 					}
 				});
-				};
-
-				$scope.isSelected = function (itemId) {
-					return itemId && $scope.selectedItems.length > 0 && $scope.selectedItems.find((item) => item === itemId);
 				};
 
 				$scope.toggleSelect = function (data) {
@@ -456,16 +446,30 @@
 					}
 				};
 
-				$scope.replaceGermplasm = function() {
+				$scope.openReplaceGermplasmModal = function(entryId) {
+					$uibModal.open({
+						templateUrl: '/Fieldbook/static/angular-templates/germplasm/replaceGermplasm.html',
+						controller: "replaceGermplasmCtrl",
+						size: 'md',
+						resolve: {
+							entryId: function () {
+								return entryId;
+							},
+						},
+					});
+				};
+
+
+				$scope.replaceGermplasm = function(entryId) {
 					if (studyStateService.hasGeneratedDesign()) {
 						var modalConfirmReplacement = $scope.openConfirmModal($.germplasmMessages.replaceGermplasmWarning, 'Yes','No');
 						modalConfirmReplacement.result.then(function (shouldContinue) {
 							if (shouldContinue) {
-								studyGermplasmService.openReplaceGermplasmModal();
+								$scope.openReplaceGermplasmModal(entryId);
 							}
 						});
 					} else {
-						studyGermplasmService.openReplaceGermplasmModal();
+						$scope.openReplaceGermplasmModal(entryId);
 					}
 
 				};
@@ -559,8 +563,8 @@
 				}
 			}]);
 
-	manageTrialAppModule.controller('replaceGermplasmCtrl', ['$scope', '$uibModalInstance', 'studyContext', 'studyGermplasmService',
-		function ($scope, $uibModalInstance, studyContext, studyGermplasmService) {
+	manageTrialAppModule.controller('replaceGermplasmCtrl', ['$scope', '$rootScope', '$uibModalInstance', 'studyContext', 'studyGermplasmService', 'entryId',
+		function ($scope, $rootScope, $uibModalInstance, studyContext, studyGermplasmService, entryId) {
 			var ctrl = this;
 
 			$scope.cancel = function () {
@@ -579,13 +583,14 @@
 				if (!regex.test(newGid)) {
 					ctrl.showAlertMessage('', 'Please enter valid GID.');
 				} else {
-					var selectedEntries = studyGermplasmService.getSelectedEntries();
 					// if there are multiple entries selected, get only the first entry for replacement
-					studyGermplasmService.replaceStudyGermplasm(selectedEntries[0], newGid).then(function (response) {
+					studyGermplasmService.replaceStudyGermplasm(entryId, newGid).then(function (response) {
 						showSuccessfulMessage('', $.germplasmMessages.replaceGermplasmSuccessful);
-						window.location = '/Fieldbook/TrialManager/openTrial/' + studyContext.studyId;
+						$rootScope.$emit("reloadStudyEntryTableData", {});
+						$uibModalInstance.close();
 					}, function(errResponse) {
 						showErrorMessage($.fieldbookMessages.errorServerError,  errResponse.errors[0].message);
+						$uibModalInstance.close();
 					});
 				}
 

@@ -19,10 +19,9 @@ import java.util.stream.Collectors;
 
 @Configurable
 // FIXME: IBP-3697 Is it possible to use ModelMapper instead???
-// TODO IBP-4062: Rename to StudyEntryTransformer
-public class StudyGermplasmTransformer {
+public class StudyEntryTransformer {
 
-	public StudyGermplasmTransformer() {
+	public StudyEntryTransformer() {
 		// this constructor is necessary for aop proxy
 	}
 

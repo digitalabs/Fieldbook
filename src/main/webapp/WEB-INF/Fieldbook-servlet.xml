@@ -573,7 +573,7 @@
 		<aop:scoped-proxy proxy-target-class="false" />
 	</bean>
 
-	<bean id="studyGermplasmTransformer" class="com.efficio.fieldbook.web.study.germplasm.StudyGermplasmTransformer" scope="request">
+	<bean id="studyEntryTransformer" class="com.efficio.fieldbook.web.study.germplasm.StudyEntryTransformer" scope="request">
 		<aop:scoped-proxy/>
 	</bean>
 

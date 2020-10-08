@@ -5,7 +5,7 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.controller.ExportStudyEntriesController;
 import com.efficio.fieldbook.web.common.service.ExportStudyGermplasmService;
-import com.efficio.fieldbook.web.study.germplasm.StudyGermplasmTransformer;
+import com.efficio.fieldbook.web.study.germplasm.StudyEntryTransformer;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
 import org.generationcp.commons.pojo.ExportColumnHeader;
@@ -58,7 +58,7 @@ public class ExportStudyGermplasmServiceImpl implements ExportStudyGermplasmServ
 	private StudyEntryService studyEntryService;
 
 	@Resource
-	private StudyGermplasmTransformer studyGermplasmTransformer;
+	private StudyEntryTransformer studyEntryTransformer;
 
 	public ExportStudyGermplasmServiceImpl() {
 
@@ -72,7 +72,7 @@ public class ExportStudyGermplasmServiceImpl implements ExportStudyGermplasmServ
 
 			final List<StudyEntryDto> studyEntryDtoList = this.studyEntryService.getStudyEntries(studyId);
 			final List<GermplasmExportSource> germplasmlistData =
-				this.studyGermplasmTransformer.tranformToGermplasmExportSource(studyEntryDtoList);
+				this.studyEntryTransformer.tranformToGermplasmExportSource(studyEntryDtoList);
 
 			final GermplasmListExportInputValues input = new GermplasmListExportInputValues();
 			final GermplasmList germplasmList = new GermplasmList();

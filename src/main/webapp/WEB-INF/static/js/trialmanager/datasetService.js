@@ -226,10 +226,10 @@
 					.then(successHandler, failureHandler);
 			};
 
-			datasetService.checkIfLocationHasExperiments = function (datasetId, instanceId) {
+			datasetService.getDatasetObservationUnitCount = function (datasetId) {
 
-				if (datasetId && instanceId) {
-					return $http.head(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/experiments/' + instanceId);
+				if (datasetId) {
+					return $http.head(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observation-units/');
 				}
 
 				return $q.reject('instanceId and datasetId are not defined.');

@@ -457,10 +457,10 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 					instanceIds.push(instance.instanceId);
 				});
 
-				datasetService.checkIfLocationHasExperiments(studyContext.measurementDatasetId, instanceIds).then(function (response) {
-					var exists = response.headers('X-Has-Experiments');
+				datasetService.getDatasetObservationUnitCount(studyContext.measurementDatasetId).then(function (response) {
+					var count = response.headers('X-Dataset-Observation-Unit');
 
-					if (exists == '0') {
+					if (count == '0') {
 						studyStateService.updateGeneratedDesign(false);
 						TrialManagerDataService.currentData.experimentalDesign.designType = '';
 					}

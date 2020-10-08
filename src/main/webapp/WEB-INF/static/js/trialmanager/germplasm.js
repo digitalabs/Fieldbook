@@ -38,8 +38,8 @@
 
 				loadTable();
 
-				$rootScope.$on("reloadData", function(){
-					$scope.reloadData();
+				$rootScope.$on("reloadStudyEntryTableData", function(){
+					$scope.reloadStudyEntryTableData();
 				});
 
 				function table() {
@@ -474,7 +474,7 @@
 
 					studyGermplasmService.deleteEntries().then(function () {
 						studyGermplasmService.saveStudyEntries(listId).then(function(res){
-							table().ajax.reload();
+							$scope.reloadStudyEntryTableData();
 							$scope.showImportListBrowser = false;
 							$scope.showStudyEntriesTable = true;
 						});
@@ -554,7 +554,7 @@
 					});
 				};
 
-				$scope.reloadData = function() {
+				$scope.reloadStudyEntryTableData = function() {
 					table().ajax.reload();
 				}
 			}]);
@@ -612,7 +612,7 @@
 			$scope.editEntryType = function () {
 				studyGermplasmService.updateStudyEntry(entryId, $scope.selected.entryType.id, studyEntryPropertyId).then(function () {
 					$uibModalInstance.close();
-					$rootScope.$emit("reloadData", {});
+					$rootScope.$emit("reloadStudyEntryTableData", {});
 				});
 			};
 

@@ -226,6 +226,15 @@
 					.then(successHandler, failureHandler);
 			};
 
+			datasetService.countObservationUnits = function (datasetId) {
+
+				if (datasetId) {
+					return $http.head(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observation-units/');
+				}
+
+				return $q.reject('datasetId not defined.');
+			};
+
 			return datasetService;
 
 		}]);

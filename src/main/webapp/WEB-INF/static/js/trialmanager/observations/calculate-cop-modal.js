@@ -24,12 +24,21 @@
 			$scope.model = {};
 			$scope.model.platform_url = url[0] + "//" + url[2];
 			$scope.model.generations = 1;
-			$scope.model.breedermail = "diego.cuenya@leafnode.io";
+			$scope.model.breedermail = "";
 			$scope.model.pollination_type = "self";
 
 			loadTable();
 
-			$scope.confirm = function () {
+			$scope.confirm = function (dtForm) {
+
+				if(!dtForm.email.$valid){
+					showErrorMessage('', 'Please verify the Breeder email');
+					return;
+				}
+				if(!dtForm.generations.$valid){
+					showErrorMessage('', 'Please verify the number of generations. The minimum value allowed is zero');
+					return;
+				}
 
 				const studyRequest = {
 					"source": "IBP",
@@ -65,6 +74,7 @@
 
 					CalculateCOPService.permissions(apiRequest).then((responsed) => {
 						$uibModalInstance.close();
+						showSuccessfulMessage('', 'calculation COP process has been started successfully. You will receive an email on ' + $scope.model.breedermail + ' with the process status.');
 					}, onError)
 				}, onError);
 			};

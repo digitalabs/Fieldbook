@@ -5,9 +5,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 	angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', '$q', 'TrialManagerDataService', '$uibModal', '$stateParams',
 		'$http', 'DTOptionsBuilder', 'LOCATION_ID', 'UNSPECIFIED_LOCATION_ID', '$timeout', 'studyInstanceService', 'studyStateService', 'derivedVariableService', 'studyContext',
-		'datasetService', '$compile', '$rootScope',
+		'datasetService', '$compile',
 		function ($scope, $q, TrialManagerDataService, $uibModal, $stateParams, $http, DTOptionsBuilder, LOCATION_ID, UNSPECIFIED_LOCATION_ID, $timeout, studyInstanceService,
-				  studyStateService, derivedVariableService, studyContext, datasetService, $compile, $rootScope) {
+				  studyStateService, derivedVariableService, studyContext, datasetService, $compile) {
 
 			var ctrl = this;
 			var tableId = '#environment-table';
@@ -452,14 +452,8 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			function deleteExperimentalDesignIfApplicable() {
 
-				var instanceIds = [];
-				angular.forEach($scope.instanceInfo.instances, function (instance){
-					instanceIds.push(instance.instanceId);
-				});
-
-				datasetService.getDatasetObservationUnitCount(studyContext.measurementDatasetId).then(function (response) {
+				datasetService.countObservationUnits(studyContext.measurementDatasetId).then(function (response) {
 					var count = response.headers('X-Dataset-Observation-Unit');
-
 					if (count == '0') {
 						studyStateService.updateGeneratedDesign(false);
 						TrialManagerDataService.currentData.experimentalDesign.designType = '';

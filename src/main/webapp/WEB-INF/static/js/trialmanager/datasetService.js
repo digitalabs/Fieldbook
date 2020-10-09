@@ -226,13 +226,13 @@
 					.then(successHandler, failureHandler);
 			};
 
-			datasetService.getDatasetObservationUnitCount = function (datasetId) {
+			datasetService.countObservationUnits = function (datasetId) {
 
 				if (datasetId) {
 					return $http.head(BASE_URL + studyContext.studyId + '/datasets/' + datasetId + '/observation-units/');
 				}
 
-				return $q.reject('instanceId and datasetId are not defined.');
+				return $q.reject('datasetId not defined.');
 			};
 
 			return datasetService;

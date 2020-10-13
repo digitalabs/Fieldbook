@@ -675,7 +675,7 @@
 				};
 
 				studyGermplasmService.addOrUpdateStudyEntryType(entryType).then(function () {
-					showSuccessfulMessage('', getMessage($.studyEntryTypeMessages.addStudyEntryTypeSuccess, $('#comboCheckCode').select2('data').text));
+					showSuccessfulMessage('', getFormattedMessage($.studyEntryTypeMessages.addStudyEntryTypeSuccess, $('#comboCheckCode').select2('data').text));
 					$uibModalInstance.dismiss();
 				});
 			};
@@ -689,7 +689,7 @@
 				};
 
 				studyGermplasmService.addOrUpdateStudyEntryType(entryType).then(function () {
-					showSuccessfulMessage('', getMessage($.studyEntryTypeMessages.updateStudyEntryTypeSuccess, $('#comboCheckCode').select2('data').text));
+					showSuccessfulMessage('', getFormattedMessage($.studyEntryTypeMessages.updateStudyEntryTypeSuccess, $('#comboCheckCode').select2('data').text));
 					$uibModalInstance.dismiss();
 				});
 
@@ -700,11 +700,11 @@
 				studyGermplasmService.isStudyEntryTypeUsed(studyEntryTypeId).then(function (isUsed) {
 					if(!isUsed) {
 						studyGermplasmService.deleteStudyEntryType(studyEntryTypeId).then(function () {
-							showSuccessfulMessage('', getMessage($.studyEntryTypeMessages.deleteStudyEntryTypeSuccess, $('#comboCheckCode').select2('data').text));
+							showSuccessfulMessage('', getFormattedMessage($.studyEntryTypeMessages.deleteStudyEntryTypeSuccess, $('#comboCheckCode').select2('data').text));
 							$uibModalInstance.dismiss();
 						});
 					} else {
-						showSuccessfulMessage('', getMessage($.studyEntryTypeMessages.deleteStudyEntryTypeFail, $('#comboCheckCode').select2('data').text));
+						showErrorMessage('', getFormattedMessage($.studyEntryTypeMessages.deleteStudyEntryTypeFail, $('#comboCheckCode').select2('data').text));
 					}
 				});
 			};
@@ -767,7 +767,7 @@
 						});
 			};
 
-			function getMessage(message, entryTypeCode) {
+			function getFormattedMessage(message, entryTypeCode) {
 				return message.replace("{0}", entryTypeCode);
 			};
 

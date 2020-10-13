@@ -133,33 +133,6 @@
 <div layout:fragment="page-script">
 	<script type="text/javascript" th:inline="javascript">
 		//<![CDATA[
-		function viewGermplasmLitDetails() {
-			'use strict';
-			openGermplasmListDetailsPopop(listId);
-		}
-		function displayListDetails(listIdTemp) {
-			'use strict';
-			listId = listIdTemp;
-			$('#'+getDisplayedTreeName()).find('*').removeClass('dynatree-selected');
-
-			$.ajax({
-				url: '/Fieldbook/StudyManager/importGermplasmList/displayGermplasmDetails/' + listId,
-				type: 'GET',
-				cache: false,
-				success: function(html) {
-					$('#imported-germplasm-list').css('display', 'block');
-					$('#imported-germplasm-list').html(html).trigger("germplasmListIsUpdated");
-					window.ImportGermplasm.initialize(dataGermplasmList);
-					$('#entries-details').css('display', 'block');
-					$('#numberOfEntries').html($('#totalGermplasms').val());
-                    toggleControlsForGermplasmListManagement(true);
-					$(document).trigger('germplasmListUpdated');
-					$('.view-header').show();
-				}
-			});
-		}
-
-
 		function displayGermplasmDetails(listIdTemp){
 			'use strict';
 			angular.element(document.getElementById('germplasm-table')).scope().saveStudyEntries(listIdTemp);

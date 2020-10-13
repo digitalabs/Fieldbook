@@ -90,10 +90,6 @@
 </div>
 
 <div class="row">
-	<div th:include="/StudyManager/includes/importGermplasmListManageCheckType"></div>
-</div>
-
-<div class="row">
 	<div th:include="/StudyManager/includes/importGermplasmListDetailsModal"></div>
 </div>
 
@@ -103,11 +99,6 @@
 <!-- Cyrus: moved the script to germplasm.js for organization. Only globals initialized from thymeleaf:spring should go here -->
 <script type="text/javascript" th:inline="javascript">
 //<![CDATA[
-
-/*globals initializeCheckTypeSelect2, reloadCheckTypeDropDown*/
-/* exported prevStartIndex,checkTypesObj */
-var checkTypes = /*[[${checkTypes}]]*/ null,
-	checkTypesObj = [];
 
 $(document).ready(function() {
 	'use strict';

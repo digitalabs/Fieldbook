@@ -38,7 +38,7 @@
 							<a href="javascript: showManageEntryTypePopup()" th:text="#{germplasm.list.manage.check.types}" >Manage Checks</a>
 						</li>
 						<li>
-							<a href="javascript: void(0)" ng-show="isOpenStudy() &amp;&amp; hasGermplasmListSelected() &amp;&amp; !hasUnsavedGermplasmChanges()" ng-click="validateGermplasmForReplacement()" th:text="#{replace.germplasm}" >Replace Germplasm</a>
+							<a href="javascript: void(0)" ng-show="hasGermplasmListSelected()" ng-click="validateGermplasmForReplacement()" th:text="#{replace.germplasm}" >Replace Germplasm</a>
 						</li>
 					</ul>
 				</div>
@@ -50,9 +50,8 @@
 		</div>
 	</div>
 
-	<div id="entries-details" style="display: none">
-		Total Entries: <label class="control-label control-label-bold" id="numberOfEntries"></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<a href="javascript: void(0)" class="view-header" onclick="viewGermplasmLitDetails();">View Header</a>
+	<div ng-show="showClearListButton()">
+		Total Entries: <label class="control-label control-label-bold" ng-model="numberOfEntries">{{numberOfEntries}}</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		<div class="col-show-hide pull-right">
 		</div>
 	</div>
@@ -74,7 +73,7 @@
 				   class="table table-curved table-condensed table-sorted">
 			</table>
 			<div class="row col-xs-12 col-md-12">
-				<div id="imported-germplasm-list-reset-button" class="pull-left">
+				<div ng-show="showStudyTable()" class="pull-left">
 					<a style="margin-top: 5px;" href="javascript: resetGermplasmList()" class="btn btn-default"
 					   th:text="#{common.clear.list}"></a>
 				</div>

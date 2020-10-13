@@ -12,11 +12,11 @@
 					  datasetService, $timeout, $uibModal) {
 
 				$scope.settings = TrialManagerDataService.settings.germplasm;
-				$scope.isOpenStudy = TrialManagerDataService.isOpenStudy;
 				$scope.trialMeasurement = {hasMeasurement: studyStateService.hasGeneratedDesign()};
 				$scope.isHideDelete = false;
 				$scope.addVariable = true;
 				$scope.selectedItems = [];
+				$scope.numberOfEntries = 0;
 
 				var tableLoadedResolve;
 				$scope.tableLoadedPromise = new Promise(function (resolve) {
@@ -156,6 +156,8 @@
 					$scope.dtColumns = dtColumnsPromise.promise;
 					$scope.dtColumnDefs = dtColumnDefsPromise.promise;
 					$scope.dtOptions = null;
+
+					setNumberOfEntries();
 
 					return loadColumns().then(function (columnsObj) {
 						$scope.dtOptions = getDtOptions();
@@ -324,9 +326,13 @@
 					return value;
 				}
 
-				$scope.showImportListBrowser = !($scope.isOpenStudy() && TrialManagerDataService.applicationData.germplasmListSelected);
+				$scope.showImportListBrowser = !TrialManagerDataService.applicationData.germplasmListSelected;
 
-				$scope.showStudyEntriesTable = $scope.isOpenStudy() && TrialManagerDataService.applicationData.germplasmListSelected;
+				$scope.showStudyEntriesTable = TrialManagerDataService.applicationData.germplasmListSelected;
+
+				$scope.showClearList = TrialManagerDataService.applicationData.germplasmListSelected && !studyStateService.hasGeneratedDesign();
+
+				$scope.showUpdateImportListButton = TrialManagerDataService.applicationData.germplasmListSelected && !studyStateService.hasGeneratedDesign() && !$scope.showImportListBrowser;
 
 				$scope.labels = {};
 				$scope.labels.germplasmFactors = {
@@ -346,7 +352,7 @@
 
 				$scope.handleSaveEvent = function () {
 					$scope.updateOccurred = false;
-					TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount = $scope.getTotalListNo();
+					TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount = $scope.numberOfEntries;
 				};
 
 				// function called whenever the user has successfully selected a germplasm list
@@ -360,24 +366,9 @@
 					TrialManagerDataService.applicationData.germplasmListSelected = false;
 				};
 
-				$scope.hasUnsavedGermplasmChanges = function () {
-					return TrialManagerDataService.applicationData.germplasmChangesUnsaved;
-				};
-
 				$(document).on('germplasmListUpdated', function () {
 					TrialManagerDataService.applicationData.germplasmListSelected = true;
-					$scope.germplasmChangesOccurred();
-					if (TrialManagerDataService.isOpenStudy()) {
-						studyStateService.updateOccurred();
-					}
-
 				});
-
-				$scope.germplasmChangesOccurred = function() {
-					$scope.$apply(function () {
-						TrialManagerDataService.applicationData.germplasmChangesUnsaved = true;
-					});
-				}
 
 				$scope.openGermplasmTree = function () {
 					openListTree(1, $scope.germplasmListSelected);
@@ -385,12 +376,17 @@
 
 				$scope.updateModifyList = function () {
 					$scope.showImportListBrowser = true;
+					$scope.showUpdateImportListButton = false;
 					showGermplasmDetailsSection();
 				};
 
 				$scope.showUpdateImportList = function () {
-					return $scope.isOpenStudy() && TrialManagerDataService.applicationData.germplasmListSelected && !studyStateService.hasGeneratedDesign() && !$scope.showImportListBrowser;
+					return $scope.showUpdateImportListButton;
 				};
+
+				$scope.showClearListButton = function() {
+					return $scope.showClearList;
+				}
 
 				$scope.showImportList = function () {
 					return $scope.showImportListBrowser;
@@ -408,15 +404,6 @@
 
 				$scope.disableAddButton = function () {
 					return studyStateService.hasGeneratedDesign();
-				};
-
-				$scope.listAvailable = function () {
-					var entryHtml = $('#numberOfEntries').html();
-					return (entryHtml !== '' && parseInt(entryHtml, 10) > 0);
-				};
-
-				$scope.getTotalListNo = function () {
-					return (parseInt($('#totalGermplasms').val())) ? parseInt($('#totalGermplasms').val()) : 0;
 				};
 
 				$scope.validateGermplasmForReplacement = function() {
@@ -478,9 +465,12 @@
 
 					studyEntryService.deleteEntries().then(function () {
 						studyEntryService.saveStudyEntries(listId).then(function(res){
+							setNumberOfEntries();
 							$scope.reloadStudyEntryTableData();
 							$scope.showImportListBrowser = false;
+							$scope.showUpdateImportListButton = true;
 							$scope.showStudyEntriesTable = true;
+							$scope.showClearList = true;
 						});
 					});
 				};
@@ -490,8 +480,11 @@
 					modalConfirmCancellation.result.then(function (shouldContinue) {
 						if (shouldContinue) {
 							studyEntryService.deleteEntries().then(function () {
+								$scope.numberOfEntries = 0;
 								$scope.showImportListBrowser = true;
+								$scope.showUpdateImportListButton = false;
 								$scope.showStudyEntriesTable = false;
+								$scope.showClearList = false;
 								$('#imported-germplasm-list-reset-button').css('opacity', '0');
 								$('#entries-details').css('display', 'none');
 								$('#numberOfEntries').text('');
@@ -543,6 +536,11 @@
 					$rootScope.navigateToTab('germplasm', {reload: true});
 				};
 
+				function setNumberOfEntries() {
+					studyEntryService.countStudyEntries().then(function(count) {
+						$scope.numberOfEntries = count;
+					});
+				}
 
 				$scope.showPopOverCheck = function(entryId, currentValue, studyEntryPropertyId) {
 					$uibModal.open({

@@ -424,17 +424,17 @@
 
 						// Check if study has advance or cross list
 						if (germplasmStudySourceTable.data.length > 0) {
-							showAlertMessage('', $.germplasmMessages.studyHasCrossesOrSelections);
+						showAlertMessage('', $.germplasmMessages.studyHasCrossesOrSelections);
+					} else {
+						if ($scope.selectedItems.length === 0) {
+							showAlertMessage('', $.germplasmMessages.selectEntryForReplacement);
+						} else if ($scope.selectedItems.length !== 1) {
+							showAlertMessage('', $.germplasmMessages.selectOnlyOneEntryForReplacement);
 						} else {
-							if ($scope.selectedItems.length === 0) {
-								showAlertMessage('', $.germplasmMessages.selectEntryForReplacement);
-							} else if ($scope.selectedItems.length !== 1) {
-								showAlertMessage('', $.germplasmMessages.selectOnlyOneEntryForReplacement);
-							} else {
-								$scope.replaceGermplasm($scope.selectedItems[0]);
-							}
+							$scope.replaceGermplasm($scope.selectedItems[0]);
 						}
-					});
+					}
+				});
 				};
 
 				$scope.toggleSelect = function (data) {
@@ -506,7 +506,8 @@
 						angular.forEach(data, function (dataset) {
 							datasetService.removeVariables(dataset.datasetId, variableIds).then(function () {
 								deferred.resolve(true);
-								loadTable();
+								showSuccessfulMessage('', $.germplasmMessages.removeVariableSuccess);
+								$rootScope.navigateToTab('germplasm', {reload: true});
 							}, function (response) {
 								if (response.errors && response.errors.length) {
 									showErrorMessage('', response.errors[0].message);
@@ -526,17 +527,22 @@
 					});
 					datasetService.getDatasets([4]).then(function (data) {
 						angular.forEach(data, function (dataset) {
+							var variableName = variable.alias ? variable.alias : variable.name;
 							datasetService.addVariables(dataset.datasetId, {
 								variableTypeId: variableType,
 								variableId: variable.cvTermId,
-								studyAlias: variable.alias ? variable.alias : variable.name
+								studyAlias: variableName
 							}).then(function () {
-								loadTable();
-							});
+								showSuccessfulMessage('', $.germplasmMessages.addVariableSuccess.replace("{0}", variableName));
+							})
 						});
 					});
-
 				};
+
+				$scope.onHideCallback = function () {
+					$rootScope.navigateToTab('germplasm', {reload: true});
+				};
+
 
 				$scope.showPopOverCheck = function(entryId, currentValue, studyEntryPropertyId) {
 					$uibModal.open({
@@ -727,7 +733,7 @@
 						{
 							query: function (query) {
 								var data = {
-										results: sortByKey($scope.suggestions_obj, 'text')
+									results: sortByKey($scope.suggestions_obj, 'text')
 								};
 								// return the array that matches
 								data.results = $.grep(data.results, function (

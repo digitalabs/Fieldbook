@@ -4,7 +4,7 @@
 		<section-container th:attr="heading=#{study.managesettings.germplasm.factors.label}" collapsible="true">
 			<section-container icon="bms-factors" name="content"
 							   th:attr="heading=#{study.studydetails.germplasm.descriptors}" help-tool-type="MANAGE_STUDIES_GERMPLASM"
-							   add-variable="true" hide-variable="addVariable" model-data="settings"
+							   add-variable="true" hide-variable="addVariable" on-hide-callback="onHideCallback" model-data="settings"
 							   variable-type="1804" callback="onAddVariable(result, 1804)">
 				<display-settings hide-delete="isHideDelete" name="content" predelete-function="onRemoveVariable" settings="settings" variable-type="1804"></display-settings>
             </section-container>

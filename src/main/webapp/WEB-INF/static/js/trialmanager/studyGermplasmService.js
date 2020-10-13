@@ -63,6 +63,20 @@
 			return request.then(successHandler, failureHandler);
 		}
 
+		studyGermplasmService.addOrUpdateStudyEntryType = function (studyEntryType) {
+			var request = $http.put(BASE_STUDY_URL + studyContext.studyId + '/entryTypes/addOrUpdate/', studyEntryType);
+			return request.then(successHandler, failureHandler);
+		}
+
+		studyGermplasmService.deleteStudyEntryType = function (studyEntryTypeId) {
+			var request = $http.delete(BASE_STUDY_URL + studyContext.studyId + '/entryTypes/delete/' + studyEntryTypeId);
+			return request.then(successHandler, failureHandler);
+		}
+
+		studyGermplasmService.isStudyEntryTypeUsed = function (studyEntryTypeId) {
+			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/entryTypes/isUsed/' + studyEntryTypeId);
+			return request.then(successHandler, failureHandler);
+		}
 
         return studyGermplasmService;
 

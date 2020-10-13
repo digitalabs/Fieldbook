@@ -29,7 +29,12 @@ function resetGermplasmList() {
 
 function showChangeEntryTypeModal(entryId, currentValue, studyEntryPropertyId) {
 	'use strict';
-	if ((!isOpenStudy()) || (isOpenStudy() && !hasGeneratedDesign())) {
+	if (!hasGeneratedDesign()) {
 		angular.element(document.getElementById('germplasm-table')).scope().showPopOverCheck(entryId, currentValue, studyEntryPropertyId);
 	}
+}
+
+function showManageEntryTypePopup() {
+	'use strict';
+	angular.element(document.getElementById('germplasm-table')).scope().showManageEntryTypePopup();
 }

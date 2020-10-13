@@ -424,17 +424,17 @@
 
 						// Check if study has advance or cross list
 						if (germplasmStudySourceTable.data.length > 0) {
-						showAlertMessage('', $.germplasmMessages.studyHasCrossesOrSelections);
-					} else {
-						if ($scope.selectedItems.length === 0) {
-							showAlertMessage('', $.germplasmMessages.selectEntryForReplacement);
-						} else if ($scope.selectedItems.length !== 1) {
-							showAlertMessage('', $.germplasmMessages.selectOnlyOneEntryForReplacement);
+							showAlertMessage('', $.germplasmMessages.studyHasCrossesOrSelections);
 						} else {
-							$scope.replaceGermplasm($scope.selectedItems[0]);
+							if ($scope.selectedItems.length === 0) {
+								showAlertMessage('', $.germplasmMessages.selectEntryForReplacement);
+							} else if ($scope.selectedItems.length !== 1) {
+								showAlertMessage('', $.germplasmMessages.selectOnlyOneEntryForReplacement);
+							} else {
+								$scope.replaceGermplasm($scope.selectedItems[0]);
+							}
 						}
-					}
-				});
+					});
 				};
 
 				$scope.toggleSelect = function (data) {
@@ -540,7 +540,7 @@
 
 				$scope.showPopOverCheck = function(entryId, currentValue, studyEntryPropertyId) {
 					$uibModal.open({
-						templateUrl: '/Fieldbook/static/angular-templates/germplasm/changeStudyEntryCheckTypeModal.html',
+						templateUrl: '/Fieldbook/static/angular-templates/germplasm/changeStudyEntryEntryTypeModal.html',
 						controller: "editEntryTypeCtrl",
 						size: 'md',
 						resolve: {
@@ -558,13 +558,24 @@
 					});
 				};
 
+				$scope.showManageEntryTypePopup = function() {
+					$uibModal.open({
+						templateUrl: '/Fieldbook/static/angular-templates/germplasm/addEntryTypeModal.html',
+						controller: "addEntryTypeCtrl",
+						size: 'md',
+						resolve: {
+						},
+						controllerAs: 'ctrl'
+					});
+				}
+
 				$scope.reloadStudyEntryTableData = function() {
 					table().ajax.reload();
 				}
 			}]);
 
-	manageTrialAppModule.controller('replaceGermplasmCtrl', ['$scope', '$rootScope', '$uibModalInstance', 'studyContext', 'studyGermplasmService', 'entryId',
-		function ($scope, $rootScope, $uibModalInstance, studyContext, studyGermplasmService, entryId) {
+	manageTrialAppModule.controller('replaceGermplasmCtrl', ['$scope', '$rootScope', '$uibModalInstance', 'studyGermplasmService', 'entryId',
+		function ($scope, $rootScope, $uibModalInstance, studyGermplasmService, entryId) {
 			var ctrl = this;
 
 			$scope.cancel = function () {
@@ -598,8 +609,8 @@
 		}
 	]);
 
-	manageTrialAppModule.controller('editEntryTypeCtrl', ['$scope', '$rootScope', '$uibModalInstance', 'studyContext', 'studyGermplasmService', 'entryId', 'currentValue',
-		'studyEntryPropertyId',	function ($scope, $rootScope, $uibModalInstance, studyContext, studyGermplasmService, entryId, currentValue, studyEntryPropertyId) {
+	manageTrialAppModule.controller('editEntryTypeCtrl', ['$scope', '$rootScope', '$uibModalInstance', 'studyGermplasmService', 'entryId', 'currentValue',
+		'studyEntryPropertyId',	function ($scope, $rootScope, $uibModalInstance, studyGermplasmService, entryId, currentValue, studyEntryPropertyId) {
 
 			$scope.selected = {};
 			$scope.entryTypes = [];
@@ -629,6 +640,136 @@
 					}
 				});
 			}
+
+			$scope.init();
+		}
+	]);
+
+	manageTrialAppModule.controller('addEntryTypeCtrl', ['$scope', '$rootScope', '$uibModalInstance', 'studyGermplasmService',
+		function ($scope, $rootScope, $uibModalInstance, studyGermplasmService) {
+
+			$scope.entryTypes = [];
+			$scope.entryTypeCode = '';
+			$scope.entryTypeValue = '';
+			$scope.showAddButton = true;
+			$scope.showUpdateButton = false;
+			$scope.showDeleteButton = false;
+			$scope.suggestions_obj = [];
+
+			$scope.init = function () {
+				studyGermplasmService.getEntryTypes().then(function (entryTypes) {
+					populateEntryTypesSelect(entryTypes);
+				});
+			};
+
+			$scope.cancel = function () {
+				$uibModalInstance.dismiss();
+			};
+
+			$scope.addEntryType = function () {
+				var entryType = {
+					id: null,
+					name: $('#comboCheckCode').select2('data').text,
+					description: $scope.entryTypeValue,
+					rank: 0
+				};
+
+				studyGermplasmService.addOrUpdateStudyEntryType(entryType).then(function () {
+					showSuccessfulMessage('', getMessage($.studyEntryTypeMessages.addStudyEntryTypeSuccess, $('#comboCheckCode').select2('data').text));
+					$uibModalInstance.dismiss();
+				});
+			};
+
+			$scope.updateEntryType = function () {
+				var entryType = {
+					id: $('#comboCheckCode').select2('data').id,
+					name: $('#comboCheckCode').select2('data').text,
+					description: $scope.entryTypeValue,
+					rank: $('#comboCheckCode').select2('data').rank
+				};
+
+				studyGermplasmService.addOrUpdateStudyEntryType(entryType).then(function () {
+					showSuccessfulMessage('', getMessage($.studyEntryTypeMessages.updateStudyEntryTypeSuccess, $('#comboCheckCode').select2('data').text));
+					$uibModalInstance.dismiss();
+				});
+
+			};
+
+			$scope.deleteEntryType = function () {
+				var studyEntryTypeId = $('#comboCheckCode').select2('data').id;
+				studyGermplasmService.isStudyEntryTypeUsed(studyEntryTypeId).then(function (isUsed) {
+					if(!isUsed) {
+						studyGermplasmService.deleteStudyEntryType(studyEntryTypeId).then(function () {
+							showSuccessfulMessage('', getMessage($.studyEntryTypeMessages.deleteStudyEntryTypeSuccess, $('#comboCheckCode').select2('data').text));
+							$uibModalInstance.dismiss();
+						});
+					} else {
+						showSuccessfulMessage('', getMessage($.studyEntryTypeMessages.deleteStudyEntryTypeFail, $('#comboCheckCode').select2('data').text));
+					}
+				});
+			};
+
+			function populateEntryTypesSelect(entryTypes) {
+				$.each(entryTypes, function (index, value) {
+					var dataObj = {
+						'id': value.id,
+						'text': value.name,
+						'description': value.description,
+						'originalText': value.name,
+						'rank': value.rank
+					};
+					$scope.suggestions_obj.push(dataObj);
+				});
+				// if combo to create is one of the ontology combos, add an onchange event
+				// to populate the description based on the selected value
+				$('#comboCheckCode')
+					.select2(
+						{
+							query: function (query) {
+								var data = {
+										results: sortByKey($scope.suggestions_obj, 'text')
+								};
+								// return the array that matches
+								data.results = $.grep(data.results, function (
+									item, index) {
+									if (item.text.toUpperCase().indexOf(query.term.toUpperCase()) === 0) {
+										return true;
+									}
+									return false;
+								});
+								if (data.results.length === 0 || data.results[0].text.toUpperCase() != query.term.toUpperCase()) {
+									data.results.unshift({
+										id: query.term,
+										text: query.term
+									});
+								}
+								query.callback(data);
+							},
+							dropdownCssClass: 's2-nosearch-icon'
+						})
+					.on(
+						'change',
+						function () {
+							if ($('#comboCheckCode').select2('data')) {
+								if ($('#comboCheckCode').select2('data').id == $('#comboCheckCode').select2('data').text) {
+									$scope.entryTypeValue = '';
+									$scope.showAddButton = true;
+									$scope.showUpdateButton = false;
+									$scope.showDeleteButton = false;
+								} else {
+									$scope.entryTypeValue = $('#comboCheckCode').select2('data').description;
+									$scope.showAddButton = false;
+									$scope.showUpdateButton = true;
+									$scope.showDeleteButton = true;
+								}
+								$scope.$apply();
+							}
+						});
+			};
+
+			function getMessage(message, entryTypeCode) {
+				return message.replace("{0}", entryTypeCode);
+			};
 
 			$scope.init();
 		}

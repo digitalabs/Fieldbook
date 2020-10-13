@@ -2423,17 +2423,6 @@ function changeBrowseSampleButtonBehavior(isEnable) {
 	}
 }
 
-function showManageCheckTypePopup() {
-	'use strict';
-	$('#page-check-message-modal').html('');
-	$('.check-germplasm-list-items .popover').remove();
-	resetButtonsAndFields();
-	$('#manageCheckTypesModal').modal({
-		backdrop: 'static',
-		keyboard: false
-	});
-}
-
 function showExportGermplasmListPopup() {
 	'use strict';
 	$('.check-germplasm-list-items .popover').remove();

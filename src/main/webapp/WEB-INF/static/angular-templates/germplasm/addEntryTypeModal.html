@@ -1,0 +1,32 @@
+<div class="modal-body">
+	<div class="row form-group">
+		<div class="col-xs-11 col-md-11">
+			<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{germplasm.list.manage.check.types}">Add Types</label>
+		</div>
+		<div class="col-xs-1 col-md-1">
+			<button ng-click="cancel()" type="button" class="close pull-right glyphicon glyphicon-remove"></button>
+		</div>
+	</div>
+	<div class="separator"></div>
+	<br/>
+	<div class="form-group">
+		<label class="control-label col-xs-3"><b><span th:text="#{study.manager.manage.check.types.code}">Code</span> <span class="required">*</span></b></label>
+
+		<div class="col-xs-8">
+			<input id="comboCheckCode" ng-model="entryTypeCode" type="hidden" class="form-control select2" placeholder=""/>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="control-label col-xs-3"><b><span th:text="#{study.manager.manage.check.types.value}">Value</span> <span class="required">*</span></b></label>
+		<div class="col-xs-8">
+			<input type="text" ng-model="entryTypeValue" class="form-control"/>
+		</div>
+	</div>
+	<br/>
+</div>
+<div class="modal-footer">
+	<button class="btn btn-default" ng-click="cancel()">Cancel</button>
+	<button class="btn btn-primary" ng-if="showAddButton" ng-click="addEntryType()">Add</button>
+	<button class="btn btn-primary" ng-if="showUpdateButton" ng-click="updateEntryType()">Update</button>
+	<button class="btn btn-primary" ng-if="showDeleteButton" ng-click="deleteEntryType()">Delete</button>
+</div>

@@ -1,8 +1,8 @@
 'use strict';
 
-describe('Study Germplasm Service', function () {
+describe('Study Entry Service', function () {
 
-	var studyGermplasmService, $httpBackend, $q;
+	var studyEntryService, $httpBackend, $q;
 	var studyContext = {
 		studyId: 1,
 		cropName: 'maize',
@@ -24,7 +24,7 @@ describe('Study Germplasm Service', function () {
 	});
 
 	beforeEach(inject(function ($injector) {
-		studyGermplasmService = $injector.get('studyGermplasmService');
+		studyEntryService = $injector.get('studyEntryService');
 		$httpBackend = $injector.get('$httpBackend');
 		$q = $injector.get('$q');
 		$uibModal = $injector.get('$uibModal');
@@ -37,7 +37,7 @@ describe('Study Germplasm Service', function () {
 				entryId)
 				.respond(200, {data: getMockStudyGermplasm()});
 
-			studyGermplasmService.replaceStudyGermplasm(entryId, newGid).then(function (response) {
+			studyEntryService.replaceStudyGermplasm(entryId, newGid).then(function (response) {
 				expect(response.data).toEqual(mockData);
 			});
 
@@ -45,7 +45,7 @@ describe('Study Germplasm Service', function () {
 
 		it('should return reject if any of the parameters are undefined', function () {
 
-			studyGermplasmService.replaceStudyGermplasm(undefined, undefined).then(function (response) {
+			studyEntryService.replaceStudyGermplasm(undefined, undefined).then(function (response) {
 			}).catch(function (reason) {
 				expect(reason).toEqual('studyId, datasetId and variableIds are not defined.');
 			});
@@ -57,20 +57,20 @@ describe('Study Germplasm Service', function () {
 	describe('Manage Selected Germplasm Entries', function () {
 
 		it('should toggle selected germplasm entries', function () {
-			studyGermplasmService.toggleSelect(11);
-			studyGermplasmService.toggleSelect(13);
-			studyGermplasmService.toggleSelect(15);
-			expect(studyGermplasmService.getSelectedEntries()).toEqual([11,13,15]);
+			studyEntryService.toggleSelect(11);
+			studyEntryService.toggleSelect(13);
+			studyEntryService.toggleSelect(15);
+			expect(studyEntryService.getSelectedEntries()).toEqual([11,13,15]);
 		});
 
 		it('should reset selected germplasm entries', function () {
-			studyGermplasmService.toggleSelect(11);
-			studyGermplasmService.toggleSelect(13);
-			studyGermplasmService.toggleSelect(15);
-			expect(studyGermplasmService.getSelectedEntries()).toEqual([11,13,15]);
+			studyEntryService.toggleSelect(11);
+			studyEntryService.toggleSelect(13);
+			studyEntryService.toggleSelect(15);
+			expect(studyEntryService.getSelectedEntries()).toEqual([11,13,15]);
 
-			studyGermplasmService.resetSelectedEntries();
-			expect(studyGermplasmService.getSelectedEntries()).toEqual([]);
+			studyEntryService.resetSelectedEntries();
+			expect(studyEntryService.getSelectedEntries()).toEqual([]);
 		});
 
 	});

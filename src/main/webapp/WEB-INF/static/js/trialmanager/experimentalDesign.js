@@ -6,9 +6,9 @@
 		manageTrialAppModule.constant('EXP_DESIGN_MSGS', expDesignMsgs)
 			.constant('EXPERIMENTAL_DESIGN_PARTIALS_LOC', '/Fieldbook/static/angular-templates/experimentalDesignPartials/')
 			.controller('ExperimentalDesignCtrl', ['$scope', '$state', 'EXPERIMENTAL_DESIGN_PARTIALS_LOC','DESIGN_TYPE','SYSTEM_DEFINED_ENTRY_TYPE', 'TrialManagerDataService', '$http',
-				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', '$rootScope', 'studyStateService', 'studyContext', 'experimentDesignService', '$uibModal', 'studyInstanceService', 'studyGermplasmService',
+				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', '$rootScope', 'studyStateService', 'studyContext', 'experimentDesignService', '$uibModal', 'studyInstanceService', 'studyEntryService',
 				function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, DESIGN_TYPE, SYSTEM_DEFINED_ENTRY_TYPE, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _,
-						 $q, Messages, $rootScope, studyStateService, studyContext, experimentDesignService, $uibModal, studyInstanceService, studyGermplasmService) {
+						 $q, Messages, $rootScope, studyStateService, studyContext, experimentDesignService, $uibModal, studyInstanceService, studyEntryService) {
 
 					var ENTRY_TYPE_COLUMN_DATA_KEY = '8255-key';
 					var MESSAGE_DIV_ID = 'page-message';
@@ -643,7 +643,7 @@
 
 						}
 
-						if (!studyGermplasmService.hasStudyEntries()) {
+						if (!studyEntryService.hasStudyEntries()) {
 							showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[26]);
 							return false;
 						}

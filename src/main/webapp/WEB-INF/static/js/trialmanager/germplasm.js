@@ -6,9 +6,9 @@
 	var manageTrialAppModule = angular.module('manageTrialApp');
 
 	manageTrialAppModule.controller('GermplasmCtrl',
-		['$scope', '$rootScope', '$q', '$compile', 'TrialManagerDataService', 'DTOptionsBuilder', 'studyStateService', 'studyGermplasmService', 'germplasmStudySourceService',
+		['$scope', '$rootScope', '$q', '$compile', 'TrialManagerDataService', 'DTOptionsBuilder', 'studyStateService', 'studyEntryService', 'germplasmStudySourceService',
 			'datasetService', '$timeout', '$uibModal',
-			function ($scope, $rootScope, $q, $compile, TrialManagerDataService, DTOptionsBuilder, studyStateService, studyGermplasmService, germplasmStudySourceService,
+			function ($scope, $rootScope, $q, $compile, TrialManagerDataService, DTOptionsBuilder, studyStateService, studyEntryService, germplasmStudySourceService,
 					  datasetService, $timeout, $uibModal) {
 
 				$scope.settings = TrialManagerDataService.settings.germplasm;
@@ -52,7 +52,7 @@
 							function (d, callback) {
 								$.ajax({
 									type: 'POST',
-									url: studyGermplasmService.getStudyEntries() + getPageQueryParameters(d),
+									url: studyEntryService.getStudyEntries() + getPageQueryParameters(d),
 									data: JSON.stringify({
 										draw: d.draw
 									}),
@@ -169,7 +169,7 @@
 				}
 
 				function loadColumns() {
-					return studyGermplasmService.getEntryTableColumns().then(function (columnsData) {
+					return studyEntryService.getEntryTableColumns().then(function (columnsData) {
 						$scope.columnsData = addCheckBoxColumn(columnsData);
 						var columnsObj = $scope.columnsObj = mapColumns($scope.columnsData);
 						return columnsObj;
@@ -476,8 +476,8 @@
 
 				$scope.saveStudyEntries = function (listId) {
 
-					studyGermplasmService.deleteEntries().then(function () {
-						studyGermplasmService.saveStudyEntries(listId).then(function(res){
+					studyEntryService.deleteEntries().then(function () {
+						studyEntryService.saveStudyEntries(listId).then(function(res){
 							$scope.reloadStudyEntryTableData();
 							$scope.showImportListBrowser = false;
 							$scope.showStudyEntriesTable = true;
@@ -489,7 +489,7 @@
 					var modalConfirmCancellation = $scope.openConfirmModal($.fieldbookMessages.confirmResetStudyEntries, 'Confirm', 'Cancel');
 					modalConfirmCancellation.result.then(function (shouldContinue) {
 						if (shouldContinue) {
-							studyGermplasmService.deleteEntries().then(function () {
+							studyEntryService.deleteEntries().then(function () {
 								$scope.showImportListBrowser = true;
 								$scope.showStudyEntriesTable = false;
 								$('#imported-germplasm-list-reset-button').css('opacity', '0');
@@ -574,8 +574,8 @@
 				}
 			}]);
 
-	manageTrialAppModule.controller('replaceGermplasmCtrl', ['$scope', '$rootScope', '$uibModalInstance', 'studyGermplasmService', 'entryId',
-		function ($scope, $rootScope, $uibModalInstance, studyGermplasmService, entryId) {
+	manageTrialAppModule.controller('replaceGermplasmCtrl', ['$scope', '$rootScope', '$uibModalInstance', 'studyEntryService', 'entryId',
+		function ($scope, $rootScope, $uibModalInstance, studyEntryService, entryId) {
 			var ctrl = this;
 
 			$scope.cancel = function () {
@@ -595,7 +595,7 @@
 					ctrl.showAlertMessage('', 'Please enter valid GID.');
 				} else {
 					// if there are multiple entries selected, get only the first entry for replacement
-					studyGermplasmService.replaceStudyGermplasm(entryId, newGid).then(function (response) {
+					studyEntryService.replaceStudyGermplasm(entryId, newGid).then(function (response) {
 						showSuccessfulMessage('', $.germplasmMessages.replaceGermplasmSuccessful);
 						$rootScope.$emit("reloadStudyEntryTableData", {});
 						$uibModalInstance.close();
@@ -609,13 +609,13 @@
 		}
 	]);
 
-	manageTrialAppModule.controller('editEntryTypeCtrl', ['$scope', '$rootScope', '$uibModalInstance', 'studyGermplasmService', 'entryId', 'currentValue',
-		'studyEntryPropertyId',	function ($scope, $rootScope, $uibModalInstance, studyGermplasmService, entryId, currentValue, studyEntryPropertyId) {
+	manageTrialAppModule.controller('editEntryTypeCtrl', ['$scope', '$rootScope', '$uibModalInstance', 'studyEntryService', 'entryId', 'currentValue',
+		'studyEntryPropertyId',	function ($scope, $rootScope, $uibModalInstance, studyEntryService, entryId, currentValue, studyEntryPropertyId) {
 
 			$scope.selected = {};
 			$scope.entryTypes = [];
 			$scope.init = function () {
-				studyGermplasmService.getEntryTypes().then(function (entryTypes) {
+				studyEntryService.getEntryTypes().then(function (entryTypes) {
 					buildEntryTypes(entryTypes);
 				})
 			};
@@ -626,7 +626,7 @@
 
 
 			$scope.editEntryType = function () {
-				studyGermplasmService.updateStudyEntry(entryId, $scope.selected.entryType.id, studyEntryPropertyId).then(function () {
+				studyEntryService.updateStudyEntry(entryId, $scope.selected.entryType.id, studyEntryPropertyId).then(function () {
 					$uibModalInstance.close();
 					$rootScope.$emit("reloadStudyEntryTableData", {});
 				});
@@ -645,8 +645,8 @@
 		}
 	]);
 
-	manageTrialAppModule.controller('addEntryTypeCtrl', ['$scope', '$rootScope', '$uibModalInstance', 'studyGermplasmService',
-		function ($scope, $rootScope, $uibModalInstance, studyGermplasmService) {
+	manageTrialAppModule.controller('addEntryTypeCtrl', ['$scope', '$rootScope', '$uibModalInstance', 'studyEntryService',
+		function ($scope, $rootScope, $uibModalInstance, studyEntryService) {
 
 			$scope.entryTypes = [];
 			$scope.entryTypeCode = '';
@@ -657,7 +657,7 @@
 			$scope.suggestions_obj = [];
 
 			$scope.init = function () {
-				studyGermplasmService.getEntryTypes().then(function (entryTypes) {
+				studyEntryService.getEntryTypes().then(function (entryTypes) {
 					populateEntryTypesSelect(entryTypes);
 				});
 			};
@@ -674,7 +674,7 @@
 					rank: 0
 				};
 
-				studyGermplasmService.addOrUpdateStudyEntryType(entryType).then(function () {
+				studyEntryService.addOrUpdateStudyEntryType(entryType).then(function () {
 					showSuccessfulMessage('', getFormattedMessage($.studyEntryTypeMessages.addStudyEntryTypeSuccess, $('#comboCheckCode').select2('data').text));
 					$uibModalInstance.dismiss();
 				});
@@ -688,7 +688,7 @@
 					rank: $('#comboCheckCode').select2('data').rank
 				};
 
-				studyGermplasmService.addOrUpdateStudyEntryType(entryType).then(function () {
+				studyEntryService.addOrUpdateStudyEntryType(entryType).then(function () {
 					showSuccessfulMessage('', getFormattedMessage($.studyEntryTypeMessages.updateStudyEntryTypeSuccess, $('#comboCheckCode').select2('data').text));
 					$uibModalInstance.dismiss();
 				});
@@ -697,9 +697,9 @@
 
 			$scope.deleteEntryType = function () {
 				var studyEntryTypeId = $('#comboCheckCode').select2('data').id;
-				studyGermplasmService.isStudyEntryTypeUsed(studyEntryTypeId).then(function (isUsed) {
+				studyEntryService.isStudyEntryTypeUsed(studyEntryTypeId).then(function (isUsed) {
 					if(!isUsed) {
-						studyGermplasmService.deleteStudyEntryType(studyEntryTypeId).then(function () {
+						studyEntryService.deleteStudyEntryType(studyEntryTypeId).then(function () {
 							showSuccessfulMessage('', getFormattedMessage($.studyEntryTypeMessages.deleteStudyEntryTypeSuccess, $('#comboCheckCode').select2('data').text));
 							$uibModalInstance.dismiss();
 						});

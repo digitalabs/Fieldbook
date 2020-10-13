@@ -182,7 +182,8 @@
 			};
 
 			$scope.importObservations = function (processWarnings) {
-				datasetService.importObservations(datasetId, $rootScope.importedData, processWarnings).then(function () {
+				var fileType = ctrl.format.selected;
+				datasetService.importObservations(datasetId, $rootScope.importedData, processWarnings, fileType).then(function () {
 					displaySaveSuccessMessage('page-message', 'Your data was successfully imported and may need confirmation.');
 					$rootScope.navigateToSubObsTab(datasetId, {reload: true});
 					$scope.close();

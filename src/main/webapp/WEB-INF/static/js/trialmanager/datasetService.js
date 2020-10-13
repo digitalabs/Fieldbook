@@ -160,7 +160,7 @@
 				}, failureHandler);
 			};
 
-			datasetService.importObservations = function (datasetId, observationList, processWarnings) {
+			datasetService.importObservations = function (datasetId, observationList, processWarnings, fileType) {
 				if (!studyContext.studyId) {
 					return $q.resolve([]);
 				}
@@ -168,7 +168,8 @@
 					{
 						processWarnings: processWarnings,
 						data: observationList,
-						draftMode: true
+						draftMode: true,
+						fileType: fileType
 					});
 				return request.then(successHandler, failureHandler);
 			};

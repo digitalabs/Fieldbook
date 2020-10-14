@@ -447,6 +447,18 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				$scope.instanceInfo.numberOfInstances -= 1;
 
 				TrialManagerDataService.deleteInstance(index + 1);
+				deleteExperimentalDesignIfApplicable();
+			}
+
+			function deleteExperimentalDesignIfApplicable() {
+
+				datasetService.countObservationUnits(studyContext.measurementDatasetId).then(function (response) {
+					var count = response.headers('X-Dataset-Observation-Unit');
+					if (count == '0') {
+						studyStateService.updateGeneratedDesign(false);
+						TrialManagerDataService.currentData.experimentalDesign.designType = '';
+					}
+				});
 			}
 
 			function addCellClickHandler() {

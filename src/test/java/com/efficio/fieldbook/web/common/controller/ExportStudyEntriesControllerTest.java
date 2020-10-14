@@ -6,7 +6,7 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.ExportGermplasmListForm;
-import com.efficio.fieldbook.web.common.service.ExportStudyGermplasmService;
+import com.efficio.fieldbook.web.common.service.ExportStudyEntriesService;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -100,7 +100,7 @@ public class ExportStudyEntriesControllerTest {
 	private FieldbookService fieldbookMiddlewareService;
 
 	@Mock
-	private ExportStudyGermplasmService exportStudyGermplasmService;
+	private ExportStudyEntriesService exportStudyEntriesService;
 
 	@Mock
 	private StudyEntryService studyEntryService;
@@ -177,11 +177,11 @@ public class ExportStudyEntriesControllerTest {
 
 		try {
 			final String output =
-				this.exportStudyEntriesController.exportStudyGermplasm(form, ExportStudyEntriesControllerTest.CSV_TYPE, this.response);
+				this.exportStudyEntriesController.exportStudyEntries(form, ExportStudyEntriesControllerTest.CSV_TYPE, this.response);
 
 			//  Verify temporary file is created in proper directory and response object is properly set
 			final ArgumentCaptor<String> filenameCaptor = ArgumentCaptor.forClass(String.class);
-			Mockito.verify(this.exportStudyGermplasmService, Mockito.times(1)).exportAsCSVFile(ArgumentMatchers.eq(studyId), filenameCaptor.capture(),
+			Mockito.verify(this.exportStudyEntriesService, Mockito.times(1)).exportAsCSVFile(ArgumentMatchers.eq(studyId), filenameCaptor.capture(),
 					ArgumentMatchers.any(Map.class));
 			final File outputFile = this.getOutputFilePath();
 			Assert.assertNotNull(outputFile);
@@ -215,8 +215,8 @@ public class ExportStudyEntriesControllerTest {
 		form.setGermplasmListVisibleColumns("0");
 
 		try {
-			this.exportStudyEntriesController.exportStudyGermplasm(form, ExportStudyEntriesControllerTest.CSV_TYPE, this.response);
-			Mockito.verify(this.exportStudyGermplasmService, Mockito.times(0)).exportAsCSVFile(ArgumentMatchers.eq(studyId), ArgumentMatchers.anyString(),
+			this.exportStudyEntriesController.exportStudyEntries(form, ExportStudyEntriesControllerTest.CSV_TYPE, this.response);
+			Mockito.verify(this.exportStudyEntriesService, Mockito.times(0)).exportAsCSVFile(ArgumentMatchers.eq(studyId), ArgumentMatchers.anyString(),
 					ArgumentMatchers.any(Map.class));
 		} catch (final GermplasmListExporterException e) {
 			Assert.fail();

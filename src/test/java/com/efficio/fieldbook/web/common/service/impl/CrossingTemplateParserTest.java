@@ -235,7 +235,7 @@ public class CrossingTemplateParserTest {
 
 
 	@Test
-	public void getPlotNoToStudyGermplasmDtoMapForStudyWithInvalidStudyName() {
+	public void testGetPlotNoToStudyEntryMapForStudy_ForStudyWithInvalidStudyName() {
 		// setup mocks
 		Mockito.when(this.studyDataManager.getStudyIdByNameAndProgramUUID(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn(null);
 		final String errorMessage = "Study not found.";
@@ -254,7 +254,7 @@ public class CrossingTemplateParserTest {
 	}
 
 	@Test
-	public void getPlotNoToStudyGermplasmDtoMapForStudyWithValidStudyAndPlotNumbers() {
+	public void testGetPlotNoToStudyEntryMapForStudy_ForStudyWithValidStudyAndPlotNumbers() {
 		Mockito.when(this.studyDataManager.getStudyIdByNameAndProgramUUID(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn(1);
 		Mockito.when(this.studyEntryService.getPlotEntriesMap(ArgumentMatchers.anyInt(), ArgumentMatchers.anySet())).thenReturn(new HashMap<>());
 

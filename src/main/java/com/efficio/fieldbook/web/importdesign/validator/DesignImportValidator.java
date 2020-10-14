@@ -5,7 +5,7 @@ import com.efficio.fieldbook.web.common.bean.DesignImportData;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
-import com.efficio.fieldbook.web.study.germplasm.StudyGermplasmTransformer;
+import com.efficio.fieldbook.web.study.germplasm.StudyEntryTransformer;
 import com.mysql.jdbc.StringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -31,7 +31,7 @@ public class DesignImportValidator {
 	private StudyEntryService studyEntryService;
 
 	@Resource
-	private StudyGermplasmTransformer studyGermplasmTransformer;
+	private StudyEntryTransformer studyEntryTransformer;
 
 	@Resource
 	private MessageSource messageSource;
@@ -90,7 +90,7 @@ public class DesignImportValidator {
 		}
 
 		final List<StudyEntryDto> studyEntries = this.studyEntryService.getStudyEntries(this.userSelection.getWorkbook().getStudyDetails().getId());
-		final List<ImportedGermplasm> germplasmList = this.studyGermplasmTransformer.tranformToImportedGermplasm(studyEntries);
+		final List<ImportedGermplasm> germplasmList = this.studyEntryTransformer.tranformToImportedGermplasm(studyEntries);
 		// Extract the entry numbers from germplasmList.
 		final Set<String> entryNumbersFromGermplasmList = new HashSet<>();
 		for (final ImportedGermplasm importedGermplasm : germplasmList) {

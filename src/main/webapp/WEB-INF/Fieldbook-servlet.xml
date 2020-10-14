@@ -169,8 +169,8 @@
 
 	<bean id="exportFieldmapService" class="com.efficio.fieldbook.service.ExportFieldmapServiceImpl" />
 
-	<bean id="exportGermplasmListService"
-		  class="com.efficio.fieldbook.web.common.service.impl.ExportStudyGermplasmServiceImpl" scope="request">
+	<bean id="exportStudyEntriesService"
+		  class="com.efficio.fieldbook.web.common.service.impl.ExportStudyEntriesServiceImpl" scope="request">
 		<aop:scoped-proxy />
 	</bean>
 
@@ -573,7 +573,7 @@
 		<aop:scoped-proxy proxy-target-class="false" />
 	</bean>
 
-	<bean id="studyGermplasmTransformer" class="com.efficio.fieldbook.web.study.germplasm.StudyGermplasmTransformer" scope="request">
+	<bean id="studyEntryTransformer" class="com.efficio.fieldbook.web.study.germplasm.StudyEntryTransformer" scope="request">
 		<aop:scoped-proxy/>
 	</bean>
 

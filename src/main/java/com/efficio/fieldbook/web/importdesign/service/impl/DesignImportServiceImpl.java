@@ -7,7 +7,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.importdesign.generator.DesignImportMeasurementRowGenerator;
 import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
-import com.efficio.fieldbook.web.study.germplasm.StudyGermplasmTransformer;
+import com.efficio.fieldbook.web.study.germplasm.StudyEntryTransformer;
 import com.efficio.fieldbook.web.trial.bean.Instance;
 import com.efficio.fieldbook.web.trial.bean.InstanceInfo;
 import com.efficio.fieldbook.web.util.ExpDesignUtil;
@@ -62,7 +62,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 	private StudyEntryService studyEntryService;
 
 	@Resource
-	private StudyGermplasmTransformer studyGermplasmTransformer;
+	private StudyEntryTransformer studyEntryTransformer;
 
 	@Resource
 	private MessageSource messageSource;
@@ -83,7 +83,7 @@ public class DesignImportServiceImpl implements DesignImportService {
 		 **/
 		this.populateEnvironmentDataWithValuesFromCsvFile(instanceInfo, designImportData);
 		final List<StudyEntryDto> studyEntries = this.studyEntryService.getStudyEntries(this.userSelection.getWorkbook().getStudyDetails().getId());
-		final List<ImportedGermplasm> list = this.studyGermplasmTransformer.tranformToImportedGermplasm(studyEntries);
+		final List<ImportedGermplasm> list = this.studyEntryTransformer.tranformToImportedGermplasm(studyEntries);
 		final Map<Integer, ImportedGermplasm> importedGermplasm =
 				Maps.uniqueIndex(list,	new Function<ImportedGermplasm, Integer>() {
 

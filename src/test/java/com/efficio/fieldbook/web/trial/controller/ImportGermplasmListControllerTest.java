@@ -17,12 +17,9 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.BVDesignException;
-import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
-import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmMainInfoInitializer;
-import com.efficio.fieldbook.web.study.germplasm.StudyGermplasmTransformer;
+import com.efficio.fieldbook.web.study.germplasm.StudyEntryTransformer;
 import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 import com.google.common.collect.Lists;
-import org.generationcp.commons.data.initializer.ImportedGermplasmTestDataInitializer;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
@@ -33,11 +30,9 @@ import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
-import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
@@ -57,12 +52,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.ui.ExtendedModelMap;
-import org.springframework.ui.Model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -76,16 +68,7 @@ public class ImportGermplasmListControllerTest {
 	private static final Integer STARTING_ENTRY_NO = 10;
 	private static final int TOTAL_NUMBER_OF_ENTRIES = 20;
 
-	private static final String DESIGNATION_FACTOR = "8250-key";
-	private static final String GID_FACTOR = "8240-key";
-	private static final String CROSS_FACTOR = "8377-key";
-	private static final String ENTRY_NO_FACTOR = "8230-key";
-	private static final int CURRENT_PAGE = 0;
-
 	private final String programUUID = UUID.randomUUID().toString();
-
-	@Mock
-	private GermplasmListManager germplasmListManager;
 
 	@Mock
 	private FieldbookService fieldbookService;
@@ -102,18 +85,7 @@ public class ImportGermplasmListControllerTest {
 	@Mock
 	private DataImportService dataImportService;
 
-	@Mock
-	private InventoryDataManager inventoryDataManager;
-
-	@Mock
-	private StudyGermplasmTransformer studyGermplasmTransformer;
-
-	@Mock
-	private StudyEntryService studyEntryService;
-
 	private UserSelection userSelection;
-
-	private final static Integer LIST_ID = 1;
 
 	@InjectMocks
 	private ImportGermplasmListController importGermplasmListController;

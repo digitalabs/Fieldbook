@@ -625,6 +625,7 @@
 
 					studyEntryService.addStudyEntryType(entryType).then(function () {
 						showSuccessfulMessage('', getFormattedMessage($.studyEntryTypeMessages.addStudyEntryTypeSuccess, $('#comboCheckCode').select2('data').text));
+						$rootScope.navigateToTab('germplasm', {reload: true});
 						$uibModalInstance.dismiss();
 					});
 				}
@@ -641,6 +642,7 @@
 
 					studyEntryService.updateStudyEntryType(entryType).then(function () {
 						showSuccessfulMessage('', getFormattedMessage($.studyEntryTypeMessages.updateStudyEntryTypeSuccess, $('#comboCheckCode').select2('data').text));
+						$rootScope.navigateToTab('germplasm', {reload: true});
 						$uibModalInstance.dismiss();
 					});
 				}

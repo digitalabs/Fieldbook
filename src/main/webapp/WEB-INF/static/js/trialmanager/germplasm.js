@@ -486,6 +486,7 @@
 								$scope.showUpdateImportListButton = false;
 								$scope.showStudyEntriesTable = false;
 								$scope.showClearList = false;
+								TrialManagerDataService.applicationData.germplasmListSelected = false;
 							});
 						}
 					});

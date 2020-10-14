@@ -259,7 +259,7 @@ public class WorkbookUtil {
 
 	public static void addMeasurementDataToRows(final List<MeasurementVariable> variableList, final boolean isVariate,
 			final UserSelection userSelection, final OntologyService ontologyService, final FieldbookService fieldbookService,
-			final String programUUID) {
+			final String programUUID, final List<ImportedGermplasm> importedGermplasms) {
 		// add new variables in measurement rows
 		for (final MeasurementVariable variable : variableList) {
 			if (variable.getOperation().equals(Operation.ADD)) {
@@ -267,7 +267,7 @@ public class WorkbookUtil {
 				for (final MeasurementRow row : userSelection.getMeasurementRowList()) {
 
 					if (!isVariate) {
-						WorkbookUtil.addFactorsToMeasurementRowDataList(row, stdVariable, isVariate, variable, userSelection);
+						WorkbookUtil.addFactorsToMeasurementRowDataList(row, stdVariable, isVariate, variable, userSelection, importedGermplasms);
 					} else {
 						final MeasurementData measurementData = new MeasurementData(variable.getName(), "", true,
 								WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
@@ -285,7 +285,7 @@ public class WorkbookUtil {
 	}
 
 	public static void addFactorsToMeasurementRowDataList(final MeasurementRow row, final StandardVariable stdVariable,
-			final boolean isVariate, final MeasurementVariable variable, final UserSelection userSelection) {
+			final boolean isVariate, final MeasurementVariable variable, final UserSelection userSelection, final List<ImportedGermplasm> importedGermplasms) {
 
 		MeasurementData measurementData = null;
 		String value = "";
@@ -299,12 +299,7 @@ public class WorkbookUtil {
 			}
 		}
 
-		if (userSelection.getImportedGermplasmMainInfo() != null
-				&& userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList() != null && !CollectionUtils
-						.isEmpty(userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms())) {
-			final List<ImportedGermplasm> importedGermplasms =
-					userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
-
+		if (!CollectionUtils.isEmpty(importedGermplasms)) {
 			for (final ImportedGermplasm importedGermplsm : importedGermplasms) {
 				if (importedGermplsm.getGid().equals(gid)) {
 					importedGermplasm = importedGermplsm;

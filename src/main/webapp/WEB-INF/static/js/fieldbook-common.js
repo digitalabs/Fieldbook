@@ -178,63 +178,6 @@ function doAjaxMainSubmit(pageMessageDivId, successMessage, overrideAction) {
 	});
 }
 
-function showPage(paginationUrl, pageNum, sectionDiv) {
-	'use strict';
-
-	$.ajax({
-		url: paginationUrl + pageNum,
-		type: 'GET',
-		data: '',
-		cache: false,
-		success: function(html) {
-
-			var tableId,
-				gid,
-				idVal,
-				indexItems,
-				rowIndex;
-
-			$('#' + sectionDiv).html(html);
-
-			if (sectionDiv === 'trial-details-list') {
-				// We highlight the previously clicked
-				for (tableId in selectedTableIds) {
-					idVal = selectedTableIds[tableId];
-					if (idVal != null) {
-						// We need to highlight
-						$('tr.data-row#' + idVal).addClass('field-map-highlight');
-					}
-				}
-			} else if (sectionDiv === 'inventory-germplasm-list') {
-				// We highlight the previously clicked
-				for (gid in selectedGids) {
-					idVal = selectedGids[gid];
-					if (idVal !== null) {
-						// We need to highlight
-						$('tr.primaryRow[data-gid=' + idVal + ']').addClass('field-map-highlight');
-					}
-				}
-			}
-
-			if (sectionDiv === 'imported-germplasm-list') {
-				makeGermplasmListDraggable(makeDraggableBool);
-
-				// Highlight
-				if (itemsIndexAdded && itemsIndexAdded.length > 0) {
-					for (indexItems = 0; indexItems < itemsIndexAdded.length ; indexItems++) {
-						if (itemsIndexAdded[indexItems] != null) {
-							rowIndex = itemsIndexAdded[indexItems].index;
-							if ($('.primaryRow[data-index=""+rowIndex+""]').length !== 0) {
-								$('.primaryRow[data-index=""+rowIndex+""]').css('opacity', '0.5');
-							}
-						}
-					}
-				}
-			}
-		}
-	});
-}
-
 function showMultiTabPage(paginationUrl, pageNum, sectionDiv, sectionContainerId, paginationListIdentifier) {
 	'use strict';
 	$.ajax({

@@ -388,10 +388,12 @@ public class OpenTrialController extends BaseTrialController {
 		// saving variables with generated design
 		if (replace == 0) {
 			try {
+				final List<StudyEntryDto> studyEntries = this.studyEntryService.getStudyEntries(workbook.getStudyDetails().getId());
+				final List<ImportedGermplasm> list = this.studyGermplasmTransformer.tranformToImportedGermplasm(studyEntries);
 				WorkbookUtil.addMeasurementDataToRows(workbook.getFactors(), false, this.userSelection, this.ontologyService,
-					this.fieldbookService, this.contextUtil.getCurrentProgramUUID());
+					this.fieldbookService, this.contextUtil.getCurrentProgramUUID(), list);
 				WorkbookUtil.addMeasurementDataToRows(workbook.getVariates(), true, this.userSelection, this.ontologyService,
-					this.fieldbookService, this.contextUtil.getCurrentProgramUUID());
+					this.fieldbookService, this.contextUtil.getCurrentProgramUUID(), list);
 
 				workbook.setMeasurementDatasetVariables(null);
 				workbook.setObservations(this.userSelection.getMeasurementRowList());

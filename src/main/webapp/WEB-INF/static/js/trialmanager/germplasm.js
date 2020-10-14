@@ -465,6 +465,7 @@
 
 					studyEntryService.deleteEntries().then(function () {
 						studyEntryService.saveStudyEntries(listId).then(function(res){
+							TrialManagerDataService.applicationData.germplasmListSelected = true;
 							setNumberOfEntries();
 							$scope.reloadStudyEntryTableData();
 							$scope.showImportListBrowser = false;

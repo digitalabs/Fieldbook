@@ -466,24 +466,6 @@ public class UserSelection implements Serializable {
 	}
 
 	/**
-	 * Gets the imported check germplasm main info.
-	 *
-	 * @return the imported check germplasm main info
-	 */
-	public ImportedGermplasmMainInfo getImportedCheckGermplasmMainInfo() {
-		return this.importedCheckGermplasmMainInfo;
-	}
-
-	/**
-	 * Sets the imported check germplasm main info.
-	 *
-	 * @param importedCheckGermplasmMainInfo the new imported check germplasm main info
-	 */
-	public void setImportedCheckGermplasmMainInfo(final ImportedGermplasmMainInfo importedCheckGermplasmMainInfo) {
-		this.importedCheckGermplasmMainInfo = importedCheckGermplasmMainInfo;
-	}
-
-	/**
 	 * Gets the treatment factors.
 	 *
 	 * @return the treatment factors
@@ -1039,9 +1021,7 @@ public class UserSelection implements Serializable {
 			&& getCurrentPageGermplasmList() == that.getCurrentPageGermplasmList() && getCurrentPageCheckGermplasmList() == that
 			.getCurrentPageCheckGermplasmList() && getCurrentPage() == that.getCurrentPage() && Objects
 			.equals(getActualFileName(), that.getActualFileName()) && Objects.equals(getServerFileName(), that.getServerFileName())
-			&& Objects.equals(getImportedGermplasmMainInfo(), that.getImportedGermplasmMainInfo()) && Objects
-			.equals(getImportedCheckGermplasmMainInfo(), that.getImportedCheckGermplasmMainInfo()) && Objects
-			.equals(getStudyDetailsList(), that.getStudyDetailsList()) && Objects
+			&& Objects.equals(getStudyDetailsList(), that.getStudyDetailsList()) && Objects
 			.equals(getStudyLevelConditions(), that.getStudyLevelConditions()) && Objects
 			.equals(getPlotsLevelList(), that.getPlotsLevelList()) && Objects.equals(getBaselineTraitsList(), that.getBaselineTraitsList())
 			&& Objects.equals(getTrialLevelVariableList(), that.getTrialLevelVariableList()) && Objects
@@ -1081,14 +1061,13 @@ public class UserSelection implements Serializable {
 	@Override
 	public int hashCode() {
 
-		return Objects.hash(getActualFileName(), getServerFileName(), isFieldLayoutRandom(), getImportedGermplasmMainInfo(),
-			getImportedCheckGermplasmMainInfo(), isImportValid(), getStudyDetailsList(), getCurrentPageGermplasmList(),
-			getCurrentPageCheckGermplasmList(), getStudyLevelConditions(), getPlotsLevelList(), getBaselineTraitsList(),
-			getTrialLevelVariableList(), getTrialEnvironmentValues(), getImportedAdvancedGermplasmList(), getTraitRefList(),
-			getTreatmentFactors(), getSelectionVariates(), getBasicDetails(), getStudyConditions(), getDeletedStudyLevelConditions(),
-			getDeletedPlotLevelList(), getDeletedBaselineTraitsList(), getDeletedStudyConditions(), getDeletedTrialLevelVariables(),
-			getDeletedTreatmentFactors(), getChangeDetails(), getRemovedFactors(), getRemovedConditions(), getNewTraits(),
-			getNewSelectionVariates(), getWorkbook(), getTemporaryWorkbook(), getDesignImportData(), getCurrentPage(),
+		return Objects.hash(getActualFileName(), getServerFileName(), isFieldLayoutRandom(), isImportValid(), getStudyDetailsList(),
+			getCurrentPageGermplasmList(), getCurrentPageCheckGermplasmList(), getStudyLevelConditions(), getPlotsLevelList(),
+			getBaselineTraitsList(), getTrialLevelVariableList(), getTrialEnvironmentValues(), getImportedAdvancedGermplasmList(),
+			getTraitRefList(), getTreatmentFactors(), getSelectionVariates(), getBasicDetails(), getStudyConditions(),
+			getDeletedStudyLevelConditions(), getDeletedPlotLevelList(), getDeletedBaselineTraitsList(), getDeletedStudyConditions(),
+			getDeletedTrialLevelVariables(), getDeletedTreatmentFactors(), getChangeDetails(), getRemovedFactors(), getRemovedConditions(),
+			getNewTraits(),	getNewSelectionVariates(), getWorkbook(), getTemporaryWorkbook(), getDesignImportData(), getCurrentPage(),
 			getMeasurementRowList(), getMeasurementDatasetVariable(), getConstantsWithLabels(), getExpDesignParams(),
 			getExpDesignVariables(), getExperimentalDesignVariables(), getImportedCrossesList(), getImportedCrossesId(), getCrossSettings(),
 			getListId(), getPreviousInventoryDetails(), getStartingPlotNo(), getStudyName(), getStudyDescription(),

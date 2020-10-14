@@ -359,10 +359,10 @@
 				};
 
 				$scope.validateGermplasmForReplacement = function() {
-					germplasmStudySourceService.searchGermplasmStudySources({}, 0, 1).then((germplasmStudySourceTable) => {
+					germplasmStudySourceService.searchGermplasmStudySources({}, 0, 1).then((germplasmStudySourceTable) => {	
 
-						// Check if study has advance or cross list
-						if (germplasmStudySourceTable.data.length > 0) {
+					// Check if study has advance or cross list
+					if (germplasmStudySourceTable.data.length > 0) {
 						showAlertMessage('', $.germplasmMessages.studyHasCrossesOrSelections);
 					} else {
 						if ($scope.selectedItems.length === 0) {

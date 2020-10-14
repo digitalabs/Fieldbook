@@ -36,11 +36,6 @@
 			return request.then(successHandler, failureHandler);
 		}
 
-		studyEntryService.countStudyEntries = function() {
-			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/countStudyEntries');
-			return request.then(successHandler, failureHandler);
-		}
-
 		studyEntryService.saveStudyEntries = function(listId) {
 			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/entries/generation/', {
 				germplasmListId: listId

@@ -729,12 +729,10 @@
 									$scope.entryTypeValue = '';
 									$scope.showAddButton = true;
 									$scope.showUpdateButton = false;
-									$scope.showDeleteButton = false;
 								} else {
 									$scope.entryTypeValue = $('#comboCheckCode').select2('data').description;
 									$scope.showAddButton = false;
 									$scope.showUpdateButton = true;
-									$scope.showDeleteButton = true;
 								}
 								$scope.$apply();
 							}

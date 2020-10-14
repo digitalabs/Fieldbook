@@ -1017,9 +1017,8 @@ public class UserSelection implements Serializable {
 		if (!(o instanceof UserSelection))
 			return false;
 		final UserSelection that = (UserSelection) o;
-		return isFieldLayoutRandom() == that.isFieldLayoutRandom() && isImportValid() == that.isImportValid()
-			&& getCurrentPageGermplasmList() == that.getCurrentPageGermplasmList() && getCurrentPageCheckGermplasmList() == that
-			.getCurrentPageCheckGermplasmList() && getCurrentPage() == that.getCurrentPage() && Objects
+		return isFieldLayoutRandom() == that.isFieldLayoutRandom() && getCurrentPageGermplasmList() == that.getCurrentPageGermplasmList() &&
+			getCurrentPageCheckGermplasmList() == that.getCurrentPageCheckGermplasmList() && getCurrentPage() == that.getCurrentPage() && Objects
 			.equals(getActualFileName(), that.getActualFileName()) && Objects.equals(getServerFileName(), that.getServerFileName())
 			&& Objects.equals(getStudyDetailsList(), that.getStudyDetailsList()) && Objects
 			.equals(getStudyLevelConditions(), that.getStudyLevelConditions()) && Objects
@@ -1061,7 +1060,7 @@ public class UserSelection implements Serializable {
 	@Override
 	public int hashCode() {
 
-		return Objects.hash(getActualFileName(), getServerFileName(), isFieldLayoutRandom(), isImportValid(), getStudyDetailsList(),
+		return Objects.hash(getActualFileName(), getServerFileName(), isFieldLayoutRandom(), getStudyDetailsList(),
 			getCurrentPageGermplasmList(), getCurrentPageCheckGermplasmList(), getStudyLevelConditions(), getPlotsLevelList(),
 			getBaselineTraitsList(), getTrialLevelVariableList(), getTrialEnvironmentValues(), getImportedAdvancedGermplasmList(),
 			getTraitRefList(), getTreatmentFactors(), getSelectionVariates(), getBasicDetails(), getStudyConditions(),

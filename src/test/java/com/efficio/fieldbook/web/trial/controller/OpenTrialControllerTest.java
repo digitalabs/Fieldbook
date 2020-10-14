@@ -1102,44 +1102,6 @@ public class OpenTrialControllerTest {
 	}
 
 	@Test
-	public void testSetUserSelectionImportedGermplasmMainInfoGermplasmListIsEmpty() {
-
-		final int germplasmListId = 111;
-		final int studyId = 1;
-
-		Mockito.verify(this.studyEntryService, Mockito.times(0)).countStudyGermplasmByEntryTypeIds(studyId,
-			Arrays.asList(String.valueOf(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId())));
-
-		Assert.assertNull(this.userSelection.getImportedGermplasmMainInfo());
-		Assert.assertFalse(this.userSelection.isImportValid());
-		Assert.assertFalse(this.model.containsAttribute(OpenTrialControllerTest.GERMPLASM_LIST_SIZE));
-		Assert.assertFalse(this.model.containsAttribute(OpenTrialControllerTest.GERMPLASM_CHECKS_SIZE));
-
-	}
-
-	@Test
-	public void testSetUserSelectionImportedGermplasmMainInfoGermplasmListIsNotEmptyButListDataIsEmpty() {
-
-		final int germplasmListId = 111;
-		final int studyId = 1;
-
-		final GermplasmList germplasmList = new GermplasmList();
-		germplasmList.setId(germplasmListId);
-
-		final List<GermplasmList> listOfGermplasmList = new ArrayList<>();
-		listOfGermplasmList.add(germplasmList);
-
-		Mockito.verify(this.studyEntryService, Mockito.times(0)).countStudyGermplasmByEntryTypeIds(studyId,
-			Arrays.asList(String.valueOf(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId())));
-
-		Assert.assertNull(this.userSelection.getImportedGermplasmMainInfo());
-		Assert.assertFalse(this.userSelection.isImportValid());
-		Assert.assertFalse(this.model.containsAttribute(OpenTrialControllerTest.GERMPLASM_LIST_SIZE));
-		Assert.assertFalse(this.model.containsAttribute(OpenTrialControllerTest.GERMPLASM_CHECKS_SIZE));
-
-	}
-
-	@Test
 	public void testSetModelAttributes() throws ParseException {
 		final Workbook testWorkbook = WorkbookTestDataInitializer.getTestWorkbook();
 		this.openTrialController.setModelAttributes(this.createTrialForm, 1010, this.model, testWorkbook);

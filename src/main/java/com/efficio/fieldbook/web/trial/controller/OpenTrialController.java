@@ -14,8 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.context.ContextInfo;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
-import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
-import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.middleware.domain.dms.DatasetDTO;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -236,7 +234,7 @@ public class OpenTrialController extends BaseTrialController {
 				form.setStudyId(studyId);
 				form.setStudyTypeName(dmsProject.getStudyType().getName());
 				this.setModelAttributes(form, studyId, model, workbook);
-				this.setUserSelectionImportedGermplasmMainInfo(this.userSelection, studyId, model);
+				this.setGermplasmListSize(this.userSelection, studyId, model);
 			}
 			return this.showAngularPage(model);
 
@@ -258,26 +256,15 @@ public class OpenTrialController extends BaseTrialController {
 		}
 	}
 
-	void setUserSelectionImportedGermplasmMainInfo(final UserSelection userSelection, final Integer studyId, final Model model) {
+	void setGermplasmListSize(final UserSelection userSelection, final Integer studyId, final Model model) {
 
 		final List<StudyEntryDto> studyEntries = this.studyEntryService.getStudyEntries(studyId);
 		if (!studyEntries.isEmpty()) {
 
 			final long germplasmListChecksSize =
 				this.studyEntryService.countStudyGermplasmByEntryTypeIds(studyId, this.getAllCheckEntryTypeIds());
-			final List<ImportedGermplasm> list = this.studyEntryTransformer.tranformToImportedGermplasm(studyEntries);
-			final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
-			importedGermplasmList.setImportedGermplasms(list);
-			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
-
-			mainInfo.setAdvanceImportType(true);
-			mainInfo.setImportedGermplasmList(importedGermplasmList);
-			userSelection.setImportedGermplasmMainInfo(mainInfo);
-			userSelection.setImportValid(true);
-
 			model.addAttribute("germplasmListSize", studyEntries.size());
 			model.addAttribute("germplasmChecksSize", germplasmListChecksSize);
-
 		}
 	}
 
@@ -388,6 +375,7 @@ public class OpenTrialController extends BaseTrialController {
 		// saving variables with generated design
 		if (replace == 0) {
 			try {
+				LOG.error("PUMASOK HERE");
 				final List<StudyEntryDto> studyEntries = this.studyEntryService.getStudyEntries(workbook.getStudyDetails().getId());
 				final List<ImportedGermplasm> list = this.studyEntryTransformer.tranformToImportedGermplasm(studyEntries);
 				WorkbookUtil.addMeasurementDataToRows(workbook.getFactors(), false, this.userSelection, this.ontologyService,

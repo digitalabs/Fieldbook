@@ -623,7 +623,7 @@
 						rank: 0
 					};
 
-					studyEntryService.addOrUpdateStudyEntryType(entryType).then(function () {
+					studyEntryService.addStudyEntryType(entryType).then(function () {
 						showSuccessfulMessage('', getFormattedMessage($.studyEntryTypeMessages.addStudyEntryTypeSuccess, $('#comboCheckCode').select2('data').text));
 						$uibModalInstance.dismiss();
 					});
@@ -639,7 +639,7 @@
 						rank: $('#comboCheckCode').select2('data').rank
 					};
 
-					studyEntryService.addOrUpdateStudyEntryType(entryType).then(function () {
+					studyEntryService.updateStudyEntryType(entryType).then(function () {
 						showSuccessfulMessage('', getFormattedMessage($.studyEntryTypeMessages.updateStudyEntryTypeSuccess, $('#comboCheckCode').select2('data').text));
 						$uibModalInstance.dismiss();
 					});

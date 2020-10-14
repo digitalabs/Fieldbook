@@ -7,7 +7,8 @@
 
     manageTrialAppModule.factory('studyEntryService', ['$http', 'serviceUtilities', '$uibModal', 'studyContext', function ($http, serviceUtilities, $uibModal, studyContext) {
 
-        var BASE_STUDY_URL = '/bmsapi/crops/' + studyContext.cropName + '/programs/' + studyContext.programId + '/studies/';
+		var BASE_PROGRAM_URL = '/bmsapi/crops/' + studyContext.cropName + '/programs/' + studyContext.programId;
+        var BASE_STUDY_URL = BASE_PROGRAM_URL + '/studies/';
 
         var studyEntryService = {};
 
@@ -32,7 +33,7 @@
 		}
 
 		studyEntryService.getEntryTypes = function() {
-			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/entryTypes');
+			var request = $http.get(BASE_PROGRAM_URL + '/entry-types');
 			return request.then(successHandler, failureHandler);
 		}
 
@@ -49,11 +50,6 @@
 			return request.then(successHandler, failureHandler);
 		}
 
-		studyEntryService.hasStudyEntries = function() {
-			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/hasStudyEntries');
-			return request.then(successHandler, failureHandler);
-		}
-
 		studyEntryService.updateStudyEntry = function (entryId, newValue, studyEntryPropertyId) {
 			var request = $http.put(BASE_STUDY_URL + studyContext.studyId + '/entries/' + entryId + '/properties/' + 8255, {
 				"studyEntryPropertyId": studyEntryPropertyId,
@@ -63,13 +59,18 @@
 			return request.then(successHandler, failureHandler);
 		}
 
-		studyEntryService.addOrUpdateStudyEntryType = function (studyEntryType) {
-			var request = $http.put(BASE_STUDY_URL + studyContext.studyId + '/entryTypes/addOrUpdate/', studyEntryType);
+		studyEntryService.addStudyEntryType = function (studyEntryType) {
+			var request = $http.post(BASE_PROGRAM_URL + '/entry-types', studyEntryType);
+			return request.then(successHandler, failureHandler);
+		}
+
+		studyEntryService.updateStudyEntryType = function (studyEntryType) {
+			var request = $http.put(BASE_PROGRAM_URL + '/entry-types', studyEntryType);
 			return request.then(successHandler, failureHandler);
 		}
 
 		studyEntryService.deleteStudyEntryType = function (studyEntryTypeId) {
-			var request = $http.delete(BASE_STUDY_URL + studyContext.studyId + '/entryTypes/delete/' + studyEntryTypeId);
+			var request = $http.delete(BASE_PROGRAM_URL + '/entry-types/' + studyEntryTypeId);
 			return request.then(successHandler, failureHandler);
 		}
 

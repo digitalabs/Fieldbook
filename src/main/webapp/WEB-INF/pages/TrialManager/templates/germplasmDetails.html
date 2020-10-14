@@ -50,7 +50,7 @@
 		</div>
 	</div>
 
-	<div ng-show="showClearListButton()">
+	<div ng-show="showStudyTable()">
 		Total Entries: <label class="control-label control-label-bold" ng-model="numberOfEntries">{{numberOfEntries}}</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		<div class="col-show-hide pull-right">
 		</div>
@@ -73,7 +73,7 @@
 				   class="table table-curved table-condensed table-sorted">
 			</table>
 			<div class="row col-xs-12 col-md-12">
-				<div ng-show="showStudyTable()" class="pull-left">
+				<div ng-show="showClearListButton()" class="pull-left">
 					<a style="margin-top: 5px;" href="javascript: resetGermplasmList()" class="btn btn-default"
 					   th:text="#{common.clear.list}"></a>
 				</div>

@@ -18,23 +18,16 @@
 				$scope.selectedItems = [];
 				$scope.numberOfEntries = 0;
 
-				var tableLoadedResolve;
-				$scope.tableLoadedPromise = new Promise(function (resolve) {
-					tableLoadedResolve = resolve;
+				var initResolve;
+				$scope.initPromise = new Promise(function (resolve) {
+					initResolve = resolve;
 				});
-				var tableRenderedResolve;
-				$scope.tableRenderedPromise = new Promise(function (resolve) {
-					tableRenderedResolve = resolve;
-				});
-
 				var dtColumnsPromise = $q.defer();
 				var dtColumnDefsPromise = $q.defer();
+
 				$scope.dtColumns = dtColumnsPromise.promise;
 				$scope.dtColumnDefs = dtColumnDefsPromise.promise;
 				$scope.dtOptions = null;
-
-				$scope.totalItems = 0;
-				$scope.isAllPagesSelected = false;
 
 				loadTable();
 
@@ -51,13 +44,15 @@
 						.withOption('ajax',
 							function (d, callback) {
 								$.ajax({
-									type: 'POST',
+									type: 'GET',
 									url: studyEntryService.getStudyEntries() + getPageQueryParameters(d),
-									data: JSON.stringify({
-										draw: d.draw
-									}),
-									success: function (res) {
-										callback(res);
+									dataSrc: '',
+									success: function (res, status, xhr) {
+										let json = {recordsTotal: 0, recordsFiltered: 0};
+										json.recordsTotal = json.recordsFiltered = xhr.getResponseHeader('X-Total-Count');
+										json.data = res;
+										setNumberOfEntries(json.recordsTotal);
+										callback(json);
 									},
 									contentType: 'application/json',
 									beforeSend: function (xhr) {
@@ -67,9 +62,7 @@
 							})
 						.withDataProp('data')
 						.withOption('serverSide', true)
-						.withOption('initComplete', initCompleteCallback)
-						.withOption('headerCallback', headerCallback)
-						.withOption('drawCallback', drawCallback));
+					);
 				}
 
 
@@ -77,7 +70,18 @@
 					var order = data.order && data.order[0];
 					var pageQuery = '?size=' + data.length
 						+ '&page=' + ((data.length === 0) ? 0 : data.start / data.length);
+					// FIXME: Until now the sort works with entryNumber when will implements by specific column we need replace the code by the commented.
+					/*if ($scope.columnsData[order.column]) {
+						pageQuery += '&sort=' + $scope.columnsData[order.column].termId + ',' + order.dir;
+					}*/
+					pageQuery += '&sort=entryNumber' + ',' + order.dir;
+
 					return pageQuery;
+				}
+
+				function setNumberOfEntries(numberOfEntries) {
+					$scope.numberOfEntries = numberOfEntries;
+					$rootScope.$apply();
 				}
 
 				function addCommonOptions(options) {
@@ -86,9 +90,8 @@
 						.withOption('lengthMenu', [[50, 75, 100], [50, 75, 100]])
 						.withOption('scrollY', '500px')
 						.withOption('scrollCollapse', true)
-						.withOption('destroy', true)
 						.withOption('scrollX', '100%')
-						.withOption('order', [[2, 'desc']]) //gid
+						.withOption('deferRender', true)
 						.withOption('language', {
 							processing: '<span class="throbber throbber-2x"></span>',
 							lengthMenu: 'Records per page: _MENU_',
@@ -98,75 +101,28 @@
 								first: '<<',
 								last: '>>'
 							}
-						})
-						.withDOM('<"pull-left fbk-left-padding"r>' + //
-							'<"pull-right"B>' + //
-							'<"clearfix">' + //
-							'<"row add-top-padding-small"<"col-sm-12"t>>' + //
-							'<"row"<"col-sm-12 paginate-float-center"<"pull-left"i><"pull-right"l>p>>')
-						.withButtons([{
-							extend: 'colvis',
-							className: 'fbk-buttons-no-border fbk-colvis-button',
-							text: '<i class="glyphicon glyphicon-th"></i>',
-							columns: ':gt(0)'
-						}])
+						}).withDOM('<"row"<"col-sm-6"l>>' +
+							'<"row"<"col-sm-12"tr>>' +
+							'<"row"<"col-sm-5"i><"col-sm-7">>' +
+							'<"row"<"col-sm-12"p>>')
 						.withPaginationType('full_numbers');
 				}
 
-				function initCompleteCallback() {
-					adjustColumns();
-					tableRenderedResolve();
-				}
-
-				function headerCallback(thead, data, start, end, display) {
-					table().columns().every(function () {
-						var column = $scope.columnsObj.columns[this.index()];
-						if (column.columnData.formula) {
-							$(this.header()).addClass('derived-trait-column-header');
-						}
-					});
-				}
-
-				function drawCallback() {
-					adjustColumns();
-				}
-
-				function adjustColumns() {
-					$timeout(function () {
-						table().columns.adjust();
-					});
-				}
-
 				function loadTable() {
-					/**
-					 * We need to reinitilize all this because
-					 * if we use column.visible an change the columns with just
-					 *        $scope.dtColumns = columnsObj.columns;
-					 * datatables is breaking with error:
-					 * Cannot read property 'clientWidth' of null
-					 */
-
 					$scope.nested = {};
 					$scope.nested.dtInstance = null;
-
-					$scope.columnsData = {};
-					$scope.columnsObj = {};
 					var dtColumnsPromise = $q.defer();
 					var dtColumnDefsPromise = $q.defer();
 					$scope.dtColumns = dtColumnsPromise.promise;
 					$scope.dtColumnDefs = dtColumnDefsPromise.promise;
 					$scope.dtOptions = null;
 
-					setNumberOfEntries();
-
 					return loadColumns().then(function (columnsObj) {
+						$scope.selectedItems = [];
 						$scope.dtOptions = getDtOptions();
-
 						dtColumnsPromise.resolve(columnsObj.columns);
 						dtColumnDefsPromise.resolve(columnsObj.columnsDef);
-
-						$scope.selectedItems = [];
-						tableLoadedResolve();
+						initResolve();
 					});
 				}
 
@@ -185,7 +141,7 @@
 						alias: "",
 						factor: true,
 						name: "CHECK",
-						termId: -3,
+						termId: -6,
 					});
 					return columns;
 				}
@@ -216,11 +172,7 @@
 							title: columnData.alias,
 							name: columnData.alias,
 							data: function (row) {
-								if(columnData.termId === -3) {
-									return '';
-								} else {
-									return row.properties[columnData.termId];
-								}
+								return row.properties[columnData.termId];
 							},
 							visible: true,
 							defaultContent: '',
@@ -466,7 +418,6 @@
 					studyEntryService.deleteEntries().then(function () {
 						studyEntryService.saveStudyEntries(listId).then(function(res){
 							TrialManagerDataService.applicationData.germplasmListSelected = true;
-							setNumberOfEntries();
 							$scope.reloadStudyEntryTableData();
 							$scope.showImportListBrowser = false;
 							$scope.showUpdateImportListButton = true;
@@ -534,12 +485,6 @@
 				$scope.onHideCallback = function () {
 					$rootScope.navigateToTab('germplasm', {reload: true});
 				};
-
-				function setNumberOfEntries() {
-					studyEntryService.countStudyEntries().then(function(count) {
-						$scope.numberOfEntries = count;
-					});
-				}
 
 				$scope.showPopOverCheck = function(entryId, currentValue, studyEntryPropertyId) {
 					$uibModal.open({

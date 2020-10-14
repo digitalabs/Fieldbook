@@ -649,20 +649,6 @@
 
 			};
 
-			$scope.deleteEntryType = function () {
-				var studyEntryTypeId = $('#comboCheckCode').select2('data').id;
-				studyEntryService.isStudyEntryTypeUsed(studyEntryTypeId).then(function (isUsed) {
-					if(!isUsed) {
-						studyEntryService.deleteStudyEntryType(studyEntryTypeId).then(function () {
-							showSuccessfulMessage('', getFormattedMessage($.studyEntryTypeMessages.deleteStudyEntryTypeSuccess, $('#comboCheckCode').select2('data').text));
-							$uibModalInstance.dismiss();
-						});
-					} else {
-						showErrorMessage('', getFormattedMessage($.studyEntryTypeMessages.deleteStudyEntryTypeFail, $('#comboCheckCode').select2('data').text));
-					}
-				});
-			};
-
 			function validateCheckFields() {
 				if (!$('#comboCheckCode').select2('data')) {
 					showErrorMessage('', $.studyEntryTypeMessages.codeRequiredError);

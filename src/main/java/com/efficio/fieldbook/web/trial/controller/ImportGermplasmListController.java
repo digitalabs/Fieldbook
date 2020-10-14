@@ -16,6 +16,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.context.ContextInfo;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,9 +58,6 @@ public class ImportGermplasmListController extends SettingsController {
 	public static final String URL = "/StudyManager/importGermplasmList";
 	static final String URL_1 = "/TrialManager/GermplasmList";
 	static final String URL_2 = "/ListManager/GermplasmList";
-
-	/** The Constant PAGINATION_TEMPLATE. */
-	private static final String PAGINATION_TEMPLATE = "/StudyManager/showGermplasmPagination";
 
 	/** The data import service. */
 	@Resource
@@ -105,6 +103,11 @@ public class ImportGermplasmListController extends SettingsController {
 		this.userSelection.setMeasurementRowList(null);
 		this.userSelection.getWorkbook().setOriginalObservations(null);
 		this.userSelection.getWorkbook().setObservations(new ArrayList<>());
+
+		for(MeasurementVariable mv: userSelection.getWorkbook().getFactors()) {
+			//Set Factor's Operation to null since it's autosaved
+			mv.setOperation(null);
+		}
 		this.fieldbookService.createIdCodeNameVariablePairs(this.userSelection.getWorkbook(),
 				AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
 		this.fieldbookService.createIdNameVariablePairs(this.userSelection.getWorkbook(),

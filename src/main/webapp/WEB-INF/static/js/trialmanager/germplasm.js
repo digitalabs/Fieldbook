@@ -174,7 +174,6 @@
 							data: function (row) {
 								return row.properties[columnData.termId];
 							},
-							visible: true,
 							defaultContent: '',
 							columnData: columnData
 						});
@@ -209,7 +208,19 @@
 										'onclick="showChangeEntryTypeModal(\'' + full.entryId + '\',\'' + data.value + '\',\'' + data.studyEntryPropertyId + '\')">' + EscapeHTML.escape(getCategoricalValue(data.value, columnData)) + '</a>';
 								}
 							});
-						} else {
+						} else if(columnData.termId < 0 && columnData.termId !== -6) {
+							columnsDef.push({
+								targets: columns.length - 1,
+								orderable: false,
+								visible: false,
+								render: function (data, type, full, meta) {
+									if (!data) {
+										return '';
+									}
+									return EscapeHTML.escape(data.value);
+								}
+							});
+						}else {
 							columnsDef.push({
 								targets: columns.length - 1,
 								orderable: false,

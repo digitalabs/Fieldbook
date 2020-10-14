@@ -764,7 +764,6 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 
 				return $scope.tabSelected && ([
 					"trialSettings",
-					"germplasm",
 					"treatment"
 				].indexOf($scope.tabSelected) >= 0);
 

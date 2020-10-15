@@ -135,6 +135,9 @@
 
 					$scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.experimentalDesign.
 							germplasmTotalListCount;
+					studyEntryService.countStudyTestEntries(function (count) {
+						$scope.germplasmTotalTestEntriesCount = count;
+					})
 
 					$scope.data = TrialManagerDataService.currentData.experimentalDesign;
 
@@ -734,7 +737,7 @@
 
 					$scope.showParamsWhenChecksAreSelected = function(designTypeId) {
 						return !(designTypeId === DESIGN_TYPE.ENTRY_LIST_ORDER &&
-							($scope.germplasmTotalTestEntriesCount === $scope.totalGermplasmEntryListCount
+							($scope.germplasmTotalTestEntriesCount === parseInt($scope.totalGermplasmEntryListCount)
 								|| $scope.totalGermplasmEntryListCount === 0  || $scope.totalGermplasmEntryListCount === null));
 					}
 

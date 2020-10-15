@@ -8,6 +8,7 @@ import com.google.common.base.Optional;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
+import org.generationcp.middleware.domain.etl.Constants;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -26,12 +27,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.olap4j.metadata.Measure;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -166,6 +169,51 @@ public class AngularMapOntologyControllerTest {
 
 		Mockito.verify(this.etlService, Mockito.times(0)).convertMessageList(Mockito.anyListOf(Message.class));
 
+	}
+
+	@Test
+	public void testProcessInvalidTrialInstanceValue() throws IOException, WorkbookParserException {
+		final org.apache.poi.ss.usermodel.Workbook apacheWorkbook = Mockito
+			.mock(org.apache.poi.ss.usermodel.Workbook.class);
+		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, new StudyTypeDto(TRIAL_TYPE_ID,"","T"), "Sample Study", 1,
+			false);
+
+		// Replace Value of Trial Instance
+		for (final MeasurementVariable var : workbook.getConditions()) {
+			if (var.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
+				var.setValue("a");
+			}
+		}
+
+		Mockito.when(this.etlService.retrieveCurrentWorkbook(this.userSelection)).thenReturn(apacheWorkbook);
+		Mockito.when(this.etlService.convertToWorkbook(this.userSelection)).thenReturn(workbook);
+		Mockito.when(this.dataImportService.parseWorkbookDescriptionSheet(apacheWorkbook, CURRENT_IBDB_USER_ID)).thenReturn(workbook);
+
+		final VariableDTO variable1 = new VariableDTO();
+		variable1.setId(101);
+		variable1.setHeaderName("VARIABLE1");
+		final VariableDTO variable2 = new VariableDTO();
+		variable2.setId(102);
+		variable2.setHeaderName("VARIABLE2");
+
+		Mockito.when(this.dataImportService.findMeasurementVariableByTermId(ArgumentMatchers.eq(TermId.LOCATION_ID.getId()), ArgumentMatchers.anyListOf(
+			MeasurementVariable.class))).thenReturn(Optional.of(new MeasurementVariable()));
+		Mockito.when(this.dataImportService.findMeasurementVariableByTermId(ArgumentMatchers.eq(TermId.TRIAL_LOCATION.getId()), ArgumentMatchers.anyListOf(
+			MeasurementVariable.class))).thenReturn(Optional.of(new MeasurementVariable()));
+
+		final VariableDTO[] variables = { variable1, variable2 } ;
+
+		this.controller.processImport(variables);
+
+		Mockito.verify(this.etlService).mergeVariableData(variables, this.userSelection, true);
+		Mockito.verify(this.etlService).validateProjectOntology(workbook);
+		// With Error
+		Mockito.verify(this.etlService, Mockito.times(1)).convertMessageList(Mockito.anyListOf(Message.class));
+
+		final Map<String, List<Message>> errorMessages = new HashMap<>();
+		this.controller.validateTrialInstanceValue(workbook.getConditions(), workbook.getTrialVariables(), errorMessages);
+		Assert.assertTrue("Invalid Trial Error",errorMessages.containsKey(Constants.INVALID_TRIAL));
+		Assert.assertEquals("Single Error",1, errorMessages.get(Constants.INVALID_TRIAL).size());
 	}
 
 	@Test

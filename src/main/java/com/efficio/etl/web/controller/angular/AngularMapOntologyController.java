@@ -325,7 +325,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 		return new FileUploadForm();
 	}
 
-	private void validateTrialInstanceValue(final List<MeasurementVariable> conditions, final List<MeasurementVariable> trialVariables, final Map<String, List<Message>> errorMessages) {
+	public void validateTrialInstanceValue(final List<MeasurementVariable> conditions, final List<MeasurementVariable> trialVariables, final Map<String, List<Message>> errorMessages) {
 		for (final MeasurementVariable varCondition : conditions) {
 			if (varCondition.getTermId() == 0) {
 				final List<MeasurementVariable> trialVariable = trialVariables.stream().filter(mVar -> {
@@ -335,14 +335,17 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 					varCondition.setTermId(trialVariable.get(0).getTermId());
 				}
 			}
-			final Message message = Util.validateVariableValues(varCondition, varCondition.getValue());
-			if (message != null) {
-				if (errorMessages.containsKey(Constants.INVALID_TRIAL)) {
-					errorMessages.get(Constants.INVALID_TRIAL).add(message);
-				} else {
-					errorMessages.put(Constants.INVALID_TRIAL, Arrays.asList(message));
+			if (varCondition.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
+				final Message message = Util.validateVariableValues(varCondition, varCondition.getValue());
+				if (message != null) {
+					if (errorMessages.containsKey(Constants.INVALID_TRIAL)) {
+						errorMessages.get(Constants.INVALID_TRIAL).add(message);
+					} else {
+						errorMessages.put(Constants.INVALID_TRIAL, Arrays.asList(message));
+					}
 				}
 			}
+
 		}
 	}
 }

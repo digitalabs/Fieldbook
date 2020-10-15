@@ -42,6 +42,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -192,9 +193,8 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 			}
 
 			// Validate Trial Instance Value
-			if (importData.getAllVariables() != null){
-				final List<Message> messageList = Util.validateVariableValues(importData.getAllVariables(), TermId.TRIAL_INSTANCE_FACTOR.getId());
-				messages.put(Constants.INVALID_TRIAL, messageList);
+			if (importData.getConditions() != null && importData.getTrialVariables() != null) {
+				this.validateTrialInstanceValue(importData.getConditions(), importData.getTrialVariables(), messages);
 			}
 
 			if (messages != null) {
@@ -325,4 +325,24 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 		return new FileUploadForm();
 	}
 
+	private void validateTrialInstanceValue(final List<MeasurementVariable> conditions, final List<MeasurementVariable> trialVariables, final Map<String, List<Message>> errorMessages) {
+		for (final MeasurementVariable varCondition : conditions) {
+			if (varCondition.getTermId() == 0) {
+				final List<MeasurementVariable> trialVariable = trialVariables.stream().filter(mVar -> {
+					return mVar.getScale().equals(varCondition.getScale()) && mVar.getMethod().equals(varCondition.getMethod()) && mVar.getProperty().equals(varCondition.getProperty());
+				}).collect(Collectors.toList());
+				if (trialVariable != null && !trialVariable.isEmpty()) {
+					varCondition.setTermId(trialVariable.get(0).getTermId());
+				}
+			}
+			final Message message = Util.validateVariableValues(varCondition, varCondition.getValue());
+			if (message != null) {
+				if (errorMessages.containsKey(Constants.INVALID_TRIAL)) {
+					errorMessages.get(Constants.INVALID_TRIAL).add(message);
+				} else {
+					errorMessages.put(Constants.INVALID_TRIAL, Arrays.asList(message));
+				}
+			}
+		}
+	}
 }

@@ -133,21 +133,8 @@
 						});
 					};
 
-					//FIXME: cheating a bit for the meantime.
-					var totalGermplasms = countGermplasms();
-					if (!TrialManagerDataService.applicationData.germplasmListCleared) {
-						$scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.experimentalDesign.
-							germplasmTotalListCount = totalGermplasms ? totalGermplasms :
-							TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount;
-					} else {
-						$scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.experimentalDesign.
-							germplasmTotalListCount = totalGermplasms;
-					}
-
-					if (isNaN($scope.totalGermplasmEntryListCount)) {
-						$scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.
-							experimentalDesign.germplasmTotalListCount = 0;
-					}
+					$scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.experimentalDesign.
+							germplasmTotalListCount;
 
 					$scope.data = TrialManagerDataService.currentData.experimentalDesign;
 

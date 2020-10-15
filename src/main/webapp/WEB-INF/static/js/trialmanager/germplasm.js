@@ -81,6 +81,8 @@
 
 				function setNumberOfEntries(numberOfEntries) {
 					$scope.numberOfEntries = numberOfEntries;
+					TrialManagerDataService.specialSettings.experimentalDesign.
+						germplasmTotalListCount = $scope.numberOfEntries;
 					$rootScope.$apply();
 				}
 
@@ -370,7 +372,7 @@
 				};
 
 				$scope.validateGermplasmForReplacement = function() {
-					germplasmStudySourceService.searchGermplasmStudySources({}, 0, 1).then((germplasmStudySourceTable) => {	
+					germplasmStudySourceService.searchGermplasmStudySources({}, 0, 1).then((germplasmStudySourceTable) => {
 
 					// Check if study has advance or cross list
 					if (germplasmStudySourceTable.data.length > 0) {
@@ -448,6 +450,7 @@
 								$scope.showUpdateImportListButton = false;
 								$scope.showStudyEntriesTable = false;
 								$scope.showClearList = false;
+								$scope.reloadStudyEntryTableData();
 								TrialManagerDataService.applicationData.germplasmListSelected = false;
 							});
 						}

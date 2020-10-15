@@ -135,9 +135,6 @@
 
 					$scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.experimentalDesign.
 							germplasmTotalListCount;
-					studyEntryService.countStudyTestEntries(function (count) {
-						$scope.germplasmTotalTestEntriesCount = count;
-					})
 
 					$scope.data = TrialManagerDataService.currentData.experimentalDesign;
 

@@ -18,6 +18,7 @@ import org.generationcp.middleware.enumeration.DatasetTypeEnum;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.util.Message;
+import org.generationcp.middleware.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -188,6 +189,12 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 				final List<Message> messageList = new ArrayList<>();
 				messageList.add(message);
 				proxy.put("", this.etlService.convertMessageList(messageList));
+			}
+
+			// Validate Trial Instance Value
+			if (importData.getAllVariables() != null){
+				final List<Message> messageList = Util.validateVariableValues(importData.getAllVariables(), TermId.TRIAL_INSTANCE_FACTOR.getId());
+				messages.put(Constants.INVALID_TRIAL, messageList);
 			}
 
 			if (messages != null) {

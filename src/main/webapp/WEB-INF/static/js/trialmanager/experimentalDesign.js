@@ -643,7 +643,7 @@
 
 						}
 
-						if ($scope.applicationData.germplasmListSelected) {
+						if (!TrialManagerDataService.applicationData.germplasmListSelected) {
 							showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[26]);
 							return false;
 						}

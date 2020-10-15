@@ -502,8 +502,8 @@
 
 				$scope.showPopOverCheck = function(entryId, currentValue, studyEntryPropertyId) {
 					$uibModal.open({
-						templateUrl: '/Fieldbook/static/angular-templates/germplasm/changeStudyEntryEntryTypeModal.html',
-						controller: "editEntryTypeCtrl",
+						templateUrl: '/Fieldbook/static/angular-templates/germplasm/changeStudyEntryTypeModal.html',
+						controller: "changeStudyEntryTypeCtrl",
 						size: 'md',
 						resolve: {
 							entryId: function () {
@@ -571,7 +571,7 @@
 		}
 	]);
 
-	manageTrialAppModule.controller('editEntryTypeCtrl', ['$scope', '$rootScope', '$uibModalInstance', 'studyEntryService', 'entryId', 'currentValue',
+	manageTrialAppModule.controller('changeStudyEntryTypeCtrl', ['$scope', '$rootScope', '$uibModalInstance', 'studyEntryService', 'entryId', 'currentValue',
 		'studyEntryPropertyId',	function ($scope, $rootScope, $uibModalInstance, studyEntryService, entryId, currentValue, studyEntryPropertyId) {
 
 			$scope.selected = {};
@@ -588,7 +588,7 @@
 
 
 			$scope.editEntryType = function () {
-				studyEntryService.updateStudyEntry(entryId, $scope.selected.entryType.id, studyEntryPropertyId).then(function () {
+				studyEntryService.updateStudyEntryProperty(entryId, $scope.selected.entryType.id, studyEntryPropertyId, 8255).then(function () {
 					$uibModalInstance.close();
 					$rootScope.$emit("reloadStudyEntryTableData", {});
 				});

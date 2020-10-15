@@ -133,7 +133,7 @@
 <div layout:fragment="page-script">
 	<script type="text/javascript" th:inline="javascript">
 		//<![CDATA[
-		function displayGermplasmDetails(listIdTemp){
+		function saveStudyEntries(listIdTemp){
 			'use strict';
 			angular.element(document.getElementById('germplasm-table')).scope().saveStudyEntries(listIdTemp);
 		}
@@ -189,7 +189,7 @@
 						if (lastDraggedChecksList != id) {
 							// Loads the primary germplasm list
 							lastDraggedPrimaryList = id;
-							displayGermplasmDetails(id);
+							saveStudyEntries(id);
 
 	                        if (selectListFunction) {
 	                            selectListFunction(id);

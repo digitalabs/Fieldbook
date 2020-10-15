@@ -50,11 +50,11 @@
 			return request.then(successHandler, failureHandler);
 		}
 
-		studyEntryService.updateStudyEntry = function (entryId, newValue, studyEntryPropertyId) {
-			var request = $http.put(BASE_STUDY_URL + studyContext.studyId + '/entries/' + entryId + '/properties/' + 8255, {
+		studyEntryService.updateStudyEntryProperty = function (entryId, newValue, studyEntryPropertyId, variableId) {
+			var request = $http.put(BASE_STUDY_URL + studyContext.studyId + '/entries/' + entryId + '/properties/' + variableId, {
 				"studyEntryPropertyId": studyEntryPropertyId,
 				"value": newValue,
-				"variableId": 8255
+				"variableId": variableId
 			});
 			return request.then(successHandler, failureHandler);
 		}

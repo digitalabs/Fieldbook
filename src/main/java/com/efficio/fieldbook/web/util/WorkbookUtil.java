@@ -259,7 +259,7 @@ public class WorkbookUtil {
 
 	public static void addMeasurementDataToRows(final List<MeasurementVariable> variableList, final boolean isVariate,
 			final UserSelection userSelection, final OntologyService ontologyService, final FieldbookService fieldbookService,
-			final String programUUID, final List<ImportedGermplasm> importedGermplasms) {
+			final String programUUID, final List<ImportedGermplasm> importedGermplasmList) {
 		// add new variables in measurement rows
 		for (final MeasurementVariable variable : variableList) {
 			if (variable.getOperation().equals(Operation.ADD)) {
@@ -267,7 +267,7 @@ public class WorkbookUtil {
 				for (final MeasurementRow row : userSelection.getMeasurementRowList()) {
 
 					if (!isVariate) {
-						WorkbookUtil.addFactorsToMeasurementRowDataList(row, stdVariable, isVariate, variable, importedGermplasms);
+						WorkbookUtil.addFactorsToMeasurementRowDataList(row, stdVariable, isVariate, variable, importedGermplasmList);
 					} else {
 						final MeasurementData measurementData = new MeasurementData(variable.getName(), "", true,
 								WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
@@ -285,7 +285,7 @@ public class WorkbookUtil {
 	}
 
 	public static void addFactorsToMeasurementRowDataList(final MeasurementRow row, final StandardVariable stdVariable,
-			final boolean isVariate, final MeasurementVariable variable, final List<ImportedGermplasm> importedGermplasms) {
+			final boolean isVariate, final MeasurementVariable variable, final List<ImportedGermplasm> importedGermplasmList) {
 
 		MeasurementData measurementData = null;
 		String value = "";
@@ -299,8 +299,8 @@ public class WorkbookUtil {
 			}
 		}
 
-		if (!CollectionUtils.isEmpty(importedGermplasms)) {
-			for (final ImportedGermplasm importedGermplsm : importedGermplasms) {
+		if (!CollectionUtils.isEmpty(importedGermplasmList)) {
+			for (final ImportedGermplasm importedGermplsm : importedGermplasmList) {
 				if (importedGermplsm.getGid().equals(gid)) {
 					importedGermplasm = importedGermplsm;
 					break;

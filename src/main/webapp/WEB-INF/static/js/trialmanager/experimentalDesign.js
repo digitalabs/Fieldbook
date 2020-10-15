@@ -694,87 +694,42 @@
 
 
 					$scope.refreshDesignDetailsForAugmentedDesign = function() {
-
-						$scope.germplasmTotalCheckEntriesCount = countCheckEntries(true);
-						$scope.germplasmTotalTestEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalCheckEntriesCount;
-						$scope.germplasmNumberOfTestEntriesPerBlock = $scope.germplasmTotalTestEntriesCount / $scope.data.numberOfBlocks;
-						$scope.germplasmNumberOfPlotsPerBlock = $scope.germplasmNumberOfTestEntriesPerBlock + $scope.germplasmTotalCheckEntriesCount;
-						$scope.germplasmTotalNumberOfPlots = $scope.germplasmNumberOfPlotsPerBlock * $scope.data.numberOfBlocks;
+						countCheckEntries(true).then(function (count) {
+							$scope.germplasmTotalCheckEntriesCount = count;
+							$scope.germplasmTotalTestEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalCheckEntriesCount;
+							$scope.germplasmNumberOfTestEntriesPerBlock = $scope.germplasmTotalTestEntriesCount / $scope.data.numberOfBlocks;
+							$scope.germplasmNumberOfPlotsPerBlock = $scope.germplasmNumberOfTestEntriesPerBlock + $scope.germplasmTotalCheckEntriesCount;
+							$scope.germplasmTotalNumberOfPlots = $scope.germplasmNumberOfPlotsPerBlock * $scope.data.numberOfBlocks;
+						});
 
 					}
 
 					$scope.refreshDesignDetailsForELODesign = function() {
-						$scope.germplasmTotalTestEntriesCount = countNumberOfTestEntries();
-						$scope.germplasmTotalCheckEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalTestEntriesCount;
+						countNumberOfTestEntries().then(function (count) {
+							$scope.germplasmTotalTestEntriesCount = count;
+							$scope.germplasmTotalCheckEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalTestEntriesCount;
+						});
 					}
 
 					$scope.refreshDesignDetailsForPRepDesign = function() {
-						$scope.germplasmTotalCheckEntriesCount = countCheckEntries(false);
-						$scope.germplasmTotalTestEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalCheckEntriesCount;
-						var noOfTestEntriesToReplicate = Math.round($scope.germplasmTotalTestEntriesCount * ($scope.data.replicationPercentage / 100));
-						$scope.germplasmTotalNumberOfPlots = ($scope.germplasmTotalTestEntriesCount - noOfTestEntriesToReplicate) +
-							(noOfTestEntriesToReplicate * $scope.data.replicationsCount) +
-							($scope.germplasmTotalCheckEntriesCount * $scope.data.replicationsCount);
-						$scope.germplasmNumberOfPlotsPerBlock = $scope.germplasmTotalNumberOfPlots / $scope.data.blockSize;
+						countCheckEntries(false).then(function (count) {
+							$scope.germplasmTotalCheckEntriesCount = count;
+							$scope.germplasmTotalTestEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalCheckEntriesCount;
+							var noOfTestEntriesToReplicate = Math.round($scope.germplasmTotalTestEntriesCount * ($scope.data.replicationPercentage / 100));
+							$scope.germplasmTotalNumberOfPlots = ($scope.germplasmTotalTestEntriesCount - noOfTestEntriesToReplicate) +
+								(noOfTestEntriesToReplicate * $scope.data.replicationsCount) +
+								($scope.germplasmTotalCheckEntriesCount * $scope.data.replicationsCount);
+							$scope.germplasmNumberOfPlotsPerBlock = $scope.germplasmTotalNumberOfPlots / $scope.data.blockSize;
+						});
 					}
 
 
 					function countNumberOfTestEntries() {
-						var germplasmListDataTable = $('.germplasm-list-items').DataTable();
-
-						if (germplasmListDataTable.rows().length !== 0) {
-
-							var numberOfTestEntries = 0;
-
-							$.each(germplasmListDataTable.rows().data(), function(index, obj) {
-								var entryCheckType = parseInt(obj[ENTRY_TYPE_COLUMN_DATA_KEY]);
-								if (entryCheckType === SYSTEM_DEFINED_ENTRY_TYPE.TEST_ENTRY) {
-									numberOfTestEntries++;
-								}
-							});
-
-							return numberOfTestEntries;
-
-						} else if (TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalCheckCount != null) {
-							// If the germplasmlistDataTable is not yet initialized, we should get the number of check entries of germplasm list in the database
-							// when an existing study is opened / loaded, only if available. experimentalDesign.germplasmTotalCheckCount contains the count of checks stored in the database.
-							return TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount -
-								TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalCheckCount;
-						}
-
-						return 0;
-
+						return studyEntryService.countStudyTestEntries();
 					}
 
 					function countCheckEntries(checkEntryOnly) {
-
-						// When the user changed the entry type of germplasm entries in Germplasm Tab, the changes are not yet saved in the database,
-						// so we can only count the number of checks through DataTable.
-						var germplasmListDataTable = $('.germplasm-list-items').DataTable();
-
-						if (germplasmListDataTable.rows().length !== 0) {
-
-							var numberOfChecksEntries = 0;
-
-							$.each(germplasmListDataTable.rows().data(), function(index, obj) {
-								var currentEntryType = parseInt(obj[ENTRY_TYPE_COLUMN_DATA_KEY]);
-								if (checkEntryOnly && currentEntryType === SYSTEM_DEFINED_ENTRY_TYPE.CHECK_ENTRY) {
-									numberOfChecksEntries++;
-								} else if (currentEntryType !== SYSTEM_DEFINED_ENTRY_TYPE.TEST_ENTRY) {
-									numberOfChecksEntries++;
-								}
-							});
-
-							return numberOfChecksEntries;
-
-						} else if (TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalCheckCount != null) {
-							// If the germplasmlistDataTable is not yet initialized, we should get the number of check entries of germplasm list in the database
-							// when an existing study is opened / loaded, only if available. experimentalDesign.germplasmTotalCheckCount contains the count of checks stored in the database.
-							return TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalCheckCount;
-						}
-
-						return 0;
-
+						return studyEntryService.countStudyCheckEntries(checkEntryOnly);
 					}
 
 					$scope.showParamsWhenChecksAreSelected = function(designTypeId) {

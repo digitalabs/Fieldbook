@@ -14,7 +14,6 @@ package com.efficio.fieldbook.web.common.bean;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
-import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -47,12 +46,6 @@ public class UserSelection implements Serializable {
 
 	/** The field layout random. */
 	private boolean fieldLayoutRandom;
-
-	/** The imported germplasm main info. */
-	private ImportedGermplasmMainInfo importedGermplasmMainInfo;
-
-	/** The imported check germplasm main info. */
-	private ImportedGermplasmMainInfo importedCheckGermplasmMainInfo;
 
 	/** The is import valid. */
 	private boolean isImportValid;
@@ -228,24 +221,6 @@ public class UserSelection implements Serializable {
 	 */
 	public void setImportValid(final boolean isImportValid) {
 		this.isImportValid = isImportValid;
-	}
-
-	/**
-	 * Gets the imported germplasm main info.
-	 *
-	 * @return the imported germplasm main info
-	 */
-	public ImportedGermplasmMainInfo getImportedGermplasmMainInfo() {
-		return this.importedGermplasmMainInfo;
-	}
-
-	/**
-	 * Sets the imported germplasm main info.
-	 *
-	 * @param importedGermplasmMainInfo the new imported germplasm main info
-	 */
-	public void setImportedGermplasmMainInfo(final ImportedGermplasmMainInfo importedGermplasmMainInfo) {
-		this.importedGermplasmMainInfo = importedGermplasmMainInfo;
 	}
 
 	/**
@@ -1076,8 +1051,7 @@ public class UserSelection implements Serializable {
 	@Override
 	public String toString() {
 		return "UserSelection{" + "actualFileName='" + actualFileName + '\'' + ", serverFileName='" + serverFileName + '\''
-			+ ", fieldLayoutRandom=" + fieldLayoutRandom + ", importedGermplasmMainInfo=" + importedGermplasmMainInfo
-			+ ", importedCheckGermplasmMainInfo=" + importedCheckGermplasmMainInfo + ", isImportValid=" + isImportValid
+			+ ", fieldLayoutRandom=" + fieldLayoutRandom + ", isImportValid=" + isImportValid
 			+ ", studyDetailsList=" + studyDetailsList + ", currentPageGermplasmList=" + currentPageGermplasmList
 			+ ", currentPageCheckGermplasmList=" + currentPageCheckGermplasmList + ", studyLevelConditions=" + studyLevelConditions
 			+ ", plotsLevelList=" + plotsLevelList + ", baselineTraitsList=" + baselineTraitsList + ", trialLevelVariableList="

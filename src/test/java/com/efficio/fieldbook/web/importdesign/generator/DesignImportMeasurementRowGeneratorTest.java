@@ -6,7 +6,7 @@ import com.efficio.fieldbook.web.common.bean.DesignHeaderItem;
 import com.efficio.fieldbook.web.common.bean.DesignImportData;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
-import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmMainInfoInitializer;
+import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmInitializer;
 import com.efficio.fieldbook.web.trial.bean.InstanceInfo;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
@@ -61,9 +61,6 @@ public class DesignImportMeasurementRowGeneratorTest {
 	private static final String TEST_VARIABLE_DESCRIPTION = "TEST DESCRIPTION";
 	private static final String TEST_VARIABLE_NAME = "TEST VARIABLE";
 
-
-	private UserSelection userSelection;
-
 	@Mock
 	private FieldbookService fieldbookService;
 
@@ -83,8 +80,6 @@ public class DesignImportMeasurementRowGeneratorTest {
 	public void setUp() {
 		final Map<String, Integer> availableCheckTypes = new HashMap<>();
 		final boolean isPreview = true;
-		this.userSelection = new UserSelection();
-		this.userSelection.setImportedGermplasmMainInfo(ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo());
 
 		Mockito.doReturn(this.createProperty(TermId.BREEDING_METHOD_PROP.getId())).when(this.ontologyService)
 				.getProperty(Matchers.anyString());
@@ -103,7 +98,8 @@ public class DesignImportMeasurementRowGeneratorTest {
 
 		this.rowValues = new ArrayList<>();
 
-		final Map<Integer, ImportedGermplasm> importedGermplasm = Maps.uniqueIndex(ImportedGermplasmMainInfoInitializer.createImportedGermplasmList(),
+		final Map<Integer, ImportedGermplasm> importedGermplasm = Maps.uniqueIndex(
+			ImportedGermplasmInitializer.createImportedGermplasmList(),
 				new Function<ImportedGermplasm, Integer>() {
 
 					@Override
@@ -136,7 +132,8 @@ public class DesignImportMeasurementRowGeneratorTest {
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(10, 3);
 
 		final Map<Integer, ImportedGermplasm> importedGermplasm =
-				Maps.uniqueIndex(ImportedGermplasmMainInfoInitializer.createImportedGermplasmList(),
+				Maps.uniqueIndex(
+					ImportedGermplasmInitializer.createImportedGermplasmList(),
 						new Function<ImportedGermplasm, Integer>() {
 
 							@Override

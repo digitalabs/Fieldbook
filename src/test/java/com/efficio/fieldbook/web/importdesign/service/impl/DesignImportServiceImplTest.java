@@ -7,8 +7,9 @@ import com.efficio.fieldbook.web.common.bean.DesignImportData;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
-import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmMainInfoInitializer;
+import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmInitializer;
 import com.efficio.fieldbook.web.importdesign.generator.DesignImportMeasurementRowGenerator;
+import com.efficio.fieldbook.web.study.germplasm.StudyEntryTransformer;
 import com.efficio.fieldbook.web.trial.bean.InstanceInfo;
 import com.efficio.fieldbook.web.util.parsing.DesignImportCsvParser;
 import com.google.common.base.Function;
@@ -16,10 +17,9 @@ import com.google.common.collect.Maps;
 import junit.framework.Assert;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
-import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
-import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.StandardVariableTestDataInitializer;
+import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -29,12 +29,13 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Property;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.domain.ontology.Scale;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyScaleDataManager;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.generationcp.middleware.service.api.study.StudyEntryDto;
+import org.generationcp.middleware.service.api.study.StudyEntryService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,6 +48,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -106,6 +108,12 @@ public class DesignImportServiceImplTest {
 	@Mock
 	private DesignImportMeasurementRowGenerator measurementRowGenerator;
 
+	@Mock
+	private StudyEntryService studyEntryService;
+
+	@Mock
+	private StudyEntryTransformer studyEntryTransformer;
+
 	private DesignImportData designImportData;
 
 	@InjectMocks
@@ -114,12 +122,17 @@ public class DesignImportServiceImplTest {
 	@Before
 	public void setUp() {
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(DesignImportServiceImplTest.PROGRAM_UUID);
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
+		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
+		final StudyEntryDto studyEntryDto = Mockito.mock(StudyEntryDto.class);
+		final List<StudyEntryDto> studyEntries = Collections.singletonList(studyEntryDto);
+		workbook.getStudyDetails().setId(1);
+		Mockito.when(this.studyEntryService.getStudyEntries(workbook.getStudyDetails().getId())).thenReturn(studyEntries);
+		Mockito.when(this.studyEntryTransformer.tranformToImportedGermplasm(studyEntries))
+			.thenReturn(ImportedGermplasmInitializer.createImportedGermplasmList());
 
-		this.initializeOntologyScaleDataManager();
 		this.initializeOntologyService();
 		this.initializeDesignImportData();
-		this.initializeGermplasmList();
-
 	}
 
 	@Test
@@ -197,9 +210,6 @@ public class DesignImportServiceImplTest {
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(10, 3);
 
-		Mockito.doReturn(ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo()).when(this.userSelection)
-				.getImportedGermplasmMainInfo();
-
 		// Make sure that there is only 1 trial instance included in the selected environments from the UI
 		final InstanceInfo instanceInfo = DesignImportTestDataInitializer.createEnvironmentData(1);
 
@@ -221,9 +231,6 @@ public class DesignImportServiceImplTest {
 		int startingPlotNo = 12;
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(10, 3);
-
-		Mockito.doReturn(ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo()).when(this.userSelection)
-				.getImportedGermplasmMainInfo();
 
 		final InstanceInfo instanceInfo = DesignImportTestDataInitializer.createEnvironmentData(1);
 
@@ -258,11 +265,6 @@ public class DesignImportServiceImplTest {
 
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(10, 3);
 
-		final ImportedGermplasmMainInfo importedGermplasmMainInfo =
-				ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo(startingEntryNo);
-
-		Mockito.doReturn(importedGermplasmMainInfo).when(this.userSelection).getImportedGermplasmMainInfo();
-
 		final InstanceInfo instanceInfo = DesignImportTestDataInitializer.createEnvironmentData(1);
 
 		DesignImportTestDataInitializer.processEnvironmentData(instanceInfo);
@@ -293,9 +295,6 @@ public class DesignImportServiceImplTest {
 
 		final int noOfTrialInstances = 3;
 		final Workbook workbook = WorkbookDataUtil.getTestWorkbookForStudy(10, noOfTrialInstances);
-
-		Mockito.doReturn(ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo()).when(this.userSelection)
-				.getImportedGermplasmMainInfo();
 
 		// Make sure that there is only 3 trial instances included in the selected environments from the UI
 		final InstanceInfo instanceInfo = DesignImportTestDataInitializer.createEnvironmentData(noOfTrialInstances);
@@ -528,7 +527,8 @@ public class DesignImportServiceImplTest {
 				this.designImportData.getMappedHeadersWithDesignHeaderItemsMappedToStdVarId();
 
 		final Map<Integer, ImportedGermplasm> importedGermplasm =
-				Maps.uniqueIndex(ImportedGermplasmMainInfoInitializer.createImportedGermplasmList(),
+				Maps.uniqueIndex(
+					ImportedGermplasmInitializer.createImportedGermplasmList(),
 						new Function<ImportedGermplasm, Integer>() {
 
 							@Override
@@ -562,12 +562,6 @@ public class DesignImportServiceImplTest {
 			Assert.fail("Failed to create DesignImportData");
 		}
 
-	}
-
-	private void initializeOntologyScaleDataManager() {
-		final Scale scale = new Scale();
-		scale.setMaxValue("1");
-		scale.setMinValue("100");
 	}
 
 	@SuppressWarnings({"unchecked"})
@@ -622,17 +616,6 @@ public class DesignImportServiceImplTest {
 				.createStandardVariable(VariableType.EXPERIMENTAL_DESIGN, TermId.BLOCK_NO.getId(), "BLOCK_NO", "", "", "", "", "", "")));
 
 		Mockito.doReturn(map).when(this.ontologyDataManager).getStandardVariablesInProjects(Matchers.anyListOf(String.class), Matchers.anyString());
-
-	}
-
-	private void initializeGermplasmList() {
-
-		final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
-		final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
-		importedGermplasmList.setImportedGermplasms(ImportedGermplasmMainInfoInitializer.createImportedGermplasmList());
-		mainInfo.setImportedGermplasmList(importedGermplasmList);
-
-		Mockito.doReturn(mainInfo).when(this.userSelection).getImportedGermplasmMainInfo();
 
 	}
 

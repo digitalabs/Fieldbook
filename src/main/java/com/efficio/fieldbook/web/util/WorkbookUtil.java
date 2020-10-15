@@ -267,7 +267,7 @@ public class WorkbookUtil {
 				for (final MeasurementRow row : userSelection.getMeasurementRowList()) {
 
 					if (!isVariate) {
-						WorkbookUtil.addFactorsToMeasurementRowDataList(row, stdVariable, isVariate, variable, userSelection, importedGermplasms);
+						WorkbookUtil.addFactorsToMeasurementRowDataList(row, stdVariable, isVariate, variable, importedGermplasms);
 					} else {
 						final MeasurementData measurementData = new MeasurementData(variable.getName(), "", true,
 								WorkbookUtil.getDataType(variable.getDataTypeId()), variable);
@@ -285,7 +285,7 @@ public class WorkbookUtil {
 	}
 
 	public static void addFactorsToMeasurementRowDataList(final MeasurementRow row, final StandardVariable stdVariable,
-			final boolean isVariate, final MeasurementVariable variable, final UserSelection userSelection, final List<ImportedGermplasm> importedGermplasms) {
+			final boolean isVariate, final MeasurementVariable variable, final List<ImportedGermplasm> importedGermplasms) {
 
 		MeasurementData measurementData = null;
 		String value = "";

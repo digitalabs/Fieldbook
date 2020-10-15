@@ -8,6 +8,7 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
+import com.efficio.fieldbook.web.study.germplasm.StudyEntryTransformer;
 import com.efficio.fieldbook.web.trial.TestDataHelper;
 import com.efficio.fieldbook.web.trial.bean.*;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
@@ -153,6 +154,9 @@ public class OpenTrialControllerTest {
 
 	@Mock
 	private StudyEntryService studyEntryService;
+
+	@Mock
+	private StudyEntryTransformer studyEntryTransformer;
 
 	@Before
 	public void setUp() {

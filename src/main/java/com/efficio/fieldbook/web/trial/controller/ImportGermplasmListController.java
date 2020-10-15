@@ -15,7 +15,7 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.TableHeader;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.exception.FieldbookRequestValidationException;
-import com.efficio.fieldbook.web.study.germplasm.StudyGermplasmTransformer;
+import com.efficio.fieldbook.web.study.germplasm.StudyEntryTransformer;
 import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.form.UpdateGermplasmCheckForm;
 import com.efficio.fieldbook.web.util.SettingsUtil;
@@ -144,7 +144,7 @@ public class ImportGermplasmListController extends SettingsController {
 	private StudyEntryService studyEntryService;
 
 	@Resource
-	private StudyGermplasmTransformer studyGermplasmTransformer;
+	private StudyEntryTransformer studyEntryTransformer;
 
 	private static final String DEFAULT_TEST_VALUE = "T";
 
@@ -233,7 +233,7 @@ public class ImportGermplasmListController extends SettingsController {
 				this.getCurrentProject().getCropType());
 
 		// for saving the stocks
-		this.saveStudyGermplasm(studyId);
+		this.saveStudyEntries(studyId);
 
 		this.fieldbookService.saveStudyColumnOrdering(studyId,
 			form.getColumnOrders(), this.userSelection.getWorkbook());
@@ -262,17 +262,17 @@ public class ImportGermplasmListController extends SettingsController {
 	}
 
 	/**
-	 * Saves the study germplasm associated to the study.
+	 * Saves the germplasm entries associated to the study.
 	 * @param studyId
 	 */
-	private void saveStudyGermplasm(final int studyId) {
+	private void saveStudyEntries(final int studyId) {
 
 		final ImportedGermplasmMainInfo germplasmMainInfo = this.getUserSelection().getImportedGermplasmMainInfo();
 		final ImportedGermplasmList importedGermplasmList = germplasmMainInfo != null ? germplasmMainInfo.getImportedGermplasmList() : null;
 
 		if (importedGermplasmList != null && !Collections.isEmpty(importedGermplasmList.getImportedGermplasms())) {
 			final List<ImportedGermplasm> importedGermplasm = importedGermplasmList.getImportedGermplasms();
-			final List<StudyEntryDto> studyEntryDtoList = this.studyGermplasmTransformer.transformToStudyEntryDto(importedGermplasm);
+			final List<StudyEntryDto> studyEntryDtoList = this.studyEntryTransformer.transformToStudyEntryDto(importedGermplasm);
 			// Delete the existing stocks so that we can replace it with the current list.
 			this.studyEntryService.deleteStudyEntries(studyId);
 			this.studyEntryService.saveStudyEntries(studyId, studyEntryDtoList);
@@ -338,7 +338,7 @@ public class ImportGermplasmListController extends SettingsController {
 
 			List<ImportedGermplasm> importedGermplasmList = new ArrayList<>();
 			if (!studyEntries.isEmpty()) {
-				importedGermplasmList = this.studyGermplasmTransformer.tranformToImportedGermplasm(studyEntries);
+				importedGermplasmList = this.studyEntryTransformer.tranformToImportedGermplasm(studyEntries);
 			}
 			form.setImportedGermplasm(importedGermplasmList);
 			final String defaultTestCheckId =
@@ -606,7 +606,7 @@ public class ImportGermplasmListController extends SettingsController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/resetStudyGermplasmDetails", method = RequestMethod.GET)
-	public String resetStudyGermplasmDetails(final Model model) {
+	public String resetStudyEntryDetails(final Model model) {
 
 		try {
 			final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();

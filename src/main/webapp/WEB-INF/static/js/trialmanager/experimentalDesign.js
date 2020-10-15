@@ -495,7 +495,7 @@
 									return false;
 								}
 
-								if ($scope.data.rowsPerReplications * $scope.data.colsPerReplications !== $scope.totalGermplasmEntryListCount) {
+								if ($scope.data.rowsPerReplications * $scope.data.colsPerReplications !== parseInt($scope.totalGermplasmEntryListCount)) {
 									showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[6]);
 									return false;
 								}

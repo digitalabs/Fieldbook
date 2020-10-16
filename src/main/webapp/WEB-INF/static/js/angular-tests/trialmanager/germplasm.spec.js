@@ -3,6 +3,7 @@
 describe('Replace Germplasm Controller', function () {
 	var replaceGermplasmCtrl, scope, $q;
 	var studyEntryService = jasmine.createSpyObj('studyEntryService', ['replaceStudyGermplasm','getSelectedEntries']);
+	var entryId = 56;
 	var studyContext = {
 		studyId: 1,
 		cropName: 'maize',
@@ -37,6 +38,7 @@ describe('Replace Germplasm Controller', function () {
 				$uibModalInstance: uibModalInstance,
 				studyContext: studyContext,
 				studyEntryService: studyEntryService,
+				entryId: entryId,
 			});
 
 			spyOn(replaceGermplasmCtrl, 'showAlertMessage');
@@ -45,7 +47,7 @@ describe('Replace Germplasm Controller', function () {
 
 	describe('performGermplasmReplacement', function () {
 		it('should replace germplasm for valid GID', function () {
-			studyEntryService.getSelectedEntries.and.returnValue([56]);
+			studyEntryService.getSelectedEntries.and.returnValue([entryId]);
 			var response = {data: {}};
 			studyEntryService.replaceStudyGermplasm.and.returnValue($q.resolve(response));
 			spyOn($.fn, 'val').and.callFake(function() {
@@ -54,7 +56,7 @@ describe('Replace Germplasm Controller', function () {
 
 			scope.performGermplasmReplacement();
 			expect(replaceGermplasmCtrl.showAlertMessage).not.toHaveBeenCalled();
-			expect(studyEntryService.replaceStudyGermplasm).toHaveBeenCalledWith(56,'135');
+			expect(studyEntryService.replaceStudyGermplasm).toHaveBeenCalledWith(entryId,'135');
 		});
 
 		it('should not replace germplasm if non-numeric GID', function () {

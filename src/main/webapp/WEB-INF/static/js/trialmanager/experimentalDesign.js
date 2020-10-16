@@ -694,8 +694,8 @@
 
 
 					$scope.refreshDesignDetailsForAugmentedDesign = function() {
-						countCheckEntries(true).then(function (count) {
-							$scope.germplasmTotalCheckEntriesCount = count;
+						studyEntryService.getStudyEntriesMetadata().then(function (metadata) {
+							$scope.germplasmTotalCheckEntriesCount = metadata.checkEntriesCount;
 							$scope.germplasmTotalTestEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalCheckEntriesCount;
 							$scope.germplasmNumberOfTestEntriesPerBlock = $scope.germplasmTotalTestEntriesCount / $scope.data.numberOfBlocks;
 							$scope.germplasmNumberOfPlotsPerBlock = $scope.germplasmNumberOfTestEntriesPerBlock + $scope.germplasmTotalCheckEntriesCount;
@@ -705,15 +705,15 @@
 					}
 
 					$scope.refreshDesignDetailsForELODesign = function() {
-						countNumberOfTestEntries().then(function (count) {
-							$scope.germplasmTotalTestEntriesCount = count;
+						studyEntryService.getStudyEntriesMetadata().then(function (metadata) {
+							$scope.germplasmTotalTestEntriesCount = metadata.testEntriesCount;
 							$scope.germplasmTotalCheckEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalTestEntriesCount;
 						});
 					}
 
 					$scope.refreshDesignDetailsForPRepDesign = function() {
-						countCheckEntries(false).then(function (count) {
-							$scope.germplasmTotalCheckEntriesCount = count;
+						studyEntryService.getStudyEntriesMetadata().then(function (metadata) {
+							$scope.germplasmTotalCheckEntriesCount = metadata.nonTestEntriesCount;
 							$scope.germplasmTotalTestEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalCheckEntriesCount;
 							var noOfTestEntriesToReplicate = Math.round($scope.germplasmTotalTestEntriesCount * ($scope.data.replicationPercentage / 100));
 							$scope.germplasmTotalNumberOfPlots = ($scope.germplasmTotalTestEntriesCount - noOfTestEntriesToReplicate) +
@@ -721,15 +721,6 @@
 								($scope.germplasmTotalCheckEntriesCount * $scope.data.replicationsCount);
 							$scope.germplasmNumberOfPlotsPerBlock = $scope.germplasmTotalNumberOfPlots / $scope.data.blockSize;
 						});
-					}
-
-
-					function countNumberOfTestEntries() {
-						return studyEntryService.countStudyTestEntries();
-					}
-
-					function countCheckEntries(checkEntryOnly) {
-						return studyEntryService.countStudyCheckEntries(checkEntryOnly);
 					}
 
 					$scope.showParamsWhenChecksAreSelected = function(designTypeId) {

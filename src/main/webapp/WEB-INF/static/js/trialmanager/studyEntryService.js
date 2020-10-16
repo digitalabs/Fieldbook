@@ -74,20 +74,10 @@
 			return request.then(successHandler, failureHandler);
 		}
 
-		studyEntryService.isStudyEntryTypeUsed = function (studyEntryTypeId) {
-			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/entryTypes/isUsed/' + studyEntryTypeId);
+		studyEntryService.getStudyEntriesMetadata = function () {
+			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/entries/metadata');
 			return request.then(successHandler, failureHandler);
-		}
-
-		studyEntryService.countStudyTestEntries = function () {
-			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/entries/count-test-entries');
-			return request.then(successHandler, failureHandler);
-		}
-
-		studyEntryService.countStudyCheckEntries = function (checkOnly) {
-			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/entries/count-check-entries/' + checkOnly);
-			return request.then(successHandler, failureHandler);
-		}
+		};
 
         return studyEntryService;
 

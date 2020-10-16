@@ -194,10 +194,15 @@
 							columnsDef.push({
 								targets: columns.length - 1,
 								orderable: false,
-								render: function (data, type, full, meta) {
-									return '<a class="gid-link" href="javascript: void(0)" ' +
+								createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
+									$(td).val("");
+									var value = columnData.termId === 8240 ? rowData.properties['8240'].value : rowData.properties['8250'].value;
+									$(td).append($compile('<a class="gid-link" href="javascript: void(0)" ' +
 										'onclick="openGermplasmDetailsPopopWithGidAndDesig(\'' +
-										full.gid + '\',\'' + full.designation + '\')">' + EscapeHTML.escape(data.value) + '</a>';
+										rowData.gid + '\',\'' + rowData.designation + '\')">' + value + '</a>')($scope));
+								},
+								render: function (data, type, full, meta) {
+									return '';
 								}
 							});
 						} else if (columnData.termId === 8255) {
@@ -205,10 +210,15 @@
 							columnsDef.push({
 								targets: columns.length - 1,
 								orderable: false,
+								createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
+									$(td).val("");
+									$(td).append($compile('<a class="check-href edit-check' + rowData.entryId + '" href="javascript: void(0)" ' +
+										'ng-click="showPopOverCheck(\'' + rowData.entryId + '\',\'' + rowData.properties['8255'].value + '\',\'' +
+										rowData.properties['8255'].studyEntryPropertyId + '\')">' +
+										getCategoricalValue(rowData.properties['8255'].value, columnData) + '</a>')($scope));
+								},
 								render: function (data, type, full, meta) {
-									return '<a class="check-href edit-check' + full.entryId + '" href="javascript: void(0)" ' +
-										'onclick="showChangeEntryTypeModal(\'' + full.entryId + '\',\'' + data.value + '\',\'' +
-										data.studyEntryPropertyId + '\')">' + EscapeHTML.escape(getCategoricalValue(data.value, columnData)) + '</a>';
+									return '';
 								}
 							});
 						} else if (columnData.termId === -3) {

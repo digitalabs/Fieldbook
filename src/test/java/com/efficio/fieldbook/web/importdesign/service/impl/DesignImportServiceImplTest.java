@@ -58,14 +58,8 @@ import java.util.Set;
 @SuppressWarnings("deprecation")
 @RunWith(MockitoJUnitRunner.class)
 public class DesignImportServiceImplTest {
-
-	private static final int CHALK_PCT_TERMID = 22768;
-
-	private static final int GYLD_TERMID = 18000;
-
 	private static final String PROGRAM_UUID = "789c6438-5a94-11e5-885d-feff819cdc9f";
 
-	private static final int TEST_STANDARD_VARIABLE_TERMID = 1;
 	private static final int TEST_PROPERTY_TERMID = 1234;
 	private static final int TEST_SCALE_TERMID = 4321;
 	private static final int TEST_METHOD_TERMID = 3333;
@@ -271,6 +265,14 @@ public class DesignImportServiceImplTest {
 
 		final DesignImportData designImportData = DesignImportTestDataInitializer.createDesignImportData(startingEntryNo, startingPlotNo);
 
+		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
+		final StudyEntryDto studyEntryDto = Mockito.mock(StudyEntryDto.class);
+		final List<StudyEntryDto> studyEntries = Collections.singletonList(studyEntryDto);
+		workbook.getStudyDetails().setId(1);
+		Mockito.when(this.studyEntryService.getStudyEntries(workbook.getStudyDetails().getId())).thenReturn(studyEntries);
+		Mockito.when(this.studyEntryTransformer.tranformToImportedGermplasm(studyEntries))
+			.thenReturn(ImportedGermplasmInitializer.createImportedGermplasmList(startingEntryNo));
+
 		final List<MeasurementRow> measurements = this.service.generateDesign(workbook, designImportData, instanceInfo, true,
 				this.createAdditionalParamsMap(startingEntryNo, startingPlotNo));
 
@@ -312,7 +314,7 @@ public class DesignImportServiceImplTest {
 	}
 
 	private Map<String, Integer> createAdditionalParamsMap(final Integer startingEntryNo, final Integer startingPlotNo) {
-		final Map<String, Integer> additionalParams = new HashMap<String, Integer>();
+		final Map<String, Integer> additionalParams = new HashMap<>();
 		additionalParams.put("startingEntryNo", startingEntryNo);
 		additionalParams.put("startingPlotNo", startingPlotNo);
 		return additionalParams;
@@ -488,7 +490,7 @@ public class DesignImportServiceImplTest {
 	@Test
 	public void testCreatePresetMeasurementRowsPerInstance() {
 		final Map<Integer, List<String>> csvData = this.designImportData.getRowDataMap();
-		final List<MeasurementRow> measurements = new ArrayList<MeasurementRow>();
+		final List<MeasurementRow> measurements = new ArrayList<>();
 		final DesignImportMeasurementRowGenerator measurementRowGenerator = this.generateMeasurementRowGenerator();
 		final int trialInstanceNo = 1;
 
@@ -537,15 +539,15 @@ public class DesignImportServiceImplTest {
 							}
 						});
 
-		final Map<Integer, StandardVariable> germplasmStandardVariables = new HashMap<Integer, StandardVariable>();
+		final Map<Integer, StandardVariable> germplasmStandardVariables = new HashMap<>();
 		germplasmStandardVariables.put(TermId.ENTRY_NO.getId(),
 				StandardVariableTestDataInitializer.createStandardVariable(TermId.ENTRY_NO.getId(), TermId.ENTRY_NO.name()));
-		final Set<String> trialInstancesFromUI = new HashSet<String>();
+		final Set<String> trialInstancesFromUI = new HashSet<>();
 		trialInstancesFromUI.add("1");
 		trialInstancesFromUI.add("2");
 		trialInstancesFromUI.add("3");
 		final boolean isPreview = false;
-		final Map<String, Integer> availableCheckTypes = new HashMap<String, Integer>();
+		final Map<String, Integer> availableCheckTypes = new HashMap<>();
 		final DesignImportMeasurementRowGenerator measurementRowGenerator =
 				new DesignImportMeasurementRowGenerator(this.fieldbookService, workbook, mappedHeadersWithStdVarId, importedGermplasm,
 						germplasmStandardVariables, trialInstancesFromUI, isPreview, availableCheckTypes);

@@ -8,6 +8,14 @@ import java.util.List;
 
 public class ImportedGermplasmInitializer {
 
+	public static List<ImportedGermplasm> createImportedGermplasmList(final int entryNo) {
+		final List<ImportedGermplasm> importedGermplasmList = new ArrayList<>();
+		for (int x = 0; x < DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES; x++) {
+			importedGermplasmList.add(createImportedGermplasm(entryNo + x));
+		}
+
+		return importedGermplasmList;
+	}
 	public static List<ImportedGermplasm> createImportedGermplasmList() {
 		final List<ImportedGermplasm> importedGermplasmList = new ArrayList<>();
 		for (int x = 1; x <= DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES; x++) {
@@ -16,6 +24,7 @@ public class ImportedGermplasmInitializer {
 
 		return importedGermplasmList;
 	}
+
 
 	public static ImportedGermplasm createImportedGermplasm(final int entryNo) {
 		final ImportedGermplasm importedGermplasm = new ImportedGermplasm();

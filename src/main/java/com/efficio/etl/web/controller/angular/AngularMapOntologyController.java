@@ -7,6 +7,7 @@ import com.efficio.etl.web.bean.UserSelection;
 import com.efficio.etl.web.bean.VariableDTO;
 import com.efficio.etl.web.validators.FileUploadFormValidator;
 import com.efficio.fieldbook.service.api.FieldbookService;
+import com.google.common.base.Optional;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.WorkbenchAppPathResolver;
@@ -336,12 +337,12 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 				}
 			}
 			if (varCondition.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
-				final Message message = Util.validateVariableValues(varCondition, varCondition.getValue());
-				if (message != null) {
+				final Optional<Message> message = Util.validateVariableValues(varCondition, varCondition.getValue());
+				if (message.isPresent()) {
 					if (errorMessages.containsKey(Constants.INVALID_TRIAL)) {
-						errorMessages.get(Constants.INVALID_TRIAL).add(message);
+						errorMessages.get(Constants.INVALID_TRIAL).add(message.get());
 					} else {
-						errorMessages.put(Constants.INVALID_TRIAL, Arrays.asList(message));
+						errorMessages.put(Constants.INVALID_TRIAL, Arrays.asList(message.get()));
 					}
 				}
 			}

@@ -54,27 +54,6 @@ describe('Study Entry Service', function () {
 
 	});
 
-	describe('Manage Selected Germplasm Entries', function () {
-
-		it('should toggle selected germplasm entries', function () {
-			studyEntryService.toggleSelect(11);
-			studyEntryService.toggleSelect(13);
-			studyEntryService.toggleSelect(15);
-			expect(studyEntryService.getSelectedEntries()).toEqual([11,13,15]);
-		});
-
-		it('should reset selected germplasm entries', function () {
-			studyEntryService.toggleSelect(11);
-			studyEntryService.toggleSelect(13);
-			studyEntryService.toggleSelect(15);
-			expect(studyEntryService.getSelectedEntries()).toEqual([11,13,15]);
-
-			studyEntryService.resetSelectedEntries();
-			expect(studyEntryService.getSelectedEntries()).toEqual([]);
-		});
-
-	});
-
 	function getMockStudyGermplasm() {
 		return {
 			entryId : 56,

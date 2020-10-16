@@ -66,13 +66,4 @@ describe('Replace Germplasm Controller', function () {
 		});
 	});
 
-	describe('cancel', function () {
-
-		it('it should close the modal instance', function () {
-			scope.cancel();
-			expect(uibModalInstance.dismiss).toHaveBeenCalled();
-		});
-
-	});
-
 });

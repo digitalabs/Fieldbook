@@ -529,23 +529,25 @@
 				};
 
 				$scope.showPopOverCheck = function(entryId, currentValue, studyEntryPropertyId) {
-					$uibModal.open({
-						templateUrl: '/Fieldbook/static/angular-templates/germplasm/changeStudyEntryTypeModal.html',
-						controller: "changeStudyEntryTypeCtrl",
-						size: 'md',
-						resolve: {
-							entryId: function () {
-								return entryId;
+					if(!studyStateService.hasGeneratedDesign()) {
+						$uibModal.open({
+							templateUrl: '/Fieldbook/static/angular-templates/germplasm/changeStudyEntryTypeModal.html',
+							controller: "changeStudyEntryTypeCtrl",
+							size: 'md',
+							resolve: {
+								entryId: function () {
+									return entryId;
+								},
+								currentValue: function () {
+									return currentValue;
+								},
+								studyEntryPropertyId: function () {
+									return studyEntryPropertyId;
+								}
 							},
-							currentValue: function () {
-								return currentValue;
-							},
-							studyEntryPropertyId: function () {
-								return studyEntryPropertyId;
-							}
-						},
-						controllerAs: 'ctrl'
-					});
+							controllerAs: 'ctrl'
+						});
+					}
 				};
 
 				$scope.showManageEntryTypePopup = function() {

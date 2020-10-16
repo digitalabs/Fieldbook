@@ -2,39 +2,10 @@
 /*exported confirmReplaceList,resetGermplasmList,removeCheckFromList,openListTree,viewGermplasmLitDetails */
 /*exported additionalLazyLoadUrl, chooseList*/
 /*globals angular*/
-var addedGid = {},
-	listId = 0,
-	makeDraggableBool = true,
-
+var listId = 0,
 	startIndex = 0,
 	lastDraggedPrimaryList = 0,
-	lastDraggedChecksList = 0,
-
-	itemsToAdd = [],
-	checksFromPrimary = 0,
-
-	itemsIndexAdded = [];
-
-var makeCheckDraggableBool = true;
+	lastDraggedChecksList = 0;
 
 //to be use as reference to the data table object
-var germplasmDataTable = null,
-		selectedCheckListDataTable = null;
-
-function resetGermplasmList() {
-	'use strict';
-	angular.element(document.getElementById('germplasm-table')).scope().resetStudyEntries();
-
-}
-
-function showChangeEntryTypeModal(entryId, currentValue, studyEntryPropertyId) {
-	'use strict';
-	if (!hasGeneratedDesign()) {
-		angular.element(document.getElementById('germplasm-table')).scope().showPopOverCheck(entryId, currentValue, studyEntryPropertyId);
-	}
-}
-
-function showManageEntryTypePopup() {
-	'use strict';
-	angular.element(document.getElementById('germplasm-table')).scope().showManageEntryTypePopup();
-}
+var germplasmDataTable = null;

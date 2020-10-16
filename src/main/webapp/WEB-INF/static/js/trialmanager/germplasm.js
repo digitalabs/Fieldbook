@@ -207,19 +207,37 @@
 								orderable: false,
 								render: function (data, type, full, meta) {
 									return '<a class="check-href edit-check' + full.entryId + '" href="javascript: void(0)" ' +
-										'onclick="showChangeEntryTypeModal(\'' + full.entryId + '\',\'' + data.value + '\',\'' + data.studyEntryPropertyId + '\')">' + EscapeHTML.escape(getCategoricalValue(data.value, columnData)) + '</a>';
+										'onclick="showChangeEntryTypeModal(\'' + full.entryId + '\',\'' + data.value + '\',\'' +
+										data.studyEntryPropertyId + '\')">' + EscapeHTML.escape(getCategoricalValue(data.value, columnData)) + '</a>';
 								}
 							});
-						} else if(columnData.termId < 0 && columnData.termId !== -6) {
+						} else if (columnData.termId === -3) {
+							//ACTIVE LOT
 							columnsDef.push({
 								targets: columns.length - 1,
 								orderable: false,
-								visible: false,
 								render: function (data, type, full, meta) {
-									if (!data) {
-										return '';
-									}
-									return EscapeHTML.escape(data.value);
+									return full.lotCount;
+								}
+							});
+
+						} else if (columnData.termId === -4) {
+							// AVAILABLE
+							columnsDef.push({
+								targets: columns.length - 1,
+								orderable: false,
+								render: function (data, type, full, meta) {
+									return full.availableBalance;
+								}
+							});
+
+						} else if (columnData.termId === -5) {
+							// UNIT
+							columnsDef.push({
+								targets: columns.length - 1,
+								orderable: false,
+								render: function (data, type, full, meta) {
+									return full.unit;
 								}
 							});
 						}else {

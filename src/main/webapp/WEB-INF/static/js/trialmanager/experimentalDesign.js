@@ -227,17 +227,17 @@
 								var licenseExpiryDays = response.headers('X-Total-Count');
 								// TODO Get the error/warning messages from properties file
 								if (licenseExpiryDays <= 0) {
-									showErrorMessage("", "The Breeding View license is expired. The design generation cannot proceed until " +
-										"this is resolved. Please contact VSNi at support@vsni.co.uk.");
+									showErrorMessage($.fieldbookMessages.errorServerError, $.experimentDesignMessages.bvLicenseExpired);
 									return;
 								} else if (licenseExpiryDays <= 30) {
-									$scope.showConfirmDialog("Your BVDesign license is going to expire in " + licenseExpiryDays + " day()s). Please" +
-										" contact VSNi at support@vsni.co.uk.").then(function() {
+									$scope.showConfirmDialog($.experimentDesignMessages.bvLicenseExpiring.replace('{0}', licenseExpiryDays)).then(function() {
 										$scope.continueGeneration();
 									});
 								} else {
 									$scope.continueGeneration();
 								}
+							}, function(errResponse) {
+								showErrorMessage($.fieldbookMessages.errorServerError, $.experimentDesignMessages.bvLicenseGenericError);
 							});
 						} else {
 							$scope.continueGeneration();

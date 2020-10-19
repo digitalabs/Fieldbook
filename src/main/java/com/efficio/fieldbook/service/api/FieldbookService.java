@@ -187,6 +187,14 @@ public interface FieldbookService {
 	 */
 	List<ValueReference> getAllPossibleValues(int id, boolean isGetAllRecords);
 
+	/**
+	 * Add/Updates/Deletes check variables.
+	 *
+	 * @param userSelection the userSelection
+	 * @param form the form
+	 */
+	void manageCheckVariables(UserSelection userSelection, ImportGermplasmListForm form);
+
 	void addConditionsToTrialObservationsIfNecessary(Workbook workbook);
 
 	void saveStudyColumnOrdering(Integer studyId, String columnOrderDelimited, Workbook workbook);

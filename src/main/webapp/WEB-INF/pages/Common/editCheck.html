@@ -1,0 +1,97 @@
+<form class="editCheck" role="form-horizontal" action="#" method="post" th:object="${updatedGermplasmCheckForm}">
+<input type="hidden" th:field="*{index}"/>
+<input type="hidden" th:field="*{dataTableIndex}"/>
+<div class="row form-group nopadding">
+<div class="col-xs-8 col-md-8 nopadding">
+	<div class="input-group nopadding">
+		<select style="width: 150px" th:field="*{checkVal}">
+			<option th:each="checkType : ${allCheckTypes}"  th:attr="data-code=${checkType.name}" th:value="${checkType.id}" th:text="${checkType.description}"></option>
+		</select>
+		<span class="input-group-btn">
+			<a href="javascript: void(0);" class="btn btn-success submit-edit-check">
+				<span class="glyphicon glyphicon-ok"></span>
+			</a>
+			<a href="javascript: void(0);" class="btn btn-danger cancel-edit-check">
+				<span class="glyphicon glyphicon-remove"></span>
+			</a>
+		</span>
+	</div>
+</div>
+</div>
+</form>
+
+<div layout:fragment="page-script">
+<script type="text/javascript" th:inline="javascript">
+//<![CDATA[
+function updateCheck(event) {
+	'use strict';
+	event.stopPropagation();
+
+	$.ajax({
+		url: '/Fieldbook/ListManager/GermplasmList/update/check',
+		type: 'POST',
+		data: $('.editCheck').serialize(),
+		success: function(data) {
+			//update the hidden and the a href
+			var oldValue = $('#selectedCheck' + $('.editCheck #index').val()).val();
+			var newValue = $('.editCheck #checkVal').select2('data').id;
+			if (oldValue != newValue) {
+				$('#selectedCheck' + $('.editCheck #index').val()).val($('.editCheck #checkVal').select2('data').id).trigger('germplasmListIsUpdated');
+				if (isOpenStudy()) {
+					var angularElem = angular.element('#mainApp');
+					angularElem
+						.scope()
+						.$apply(
+							function () {
+								angular.element('#mainApp').injector().get('studyStateService').updateOccurred();
+								angular.element('#mainApp').injector().get('TrialManagerDataService').applicationData.germplasmChangesUnsaved = true;
+							});
+				}
+			} else {
+				$('#selectedCheck' + $('.editCheck #index').val()).val($('.editCheck #checkVal').select2('data').id);
+			}
+
+			$('.check-table-popover #selectedCheck' + $('.editCheck #index').val()).data('code',  $('.editCheck #checkVal option:selected').data('code'));
+			$('.edit-check' + $('.editCheck #index').val()).data('code',  $('.editCheck #checkVal option:selected').data('code'));
+			$('.editCheck #checkVal').select2('destroy');
+
+			var listDataTable = germplasmDataTable;
+			var columnIndex = listDataTable.getDataTableColumnIndex('8255-key');
+			//we need to get the real index of the check
+
+			if (listDataTable != null) {
+				$('body .popover').hide();
+				listDataTable.getDataTable().fnUpdate($('#selectedCheck' + $('.editCheck #index').val()).val(), $('.editCheck #index').val(), columnIndex, false, false); // Single cell
+				listDataTable.getDataTable().$('.delete-check').off('click');
+				listDataTable.getDataTable().$('.delete-check').on('click', function() {
+
+					var entryNumber = $(this).parent().parent().data('entry'),
+					gid = '' + $(this).parent().parent().data('gid');
+					deleteCheckGermplasmList(entryNumber, gid, $(this).parent().parent());
+
+				});
+			}
+			$('.edit-check' + $('.editCheck #index').val()).html($('.editCheck #checkVal option:selected').html());
+			$('body .popover').remove();
+		}
+	});
+
+	return false;
+}
+
+$(document).ready(function() {
+	'use strict';
+	$('.cancel-edit-check').on('click', function(event) {	
+		event.stopPropagation();
+		$('body .popover').remove();
+	});
+	$('.submit-edit-check').on('click', updateCheck);
+
+	$('.editCheck select').each(function() {
+		$(this).select2({width: 'copy', minimumResultsForSearch: $(this).find('option').length == 0 ? -1 : 20});
+	});
+
+});
+//]]>
+</script>
+</div>

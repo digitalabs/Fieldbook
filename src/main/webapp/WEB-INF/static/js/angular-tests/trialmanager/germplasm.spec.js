@@ -2,8 +2,7 @@
 
 describe('Replace Germplasm Controller', function () {
 	var replaceGermplasmCtrl, scope, $q;
-	var studyEntryService = jasmine.createSpyObj('studyEntryService', ['replaceStudyGermplasm','getSelectedEntries']);
-	var entryId = 56;
+	var studyGermplasmService = jasmine.createSpyObj('studyGermplasmService', ['replaceStudyGermplasm','getSelectedEntries']);
 	var studyContext = {
 		studyId: 1,
 		cropName: 'maize',
@@ -21,7 +20,7 @@ describe('Replace Germplasm Controller', function () {
 	beforeEach(function () {
 		module('manageTrialApp');
 		module(function ($provide) {
-			$provide.value("studyEntryService", studyEntryService);
+			$provide.value("studyGermplasmService", studyGermplasmService);
 			$provide.value("$uibModalInstance", uibModalInstance);
 		});
 	});
@@ -32,13 +31,12 @@ describe('Replace Germplasm Controller', function () {
 			var $controller = $injector.get('$controller');
 			$q = $injector.get('$q');
 			uibModalInstance = $injector.get('$uibModalInstance');
-			studyEntryService = $injector.get('studyEntryService');
+			studyGermplasmService = $injector.get('studyGermplasmService');
 			replaceGermplasmCtrl = $controller('replaceGermplasmCtrl', {
 				$scope: scope,
 				$uibModalInstance: uibModalInstance,
 				studyContext: studyContext,
-				studyEntryService: studyEntryService,
-				entryId: entryId,
+				studyGermplasmService: studyGermplasmService,
 			});
 
 			spyOn(replaceGermplasmCtrl, 'showAlertMessage');
@@ -47,16 +45,16 @@ describe('Replace Germplasm Controller', function () {
 
 	describe('performGermplasmReplacement', function () {
 		it('should replace germplasm for valid GID', function () {
-			studyEntryService.getSelectedEntries.and.returnValue([entryId]);
+			studyGermplasmService.getSelectedEntries.and.returnValue([56]);
 			var response = {data: {}};
-			studyEntryService.replaceStudyGermplasm.and.returnValue($q.resolve(response));
+			studyGermplasmService.replaceStudyGermplasm.and.returnValue($q.resolve(response));
 			spyOn($.fn, 'val').and.callFake(function() {
 				return '135';
 			});
 
 			scope.performGermplasmReplacement();
 			expect(replaceGermplasmCtrl.showAlertMessage).not.toHaveBeenCalled();
-			expect(studyEntryService.replaceStudyGermplasm).toHaveBeenCalledWith(entryId,'135');
+			expect(studyGermplasmService.replaceStudyGermplasm).toHaveBeenCalledWith(56,'135');
 		});
 
 		it('should not replace germplasm if non-numeric GID', function () {
@@ -66,6 +64,15 @@ describe('Replace Germplasm Controller', function () {
 			scope.performGermplasmReplacement();
 			expect(replaceGermplasmCtrl.showAlertMessage).toHaveBeenCalledWith('','Please enter valid GID.');
 		});
+	});
+
+	describe('cancel', function () {
+
+		it('it should close the modal instance', function () {
+			scope.cancel();
+			expect(uibModalInstance.dismiss).toHaveBeenCalled();
+		});
+
 	});
 
 });

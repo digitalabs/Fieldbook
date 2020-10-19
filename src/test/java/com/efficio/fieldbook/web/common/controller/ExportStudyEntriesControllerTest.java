@@ -12,6 +12,7 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.FileUtils;
 import org.generationcp.commons.util.InstallationDirectoryUtil;
@@ -138,6 +139,11 @@ public class ExportStudyEntriesControllerTest {
 
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListById(ArgumentMatchers.anyInt())).thenReturn(this.getGermplasmList());
 
+		Mockito.when(this.userSelection.getImportedGermplasmMainInfo()).thenReturn(Mockito.mock(ImportedGermplasmMainInfo.class));
+		Mockito.when(this.userSelection.getImportedGermplasmMainInfo().getListId()).thenReturn(LIST_ID);
+		Mockito.when(this.userSelection.getImportedGermplasmMainInfo().getListName())
+				.thenReturn(ExportStudyEntriesControllerTest.LIST_NAME);
+
 		Mockito.doReturn(ProjectTestDataInitializer.createProject()).when(this.contextUtil).getProjectInContext();
 	}
 
@@ -198,6 +204,7 @@ public class ExportStudyEntriesControllerTest {
 		} catch (final MiddlewareQueryException e1) {
 			Assert.fail();
 		}
+		Mockito.when(this.userSelection.getImportedGermplasmMainInfo()).thenReturn(null);
 		final Workbook workbook = new Workbook();
 		final StudyDetails studyDetails = new StudyDetails();
 		final int studyId = new Random().nextInt();

@@ -1,21 +1,23 @@
 package com.efficio.fieldbook.web.data.initializer;
 
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImportedGermplasmInitializer {
+public class ImportedGermplasmMainInfoInitializer {
 
-	public static List<ImportedGermplasm> createImportedGermplasmList(final int entryNo) {
-		final List<ImportedGermplasm> importedGermplasmList = new ArrayList<>();
-		for (int x = 0; x < DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES; x++) {
-			importedGermplasmList.add(createImportedGermplasm(entryNo + x));
-		}
-
-		return importedGermplasmList;
+	public static ImportedGermplasmMainInfo createImportedGermplasmMainInfo() {
+		final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+		final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
+		importedGermplasmList.setImportedGermplasms(createImportedGermplasmList());
+		mainInfo.setImportedGermplasmList(importedGermplasmList);
+		return mainInfo;
 	}
+
 	public static List<ImportedGermplasm> createImportedGermplasmList() {
 		final List<ImportedGermplasm> importedGermplasmList = new ArrayList<>();
 		for (int x = 1; x <= DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES; x++) {
@@ -25,6 +27,22 @@ public class ImportedGermplasmInitializer {
 		return importedGermplasmList;
 	}
 
+	public static ImportedGermplasmMainInfo createImportedGermplasmMainInfo(final int startingEntryNo) {
+		final ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+		final ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
+		importedGermplasmList.setImportedGermplasms(createImportedGermplasmList(startingEntryNo));
+		mainInfo.setImportedGermplasmList(importedGermplasmList);
+		return mainInfo;
+	}
+
+	public static List<ImportedGermplasm> createImportedGermplasmList(final int startingEntryNo) {
+		final List<ImportedGermplasm> importedGermplasmList = new ArrayList<>();
+		for (int x = 0; x < DesignImportTestDataInitializer.NO_OF_TEST_ENTRIES; x++) {
+			importedGermplasmList.add(createImportedGermplasm(x + startingEntryNo));
+		}
+
+		return importedGermplasmList;
+	}
 
 	public static ImportedGermplasm createImportedGermplasm(final int entryNo) {
 		final ImportedGermplasm importedGermplasm = new ImportedGermplasm();

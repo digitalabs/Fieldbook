@@ -79,6 +79,7 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 						templateUrl: '/Fieldbook/TrialManager/createTrial/germplasm'
 					}
 				},
+				deepStateRedirect: true, sticky: true
 			})
 
 			.state('germplasmStudySource', {
@@ -213,6 +214,10 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 				{
 					name: 'Settings',
 					state: 'trialSettings'
+				},
+				{
+					name: 'Germplasm & Checks',
+					state: 'germplasm'
 				}
 			];
 			$scope.subObservationTabs = [];
@@ -242,11 +247,6 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 			$scope.PERMISSIONS = PERMISSIONS;
 
 			if ($scope.isOpenStudy()) {
-				$scope.trialTabs.push({
-						name: 'Germplasm & Checks',
-						state: 'germplasm'
-
-				});
 				$scope.trialTabs.push({
 					name: 'Treatment Factors',
 					state: 'treatment'
@@ -764,6 +764,7 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 
 				return $scope.tabSelected && ([
 					"trialSettings",
+					"germplasm",
 					"treatment"
 				].indexOf($scope.tabSelected) >= 0);
 

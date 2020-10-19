@@ -1042,6 +1042,36 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return possibleValues;
 	}
 
+	@Override
+	public void manageCheckVariables(final UserSelection userSelection, final ImportGermplasmListForm form) {
+		if (userSelection.getImportedCheckGermplasmMainInfo() != null && form.getImportedCheckGermplasm() != null) {
+			if (!form.getImportedCheckGermplasm().isEmpty()
+				&& !this.hasCheckVariables(userSelection.getWorkbook().getConditions())) {
+				// add check variables
+				this.addCheckVariables(userSelection.getWorkbook().getConditions(), form);
+			} else if (!form.getImportedCheckGermplasm().isEmpty()
+				&& this.hasCheckVariables(userSelection.getWorkbook().getConditions())) {
+				// update values of check variables
+				this.updateCheckVariables(userSelection.getWorkbook().getConditions(), form);
+				this.updateChecksInTrialObservations(userSelection.getWorkbook().getTrialObservations(), form);
+			} else if (form.getImportedCheckGermplasm().isEmpty()
+				&& this.hasCheckVariables(userSelection.getWorkbook().getConditions())) {
+				// delete check variables
+				this.deleteCheckVariables(userSelection.getWorkbook().getConditions());
+			}
+		}
+	}
+
+	private void updateChecksInTrialObservations(
+		final List<MeasurementRow> trialObservations,
+		final ImportGermplasmListForm form) {
+		if (trialObservations != null) {
+			for (final MeasurementRow row : trialObservations) {
+				this.setMeasurementDataInList(row, form);
+			}
+		}
+	}
+
 	private void setMeasurementDataInList(final MeasurementRow row, final ImportGermplasmListForm form) {
 		if (row.getDataList() != null) {
 			for (final MeasurementData data : row.getDataList()) {

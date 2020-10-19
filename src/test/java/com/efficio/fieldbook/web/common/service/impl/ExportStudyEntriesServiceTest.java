@@ -7,6 +7,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
+import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportRow;
 import org.generationcp.commons.service.GermplasmExportService;
@@ -102,6 +103,9 @@ public class ExportStudyEntriesServiceTest {
 	private OntologyVariableDataManager ontologyVariableDataManager;
 
 	@Mock
+	private ImportedGermplasmMainInfo importedGermplasmMainInfo;
+
+	@Mock
 	private ImportedGermplasmList importedGermplasmList;
 
 	@Mock
@@ -146,6 +150,8 @@ public class ExportStudyEntriesServiceTest {
 			.thenReturn(this.createStandardVariable(TermId.CHECK.getId(), ExportStudyEntriesServiceTest.CHECK));
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(this.workbook);
 		Mockito.when(this.workbook.getStudyDetails()).thenReturn(this.studyDetails);
+		Mockito.when(this.userSelection.getImportedGermplasmMainInfo()).thenReturn(this.importedGermplasmMainInfo);
+		Mockito.when(this.importedGermplasmMainInfo.getImportedGermplasmList()).thenReturn(this.importedGermplasmList);
 		Mockito.when(this.importedGermplasmList.getImportedGermplasms()).thenReturn(importedGermplasms);
 		Mockito.doReturn(this.getPlotLevelList()).when(this.userSelection).getPlotsLevelList();
 		Mockito.doReturn(this.getGermplasmList()).when(this.fieldbookMiddlewareService)

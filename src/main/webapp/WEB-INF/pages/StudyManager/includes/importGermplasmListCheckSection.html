@@ -1,0 +1,62 @@
+<form id="specify-checks-form" role="form-horizontal" class="form-horizontal" action="#"
+	th:action="@{/StudyManager/importGermplasmList/next}" method="post" th:object="${importGermplasmListForm}" enctype="multipart/form-data">
+	<div>
+		<span class="h3" th:text="#{germplasm.list.specify.checks}">Specify Checks</span>
+		<div class="row">
+			<div class="row form-group col-xs-12 col-md-12">
+				<div class="col-xs-4 col-md-4 add_top_padding">
+					<label class="control-label label-bold" th:utext="#{germplasm.list.choose.check.type.starting.index}">Starting Index</label>
+				</div>
+				<div class="col-xs-2 col-md-2">
+					<input type="hidden" th:field="*{checkVariables[0].variable.cvTermId}" />
+					<input style="width: 50px" type="text" class="form-control" th:field="*{checkVariables[0].value}" />
+				</div>
+				<div class="col-xs-3 col-md-3 add_top_padding">
+					<label class="control-label label-bold" th:utext="#{germplasm.list.choose.check.type.manner.of.insertion}">Manner of Insertion</label>
+				</div>
+				<div class="col-xs-3 col-md-3">
+					<input type="hidden" th:field="*{checkVariables[2].variable.cvTermId}" />
+					<select class="form-control" th:field="*{checkVariables[2].value}">
+						<option th:each="check : *{checkVariables[2].possibleValues}" th:value="${check.id}" th:text="${check.description}"/>
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="row form-group col-xs-12 col-md-12">
+				<div class="col-xs-4 col-md-4 add_top_padding">
+					<label class="control-label label-bold" th:utext="#{germplasm.list.choose.check.type.interval}">Interval</label>
+				</div>
+				<div class="col-xs-2 col-md-2">
+					<input type="hidden" th:field="*{checkVariables[1].variable.cvTermId}" />
+					<input style="width: 50px" type="text" th:field="*{checkVariables[1].value}" class="form-control" />
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+<script type="text/javascript" th:inline="javascript">
+//<![CDATA[
+/*globals initializeCheckTypeSelect2, reloadCheckTypeDropDown*/
+/* exported prevStartIndex,checkTypesObj */
+
+var checkTypes = /*[[${checkTypes}]]*/ null,
+	checkTypesObj = [],
+	prevStartIndex = 0;
+
+$(document).ready(function() {
+	'use strict';
+	$('#manageCheckTypesModal').on('hidden.bs.modal', function() {
+		reloadCheckTypeDropDown(false, 'checklist-select');
+	});
+
+	initializeCheckTypeSelect2(checkTypes, [], false, 0, 'comboCheckCode');
+	$('#updateCheckTypes').hide();
+	$('#deleteCheckTypes').hide();
+	$('#' + getJquerySafeId('checkVariables2.value')).select2({minimumResultsForSearch: 20});
+
+	setSpinnerMaxValue();
+});
+
+//]]>
+</script>

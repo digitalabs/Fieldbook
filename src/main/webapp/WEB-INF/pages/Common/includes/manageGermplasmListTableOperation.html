@@ -3,7 +3,7 @@
 <div class="modal fade" id="addGermplasmFolder" role="dialog" aria-labelledby="addGermplasmFolder" aria-hidden="true" style="overflow: hidden">
 	<div class="modal-dialog modal-extra-small">
 		<div class="modal-content">
-
+			
 			<form onsubmit="return createGermplasmFolderInTreeTable();">
 			<div class="modal-body" id="manageCheckTypesModalBody">
 				<div class="row form-group">
@@ -12,9 +12,9 @@
 					</div>
 					<div class="col-xs-1 col-md-1">
 						<button id="closeAddGermplasmFolder" type="button" class="close  pull-right glyphicon glyphicon-remove" onclick="javascript: closeModal('addGermplasmFolder')"/>
-					</div>
+					</div>										
 				</div>
-
+				
 				<div class="row">
 					<div id="page-add-germplasm-folder-message-modal" class="col-xs-12 col-md-12">
 					</div>
@@ -39,15 +39,15 @@
 
 <div class="modal fade" id="renameGermplasmFolder" role="dialog" aria-labelledby="renameGermplasmFolder" aria-hidden="true" style="overflow: hidden">
 	<div class="modal-dialog modal-extra-small">
-		<div class="modal-content">
+		<div class="modal-content">			
 			<div class="modal-body" id="manageCheckTypesModalBody">
 				<div class="row form-group">
-					<div class="col-xs-11 col-md-11">
+					<div class="col-xs-11 col-md-11">					
 						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{browse.study.rename.folder.name}"></label>
 					</div>
 					<div class="col-xs-1 col-md-1">
 						<button  id="closeRenameGermplasmFolder" type="button" class="close  pull-right glyphicon glyphicon-remove"  onclick="javascript: closeModal('renameGermplasmFolder')"/>
-					</div>
+					</div>										
 				</div>
 				<div class="row">
 					<div id="page-rename-germplasm-folder-message-modal" class="col-xs-12 col-md-12">
@@ -73,17 +73,17 @@
 
 <div class="modal fade" id="deleteFolder" role="dialog" aria-labelledby="deleteFolder" aria-hidden="true" style="overflow: hidden">
 	<div class="modal-dialog modal-extra-small">
-		<div class="modal-content">
+		<div class="modal-content">			
 			<div class="modal-body" id="manageCheckTypesModalBody">
 				<div class="row form-group">
-					<div class="col-xs-11 col-md-11">
+					<div class="col-xs-11 col-md-11">					
 						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{browse.study.delete.folder.name}"></label>
 					</div>
 					<div class="col-xs-1 col-md-1">
 						<button  id="closeDeleteGermplasmFolder" type="button" class="close  pull-right glyphicon glyphicon-remove"  onclick="javascript: closeModal('deleteFolder')"/>
-					</div>
+					</div>										
 				</div>
-
+				
 				<div class="row">
 					<div id="page-delete-germplasm-folder-message-modal" class="col-xs-12 col-md-12">
 					</div>
@@ -105,17 +105,17 @@
 
 <div class="modal fade" id="moveGermplasmFolder" role="dialog" aria-labelledby="moveGermplasmFolder" aria-hidden="true" style="overflow: hidden">
 	<div class="modal-dialog modal-extra-small">
-		<div class="modal-content">
+		<div class="modal-content">			
 			<div class="modal-body" id="manageCheckTypesModalBody">
 				<div class="row form-group">
-					<div class="col-xs-11 col-md-11">
+					<div class="col-xs-11 col-md-11">					
 						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{common.form.notification.text}"></label>
 					</div>
 					<div class="col-xs-1 col-md-1">
 						<button  id="closeMoveGermplasmFolder" type="button" class="close  pull-right glyphicon glyphicon-remove"  onclick="javascript: closeModal('moveGermplasmFolder')"/>
-					</div>
+					</div>										
 				</div>
-
+				
 				<div class="row">
 					<div id="page-move-germplasm-folder-message-modal" class="col-xs-12 col-md-12">
 					</div>
@@ -133,9 +133,42 @@
 <div layout:fragment="page-script">
 	<script type="text/javascript" th:inline="javascript">
 		//<![CDATA[
-		function saveStudyEntries(listIdTemp){
+		function viewGermplasmLitDetails() {
 			'use strict';
-			angular.element(document.getElementById('germplasm-table')).scope().saveStudyEntries(listIdTemp);
+			openGermplasmListDetailsPopop(listId);
+		}
+		function displayListDetails(listIdTemp) {
+			'use strict';
+			listId = listIdTemp;
+			$('#'+getDisplayedTreeName()).find('*').removeClass('dynatree-selected');
+			
+			$.ajax({
+				url: '/Fieldbook/StudyManager/importGermplasmList/displayGermplasmDetails/' + listId,
+				type: 'GET',
+				cache: false,
+				success: function(html) {
+					$('#imported-germplasm-list').css('display', 'block');					 
+					$('#imported-germplasm-list').html(html).trigger("germplasmListIsUpdated");
+					window.ImportGermplasm.initialize(dataGermplasmList);
+					$('#entries-details').css('display', 'block');
+					$('#numberOfEntries').html($('#totalGermplasms').val());
+                    toggleControlsForGermplasmListManagement(true);
+					$(document).trigger('germplasmListUpdated');
+					$('.view-header').show();
+				}
+			});
+		}
+		
+		
+		function displayGermplasmDetails(listIdTemp){
+			'use strict';
+			if (lastDraggedChecksList === 0 && $('.check-germplasm-list-items tbody tr').length > 0){
+				$('#confirmReplaceListModal #replaceListId').val(listIdTemp);
+				$('#confirmReplaceListModal').modal({ backdrop: 'static', keyboard: true });	
+			}else {
+				displayListDetails(listIdTemp);
+			}
+			
 		}
 
 		function hideFolderDiv(selector) {
@@ -167,17 +200,17 @@
 				}
 			}
 		}
-
+		
 		var ListTable = {
 			chooseList: function(){
 				'use strict';
 				var node = germplasmTreetable.getSelectedList();
 				ListTable.chooseListNode(node, false);
 			},
-
+	
 			chooseListNode : function (node, fromEnterKey) {
-				'use strict';
-
+				'use strict';		
+	
 				if (node === null || germplasmTreetable.isSelectedListAFolder()) {
 					if(fromEnterKey === false){
 						showErrorMessage('page-import-message-modal', pleaseChooseFolder);
@@ -189,18 +222,18 @@
 						if (lastDraggedChecksList != id) {
 							// Loads the primary germplasm list
 							lastDraggedPrimaryList = id;
-							saveStudyEntries(id);
-
+							displayGermplasmDetails(id);
+	
 	                        if (selectListFunction) {
 	                            selectListFunction(id);
 	                        }
-
+	
 						} else {
 							if(fromEnterKey === false){
 								showErrorMessage('page-import-message-modal', sameListErr);
-								return;
+								return;	
 							}
-
+							
 						}
 					} else if(openTreeType === 2) {
 						// Load in check list
@@ -208,10 +241,10 @@
 							// Loads the check list
 							$('#lastCheckSourcePrimary').val(0);
 							lastDraggedChecksList = id;
-
+	
 							// Set primary germplasm list rows' opacity to 1
 							$('.germplasm-list-items tbody tr').css('opacity', '1');
-
+	
 							// If there is an existing list already, ask user if data should be overwritten
 							if ($('.check-germplasm-list-items tbody tr').length > 0) {
 								$('#keyForOverwrite').val(id);

@@ -86,7 +86,7 @@
 			};
 
 			$scope.filterByColumn = function () {
-				// resetChecksStatus();
+				resetRadioButtonStatus();
 				table().ajax.reload();
 			};
 
@@ -129,7 +129,7 @@
 					});
 					$scope.columnFilter.columnData.isSelectAll = false;
 				}
-				// resetChecksStatus();
+				resetRadioButtonStatus();
 				table().ajax.reload();
 			};
 
@@ -196,11 +196,7 @@
 							$.ajax({
 								type: 'POST',
 								url: ChangePlotEntryService.getEntriesTableUrl() + getPageQueryParameters(d),
-								// dataSrc: '',
 								data: JSON.stringify({
-									// draw: d.draw,
-									// instanceId: $scope.nested.selectedEnvironment.instanceId,
-									// draftMode: $scope.isPendingView,
 									filter: getFilter()
 								}),
 								success: function (res, status, xhr) {
@@ -224,25 +220,16 @@
 			function initCompleteCallback() {
 				table().columns().every(function () {
 					$(this.header())
-						// .prepend($compile('<span class="glyphicon glyphicon-bookmark" style="margin-right: 10px; color:#1b95b2;"' +
-						// 	' ng-if="isVariableBatchActionSelected(' + this.index() + ')"> </span>')($scope))
 						.append($compile('<span ng-if="isFilterable(' + this.index() + ')" class="glyphicon glyphicon-filter" ' +
 							' style="cursor:pointer; padding-left: 5px;"' +
 							' popover-placement="bottom"' +
 							' ng-class="getFilteringByClass(' + this.index() + ')"' +
 							' popover-append-to-body="true"' +
 							' popover-trigger="\'outsideClick\'"' +
-							// does not work with outsideClick
-							// ' popover-is-open="columnFilter.isOpen"' +
-							// ' ng-if="isVariableFilter(' + this.index() + ')"' +
 							' ng-click="openColumnFilter(' + this.index() + ')"' +
 							' uib-popover-template="\'columnFilterPopoverTemplate.html\'"></span>')($scope));
-						// .prepend($compile('<span ng-if="isFilterable(' + this.index() + ')">'
-						// 	+ '<input type="checkbox" title="select current page" ng-checked="isPageSelected()"  ng-click="onSelectPage()">'
-						// 	+ '</span>')($scope));
 				});
 				adjustColumns();
-				// tableRenderedResolve();
 			}
 
 			function mapColumns(columnsData) {
@@ -351,12 +338,9 @@
 				var order = data.order && data.order[0];
 				var pageQuery = '?size=' + data.length
 					+ '&page=' + ((data.length === 0) ? 0 : data.start / data.length);
-				// FIXME: Until now the sort works with entryNumber when will implements by specific column we need replace the code by the commented.
 				if ($scope.columnsData[order.column]) {
 					pageQuery += '&sort=' + $scope.columnsData[order.column].termId + ',' + order.dir;
 				}
-				// pageQuery += '&sort=entryNumber' + ',' + order.dir;
-
 				return pageQuery;
 			}
 
@@ -400,11 +384,9 @@
 			}
 
 			function adjustColumns() {
-				// if ($scope.hasInstances) {
 				$timeout(function () {
 					table().columns.adjust();
 				});
-					// }
 			}
 
 			function getFilter() {
@@ -471,6 +453,11 @@
 				return true;
 
 			}
+
+			function resetRadioButtonStatus() {
+				$scope.selected = {entryId: ''};
+			}
+
 		}
 	]);
 })();

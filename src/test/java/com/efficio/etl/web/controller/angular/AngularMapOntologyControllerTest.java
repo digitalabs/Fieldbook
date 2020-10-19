@@ -211,7 +211,7 @@ public class AngularMapOntologyControllerTest {
 		Mockito.verify(this.etlService, Mockito.times(1)).convertMessageList(Mockito.anyListOf(Message.class));
 
 		final Map<String, List<Message>> errorMessages = new HashMap<>();
-		this.controller.validateTrialInstanceValue(workbook.getConditions(), workbook.getTrialVariables(), errorMessages);
+		this.controller.validateTrialInstanceValue(workbook.getConditions(), errorMessages);
 		Assert.assertTrue("Invalid Trial Error",errorMessages.containsKey(Constants.INVALID_TRIAL));
 		Assert.assertEquals("Single Error",1, errorMessages.get(Constants.INVALID_TRIAL).size());
 	}

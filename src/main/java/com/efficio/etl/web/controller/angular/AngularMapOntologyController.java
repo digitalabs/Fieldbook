@@ -195,7 +195,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 
 			// Validate Trial Instance Value
 			if (importData.getConditions() != null && importData.getTrialVariables() != null) {
-				this.validateTrialInstanceValue(importData.getConditions(), importData.getTrialVariables(), messages);
+				this.validateTrialInstanceValue(importData.getConditions(), messages);
 			}
 
 			if (messages != null) {
@@ -326,16 +326,8 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 		return new FileUploadForm();
 	}
 
-	public void validateTrialInstanceValue(final List<MeasurementVariable> conditions, final List<MeasurementVariable> trialVariables, final Map<String, List<Message>> errorMessages) {
+	public void validateTrialInstanceValue(final List<MeasurementVariable> conditions, final Map<String, List<Message>> errorMessages) {
 		for (final MeasurementVariable varCondition : conditions) {
-			if (varCondition.getTermId() == 0) {
-				final List<MeasurementVariable> trialVariable = trialVariables.stream().filter(mVar -> {
-					return mVar.getScale().equals(varCondition.getScale()) && mVar.getMethod().equals(varCondition.getMethod()) && mVar.getProperty().equals(varCondition.getProperty());
-				}).collect(Collectors.toList());
-				if (trialVariable != null && !trialVariable.isEmpty()) {
-					varCondition.setTermId(trialVariable.get(0).getTermId());
-				}
-			}
 			if (varCondition.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
 				final Optional<Message> message = Util.validateVariableValues(varCondition, varCondition.getValue());
 				if (message.isPresent()) {

@@ -6,9 +6,9 @@
 		manageTrialAppModule.constant('EXP_DESIGN_MSGS', expDesignMsgs)
 			.constant('EXPERIMENTAL_DESIGN_PARTIALS_LOC', '/Fieldbook/static/angular-templates/experimentalDesignPartials/')
 			.controller('ExperimentalDesignCtrl', ['$scope', '$state', 'EXPERIMENTAL_DESIGN_PARTIALS_LOC','DESIGN_TYPE','SYSTEM_DEFINED_ENTRY_TYPE', 'TrialManagerDataService', '$http',
-				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', '$rootScope', 'studyStateService', 'studyContext', 'experimentDesignService', '$uibModal', 'studyInstanceService',
+				'EXP_DESIGN_MSGS', '_', '$q', 'Messages', '$rootScope', 'studyStateService', 'studyContext', 'experimentDesignService', '$uibModal', 'studyInstanceService', 'studyEntryService',
 				function($scope, $state, EXPERIMENTAL_DESIGN_PARTIALS_LOC, DESIGN_TYPE, SYSTEM_DEFINED_ENTRY_TYPE, TrialManagerDataService, $http, EXP_DESIGN_MSGS, _,
-						 $q, Messages, $rootScope, studyStateService, studyContext, experimentDesignService, $uibModal, studyInstanceService) {
+						 $q, Messages, $rootScope, studyStateService, studyContext, experimentDesignService, $uibModal, studyInstanceService, studyEntryService) {
 
 					var ENTRY_TYPE_COLUMN_DATA_KEY = '8255-key';
 					var MESSAGE_DIV_ID = 'page-message';
@@ -133,21 +133,8 @@
 						});
 					};
 
-					//FIXME: cheating a bit for the meantime.
-					var totalGermplasms = countGermplasms();
-					if (!TrialManagerDataService.applicationData.germplasmListCleared) {
-						$scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.experimentalDesign.
-							germplasmTotalListCount = totalGermplasms ? totalGermplasms :
-							TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount;
-					} else {
-						$scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.experimentalDesign.
-							germplasmTotalListCount = totalGermplasms;
-					}
-
-					if (isNaN($scope.totalGermplasmEntryListCount)) {
-						$scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.
-							experimentalDesign.germplasmTotalListCount = 0;
-					}
+					$scope.totalGermplasmEntryListCount = TrialManagerDataService.specialSettings.experimentalDesign.
+							germplasmTotalListCount;
 
 					$scope.data = TrialManagerDataService.currentData.experimentalDesign;
 
@@ -508,7 +495,7 @@
 									return false;
 								}
 
-								if ($scope.data.rowsPerReplications * $scope.data.colsPerReplications !== $scope.totalGermplasmEntryListCount) {
+								if ($scope.data.rowsPerReplications * $scope.data.colsPerReplications !== parseInt($scope.totalGermplasmEntryListCount)) {
 									showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[6]);
 									return false;
 								}
@@ -643,7 +630,7 @@
 
 						}
 
-						if ($scope.totalGermplasmEntryListCount <= 0) {
+						if (!TrialManagerDataService.applicationData.germplasmListSelected) {
 							showErrorMessage(MESSAGE_DIV_ID, EXP_DESIGN_MSGS[26]);
 							return false;
 						}
@@ -707,92 +694,38 @@
 
 
 					$scope.refreshDesignDetailsForAugmentedDesign = function() {
-
-						$scope.germplasmTotalCheckEntriesCount = countCheckEntries(true);
-						$scope.germplasmTotalTestEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalCheckEntriesCount;
-						$scope.germplasmNumberOfTestEntriesPerBlock = $scope.germplasmTotalTestEntriesCount / $scope.data.numberOfBlocks;
-						$scope.germplasmNumberOfPlotsPerBlock = $scope.germplasmNumberOfTestEntriesPerBlock + $scope.germplasmTotalCheckEntriesCount;
-						$scope.germplasmTotalNumberOfPlots = $scope.germplasmNumberOfPlotsPerBlock * $scope.data.numberOfBlocks;
+						studyEntryService.getStudyEntriesMetadata().then(function (metadata) {
+							$scope.germplasmTotalCheckEntriesCount = metadata.checkEntriesCount;
+							$scope.germplasmTotalTestEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalCheckEntriesCount;
+							$scope.germplasmNumberOfTestEntriesPerBlock = $scope.germplasmTotalTestEntriesCount / $scope.data.numberOfBlocks;
+							$scope.germplasmNumberOfPlotsPerBlock = $scope.germplasmNumberOfTestEntriesPerBlock + $scope.germplasmTotalCheckEntriesCount;
+							$scope.germplasmTotalNumberOfPlots = $scope.germplasmNumberOfPlotsPerBlock * $scope.data.numberOfBlocks;
+						});
 
 					}
 
 					$scope.refreshDesignDetailsForELODesign = function() {
-						$scope.germplasmTotalTestEntriesCount = countNumberOfTestEntries();
-						$scope.germplasmTotalCheckEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalTestEntriesCount;
+						studyEntryService.getStudyEntriesMetadata().then(function (metadata) {
+							$scope.germplasmTotalTestEntriesCount = metadata.testEntriesCount;
+							$scope.germplasmTotalCheckEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalTestEntriesCount;
+						});
 					}
 
 					$scope.refreshDesignDetailsForPRepDesign = function() {
-						$scope.germplasmTotalCheckEntriesCount = countCheckEntries(false);
-						$scope.germplasmTotalTestEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalCheckEntriesCount;
-						var noOfTestEntriesToReplicate = Math.round($scope.germplasmTotalTestEntriesCount * ($scope.data.replicationPercentage / 100));
-						$scope.germplasmTotalNumberOfPlots = ($scope.germplasmTotalTestEntriesCount - noOfTestEntriesToReplicate) +
-							(noOfTestEntriesToReplicate * $scope.data.replicationsCount) +
-							($scope.germplasmTotalCheckEntriesCount * $scope.data.replicationsCount);
-						$scope.germplasmNumberOfPlotsPerBlock = $scope.germplasmTotalNumberOfPlots / $scope.data.blockSize;
-					}
-
-
-					function countNumberOfTestEntries() {
-						var germplasmListDataTable = $('.germplasm-list-items').DataTable();
-
-						if (germplasmListDataTable.rows().length !== 0) {
-
-							var numberOfTestEntries = 0;
-
-							$.each(germplasmListDataTable.rows().data(), function(index, obj) {
-								var entryCheckType = parseInt(obj[ENTRY_TYPE_COLUMN_DATA_KEY]);
-								if (entryCheckType === SYSTEM_DEFINED_ENTRY_TYPE.TEST_ENTRY) {
-									numberOfTestEntries++;
-								}
-							});
-
-							return numberOfTestEntries;
-
-						} else if (TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalCheckCount != null) {
-							// If the germplasmlistDataTable is not yet initialized, we should get the number of check entries of germplasm list in the database
-							// when an existing study is opened / loaded, only if available. experimentalDesign.germplasmTotalCheckCount contains the count of checks stored in the database.
-							return TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalListCount -
-								TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalCheckCount;
-						}
-
-						return 0;
-
-					}
-
-					function countCheckEntries(checkEntryOnly) {
-
-						// When the user changed the entry type of germplasm entries in Germplasm Tab, the changes are not yet saved in the database,
-						// so we can only count the number of checks through DataTable.
-						var germplasmListDataTable = $('.germplasm-list-items').DataTable();
-
-						if (germplasmListDataTable.rows().length !== 0) {
-
-							var numberOfChecksEntries = 0;
-
-							$.each(germplasmListDataTable.rows().data(), function(index, obj) {
-								var currentEntryType = parseInt(obj[ENTRY_TYPE_COLUMN_DATA_KEY]);
-								if (checkEntryOnly && currentEntryType === SYSTEM_DEFINED_ENTRY_TYPE.CHECK_ENTRY) {
-									numberOfChecksEntries++;
-								} else if (currentEntryType !== SYSTEM_DEFINED_ENTRY_TYPE.TEST_ENTRY) {
-									numberOfChecksEntries++;
-								}
-							});
-
-							return numberOfChecksEntries;
-
-						} else if (TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalCheckCount != null) {
-							// If the germplasmlistDataTable is not yet initialized, we should get the number of check entries of germplasm list in the database
-							// when an existing study is opened / loaded, only if available. experimentalDesign.germplasmTotalCheckCount contains the count of checks stored in the database.
-							return TrialManagerDataService.specialSettings.experimentalDesign.germplasmTotalCheckCount;
-						}
-
-						return 0;
-
+						studyEntryService.getStudyEntriesMetadata().then(function (metadata) {
+							$scope.germplasmTotalCheckEntriesCount = metadata.nonTestEntriesCount;
+							$scope.germplasmTotalTestEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalCheckEntriesCount;
+							var noOfTestEntriesToReplicate = Math.round($scope.germplasmTotalTestEntriesCount * ($scope.data.replicationPercentage / 100));
+							$scope.germplasmTotalNumberOfPlots = ($scope.germplasmTotalTestEntriesCount - noOfTestEntriesToReplicate) +
+								(noOfTestEntriesToReplicate * $scope.data.replicationsCount) +
+								($scope.germplasmTotalCheckEntriesCount * $scope.data.replicationsCount);
+							$scope.germplasmNumberOfPlotsPerBlock = $scope.germplasmTotalNumberOfPlots / $scope.data.blockSize;
+						});
 					}
 
 					$scope.showParamsWhenChecksAreSelected = function(designTypeId) {
 						return !(designTypeId === DESIGN_TYPE.ENTRY_LIST_ORDER &&
-							($scope.germplasmTotalTestEntriesCount === $scope.totalGermplasmEntryListCount
+							($scope.germplasmTotalTestEntriesCount === parseInt($scope.totalGermplasmEntryListCount)
 								|| $scope.totalGermplasmEntryListCount === 0  || $scope.totalGermplasmEntryListCount === null));
 					}
 

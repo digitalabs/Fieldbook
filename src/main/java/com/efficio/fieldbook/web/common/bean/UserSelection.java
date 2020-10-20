@@ -14,7 +14,6 @@ package com.efficio.fieldbook.web.common.bean;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import org.generationcp.commons.parsing.pojo.ImportedCrossesList;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
-import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -47,12 +46,6 @@ public class UserSelection implements Serializable {
 
 	/** The field layout random. */
 	private boolean fieldLayoutRandom;
-
-	/** The imported germplasm main info. */
-	private ImportedGermplasmMainInfo importedGermplasmMainInfo;
-
-	/** The imported check germplasm main info. */
-	private ImportedGermplasmMainInfo importedCheckGermplasmMainInfo;
 
 	/** The is import valid. */
 	private boolean isImportValid;
@@ -228,24 +221,6 @@ public class UserSelection implements Serializable {
 	 */
 	public void setImportValid(final boolean isImportValid) {
 		this.isImportValid = isImportValid;
-	}
-
-	/**
-	 * Gets the imported germplasm main info.
-	 *
-	 * @return the imported germplasm main info
-	 */
-	public ImportedGermplasmMainInfo getImportedGermplasmMainInfo() {
-		return this.importedGermplasmMainInfo;
-	}
-
-	/**
-	 * Sets the imported germplasm main info.
-	 *
-	 * @param importedGermplasmMainInfo the new imported germplasm main info
-	 */
-	public void setImportedGermplasmMainInfo(final ImportedGermplasmMainInfo importedGermplasmMainInfo) {
-		this.importedGermplasmMainInfo = importedGermplasmMainInfo;
 	}
 
 	/**
@@ -463,24 +438,6 @@ public class UserSelection implements Serializable {
 	 */
 	public void setTrialEnvironmentValues(final List<List<ValueReference>> trialEnvironmentValues) {
 		this.trialEnvironmentValues = trialEnvironmentValues;
-	}
-
-	/**
-	 * Gets the imported check germplasm main info.
-	 *
-	 * @return the imported check germplasm main info
-	 */
-	public ImportedGermplasmMainInfo getImportedCheckGermplasmMainInfo() {
-		return this.importedCheckGermplasmMainInfo;
-	}
-
-	/**
-	 * Sets the imported check germplasm main info.
-	 *
-	 * @param importedCheckGermplasmMainInfo the new imported check germplasm main info
-	 */
-	public void setImportedCheckGermplasmMainInfo(final ImportedGermplasmMainInfo importedCheckGermplasmMainInfo) {
-		this.importedCheckGermplasmMainInfo = importedCheckGermplasmMainInfo;
 	}
 
 	/**
@@ -1035,13 +992,10 @@ public class UserSelection implements Serializable {
 		if (!(o instanceof UserSelection))
 			return false;
 		final UserSelection that = (UserSelection) o;
-		return isFieldLayoutRandom() == that.isFieldLayoutRandom() && isImportValid() == that.isImportValid()
-			&& getCurrentPageGermplasmList() == that.getCurrentPageGermplasmList() && getCurrentPageCheckGermplasmList() == that
-			.getCurrentPageCheckGermplasmList() && getCurrentPage() == that.getCurrentPage() && Objects
+		return isFieldLayoutRandom() == that.isFieldLayoutRandom() && getCurrentPageGermplasmList() == that.getCurrentPageGermplasmList() &&
+			getCurrentPageCheckGermplasmList() == that.getCurrentPageCheckGermplasmList() && getCurrentPage() == that.getCurrentPage() && Objects
 			.equals(getActualFileName(), that.getActualFileName()) && Objects.equals(getServerFileName(), that.getServerFileName())
-			&& Objects.equals(getImportedGermplasmMainInfo(), that.getImportedGermplasmMainInfo()) && Objects
-			.equals(getImportedCheckGermplasmMainInfo(), that.getImportedCheckGermplasmMainInfo()) && Objects
-			.equals(getStudyDetailsList(), that.getStudyDetailsList()) && Objects
+			&& Objects.equals(getStudyDetailsList(), that.getStudyDetailsList()) && Objects
 			.equals(getStudyLevelConditions(), that.getStudyLevelConditions()) && Objects
 			.equals(getPlotsLevelList(), that.getPlotsLevelList()) && Objects.equals(getBaselineTraitsList(), that.getBaselineTraitsList())
 			&& Objects.equals(getTrialLevelVariableList(), that.getTrialLevelVariableList()) && Objects
@@ -1081,14 +1035,13 @@ public class UserSelection implements Serializable {
 	@Override
 	public int hashCode() {
 
-		return Objects.hash(getActualFileName(), getServerFileName(), isFieldLayoutRandom(), getImportedGermplasmMainInfo(),
-			getImportedCheckGermplasmMainInfo(), isImportValid(), getStudyDetailsList(), getCurrentPageGermplasmList(),
-			getCurrentPageCheckGermplasmList(), getStudyLevelConditions(), getPlotsLevelList(), getBaselineTraitsList(),
-			getTrialLevelVariableList(), getTrialEnvironmentValues(), getImportedAdvancedGermplasmList(), getTraitRefList(),
-			getTreatmentFactors(), getSelectionVariates(), getBasicDetails(), getStudyConditions(), getDeletedStudyLevelConditions(),
-			getDeletedPlotLevelList(), getDeletedBaselineTraitsList(), getDeletedStudyConditions(), getDeletedTrialLevelVariables(),
-			getDeletedTreatmentFactors(), getChangeDetails(), getRemovedFactors(), getRemovedConditions(), getNewTraits(),
-			getNewSelectionVariates(), getWorkbook(), getTemporaryWorkbook(), getDesignImportData(), getCurrentPage(),
+		return Objects.hash(getActualFileName(), getServerFileName(), isFieldLayoutRandom(), getStudyDetailsList(),
+			getCurrentPageGermplasmList(), getCurrentPageCheckGermplasmList(), getStudyLevelConditions(), getPlotsLevelList(),
+			getBaselineTraitsList(), getTrialLevelVariableList(), getTrialEnvironmentValues(), getImportedAdvancedGermplasmList(),
+			getTraitRefList(), getTreatmentFactors(), getSelectionVariates(), getBasicDetails(), getStudyConditions(),
+			getDeletedStudyLevelConditions(), getDeletedPlotLevelList(), getDeletedBaselineTraitsList(), getDeletedStudyConditions(),
+			getDeletedTrialLevelVariables(), getDeletedTreatmentFactors(), getChangeDetails(), getRemovedFactors(), getRemovedConditions(),
+			getNewTraits(),	getNewSelectionVariates(), getWorkbook(), getTemporaryWorkbook(), getDesignImportData(), getCurrentPage(),
 			getMeasurementRowList(), getMeasurementDatasetVariable(), getConstantsWithLabels(), getExpDesignParams(),
 			getExpDesignVariables(), getExperimentalDesignVariables(), getImportedCrossesList(), getImportedCrossesId(), getCrossSettings(),
 			getListId(), getPreviousInventoryDetails(), getStartingPlotNo(), getStudyName(), getStudyDescription(),
@@ -1098,8 +1051,7 @@ public class UserSelection implements Serializable {
 	@Override
 	public String toString() {
 		return "UserSelection{" + "actualFileName='" + actualFileName + '\'' + ", serverFileName='" + serverFileName + '\''
-			+ ", fieldLayoutRandom=" + fieldLayoutRandom + ", importedGermplasmMainInfo=" + importedGermplasmMainInfo
-			+ ", importedCheckGermplasmMainInfo=" + importedCheckGermplasmMainInfo + ", isImportValid=" + isImportValid
+			+ ", fieldLayoutRandom=" + fieldLayoutRandom + ", isImportValid=" + isImportValid
 			+ ", studyDetailsList=" + studyDetailsList + ", currentPageGermplasmList=" + currentPageGermplasmList
 			+ ", currentPageCheckGermplasmList=" + currentPageCheckGermplasmList + ", studyLevelConditions=" + studyLevelConditions
 			+ ", plotsLevelList=" + plotsLevelList + ", baselineTraitsList=" + baselineTraitsList + ", trialLevelVariableList="

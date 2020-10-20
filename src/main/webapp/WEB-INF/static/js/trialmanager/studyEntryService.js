@@ -59,21 +59,6 @@
 			return request.then(successHandler, failureHandler);
 		}
 
-		studyEntryService.addStudyEntryType = function (studyEntryType) {
-			var request = $http.post(BASE_PROGRAM_URL + '/entry-types', studyEntryType);
-			return request.then(successHandler, failureHandler);
-		}
-
-		studyEntryService.updateStudyEntryType = function (studyEntryType) {
-			var request = $http.put(BASE_PROGRAM_URL + '/entry-types', studyEntryType);
-			return request.then(successHandler, failureHandler);
-		}
-
-		studyEntryService.deleteStudyEntryType = function (studyEntryTypeId) {
-			var request = $http.delete(BASE_PROGRAM_URL + '/entry-types/' + studyEntryTypeId);
-			return request.then(successHandler, failureHandler);
-		}
-
 		studyEntryService.getStudyEntriesMetadata = function () {
 			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/entries/metadata');
 			return request.then(successHandler, failureHandler);

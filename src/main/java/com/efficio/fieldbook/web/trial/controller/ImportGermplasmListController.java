@@ -104,7 +104,7 @@ public class ImportGermplasmListController extends SettingsController {
 		this.userSelection.getWorkbook().setOriginalObservations(null);
 		this.userSelection.getWorkbook().setObservations(new ArrayList<>());
 
-		for(MeasurementVariable mv: userSelection.getWorkbook().getFactors()) {
+		for(final MeasurementVariable mv: this.userSelection.getWorkbook().getFactors()) {
 			//Set Factor's Operation to null since it's autosaved
 			mv.setOperation(null);
 		}

@@ -555,6 +555,7 @@
 				};
 
 				$scope.reloadStudyEntryTableData = function() {
+					$scope.selectedItems = [];
 					table().ajax.reload();
 				}
 			}]);

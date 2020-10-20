@@ -486,23 +486,27 @@
 				}
 
 				$scope.onRemoveVariable = function (variableType, variableIds) {
-					var deferred = $q.defer();
-					datasetService.getDatasets([4]).then(function (data) {
-						angular.forEach(data, function (dataset) {
-							datasetService.removeVariables(dataset.datasetId, variableIds).then(function () {
-								deferred.resolve(true);
-								showSuccessfulMessage('', $.germplasmMessages.removeVariableSuccess);
-								$rootScope.navigateToTab('germplasm', {reload: true});
-							}, function (response) {
-								if (response.errors && response.errors.length) {
-									showErrorMessage('', response.errors[0].message);
-								} else {
-									showErrorMessage('', ajaxGenericErrorMsg);
-								}
+					if(variableIds && variableIds.length !== 0) {
+						var deferred = $q.defer();
+						datasetService.getDatasets([4]).then(function (data) {
+							angular.forEach(data, function (dataset) {
+								datasetService.removeVariables(dataset.datasetId, variableIds).then(function () {
+									deferred.resolve(true);
+									showSuccessfulMessage('', $.germplasmMessages.removeVariableSuccess);
+									$rootScope.navigateToTab('germplasm', {reload: true});
+								}, function (response) {
+									if (response.errors && response.errors.length) {
+										showErrorMessage('', response.errors[0].message);
+									} else {
+										showErrorMessage('', ajaxGenericErrorMsg);
+									}
+								});
 							});
 						});
-					});
-					return deferred.promise;
+						return deferred.promise;
+					} else {
+						showAlertMessage('', $.germplasmMessages.removeVariableWarning);
+					}
 				};
 
 				$scope.onAddVariable = function(result, variableType) {

@@ -445,6 +445,8 @@
 
 						}
 					}
+                    //Refresh the germplasm list table
+                    refreshListDetails();
 					service.resetServiceBackup();
 				},
 				onUpdateData: function(dataKey, updateFunction) {

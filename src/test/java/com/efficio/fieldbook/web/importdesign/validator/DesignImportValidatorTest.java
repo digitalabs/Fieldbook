@@ -5,17 +5,12 @@ import com.efficio.fieldbook.web.common.bean.DesignImportData;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
-import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmInitializer;
+import com.efficio.fieldbook.web.data.initializer.ImportedGermplasmMainInfoInitializer;
 import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
-import com.efficio.fieldbook.web.study.germplasm.StudyEntryTransformer;
 import junit.framework.Assert;
-import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
-import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.manager.ontology.api.OntologyScaleDataManager;
-import org.generationcp.middleware.service.api.study.StudyEntryDto;
-import org.generationcp.middleware.service.api.study.StudyEntryService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +20,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -44,12 +38,6 @@ public class DesignImportValidatorTest {
 	@Mock
 	private DesignImportService designImportService;
 
-	@Mock
-	private StudyEntryService studyEntryService;
-
-	@Mock
-	private StudyEntryTransformer studyEntryTransformer;
-
 	@InjectMocks
 	private DesignImportValidator designImportValidator;
 
@@ -59,14 +47,14 @@ public class DesignImportValidatorTest {
 	public void setUp() throws DesignValidationException {
 		this.designImportData = DesignImportTestDataInitializer.createDesignImportData(1, 1);
 
-		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
-		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
-		final StudyEntryDto studyEntryDto = Mockito.mock(StudyEntryDto.class);
-		final List<StudyEntryDto> studyEntries = Collections.singletonList(studyEntryDto);
-		workbook.getStudyDetails().setId(1);
-		Mockito.when(this.studyEntryService.getStudyEntries(workbook.getStudyDetails().getId())).thenReturn(studyEntries);
-		Mockito.when(this.studyEntryTransformer.tranformToImportedGermplasm(studyEntries))
-			.thenReturn(ImportedGermplasmInitializer.createImportedGermplasmList());
+		Mockito.doReturn(ImportedGermplasmMainInfoInitializer.createImportedGermplasmMainInfo()).when(this.userSelection)
+			.getImportedGermplasmMainInfo();
+
+		final DesignHeaderItem trialInstanceHeaderItem = DesignImportTestDataInitializer
+			.filterDesignHeaderItemsByTermId(
+				TermId.TRIAL_INSTANCE_FACTOR,
+				this.designImportData.getMappedHeaders().get(PhenotypicType.TRIAL_ENVIRONMENT));
+
 		final DesignHeaderItem headerItem = DesignImportTestDataInitializer
 			.filterDesignHeaderItemsByTermId(TermId.ENTRY_NO, this.designImportData.getMappedHeaders().get(PhenotypicType.GERMPLASM));
 		Mockito.doReturn(headerItem).when(this.designImportService).validateIfStandardVariableExists(

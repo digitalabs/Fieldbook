@@ -454,6 +454,9 @@ public class CreateTrialController extends BaseTrialController {
 			if (this.userSelection.getTemporaryWorkbook() != null) {
 				this.userSelection.setTemporaryWorkbook(null);
 			}
+			if (this.userSelection.getImportedGermplasmMainInfo() != null) {
+				this.userSelection.setImportedGermplasmMainInfo(null);
+			}
 		} catch (final MiddlewareException e) {
 			CreateTrialController.LOG.error(e.getMessage(), e);
 		}

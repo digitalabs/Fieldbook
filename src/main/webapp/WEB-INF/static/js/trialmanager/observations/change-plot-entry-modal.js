@@ -390,9 +390,7 @@
 			}
 
 			function getFilter() {
-				var variableId = $scope.nested.selectedVariableFilter && $scope.nested.selectedVariableFilter.termId;
 				return {
-					variableId: variableId,
 					filterColumns: [],
 					filteredValues: $scope.columnsObj.columns.reduce(function (map, column) {
 						var columnData = column.columnData;

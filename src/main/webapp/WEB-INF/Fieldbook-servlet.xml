@@ -128,11 +128,7 @@
 		  init-method="init">
 		<constructor-arg value="${upload.directory}" />
 	</bean>
-
-	<bean id="importGermplasmfileService"
-		class="com.efficio.fieldbook.web.trial.service.impl.ImportGermplasmFileServiceImpl" />
-
-
+	
 	<bean id="crossingService"
 		class="com.efficio.fieldbook.web.common.service.impl.CrossingServiceImpl" />
 

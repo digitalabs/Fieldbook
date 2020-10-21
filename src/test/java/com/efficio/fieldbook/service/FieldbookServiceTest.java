@@ -2,22 +2,15 @@
 package com.efficio.fieldbook.service;
 
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.utils.test.WorkbookTestUtil;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.PossibleValuesCache;
-import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
-import com.google.inject.matcher.Matchers;
 import org.apache.commons.lang.RandomStringUtils;
 import org.generationcp.commons.constant.AppConstants;
-import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
-import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.LocationTestDataInitializer;
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.MethodTestDataInitializer;
 import org.generationcp.middleware.data.initializer.StandardVariableTestDataInitializer;
-import org.generationcp.middleware.data.initializer.ValueReferenceTestDataInitializer;
 import org.generationcp.middleware.data.initializer.VariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -27,12 +20,9 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
-import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.Variable;
-import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -40,9 +30,6 @@ import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.Method;
-import org.generationcp.middleware.pojos.Person;
-import org.generationcp.middleware.pojos.workbench.CropType;
-import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.service.api.user.UserService;
@@ -67,32 +54,7 @@ public class FieldbookServiceTest {
 	private static final String METHOD_DESCRIPTION = "Method Description 5";
 	private static final String LOCATION_NAME = "Loc1";
 	private static final String PROGRAMUUID = "1000001";
-	private static final String CHECK = "CHECK";
-	private static final String DESIG = "DESIG";
-	private static final String CATEGORICAL_VARIABLE = "Categorical variable";
-	private static final String CODE = "Code";
-	private static final int CODE_ID = 6050;
-	private static final String ASSIGNED = "Assigned";
-	private static final int ASSIGNED_ID = 4030;
-	private static final String ED_CHECK_PLAN = "ED - Check Plan";
-	private static final int CHECK_PLAN_PROPERTY_ID = 2155;
-	private static final int CHECK_INTERVAL_PROPERTY_ID = 2154;
-	private static final String ED_CHECK_INTERVAL = "ED - Check Interval";
-	private static final String CHECK_INTERVAL = "CHECK_INTERVAL";
-	private static final String CHECK_START = "CHECK_START";
-	private static final String STUDY_DESIGN = "Study Design";
-	private static final int STUDY_DESIGN_ID = 1100;
-	private static final String STUDY_ENVIRONMENT_INFORMATION = "Study Environment Information";
-	private static final int ENV_ID = 1020;
-	private static final String NUMERIC_VARIABLE = "Numeric variable";
-	private static final String FIELD_STUDY = "Field study";
-	private static final int FIELD_STUDY_ID = 4100;
-	private static final String NUMBER = "Number";
-	private static final int NUMBER_ID = 6040;
-	private static final String ED_CHECK_START = "ED - Check Start";
-	private static final int CHECK_START_PROPERTY_ID = 2153;
-	private static final long PROJECT_ID = 1L;
-	private static final String DUMMY_UNIQUE_ID = "1234567890";
+
 	@Mock
 	private ContextUtil contextUtil;
 
@@ -124,7 +86,7 @@ public class FieldbookServiceTest {
 		allLocation.add(LocationTestDataInitializer.createLocation(2, "Loc2", null));
 		Mockito.when(this.fieldbookMiddlewareService.getLocationsByProgramUUID(FieldbookServiceTest.PROGRAMUUID))
 				.thenReturn(allLocation);
-		Mockito.when(this.fieldbookMiddlewareService.getAllBreedingLocations()).thenReturn(new ArrayList<Location>());
+		Mockito.when(this.fieldbookMiddlewareService.getAllBreedingLocations()).thenReturn(new ArrayList<>());
 
 		this.fieldbookServiceImpl.setFieldbookMiddlewareService(this.fieldbookMiddlewareService);
 		this.fieldbookServiceImpl.setOntologyService(this.ontologyService);
@@ -147,58 +109,6 @@ public class FieldbookServiceTest {
 		this.nonLocationVariable.setPossibleValues(possibleValues);
 
 		this.fieldbookServiceImpl.setContextUtil(this.contextUtil);
-		this.setUpStandardVariablesForChecks();
-	}
-
-	private void setUpStandardVariablesForChecks() throws MiddlewareException {
-		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_START.getId(),
-				FieldbookServiceTest.PROGRAMUUID))
-				.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(
-						new Term(FieldbookServiceTest.CHECK_START_PROPERTY_ID, FieldbookServiceTest.ED_CHECK_START,
-								FieldbookServiceTest.ED_CHECK_START),
-						new Term(FieldbookServiceTest.NUMBER_ID, FieldbookServiceTest.NUMBER,
-								FieldbookServiceTest.NUMBER),
-						new Term(FieldbookServiceTest.FIELD_STUDY_ID, FieldbookServiceTest.FIELD_STUDY,
-								FieldbookServiceTest.FIELD_STUDY),
-						new Term(TermId.NUMERIC_VARIABLE.getId(), FieldbookServiceTest.NUMERIC_VARIABLE,
-								FieldbookServiceTest.NUMERIC_VARIABLE),
-						new Term(FieldbookServiceTest.ENV_ID, FieldbookServiceTest.STUDY_ENVIRONMENT_INFORMATION,
-								FieldbookServiceTest.STUDY_ENVIRONMENT_INFORMATION),
-						new Term(FieldbookServiceTest.STUDY_DESIGN_ID, FieldbookServiceTest.STUDY_DESIGN,
-								FieldbookServiceTest.STUDY_DESIGN),
-						PhenotypicType.TRIAL_ENVIRONMENT, TermId.CHECK_START.getId(),
-						FieldbookServiceTest.CHECK_START));
-		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_INTERVAL.getId(),
-				FieldbookServiceTest.PROGRAMUUID))
-				.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(
-						new Term(FieldbookServiceTest.CHECK_INTERVAL_PROPERTY_ID,
-								FieldbookServiceTest.ED_CHECK_INTERVAL, FieldbookServiceTest.ED_CHECK_INTERVAL),
-						new Term(FieldbookServiceTest.NUMBER_ID, FieldbookServiceTest.NUMBER,
-								FieldbookServiceTest.NUMBER),
-						new Term(FieldbookServiceTest.FIELD_STUDY_ID, FieldbookServiceTest.FIELD_STUDY,
-								FieldbookServiceTest.FIELD_STUDY),
-						new Term(TermId.NUMERIC_VARIABLE.getId(), FieldbookServiceTest.NUMERIC_VARIABLE,
-								FieldbookServiceTest.NUMERIC_VARIABLE),
-						new Term(FieldbookServiceTest.ENV_ID, FieldbookServiceTest.STUDY_ENVIRONMENT_INFORMATION,
-								FieldbookServiceTest.STUDY_ENVIRONMENT_INFORMATION),
-						new Term(1100, FieldbookServiceTest.STUDY_DESIGN, FieldbookServiceTest.STUDY_DESIGN),
-						PhenotypicType.TRIAL_ENVIRONMENT, TermId.CHECK_INTERVAL.getId(),
-						FieldbookServiceTest.CHECK_INTERVAL));
-		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(TermId.CHECK_PLAN.getId(),
-				FieldbookServiceTest.PROGRAMUUID))
-				.thenReturn(StandardVariableTestDataInitializer.createStandardVariable(
-						new Term(FieldbookServiceTest.CHECK_PLAN_PROPERTY_ID, FieldbookServiceTest.ED_CHECK_PLAN,
-								FieldbookServiceTest.ED_CHECK_PLAN),
-						new Term(FieldbookServiceTest.CODE_ID, FieldbookServiceTest.CODE, FieldbookServiceTest.CODE),
-						new Term(FieldbookServiceTest.ASSIGNED_ID, FieldbookServiceTest.ASSIGNED,
-								FieldbookServiceTest.ASSIGNED),
-						new Term(TermId.CATEGORICAL_VARIABLE.getId(), FieldbookServiceTest.CATEGORICAL_VARIABLE,
-								FieldbookServiceTest.CATEGORICAL_VARIABLE),
-						new Term(FieldbookServiceTest.ENV_ID, FieldbookServiceTest.STUDY_ENVIRONMENT_INFORMATION,
-								FieldbookServiceTest.STUDY_ENVIRONMENT_INFORMATION),
-						new Term(FieldbookServiceTest.STUDY_DESIGN_ID, FieldbookServiceTest.STUDY_DESIGN,
-								FieldbookServiceTest.STUDY_DESIGN),
-						PhenotypicType.TRIAL_ENVIRONMENT, TermId.CHECK_PLAN.getId(), "CHECK_PLAN"));
 	}
 
 	@Test
@@ -260,229 +170,6 @@ public class FieldbookServiceTest {
 		Assert.assertEquals("There should be 1 record as per our test data", 5, resultPossibleValues.size());
 		Assert.assertEquals("First possible value should have an id of 200 as per our test data", Integer.valueOf(0),
 				resultPossibleValues.get(0).getId());
-	}
-
-	@Test
-	public void testManageCheckVariablesWhenCheckGermplasmMainInfoIsNull() {
-		// prepare test data
-		final UserSelection userSelection = new UserSelection();
-		final ImportGermplasmListForm form = new ImportGermplasmListForm();
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
-
-		userSelection.setImportedCheckGermplasmMainInfo(null);
-		userSelection.setWorkbook(workbook);
-		form.setImportedCheckGermplasm(new ArrayList<ImportedGermplasm>());
-
-		try {
-			this.fieldbookServiceImpl.manageCheckVariables(userSelection, form);
-		} catch (final MiddlewareException e) {
-			Assert.fail("Epected mocked class but original method was called.");
-		}
-
-		Assert.assertFalse("Expected no check variables in the conditions but found one.",
-				this.fieldbookServiceImpl.hasCheckVariables(userSelection.getWorkbook().getConditions()));
-	}
-
-	@Test
-	public void testManageCheckVariablesWhenImportedCheckGermplasmIsNull() {
-		// prepare test data
-		final UserSelection userSelection = new UserSelection();
-		final ImportGermplasmListForm form = new ImportGermplasmListForm();
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
-
-		userSelection.setImportedCheckGermplasmMainInfo(new ImportedGermplasmMainInfo());
-		userSelection.setWorkbook(workbook);
-		form.setImportedCheckGermplasm(null);
-
-		try {
-			this.fieldbookServiceImpl.manageCheckVariables(userSelection, form);
-		} catch (final MiddlewareException e) {
-			Assert.fail("Epected mocked class but original method was called.");
-		}
-
-		Assert.assertFalse("Expected no check variables in the conditions but found one.",
-				this.fieldbookServiceImpl.hasCheckVariables(userSelection.getWorkbook().getConditions()));
-	}
-
-	@Test
-	public void testManageCheckVariablesForAdd() {
-		// prepare test data
-		final UserSelection userSelection = new UserSelection();
-		final ImportGermplasmListForm form = new ImportGermplasmListForm();
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
-
-		userSelection.setImportedCheckGermplasmMainInfo(new ImportedGermplasmMainInfo());
-		userSelection.setWorkbook(workbook);
-		form.setImportedCheckGermplasm(this.createImportedCheckGermplasmData());
-		form.setCheckVariables(WorkbookTestUtil.createCheckVariables());
-
-		try {
-			this.fieldbookServiceImpl.manageCheckVariables(userSelection, form);
-		} catch (final MiddlewareException e) {
-			Assert.fail("Epected mocked class but original method was called.");
-		}
-
-		Assert.assertTrue("Expected check variables in the conditions but none.",
-				this.fieldbookServiceImpl.hasCheckVariables(userSelection.getWorkbook().getConditions()));
-	}
-
-	private List<ImportedGermplasm> createImportedCheckGermplasmData() {
-		final List<ImportedGermplasm> importedGermplasms = new ArrayList<>();
-		importedGermplasms.add(new ImportedGermplasm(1, FieldbookServiceTest.DESIG, FieldbookServiceTest.CHECK));
-		return importedGermplasms;
-	}
-
-	@Test
-	public void testManageCheckVariablesForUpdate() {
-		// prepare test data
-		final UserSelection userSelection = new UserSelection();
-		final ImportGermplasmListForm form = new ImportGermplasmListForm();
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
-		WorkbookDataUtil.createStudyObservations(1, workbook);
-		try {
-			userSelection.setImportedCheckGermplasmMainInfo(new ImportedGermplasmMainInfo());
-			userSelection.setWorkbook(workbook);
-			form.setImportedCheckGermplasm(this.createImportedCheckGermplasmData());
-			form.setCheckVariables(WorkbookTestUtil.createCheckVariables());
-
-			this.fieldbookServiceImpl.manageCheckVariables(userSelection, form);
-		} catch (final MiddlewareException e) {
-			Assert.fail("Expected mocked class but original method was called.");
-		}
-
-		Assert.assertTrue("Expected check variables in the conditions but found none.",
-				this.fieldbookServiceImpl.hasCheckVariables(userSelection.getWorkbook().getConditions()));
-
-		Assert.assertTrue("Expected check variable values were updated but weren't.",
-				this.areCheckVariableValuesUpdated(userSelection.getWorkbook().getConditions()));
-	}
-
-	@Test
-	public void testManageCheckVariablesForUpdateWithNoStudyObservations() {
-		// prepare test data
-		final UserSelection userSelection = new UserSelection();
-		final ImportGermplasmListForm form = new ImportGermplasmListForm();
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
-		workbook.setTrialObservations(null);
-		try {
-			this.addCheckVariables(workbook.getConditions());
-
-			userSelection.setImportedCheckGermplasmMainInfo(new ImportedGermplasmMainInfo());
-			userSelection.setWorkbook(workbook);
-			form.setImportedCheckGermplasm(this.createImportedCheckGermplasmData());
-			form.setCheckVariables(WorkbookTestUtil.createCheckVariables());
-
-			this.fieldbookServiceImpl.manageCheckVariables(userSelection, form);
-		} catch (final MiddlewareException e) {
-			Assert.fail("Epected mocked class but original method was called.");
-		}
-
-		Assert.assertTrue("Expected check variables in the conditions but found none.",
-				this.fieldbookServiceImpl.hasCheckVariables(userSelection.getWorkbook().getConditions()));
-
-		Assert.assertTrue("Expected check variable values were updated but weren't.",
-				this.areCheckVariableValuesUpdated(userSelection.getWorkbook().getConditions()));
-	}
-
-	private boolean areCheckVariableValuesUpdated(final List<MeasurementVariable> conditions) {
-		for (final MeasurementVariable var : conditions) {
-			if (var.getTermId() == TermId.CHECK_START.getId() && !"1".equals(var.getValue())
-					|| var.getTermId() == TermId.CHECK_INTERVAL.getId() && !"4".equals(var.getValue())
-					|| var.getTermId() == TermId.CHECK_PLAN.getId() && !"8414".equals(var.getValue())) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	private void addCheckVariables(final List<MeasurementVariable> conditions) throws MiddlewareException {
-		conditions.add(this.fieldbookServiceImpl.createMeasurementVariable(String.valueOf(TermId.CHECK_START.getId()),
-				"2", Operation.UPDATE, VariableType.ENVIRONMENT_DETAIL.getRole()));
-		conditions
-				.add(this.fieldbookServiceImpl.createMeasurementVariable(String.valueOf(TermId.CHECK_INTERVAL.getId()),
-						"3", Operation.UPDATE, VariableType.ENVIRONMENT_DETAIL.getRole()));
-		conditions.add(this.fieldbookServiceImpl.createMeasurementVariable(String.valueOf(TermId.CHECK_PLAN.getId()),
-				"8415", Operation.UPDATE, VariableType.ENVIRONMENT_DETAIL.getRole()));
-	}
-
-	@Test
-	public void testManageCheckVariablesForDelete() {
-		// prepare test data
-		final UserSelection userSelection = new UserSelection();
-		final ImportGermplasmListForm form = new ImportGermplasmListForm();
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
-
-		try {
-			this.addCheckVariables(workbook.getConditions());
-
-			userSelection.setImportedCheckGermplasmMainInfo(new ImportedGermplasmMainInfo());
-			userSelection.setWorkbook(workbook);
-			form.setImportedCheckGermplasm(new ArrayList<ImportedGermplasm>());
-			form.setCheckVariables(WorkbookTestUtil.createCheckVariables());
-
-			this.fieldbookServiceImpl.manageCheckVariables(userSelection, form);
-		} catch (final MiddlewareException e) {
-			Assert.fail("Epected mocked class but original method was called.");
-		}
-
-		Assert.assertTrue("Expected check variables to have delete operation but found Add/Update.",
-				this.areOperationsDelete(userSelection.getWorkbook().getConditions()));
-	}
-
-	private boolean areOperationsDelete(final List<MeasurementVariable> conditions) {
-		for (final MeasurementVariable var : conditions) {
-			if (var.getTermId() == TermId.CHECK_START.getId() && !Operation.DELETE.equals(var.getOperation())
-					|| var.getTermId() == TermId.CHECK_INTERVAL.getId() && !Operation.DELETE.equals(var.getOperation())
-					|| var.getTermId() == TermId.CHECK_PLAN.getId() && !Operation.DELETE.equals(var.getOperation())) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	@Test
-	public void testManageCheckVariablesForNoOperation() {
-		// prepare test data
-		final UserSelection userSelection = new UserSelection();
-		final ImportGermplasmListForm form = new ImportGermplasmListForm();
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
-
-		userSelection.setImportedCheckGermplasmMainInfo(new ImportedGermplasmMainInfo());
-		userSelection.setWorkbook(workbook);
-		form.setImportedCheckGermplasm(new ArrayList<ImportedGermplasm>());
-
-		try {
-			this.fieldbookServiceImpl.manageCheckVariables(userSelection, form);
-		} catch (final MiddlewareException e) {
-			Assert.fail("Epected mocked class but original method was called.");
-		}
-
-		Assert.assertFalse("Expected no check variables in the conditions but found one.",
-				this.fieldbookServiceImpl.hasCheckVariables(userSelection.getWorkbook().getConditions()));
-	}
-
-	@Test
-	public void testCheckingOfCheckVariablesIfConditionsIsNotNullAndNotEmpty() {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
-
-		Assert.assertFalse("Expected no check variables in the conditions but found one.",
-				this.fieldbookServiceImpl.hasCheckVariables(workbook.getConditions()));
-	}
-
-	@Test
-	public void testCheckingOfCheckVariablesIfConditionsIsNotNullButEmpty() {
-		final List<MeasurementVariable> conditions = new ArrayList<>();
-
-		Assert.assertFalse("Expected no check variables in the conditions but found one.",
-				this.fieldbookServiceImpl.hasCheckVariables(conditions));
-	}
-
-	@Test
-	public void testCheckingOfCheckVariablesIfConditionsIsNullAndEmpty() {
-		final List<MeasurementVariable> conditions = null;
-
-		Assert.assertFalse("Expected no check variables in the conditions but found one.",
-				this.fieldbookServiceImpl.hasCheckVariables(conditions));
 	}
 
 	@Test
@@ -608,9 +295,9 @@ public class FieldbookServiceTest {
 		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, new StudyTypeDto("T"), "Sample Study", 1,
 				false);
 		// Set lists to empty lists for easier testing
-		workbook.setConditions(new ArrayList<MeasurementVariable>());
-		workbook.setFactors(new ArrayList<MeasurementVariable>());
-		workbook.getObservations().get(0).setDataList(new ArrayList<MeasurementData>());
+		workbook.setConditions(new ArrayList<>());
+		workbook.setFactors(new ArrayList<>());
+		workbook.getObservations().get(0).setDataList(new ArrayList<>());
 
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(ArgumentMatchers.eq(TermId.OBS_UNIT_ID.getId()),
 			ArgumentMatchers.anyString()))
@@ -632,9 +319,9 @@ public class FieldbookServiceTest {
 		final Workbook workbook = WorkbookTestDataInitializer.createTestWorkbook(1, new StudyTypeDto("T"), "Sample Study", 1,
 				false);
 		// Set lists to empty lists for easier testing
-		workbook.setConditions(new ArrayList<MeasurementVariable>());
-		workbook.setFactors(new ArrayList<MeasurementVariable>());
-		workbook.getObservations().get(0).setDataList(new ArrayList<MeasurementData>());
+		workbook.setConditions(new ArrayList<>());
+		workbook.setFactors(new ArrayList<>());
+		workbook.getObservations().get(0).setDataList(new ArrayList<>());
 
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(ArgumentMatchers.eq(TermId.OBS_UNIT_ID.getId()),
 			ArgumentMatchers.anyString()))
@@ -664,7 +351,7 @@ public class FieldbookServiceTest {
 
 		final List<MeasurementRow> measurementRows = new ArrayList<>();
 		final MeasurementRow measurementRow = new MeasurementRow();
-		measurementRow.setDataList(new ArrayList<MeasurementData>());
+		measurementRow.setDataList(new ArrayList<>());
 		measurementRows.add(measurementRow);
 
 		this.fieldbookServiceImpl.addMeasurementVariableToMeasurementRows(measurementVariableToAdd, measurementRows);
@@ -740,7 +427,7 @@ public class FieldbookServiceTest {
 
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(
                 TermId.PI_NAME.getId(), this.contextUtil.getCurrentProgramUUID())).thenReturn(piName);
-		this.fieldbookServiceImpl.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<SettingDetail>(),
+		this.fieldbookServiceImpl.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<>(),
 				AppConstants.ID_NAME_COMBINATION.getString(), true);
 
 		Assert.assertEquals(2, userSelection.getWorkbook().getConditions().size());
@@ -759,7 +446,7 @@ public class FieldbookServiceTest {
 
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(
                 TermId.PI_NAME.getId(), this.contextUtil.getCurrentProgramUUID())).thenReturn(piName);
-		this.fieldbookServiceImpl.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<SettingDetail>(),
+		this.fieldbookServiceImpl.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<>(),
 				AppConstants.ID_NAME_COMBINATION.getString(), true);
 
 		Assert.assertEquals(2, userSelection.getWorkbook().getConditions().size());
@@ -778,7 +465,7 @@ public class FieldbookServiceTest {
 
 		Mockito.when(this.fieldbookMiddlewareService.getStandardVariable(
                 TermId.PI_NAME.getId(), this.contextUtil.getCurrentProgramUUID())).thenReturn(piName);
-		this.fieldbookServiceImpl.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<SettingDetail>(),
+		this.fieldbookServiceImpl.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList<>(),
 				AppConstants.ID_NAME_COMBINATION.getString(), true);
 		//Pair Name variable not added
 		Assert.assertEquals(1, userSelection.getWorkbook().getConditions().size());

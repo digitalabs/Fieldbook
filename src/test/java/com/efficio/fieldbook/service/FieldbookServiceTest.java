@@ -2,7 +2,6 @@
 package com.efficio.fieldbook.service;
 
 import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.PossibleValuesCache;
 import org.apache.commons.lang.RandomStringUtils;
@@ -171,32 +170,6 @@ public class FieldbookServiceTest {
 		Assert.assertEquals("There should be 1 record as per our test data", 5, resultPossibleValues.size());
 		Assert.assertEquals("First possible value should have an id of 200 as per our test data", Integer.valueOf(0),
 				resultPossibleValues.get(0).getId());
-	}
-
-
-
-	@Test
-	public void testCheckingOfCheckVariablesIfConditionsIsNotNullAndNotEmpty() {
-		final Workbook workbook = WorkbookDataUtil.getTestWorkbook(10, new StudyTypeDto("N"));
-
-		Assert.assertFalse("Expected no check variables in the conditions but found one.",
-				this.fieldbookServiceImpl.hasCheckVariables(workbook.getConditions()));
-	}
-
-	@Test
-	public void testCheckingOfCheckVariablesIfConditionsIsNotNullButEmpty() {
-		final List<MeasurementVariable> conditions = new ArrayList<>();
-
-		Assert.assertFalse("Expected no check variables in the conditions but found one.",
-				this.fieldbookServiceImpl.hasCheckVariables(conditions));
-	}
-
-	@Test
-	public void testCheckingOfCheckVariablesIfConditionsIsNullAndEmpty() {
-		final List<MeasurementVariable> conditions = null;
-
-		Assert.assertFalse("Expected no check variables in the conditions but found one.",
-				this.fieldbookServiceImpl.hasCheckVariables(conditions));
 	}
 
 	@Test

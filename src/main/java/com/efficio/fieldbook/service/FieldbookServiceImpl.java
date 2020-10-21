@@ -15,9 +15,7 @@ import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.PossibleValuesCache;
-import com.efficio.fieldbook.web.trial.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -337,7 +335,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		} else if (DataType.CATEGORICAL_VARIABLE.equals(variable.getScale().getDataType())) {
 			possibleValues = this.possibleValuesCache.getPossibleValues(variable.getId());
 		}
-		return possibleValues != null ? possibleValues : new ArrayList<ValueReference>();
+		return possibleValues != null ? possibleValues : new ArrayList<>();
 	}
 
 	private List<Location> getAllBreedingLocationsByUniqueID(final String programUUID) {
@@ -1030,7 +1028,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	@Override
 	public List<ValueReference> getVariablePossibleValues(final MeasurementVariable var) {
-		List<ValueReference> possibleValues = new ArrayList<>();
+		List<ValueReference> possibleValues;
 		// we need to get all possible values so we can check the favorites as
 		// well, since if we depend on the variable possible values, its
 		// already filtered, so it can be wrong
@@ -1040,99 +1038,6 @@ public class FieldbookServiceImpl implements FieldbookService {
 			possibleValues = var.getPossibleValues();
 		}
 		return possibleValues;
-	}
-
-	private void setMeasurementDataInList(final MeasurementRow row, final ImportGermplasmListForm form) {
-		if (row.getDataList() != null) {
-			for (final MeasurementData data : row.getDataList()) {
-				if (AppConstants.CHECK_VARIABLES.getString()
-					.contains(String.valueOf(data.getMeasurementVariable().getTermId()))) {
-					this.setMeasurementData(data, form, data.getMeasurementVariable().getTermId());
-				}
-			}
-		}
-	}
-
-	private void setMeasurementData(final MeasurementData data, final ImportGermplasmListForm form, final int id) {
-		data.setValue(SettingsUtil.getSettingDetailValue(form.getCheckVariables(), id));
-		if (data.getMeasurementVariable().getDataTypeId().equals(TermId.CATEGORICAL_VARIABLE.getId())) {
-			data.setcValueId(data.getValue());
-		}
-	}
-
-	private void addCheckVariables(final List<MeasurementVariable> conditions, final ImportGermplasmListForm form) {
-		conditions.add(this.createMeasurementVariable(String.valueOf(TermId.CHECK_START.getId()),
-			SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_START.getId()), Operation.ADD,
-			VariableType.ENVIRONMENT_DETAIL.getRole()));
-		conditions.add(this.createMeasurementVariable(String.valueOf(TermId.CHECK_INTERVAL.getId()),
-			SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_INTERVAL.getId()),
-			Operation.ADD, VariableType.ENVIRONMENT_DETAIL.getRole()));
-		conditions.add(this.createMeasurementVariable(String.valueOf(TermId.CHECK_PLAN.getId()),
-			SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_PLAN.getId()), Operation.ADD,
-			VariableType.ENVIRONMENT_DETAIL.getRole()));
-	}
-
-	private void updateCheckVariables(final List<MeasurementVariable> conditions, final ImportGermplasmListForm form) {
-		if (conditions != null && !conditions.isEmpty()) {
-			for (final MeasurementVariable var : conditions) {
-				if (var.getTermId() == TermId.CHECK_START.getId()) {
-					var.setValue(
-						SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_START.getId()));
-				} else if (var.getTermId() == TermId.CHECK_INTERVAL.getId()) {
-					var.setValue(SettingsUtil.getSettingDetailValue(
-						form.getCheckVariables(),
-						TermId.CHECK_INTERVAL.getId()));
-				} else if (var.getTermId() == TermId.CHECK_PLAN.getId()) {
-					var.setValue(
-						SettingsUtil.getSettingDetailValue(form.getCheckVariables(), TermId.CHECK_PLAN.getId()));
-				}
-			}
-		}
-	}
-
-	private void deleteCheckVariables(final List<MeasurementVariable> conditions) {
-		final String checkVariables = AppConstants.CHECK_VARIABLES.getString();
-		if (checkVariables != null && !checkVariables.isEmpty()) {
-			final StringTokenizer tokenizer = new StringTokenizer(checkVariables, ",");
-			if (tokenizer.hasMoreTokens()) {
-				while (tokenizer.hasMoreTokens()) {
-					this.setCheckVariableToDelete(tokenizer.nextToken(), conditions);
-				}
-			}
-		}
-	}
-
-	private void setCheckVariableToDelete(final String id, final List<MeasurementVariable> conditions) {
-		if (conditions != null && !conditions.isEmpty()) {
-			for (final MeasurementVariable var : conditions) {
-				if (var.getTermId() == Integer.parseInt(id)) {
-					var.setOperation(Operation.DELETE);
-				}
-			}
-		}
-	}
-
-	protected boolean hasCheckVariables(final List<MeasurementVariable> conditions) {
-		if (conditions != null && !conditions.isEmpty()) {
-			for (final MeasurementVariable var : conditions) {
-				if (this.isCheckVariable(var.getTermId())) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	private boolean isCheckVariable(final int termId) {
-		final StringTokenizer tokenizer = new StringTokenizer(AppConstants.CHECK_VARIABLES.getString(), ",");
-		if (tokenizer.hasMoreTokens()) {
-			while (tokenizer.hasMoreTokens()) {
-				if (Integer.parseInt(tokenizer.nextToken()) == termId) {
-					return true;
-				}
-			}
-		}
-		return false;
 	}
 
 

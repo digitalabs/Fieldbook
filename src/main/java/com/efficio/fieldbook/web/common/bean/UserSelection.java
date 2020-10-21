@@ -894,7 +894,7 @@ public class UserSelection implements Serializable {
 	}
 
 	public Integer getStartingPlotNo() {
-		return startingPlotNo;
+		return this.startingPlotNo;
 	}
 
 	public void setStartingPlotNo(final Integer startingPlotNo) {
@@ -906,7 +906,7 @@ public class UserSelection implements Serializable {
 	}
 
 	public boolean isFieldLayoutRandom() {
-		return fieldLayoutRandom;
+		return this.fieldLayoutRandom;
 	}
 
 	public void setFieldLayoutRandom(final boolean fieldLayoutRandom) {
@@ -914,7 +914,7 @@ public class UserSelection implements Serializable {
 	}
 
 	public List<InventoryDetails> getPreviousInventoryDetails() {
-		return previousInventoryDetails;
+		return this.previousInventoryDetails;
 	}
 
 	public void setPreviousInventoryDetails(final List<InventoryDetails> previousInventoryDetails) {
@@ -922,7 +922,7 @@ public class UserSelection implements Serializable {
 	}
 
 	public String getStudyName() {
-		return studyName;
+		return this.studyName;
 	}
 
 	public void setStudyName(final String studyName) {
@@ -930,7 +930,7 @@ public class UserSelection implements Serializable {
 	}
 
 	public String getStudyDescription() {
-		return studyDescription;
+		return this.studyDescription;
 	}
 
 	public void setStudyDescription(final String studyDescription) {
@@ -938,7 +938,7 @@ public class UserSelection implements Serializable {
 	}
 
 	public String getStudyObjective() {
-		return studyObjective;
+		return this.studyObjective;
 	}
 
 	public void setStudyObjective(final String studyObjective) {
@@ -946,7 +946,7 @@ public class UserSelection implements Serializable {
 	}
 
 	public String getStudyStartDate() {
-		return studyStartDate;
+		return this.studyStartDate;
 	}
 
 	public void setStudyStartDate(final String studyStartDate) {
@@ -954,7 +954,7 @@ public class UserSelection implements Serializable {
 	}
 
 	public String getStudyEndDate() {
-		return studyEndDate;
+		return this.studyEndDate;
 	}
 
 	public void setStudyEndDate(final String studyEndDate) {
@@ -962,7 +962,7 @@ public class UserSelection implements Serializable {
 	}
 
 	public String getStudyUpdate() {
-		return studyUpdate;
+		return this.studyUpdate;
 	}
 
 	public void setStudyUpdate(final String studyUpdate) {
@@ -970,7 +970,7 @@ public class UserSelection implements Serializable {
 	}
 
 	public String getStudyType() {
-		return studyType;
+		return this.studyType;
 	}
 
 	public void setStudyType(final String studyType) {
@@ -978,7 +978,7 @@ public class UserSelection implements Serializable {
 	}
 
 	public String getCreatedBy() {
-		return createdBy;
+		return this.createdBy;
 	}
 
 	public void setCreatedBy(final String createdBy) {
@@ -992,86 +992,103 @@ public class UserSelection implements Serializable {
 		if (!(o instanceof UserSelection))
 			return false;
 		final UserSelection that = (UserSelection) o;
-		return isFieldLayoutRandom() == that.isFieldLayoutRandom() && getCurrentPageGermplasmList() == that.getCurrentPageGermplasmList() &&
-			getCurrentPageCheckGermplasmList() == that.getCurrentPageCheckGermplasmList() && getCurrentPage() == that.getCurrentPage() && Objects
-			.equals(getActualFileName(), that.getActualFileName()) && Objects.equals(getServerFileName(), that.getServerFileName())
-			&& Objects.equals(getStudyDetailsList(), that.getStudyDetailsList()) && Objects
-			.equals(getStudyLevelConditions(), that.getStudyLevelConditions()) && Objects
-			.equals(getPlotsLevelList(), that.getPlotsLevelList()) && Objects.equals(getBaselineTraitsList(), that.getBaselineTraitsList())
-			&& Objects.equals(getTrialLevelVariableList(), that.getTrialLevelVariableList()) && Objects
-			.equals(getTrialEnvironmentValues(), that.getTrialEnvironmentValues()) && Objects
-			.equals(getImportedAdvancedGermplasmList(), that.getImportedAdvancedGermplasmList()) && Objects
-			.equals(getTraitRefList(), that.getTraitRefList()) && Objects.equals(getTreatmentFactors(), that.getTreatmentFactors())
-			&& Objects.equals(getSelectionVariates(), that.getSelectionVariates()) && Objects
-			.equals(getBasicDetails(), that.getBasicDetails()) && Objects.equals(getStudyConditions(), that.getStudyConditions())
-			&& Objects.equals(getDeletedStudyLevelConditions(), that.getDeletedStudyLevelConditions()) && Objects
-			.equals(getDeletedPlotLevelList(), that.getDeletedPlotLevelList()) && Objects
-			.equals(getDeletedBaselineTraitsList(), that.getDeletedBaselineTraitsList()) && Objects
-			.equals(getDeletedStudyConditions(), that.getDeletedStudyConditions()) && Objects
-			.equals(getDeletedTrialLevelVariables(), that.getDeletedTrialLevelVariables()) && Objects
-			.equals(getDeletedTreatmentFactors(), that.getDeletedTreatmentFactors()) && Objects
-			.equals(getChangeDetails(), that.getChangeDetails()) && Objects.equals(getRemovedFactors(), that.getRemovedFactors()) && Objects
-			.equals(getRemovedConditions(), that.getRemovedConditions()) && Objects.equals(getNewTraits(), that.getNewTraits()) && Objects
-			.equals(getNewSelectionVariates(), that.getNewSelectionVariates()) && Objects.equals(getWorkbook(), that.getWorkbook())
-			&& Objects.equals(getTemporaryWorkbook(), that.getTemporaryWorkbook()) && Objects
-			.equals(getDesignImportData(), that.getDesignImportData())
-			&& Objects.equals(getMeasurementRowList(), that.getMeasurementRowList()) && Objects
-			.equals(getMeasurementDatasetVariable(), that.getMeasurementDatasetVariable()) && Objects
-			.equals(getConstantsWithLabels(), that.getConstantsWithLabels()) && Objects
-			.equals(getExpDesignParams(), that.getExpDesignParams()) && Objects
-			.equals(getExpDesignVariables(), that.getExpDesignVariables()) && Objects
-			.equals(getExperimentalDesignVariables(), that.getExperimentalDesignVariables()) && Objects
-			.equals(getImportedCrossesList(), that.getImportedCrossesList()) && Objects
-			.equals(getImportedCrossesId(), that.getImportedCrossesId()) && Objects.equals(getCrossSettings(), that.getCrossSettings())
-			&& Objects.equals(getListId(), that.getListId()) && Objects
-			.equals(getPreviousInventoryDetails(), that.getPreviousInventoryDetails()) && Objects.equals(getStartingPlotNo(), that.getStartingPlotNo())
-			&& Objects.equals(getStudyName(), that.getStudyName()) && Objects.equals(getStudyDescription(), that.getStudyDescription())
-			&& Objects.equals(getStudyObjective(), that.getStudyObjective()) && Objects
-			.equals(getStudyStartDate(), that.getStudyStartDate()) && Objects.equals(getStudyEndDate(), that.getStudyEndDate()) && Objects
-			.equals(getStudyUpdate(), that.getStudyUpdate()) && Objects.equals(getStudyType(), that.getStudyType()) && Objects
-			.equals(getCreatedBy(), that.getCreatedBy());
+		return this.isFieldLayoutRandom() == that.isFieldLayoutRandom() && this.getCurrentPageGermplasmList() == that.getCurrentPageGermplasmList() &&
+			this.getCurrentPageCheckGermplasmList() == that.getCurrentPageCheckGermplasmList() && this.getCurrentPage() == that.getCurrentPage() && Objects
+			.equals(this.getActualFileName(), that.getActualFileName()) && Objects.equals(this.getServerFileName(), that.getServerFileName())
+			&& Objects.equals(this.getStudyDetailsList(), that.getStudyDetailsList()) && Objects
+			.equals(this.getStudyLevelConditions(), that.getStudyLevelConditions()) && Objects
+			.equals(this.getPlotsLevelList(), that.getPlotsLevelList()) && Objects.equals(this.getBaselineTraitsList(), that.getBaselineTraitsList())
+			&& Objects.equals(this.getTrialLevelVariableList(), that.getTrialLevelVariableList()) && Objects
+			.equals(this.getTrialEnvironmentValues(), that.getTrialEnvironmentValues()) && Objects
+			.equals(this.getImportedAdvancedGermplasmList(), that.getImportedAdvancedGermplasmList()) && Objects
+			.equals(this.getTraitRefList(), that.getTraitRefList()) && Objects.equals(this.getTreatmentFactors(), that.getTreatmentFactors())
+			&& Objects.equals(this.getSelectionVariates(), that.getSelectionVariates()) && Objects
+			.equals(this.getBasicDetails(), that.getBasicDetails()) && Objects.equals(this.getStudyConditions(), that.getStudyConditions())
+			&& Objects.equals(this.getDeletedStudyLevelConditions(), that.getDeletedStudyLevelConditions()) && Objects
+			.equals(this.getDeletedPlotLevelList(), that.getDeletedPlotLevelList()) && Objects
+			.equals(this.getDeletedBaselineTraitsList(), that.getDeletedBaselineTraitsList()) && Objects
+			.equals(this.getDeletedStudyConditions(), that.getDeletedStudyConditions()) && Objects
+			.equals(this.getDeletedTrialLevelVariables(), that.getDeletedTrialLevelVariables()) && Objects
+			.equals(this.getDeletedTreatmentFactors(), that.getDeletedTreatmentFactors()) && Objects
+			.equals(this.getChangeDetails(), that.getChangeDetails()) && Objects.equals(this.getRemovedFactors(), that.getRemovedFactors()) && Objects
+			.equals(this.getRemovedConditions(), that.getRemovedConditions()) && Objects.equals(this.getNewTraits(), that.getNewTraits()) && Objects
+			.equals(this.getNewSelectionVariates(), that.getNewSelectionVariates()) && Objects.equals(this.getWorkbook(), that.getWorkbook())
+			&& Objects.equals(this.getTemporaryWorkbook(), that.getTemporaryWorkbook()) && Objects
+			.equals(this.getDesignImportData(), that.getDesignImportData())
+			&& Objects.equals(this.getMeasurementRowList(), that.getMeasurementRowList()) && Objects
+			.equals(this.getMeasurementDatasetVariable(), that.getMeasurementDatasetVariable()) && Objects
+			.equals(this.getConstantsWithLabels(), that.getConstantsWithLabels()) && Objects
+			.equals(this.getExpDesignParams(), that.getExpDesignParams()) && Objects
+			.equals(this.getExpDesignVariables(), that.getExpDesignVariables()) && Objects
+			.equals(this.getExperimentalDesignVariables(), that.getExperimentalDesignVariables()) && Objects
+			.equals(this.getImportedCrossesList(), that.getImportedCrossesList()) && Objects
+			.equals(this.getImportedCrossesId(), that.getImportedCrossesId()) && Objects.equals(this.getCrossSettings(), that.getCrossSettings())
+			&& Objects.equals(this.getListId(), that.getListId()) && Objects
+			.equals(this.getPreviousInventoryDetails(), that.getPreviousInventoryDetails()) && Objects.equals(this.getStartingPlotNo(), that.getStartingPlotNo())
+			&& Objects.equals(this.getStudyName(), that.getStudyName()) && Objects.equals(this.getStudyDescription(), that.getStudyDescription())
+			&& Objects.equals(this.getStudyObjective(), that.getStudyObjective()) && Objects
+			.equals(this.getStudyStartDate(), that.getStudyStartDate()) && Objects.equals(this.getStudyEndDate(), that.getStudyEndDate()) && Objects
+			.equals(this.getStudyUpdate(), that.getStudyUpdate()) && Objects.equals(this.getStudyType(), that.getStudyType()) && Objects
+			.equals(this.getCreatedBy(), that.getCreatedBy());
 	}
 
 	@Override
 	public int hashCode() {
 
-		return Objects.hash(getActualFileName(), getServerFileName(), isFieldLayoutRandom(), getStudyDetailsList(),
-			getCurrentPageGermplasmList(), getCurrentPageCheckGermplasmList(), getStudyLevelConditions(), getPlotsLevelList(),
-			getBaselineTraitsList(), getTrialLevelVariableList(), getTrialEnvironmentValues(), getImportedAdvancedGermplasmList(),
-			getTraitRefList(), getTreatmentFactors(), getSelectionVariates(), getBasicDetails(), getStudyConditions(),
-			getDeletedStudyLevelConditions(), getDeletedPlotLevelList(), getDeletedBaselineTraitsList(), getDeletedStudyConditions(),
-			getDeletedTrialLevelVariables(), getDeletedTreatmentFactors(), getChangeDetails(), getRemovedFactors(), getRemovedConditions(),
-			getNewTraits(),	getNewSelectionVariates(), getWorkbook(), getTemporaryWorkbook(), getDesignImportData(), getCurrentPage(),
-			getMeasurementRowList(), getMeasurementDatasetVariable(), getConstantsWithLabels(), getExpDesignParams(),
-			getExpDesignVariables(), getExperimentalDesignVariables(), getImportedCrossesList(), getImportedCrossesId(), getCrossSettings(),
-			getListId(), getPreviousInventoryDetails(), getStartingPlotNo(), getStudyName(), getStudyDescription(),
-			getStudyObjective(), getStudyStartDate(), getStudyEndDate(), getStudyUpdate(), getStudyType(), getCreatedBy());
+		return Objects.hash(
+			this.getActualFileName(), this.getServerFileName(), this.isFieldLayoutRandom(), this.getStudyDetailsList(),
+			this.getCurrentPageGermplasmList(), this.getCurrentPageCheckGermplasmList(), this.getStudyLevelConditions(), this
+				.getPlotsLevelList(),
+			this.getBaselineTraitsList(), this.getTrialLevelVariableList(), this.getTrialEnvironmentValues(), this
+				.getImportedAdvancedGermplasmList(),
+			this.getTraitRefList(), this.getTreatmentFactors(), this.getSelectionVariates(), this.getBasicDetails(), this
+				.getStudyConditions(),
+			this.getDeletedStudyLevelConditions(), this.getDeletedPlotLevelList(), this.getDeletedBaselineTraitsList(), this
+				.getDeletedStudyConditions(),
+			this.getDeletedTrialLevelVariables(), this.getDeletedTreatmentFactors(), this.getChangeDetails(), this.getRemovedFactors(),
+			this.getRemovedConditions(),
+			this.getNewTraits(), this.getNewSelectionVariates(), this.getWorkbook(), this.getTemporaryWorkbook(), this.getDesignImportData(), this
+				.getCurrentPage(),
+			this.getMeasurementRowList(), this.getMeasurementDatasetVariable(), this.getConstantsWithLabels(), this.getExpDesignParams(),
+			this.getExpDesignVariables(), this.getExperimentalDesignVariables(), this.getImportedCrossesList(), this.getImportedCrossesId(),
+			this.getCrossSettings(),
+			this.getListId(), this.getPreviousInventoryDetails(), this.getStartingPlotNo(), this.getStudyName(), this.getStudyDescription(),
+			this.getStudyObjective(), this.getStudyStartDate(), this.getStudyEndDate(), this.getStudyUpdate(), this.getStudyType(), this
+				.getCreatedBy());
 	}
 
 	@Override
 	public String toString() {
-		return "UserSelection{" + "actualFileName='" + actualFileName + '\'' + ", serverFileName='" + serverFileName + '\''
-			+ ", fieldLayoutRandom=" + fieldLayoutRandom + ", isImportValid=" + isImportValid
-			+ ", studyDetailsList=" + studyDetailsList + ", currentPageGermplasmList=" + currentPageGermplasmList
-			+ ", currentPageCheckGermplasmList=" + currentPageCheckGermplasmList + ", studyLevelConditions=" + studyLevelConditions
-			+ ", plotsLevelList=" + plotsLevelList + ", baselineTraitsList=" + baselineTraitsList + ", trialLevelVariableList="
-			+ trialLevelVariableList + ", trialEnvironmentValues=" + trialEnvironmentValues + ", importedAdvancedGermplasmList="
-			+ importedAdvancedGermplasmList + ", traitRefList=" + traitRefList + ", treatmentFactors=" + treatmentFactors
-			+ ", selectionVariates=" + selectionVariates + ", basicDetails=" + basicDetails + ", studyConditions=" + studyConditions
-			+ ", deletedStudyLevelConditions=" + deletedStudyLevelConditions + ", deletedPlotLevelList=" + deletedPlotLevelList
-			+ ", deletedBaselineTraitsList=" + deletedBaselineTraitsList + ", deletedstudyConditions=" + deletedStudyConditions
-			+ ", deletedTrialLevelVariables=" + deletedTrialLevelVariables + ", deletedTreatmentFactors=" + deletedTreatmentFactors
-			+ ", changeDetails=" + changeDetails + ", removedFactors=" + removedFactors + ", removedConditions=" + removedConditions
-			+ ", newTraits=" + newTraits + ", newSelectionVariates=" + newSelectionVariates + ", workbook=" + workbook
-			+ ", temporaryWorkbook=" + temporaryWorkbook + ", designImportData=" + designImportData + ", currentPage=" + currentPage
-			+ ", measurementRowList=" + measurementRowList + ", measurementDatasetVariable="
-			+ measurementDatasetVariable + ", constantsWithLabels=" + constantsWithLabels + ", expDesignParams=" + expDesignParams
-			+ ", expDesignVariables=" + expDesignVariables + ", experimentalDesignVariables=" + experimentalDesignVariables
-			+ ", importedCrossesList=" + importedCrossesList + ", importedCrossesId=" + importedCrossesId + ", crossSettings="
-			+ crossSettings + ", listId=" + listId + ", previousInventoryDetails=" + previousInventoryDetails + ", startingPlotNo="
-			+ startingPlotNo + ", studyName='" + studyName + '\'' + ", studyDescription='"
-			+ studyDescription + '\'' + ", studyObjective='" + studyObjective + '\'' + ", studyStartDate='" + studyStartDate + '\''
-			+ ", studyEndDate='" + studyEndDate + '\'' + ", studyUpdate='" + studyUpdate + '\'' + ", studyType='" + studyType + '\''
-			+ ", createdBy='" + createdBy + '\'' + '}';
+		return "UserSelection{" + "actualFileName='" + this.actualFileName + '\'' + ", serverFileName='" + this.serverFileName + '\''
+			+ ", fieldLayoutRandom=" + this.fieldLayoutRandom + ", isImportValid=" + this.isImportValid
+			+ ", studyDetailsList=" + this.studyDetailsList + ", currentPageGermplasmList=" + this.currentPageGermplasmList
+			+ ", currentPageCheckGermplasmList=" + this.currentPageCheckGermplasmList
+			+ ", studyLevelConditions=" + this.studyLevelConditions
+			+ ", plotsLevelList=" + this.plotsLevelList + ", baselineTraitsList=" + this.baselineTraitsList + ", trialLevelVariableList="
+			+ this.trialLevelVariableList + ", trialEnvironmentValues=" + this.trialEnvironmentValues + ", importedAdvancedGermplasmList="
+			+ this.importedAdvancedGermplasmList + ", traitRefList=" + this.traitRefList + ", treatmentFactors=" + this.treatmentFactors
+			+ ", selectionVariates=" + this.selectionVariates + ", basicDetails=" + this.basicDetails
+			+ ", studyConditions=" + this.studyConditions
+			+ ", deletedStudyLevelConditions=" + this.deletedStudyLevelConditions + ", deletedPlotLevelList=" + this.deletedPlotLevelList
+			+ ", deletedBaselineTraitsList=" + this.deletedBaselineTraitsList + ", deletedstudyConditions=" + this.deletedStudyConditions
+			+ ", deletedTrialLevelVariables=" + this.deletedTrialLevelVariables
+			+ ", deletedTreatmentFactors=" + this.deletedTreatmentFactors
+			+ ", changeDetails=" + this.changeDetails + ", removedFactors=" + this.removedFactors
+			+ ", removedConditions=" + this.removedConditions
+			+ ", newTraits=" + this.newTraits + ", newSelectionVariates=" + this.newSelectionVariates + ", workbook=" + this.workbook
+			+ ", temporaryWorkbook=" + this.temporaryWorkbook + ", designImportData=" + this.designImportData
+			+ ", currentPage=" + this.currentPage
+			+ ", measurementRowList=" + this.measurementRowList + ", measurementDatasetVariable="
+			+ this.measurementDatasetVariable + ", constantsWithLabels=" + this.constantsWithLabels
+			+ ", expDesignParams=" + this.expDesignParams
+			+ ", expDesignVariables=" + this.expDesignVariables + ", experimentalDesignVariables=" + this.experimentalDesignVariables
+			+ ", importedCrossesList=" + this.importedCrossesList + ", importedCrossesId=" + this.importedCrossesId + ", crossSettings="
+			+ this.crossSettings + ", listId=" + this.listId + ", previousInventoryDetails=" + this.previousInventoryDetails + ", startingPlotNo="
+			+ this.startingPlotNo + ", studyName='" + this.studyName + '\'' + ", studyDescription='"
+			+ this.studyDescription + '\'' + ", studyObjective='" + this.studyObjective + '\'' + ", studyStartDate='" + this.studyStartDate
+			+ '\''
+			+ ", studyEndDate='" + this.studyEndDate + '\'' + ", studyUpdate='" + this.studyUpdate + '\'' + ", studyType='" + this.studyType
+			+ '\''
+			+ ", createdBy='" + this.createdBy + '\'' + '}';
 	}
 }

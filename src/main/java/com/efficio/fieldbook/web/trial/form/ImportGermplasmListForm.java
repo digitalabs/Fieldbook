@@ -14,7 +14,6 @@ package com.efficio.fieldbook.web.trial.form;
 import java.util.List;
 
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
-import org.generationcp.commons.parsing.pojo.ImportedGermplasmMainInfo;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
@@ -29,12 +28,6 @@ public class ImportGermplasmListForm {
 
 	/** The has error. */
 	private String hasError;
-
-	/** The imported germplasm main info. */
-	private ImportedGermplasmMainInfo importedGermplasmMainInfo;
-
-	/** The imported check germplasm main info. */
-	private ImportedGermplasmMainInfo importedCheckGermplasmMainInfo;
 
 	/** The imported germplasm. */
 	private List<ImportedGermplasm> importedGermplasm;
@@ -382,24 +375,6 @@ public class ImportGermplasmListForm {
 	}
 
 	/**
-	 * Gets the imported germplasm main info.
-	 *
-	 * @return the imported germplasm main info
-	 */
-	public ImportedGermplasmMainInfo getImportedGermplasmMainInfo() {
-		return this.importedGermplasmMainInfo;
-	}
-
-	/**
-	 * Sets the imported germplasm main info.
-	 *
-	 * @param importedGermplasmMainInfo the new imported germplasm main info
-	 */
-	public void setImportedGermplasmMainInfo(ImportedGermplasmMainInfo importedGermplasmMainInfo) {
-		this.importedGermplasmMainInfo = importedGermplasmMainInfo;
-	}
-
-	/**
 	 * Instantiates a new import germplasm list form.
 	 */
 	public ImportGermplasmListForm() {
@@ -512,24 +487,6 @@ public class ImportGermplasmListForm {
 	 */
 	public void setManageCheckValue(String manageCheckValue) {
 		this.manageCheckValue = manageCheckValue;
-	}
-
-	/**
-	 * Gets the imported check germplasm main info.
-	 *
-	 * @return the imported check germplasm main info
-	 */
-	public ImportedGermplasmMainInfo getImportedCheckGermplasmMainInfo() {
-		return this.importedCheckGermplasmMainInfo;
-	}
-
-	/**
-	 * Sets the imported check germplasm main info.
-	 *
-	 * @param importedCheckGermplasmMainInfo the new imported check germplasm main info
-	 */
-	public void setImportedCheckGermplasmMainInfo(ImportedGermplasmMainInfo importedCheckGermplasmMainInfo) {
-		this.importedCheckGermplasmMainInfo = importedCheckGermplasmMainInfo;
 	}
 
 	/**

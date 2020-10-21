@@ -9,6 +9,7 @@ import com.efficio.etl.web.validators.FileUploadFormValidator;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.google.common.base.Optional;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.fest.util.Collections;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.WorkbenchAppPathResolver;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -194,7 +195,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 			}
 
 			// Validate Trial Instance Value
-			if (importData.getConditions() != null && importData.getTrialVariables() != null) {
+			if (!Collections.isEmpty(importData.getConditions())) {
 				this.validateTrialInstanceValue(importData.getConditions(), messages);
 			}
 
@@ -331,11 +332,8 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 			if (varCondition.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
 				final Optional<Message> message = Util.validateVariableValues(varCondition, varCondition.getValue());
 				if (message.isPresent()) {
-					if (errorMessages.containsKey(Constants.INVALID_TRIAL)) {
-						errorMessages.get(Constants.INVALID_TRIAL).add(message.get());
-					} else {
-						errorMessages.put(Constants.INVALID_TRIAL, Arrays.asList(message.get()));
-					}
+					errorMessages.putIfAbsent(Constants.INVALID_TRIAL, Arrays.asList(message.get()));
+					errorMessages.get(Constants.INVALID_TRIAL).add(message.get());
 				}
 			}
 

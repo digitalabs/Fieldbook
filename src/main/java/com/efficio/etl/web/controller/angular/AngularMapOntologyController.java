@@ -44,7 +44,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte
@@ -332,7 +331,7 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 			if (varCondition.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
 				final Optional<Message> message = Util.validateVariableValues(varCondition, varCondition.getValue());
 				if (message.isPresent()) {
-					errorMessages.putIfAbsent(Constants.INVALID_TRIAL, Arrays.asList(message.get()));
+					errorMessages.putIfAbsent(Constants.INVALID_TRIAL, new ArrayList<>());
 					errorMessages.get(Constants.INVALID_TRIAL).add(message.get());
 				}
 			}

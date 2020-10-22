@@ -444,8 +444,8 @@
 			}
 
 			function isTextFilter(columnData) {
-				if (columnData.termId === GID || columnData.dataType === 'Categorical' || columnData.dataType === 'Numeric'
-					|| columnData.dataType === 'Date') {
+				if (columnData.termId === GID || columnData.termId === LOTS || columnData.dataType === 'Categorical'
+					|| columnData.dataType === 'Numeric' || columnData.dataType === 'Date') {
 					return false;
 				}
 				return true;

@@ -203,10 +203,6 @@ public class DesignImportMeasurementRowGenerator {
 			// This will initially create blank values for OBS_UNIT_ID but the generation of observation unit IDs will be handled during the saving of Workbook.
 			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.OBS_UNIT_ID.getId()), ""));
 		}
-		if (germplasmStandardVariables.get(TermId.STOCKID.getId()) != null) {
-			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.STOCKID.getId()),
-				germplasmEntry.getStockIDs() != null ? germplasmEntry.getStockIDs() : ""));
-		}
 		if (germplasmStandardVariables.get(TermId.GROUPGID.getId()) != null) {
 			dataList.add(this.createMeasurementData(germplasmStandardVariables.get(TermId.GROUPGID.getId()),
 				germplasmEntry.getGroupId() != null ? germplasmEntry.getGroupId().toString() : ""));

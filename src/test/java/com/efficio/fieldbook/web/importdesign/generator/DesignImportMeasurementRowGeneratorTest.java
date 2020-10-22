@@ -195,9 +195,6 @@ public class DesignImportMeasurementRowGeneratorTest {
 				Assert.assertEquals("The value of MeasurementData should be empty for " + TermId.OBS_UNIT_ID.toString() + " variable",
 						measurementData.getValue().toString(), "");
 
-			} else if (TermId.STOCKID.getId() == measurementData.getMeasurementVariable().getTermId()) {
-				Assert.assertEquals("The value of MeasurementData should be empty for " + TermId.STOCKID.toString() + " variable",
-					measurementData.getValue().toString(), "");
 			} else if (TermId.GROUPGID.getId() == measurementData.getMeasurementVariable().getTermId()) {
 				Assert.assertEquals("The value of MeasurementData should be empty for " + TermId.GROUPGID.toString() + " variable",
 					measurementData.getValue().toString(), "");

@@ -161,8 +161,6 @@ public class ExportStudyEntriesServiceTest {
 		Mockito.when(this.ontologyService.getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID()))
 			.thenReturn(checkStandardVariable);
 
-		Mockito.when(ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), TermId.STOCKID.getId(), false))
-			.thenReturn(this.createVariable(TermId.STOCKID.getId()));
 		Mockito.when(ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), TermId.SEED_AMOUNT_G.getId(), false))
 			.thenReturn(this.createVariable(TermId.SEED_AMOUNT_G.getId()));
 	}
@@ -294,15 +292,13 @@ public class ExportStudyEntriesServiceTest {
 	public void testExtractInventoryVariableMapFromVisibleColumnsInventoryVariablesAreVisible() {
 
 		final Map<String, Boolean> visibleColumnsMap = this.getVisibleColumnMap();
-		visibleColumnsMap.put(String.valueOf(TermId.STOCKID.getId()), true);
 		visibleColumnsMap.put(String.valueOf(TermId.SEED_AMOUNT_G.getId()), true);
 
 		final Map<Integer, Variable> result =
 			exportStudyEntryServiceImpl.extractInventoryVariableMapFromVisibleColumns(visibleColumnsMap);
 
-		Assert.assertEquals("There are 2 inventory variables in visibleColumnsMap so the size of InventoryVariableMap should be 2.", 2,
+		Assert.assertEquals("There are 1 inventory variables in visibleColumnsMap so the size of InventoryVariableMap should be 1.", 1,
 			result.size());
-		Assert.assertTrue(result.containsKey(TermId.STOCKID.getId()));
 		Assert.assertTrue(result.containsKey(TermId.SEED_AMOUNT_G.getId()));
 
 	}
@@ -311,16 +307,14 @@ public class ExportStudyEntriesServiceTest {
 	public void testExtractInventoryVariableMapFromVisibleColumnsInventoryVariablesAreNotVisible() {
 
 		final Map<String, Boolean> visibleColumnsMap = this.getVisibleColumnMap();
-		visibleColumnsMap.put(String.valueOf(TermId.STOCKID.getId()), false);
 		visibleColumnsMap.put(String.valueOf(TermId.SEED_AMOUNT_G.getId()), false);
 
 		final Map<Integer, Variable> result =
 			exportStudyEntryServiceImpl.extractInventoryVariableMapFromVisibleColumns(visibleColumnsMap);
 
 		Assert.assertTrue(
-			"There are 2 inventory variables in visibleColumnsMap but they are not visible so the size of InventoryVariableMap should be empty",
+			"There are 1 inventory variables in visibleColumnsMap but they are not visible so the size of InventoryVariableMap should be empty",
 			result.isEmpty());
-		Assert.assertFalse(result.containsKey(TermId.STOCKID.getId()));
 		Assert.assertFalse(result.containsKey(TermId.SEED_AMOUNT_G.getId()));
 
 	}
@@ -335,7 +329,6 @@ public class ExportStudyEntriesServiceTest {
 		final int visibleColumnsMapVariableCount = visibleColumnsMap.size();
 
 		// Add inventory variables in visibleColumnsmap
-		visibleColumnsMap.put(String.valueOf(TermId.STOCKID.getId()), true);
 		visibleColumnsMap.put(String.valueOf(TermId.SEED_AMOUNT_G.getId()), true);
 
 		exportStudyEntryServiceImpl.removeInventoryVariableMapFromVisibleColumns(visibleColumnsMap);
@@ -343,7 +336,6 @@ public class ExportStudyEntriesServiceTest {
 		Assert
 			.assertEquals("Expecting " + visibleColumnsMapVariableCount + " variables in visibleColumnsMap", visibleColumnsMapVariableCount,
 				visibleColumnsMap.size());
-		Assert.assertFalse(visibleColumnsMap.containsKey(TermId.STOCKID.getId()));
 		Assert.assertFalse(visibleColumnsMap.containsKey(TermId.SEED_AMOUNT_G.getId()));
 
 	}

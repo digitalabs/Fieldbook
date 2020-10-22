@@ -62,7 +62,6 @@ public class StudyEntryTransformer {
 				}
 				importedGermplasm.setSource(studyEntryDto.getStudyEntryPropertyValue(TermId.SEED_SOURCE.getId()).orElse(""));
 				importedGermplasm.setGroupName(studyEntryDto.getStudyEntryPropertyValue(TermId.CROSS.getId()).orElse(""));
-				importedGermplasm.setStockIDs(studyEntryDto.getStudyEntryPropertyValue(TermId.STOCKID.getId()).orElse(""));
 				importedGermplasm.setIndex(studyEntryDto.getEntryNumber());
 				importedGermplasmList.add(importedGermplasm);
 			}
@@ -144,7 +143,7 @@ public class StudyEntryTransformer {
 
 					@Override
 					public String getStockIDs() {
-						return studyEntryDto.getStudyEntryPropertyValue(TermId.STOCKID.getId()).orElse("");
+						return "";
 					}
 
 					@Override

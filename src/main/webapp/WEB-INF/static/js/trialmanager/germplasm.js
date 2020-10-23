@@ -428,9 +428,9 @@
 
 				$scope.openReplaceGermplasmModal = function(entryId) {
 					$uibModal.open({
-						templateUrl: '/Fieldbook/static/angular-templates/germplasm/replaceGermplasm.html',
-						controller: "replaceGermplasmCtrl",
-						size: 'md',
+						templateUrl: '/Fieldbook/static/js/trialmanager/germplasm-selector/germplasm-selector-modal.html',
+						controller: "GermplasmSelectorCtrl",
+						size: 'lg',
 						resolve: {
 							entryId: function () {
 								return entryId;
@@ -560,40 +560,6 @@
 				}
 			}]);
 
-	manageTrialAppModule.controller('replaceGermplasmCtrl', ['$scope', '$rootScope', '$uibModalInstance', 'studyEntryService', 'entryId',
-		function ($scope, $rootScope, $uibModalInstance, studyEntryService, entryId) {
-			var ctrl = this;
-
-			$scope.cancel = function () {
-				$uibModalInstance.dismiss();
-			};
-
-			// Wrap 'showAlertMessage' global function to a controller function so that we can mock it in unit test.
-			ctrl.showAlertMessage = function (title, message) {
-				showAlertMessage(title, message);
-			};
-
-
-			$scope.performGermplasmReplacement = function () {
-				var newGid = $('#replaceGermplasmGID').val();
-				var regex = new RegExp('^[0-9]+$');
-				if (!regex.test(newGid)) {
-					ctrl.showAlertMessage('', 'Please enter valid GID.');
-				} else {
-					// if there are multiple entries selected, get only the first entry for replacement
-					studyEntryService.replaceStudyGermplasm(entryId, newGid).then(function (response) {
-						showSuccessfulMessage('', $.germplasmMessages.replaceGermplasmSuccessful);
-						$rootScope.$emit("reloadStudyEntryTableData", {});
-						$uibModalInstance.close();
-					}, function(errResponse) {
-						showErrorMessage($.fieldbookMessages.errorServerError,  errResponse.errors[0].message);
-						$uibModalInstance.close();
-					});
-				}
-
-			};
-		}
-	]);
 
 	manageTrialAppModule.controller('changeStudyEntryTypeCtrl', ['$scope', '$rootScope', '$uibModalInstance', 'studyEntryService', 'entryId', 'currentValue',
 		'studyEntryPropertyId',	function ($scope, $rootScope, $uibModalInstance, studyEntryService, entryId, currentValue, studyEntryPropertyId) {

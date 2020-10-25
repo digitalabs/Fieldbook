@@ -3,6 +3,16 @@
 
 	const module = angular.module('manageTrialApp');
 
+	var RADIO_BUTTON = -6,
+	 	ENTRY_TYPE = 8255,
+		GID = 8240,
+		DESIGNATION = 8250,
+		ENTRY_NO = 8230,
+		CROSS = 8377,
+		LOTS = -3,
+		AVAILABLE = -4,
+		UNITS = -5;
+
 	module.controller('ChangePlotEntryModalCtrl', ['$scope', '$rootScope', 'studyContext', '$uibModalInstance', 'DTOptionsBuilder', 'DTColumnBuilder',
 		'$timeout', '$q', '$compile', 'ChangePlotEntryService',
 		function ($scope, $rootScope, studyContext, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, $timeout, $q, $compile, ChangePlotEntryService) {
@@ -22,6 +32,9 @@
 			$scope.dtColumns = dtColumnsPromise.promise;
 			$scope.dtColumnDefs = dtColumnDefsPromise.promise;
 			$scope.dtOptions = null;
+
+			$scope.nested = {};
+			$scope.nested.dtInstance = null;
 
 			loadTable();
 
@@ -47,6 +60,77 @@
 
 			$scope.valid = function () {
 				return $scope.selected.entryId != '';
+			};
+
+			$scope.columnFilter = {
+				selectAll: function () {
+					this.columnData.possibleValues.forEach(function (value) {
+						value.isSelectedInFilters = this.columnData.isSelectAll;
+					}.bind(this));
+				},
+				selectOption: function (selected) {
+					if (!selected) {
+						this.columnData.isSelectAll = false;
+					}
+				},
+				search: function (item) {
+					var query = $scope.columnFilter.columnData.query;
+					if (!query) {
+						return true;
+					}
+					if (item.name.indexOf(query) !== -1 || item.displayDescription.indexOf(query) !== -1) {
+						return true;
+					}
+					return false;
+				}
+			};
+
+			$scope.filterByColumn = function () {
+				resetRadioButtonStatus();
+				table().ajax.reload();
+			};
+
+			$scope.isFilterable = function (index) {
+				var columnData = $scope.columnsData[index];
+				return columnData && columnData.termId !== RADIO_BUTTON && columnData.termId !== AVAILABLE;
+			};
+
+			$scope.openColumnFilter = function (index) {
+				$scope.columnFilter.index = index;
+				$scope.columnFilter.columnData = $scope.columnsObj.columns[index].columnData;
+				if ($scope.columnFilter.columnData.sortingAsc != null && !table().order().some(function (order) {
+					return order[0] === index;
+				})) {
+					$scope.columnFilter.columnData.sortingAsc = null;
+				}
+			};
+
+			$scope.sortColumn = function (asc) {
+				$scope.columnFilter.columnData.sortingAsc = asc;
+				table().order([$scope.columnFilter.index, asc ? 'asc' : 'desc']).draw();
+			};
+
+			$scope.getFilteringByClass = function (index) {
+				if (!$scope.columnsObj.columns[index]) {
+					return;
+				}
+				var columnData = $scope.columnsObj.columns[index].columnData;
+				if (columnData.isFiltered) {
+					return 'filtering-by';
+				}
+			};
+
+			$scope.resetFilterByColumn = function () {
+				$scope.columnFilter.columnData.query = '';
+				$scope.columnFilter.columnData.sortingAsc = null;
+				if ($scope.columnFilter.columnData.possibleValues) {
+					$scope.columnFilter.columnData.possibleValues.forEach(function (value) {
+						value.isSelectedInFilters = false;
+					});
+					$scope.columnFilter.columnData.isSelectAll = false;
+				}
+				resetRadioButtonStatus();
+				table().ajax.reload();
 			};
 
 			function proceed() {
@@ -77,6 +161,9 @@
 
 				return loadColumns().then(function (columnsObj) {
 					$scope.dtOptions = getDtOptions();
+					$scope.dtOptions.withOption('order',
+						[columnsObj.columns.findIndex(c => c.columnData.termId === ENTRY_NO), 'asc']);
+
 					dtColumnsPromise.resolve(columnsObj.columns);
 					dtColumnDefsPromise.resolve(columnsObj.columnsDef);
 					initResolve();
@@ -97,7 +184,7 @@
 					alias: "",
 					factor: true,
 					name: "RADIO",
-					termId: -6,
+					termId: RADIO_BUTTON,
 				});
 				return columns;
 			}
@@ -107,9 +194,11 @@
 					.withOption('ajax',
 						function (d, callback) {
 							$.ajax({
-								type: 'GET',
+								type: 'POST',
 								url: ChangePlotEntryService.getEntriesTableUrl() + getPageQueryParameters(d),
-								dataSrc: '',
+								data: JSON.stringify({
+									filter: getFilter()
+								}),
 								success: function (res, status, xhr) {
 									let json = {recordsTotal: 0, recordsFiltered: 0}
 									json.recordsTotal = json.recordsFiltered = xhr.getResponseHeader('X-Total-Count');
@@ -124,7 +213,23 @@
 						})
 					.withDataProp('data')
 					.withOption('serverSide', true)
+					.withOption('initComplete', initCompleteCallback)
 				);
+			}
+
+			function initCompleteCallback() {
+				table().columns().every(function () {
+					$(this.header())
+						.append($compile('<span ng-if="isFilterable(' + this.index() + ')" class="glyphicon glyphicon-filter" ' +
+							' style="cursor:pointer; padding-left: 5px;"' +
+							' popover-placement="bottom"' +
+							' ng-class="getFilteringByClass(' + this.index() + ')"' +
+							' popover-append-to-body="true"' +
+							' popover-trigger="\'outsideClick\'"' +
+							' ng-click="openColumnFilter(' + this.index() + ')"' +
+							' uib-popover-template="\'columnFilterPopoverTemplate.html\'"></span>')($scope));
+				});
+				adjustColumns();
 			}
 
 			function mapColumns(columnsData) {
@@ -156,7 +261,7 @@
 					});
 
 					// Radio Button Column
-					if (columnData.termId === -6) {
+					if (columnData.termId === RADIO_BUTTON) {
 						columnsDef.push({
 							targets: columns.length - 1,
 							orderable: false,
@@ -164,7 +269,7 @@
 								$(td).append($compile('<span><input type="radio" name="rowData.entryId" ng-model="selected.entryId" value=' + rowData.entryId + '></span>')($scope));
 							}
 						});
-					} else if (columnData.termId === 8240 || columnData.termId === 8250) {
+					} else if (columnData.termId === GID || columnData.termId === DESIGNATION) {
 						// GID or DESIGNATION
 						columnsDef.push({
 							targets: columns.length - 1,
@@ -175,7 +280,7 @@
 									full.gid + '\',\'' + full.designation + '\')">' + EscapeHTML.escape(data.value) + '</a>';
 							}
 						});
-					} else if (columnData.termId === -3) {
+					} else if (columnData.termId === LOTS) {
 						//ACTIVE LOT
 						columnsDef.push({
 							targets: columns.length - 1,
@@ -185,7 +290,7 @@
 							}
 						});
 
-					} else if (columnData.termId === -4) {
+					} else if (columnData.termId === AVAILABLE) {
 						// AVAILABLE
 						columnsDef.push({
 							targets: columns.length - 1,
@@ -195,7 +300,7 @@
 							}
 						});
 
-					} else if (columnData.termId === -5) {
+					} else if (columnData.termId === UNITS) {
 						// UNIT
 						columnsDef.push({
 							targets: columns.length - 1,
@@ -233,12 +338,9 @@
 				var order = data.order && data.order[0];
 				var pageQuery = '?size=' + data.length
 					+ '&page=' + ((data.length === 0) ? 0 : data.start / data.length);
-				// FIXME: Until now the sort works with entryNumber when will implements by specific column we need replace the code by the commented.
-				/*if ($scope.columnsData[order.column]) {
+				if ($scope.columnsData[order.column]) {
 					pageQuery += '&sort=' + $scope.columnsData[order.column].termId + ',' + order.dir;
-				}*/
-				pageQuery += '&sort=entryNumber' + ',' + order.dir;
-
+				}
 				return pageQuery;
 			}
 
@@ -276,6 +378,84 @@
 				return displayValue;
 
 			}
+
+			function table() {
+				return $scope.nested.dtInstance.DataTable;
+			}
+
+			function adjustColumns() {
+				$timeout(function () {
+					table().columns.adjust();
+				});
+			}
+
+			function getFilter() {
+				return {
+					filterColumns: [],
+					filteredValues: $scope.columnsObj.columns.reduce(function (map, column) {
+						var columnData = column.columnData;
+						columnData.isFiltered = false;
+
+						if (isTextFilter(columnData)) {
+							return map;
+						}
+
+						if (columnData.possibleValues) {
+							columnData.possibleValues.forEach(function (value) {
+								if (value.isSelectedInFilters) {
+									if (!map[columnData.termId]) {
+										map[columnData.termId] = [];
+									}
+									map[columnData.termId].push(value.name);
+								}
+							});
+							if (!map[columnData.termId] && columnData.query) {
+								map[columnData.termId] = [columnData.query];
+							}
+						} else if (columnData.query) {
+							if (columnData.dataType === 'Date') {
+								map[columnData.termId] = [($.datepicker.formatDate("yymmdd", columnData.query))];
+							} else {
+								map[columnData.termId] = [(columnData.query)];
+							}
+						}
+
+						if (map[columnData.termId]) {
+							columnData.isFiltered = true;
+						}
+						return map;
+					}, {}),
+					filteredTextValues: $scope.columnsObj.columns.reduce(function (map, column) {
+						var columnData = column.columnData;
+						if (!isTextFilter(columnData)) {
+							return map;
+						}
+						if (columnData.query) {
+							map[columnData.termId] = columnData.query;
+							columnData.isFiltered = true;
+						}
+						return map;
+					}, {}),
+					variableTypeMap: $scope.columnsObj.columns.reduce(function (map, column) {
+						map[column.columnData.termId] = column.columnData.variableType;
+						return map;
+					}, {})
+				};
+			}
+
+			function isTextFilter(columnData) {
+				if (columnData.termId === GID || columnData.termId === LOTS || columnData.dataType === 'Categorical'
+					|| columnData.dataType === 'Numeric' || columnData.dataType === 'Date') {
+					return false;
+				}
+				return true;
+
+			}
+
+			function resetRadioButtonStatus() {
+				$scope.selected = {entryId: ''};
+			}
+
 		}
 	]);
 })();

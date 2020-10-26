@@ -430,12 +430,19 @@
 					$uibModal.open({
 						templateUrl: '/Fieldbook/static/js/trialmanager/germplasm-selector/germplasm-selector-modal.html',
 						controller: "GermplasmSelectorCtrl",
-						size: 'lg',
-						resolve: {
-							entryId: function () {
-								return entryId;
-							},
-						},
+						windowClass: 'modal-very-huge',
+					}).result.then((gids) => {
+						if (gids != null) {
+							// if there are multiple entries selected, get only the first entry for replacement
+							studyEntryService.replaceStudyGermplasm(entryId, gids[0]).then(function (response) {
+								showSuccessfulMessage('', $.germplasmMessages.replaceGermplasmSuccessful);
+								$rootScope.$emit("reloadStudyEntryTableData", {});
+								$uibModalInstance.close();
+							}, function(errResponse) {
+								showErrorMessage($.fieldbookMessages.errorServerError,  errResponse.errors[0].message);
+								$uibModalInstance.close();
+							});
+						}
 					});
 				};
 

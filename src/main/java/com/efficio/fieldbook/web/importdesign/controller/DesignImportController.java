@@ -974,9 +974,9 @@ public class DesignImportController extends SettingsController {
 			if (data.getMeasurementVariable().getDataTypeId().equals(TermId.CATEGORICAL_VARIABLE.getId())
 					|| data.getMeasurementVariable().getDataTypeId().equals(TermId.NUMERIC_VARIABLE.getId())) {
 				final Object[] categArray = new Object[] { displayVal, data.isAccepted() };
-				dataMap.put(data.getMeasurementVariable().getName(), categArray);
+				dataMap.put(data.getLabel(), categArray);
 			} else {
-				dataMap.put(data.getMeasurementVariable().getName(), displayVal);
+				dataMap.put(data.getLabel(), displayVal);
 			}
 		}
 		return dataMap;

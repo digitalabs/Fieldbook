@@ -7,7 +7,9 @@ import com.efficio.etl.web.bean.UserSelection;
 import com.efficio.etl.web.bean.VariableDTO;
 import com.efficio.etl.web.validators.FileUploadFormValidator;
 import com.efficio.fieldbook.service.api.FieldbookService;
+import com.google.common.base.Optional;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.fest.util.Collections;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.WorkbenchAppPathResolver;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -18,6 +20,7 @@ import org.generationcp.middleware.enumeration.DatasetTypeEnum;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.util.Message;
+import org.generationcp.middleware.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -190,6 +193,11 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 				proxy.put("", this.etlService.convertMessageList(messageList));
 			}
 
+			// Validate Trial Instance Value
+			if (!Collections.isEmpty(importData.getConditions())) {
+				this.validateTrialInstanceValue(importData.getConditions(), messages);
+			}
+
 			if (messages != null) {
 				for (final Map.Entry<String, List<Message>> entry : messages.entrySet()) {
 					proxy.put(entry.getKey(), this.etlService.convertMessageList(entry.getValue()));
@@ -318,4 +326,16 @@ public class AngularMapOntologyController extends AbstractBaseETLController {
 		return new FileUploadForm();
 	}
 
+	public void validateTrialInstanceValue(final List<MeasurementVariable> conditions, final Map<String, List<Message>> errorMessages) {
+		for (final MeasurementVariable varCondition : conditions) {
+			if (varCondition.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
+				final Optional<Message> message = Util.validateVariableValues(varCondition, varCondition.getValue());
+				if (message.isPresent()) {
+					errorMessages.putIfAbsent(Constants.INVALID_TRIAL, new ArrayList<>());
+					errorMessages.get(Constants.INVALID_TRIAL).add(message.get());
+				}
+			}
+
+		}
+	}
 }

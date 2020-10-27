@@ -7,6 +7,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.exception.DesignValidationException;
 import com.efficio.fieldbook.web.importdesign.generator.DesignImportMeasurementRowGenerator;
 import com.efficio.fieldbook.web.importdesign.service.DesignImportService;
+import com.efficio.fieldbook.web.study.germplasm.StudyEntryTransformer;
 import com.efficio.fieldbook.web.trial.bean.Instance;
 import com.efficio.fieldbook.web.trial.bean.InstanceInfo;
 import com.efficio.fieldbook.web.util.ExpDesignUtil;
@@ -27,6 +28,8 @@ import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.generationcp.middleware.service.api.study.StudyEntryDto;
+import org.generationcp.middleware.service.api.study.StudyEntryService;
 import org.springframework.context.MessageSource;
 
 import javax.annotation.Resource;
@@ -56,6 +59,12 @@ public class DesignImportServiceImpl implements DesignImportService {
 	private OntologyDataManager ontologyDataManager;
 
 	@Resource
+	private StudyEntryService studyEntryService;
+
+	@Resource
+	private StudyEntryTransformer studyEntryTransformer;
+
+	@Resource
 	private MessageSource messageSource;
 
 	@Resource
@@ -73,10 +82,10 @@ public class DesignImportServiceImpl implements DesignImportService {
 		 * the values in the Environments Tab.
 		 **/
 		this.populateEnvironmentDataWithValuesFromCsvFile(instanceInfo, designImportData);
-
+		final List<StudyEntryDto> studyEntries = this.studyEntryService.getStudyEntries(this.userSelection.getWorkbook().getStudyDetails().getId());
+		final List<ImportedGermplasm> list = this.studyEntryTransformer.tranformToImportedGermplasm(studyEntries);
 		final Map<Integer, ImportedGermplasm> importedGermplasm =
-				Maps.uniqueIndex(this.userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(),
-						new Function<ImportedGermplasm, Integer>() {
+				Maps.uniqueIndex(list,	new Function<ImportedGermplasm, Integer>() {
 
 							@Override
 							public Integer apply(final ImportedGermplasm input) {

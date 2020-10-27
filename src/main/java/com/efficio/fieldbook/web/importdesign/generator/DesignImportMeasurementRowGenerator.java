@@ -214,10 +214,11 @@ public class DesignImportMeasurementRowGenerator {
 	}
 
 	protected MeasurementData createMeasurementData(final StandardVariable standardVariable, final String value) {
+		final String alias = this.getAliasFromMappedHeaders(standardVariable);
 		final MeasurementData data = new MeasurementData();
 		data.setMeasurementVariable(this.createMeasurementVariable(standardVariable));
 		data.setValue(value);
-		data.setLabel(data.getMeasurementVariable().getName());
+		data.setLabel(alias);
 		data.setDataType(data.getMeasurementVariable().getDataType());
 
 		// For categorical variables, we should assign the categorical value id if the value imported is within valid value range
@@ -251,8 +252,6 @@ public class DesignImportMeasurementRowGenerator {
 
 	protected MeasurementVariable createMeasurementVariable(final StandardVariable standardVariable) {
 		final MeasurementVariable measurementVariable =  ExpDesignUtil.convertStandardVariableToMeasurementVariable(standardVariable, Operation.ADD, this.fieldbookService);
-		final String alias = this.getAliasFromMappedHeaders(standardVariable);
-		measurementVariable.setName(alias);
 		return measurementVariable;
 	}
 

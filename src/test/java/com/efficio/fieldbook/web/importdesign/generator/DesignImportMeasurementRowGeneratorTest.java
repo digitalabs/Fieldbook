@@ -318,7 +318,7 @@ public class DesignImportMeasurementRowGeneratorTest {
 
 		final Map<String, String> actualVariableValueMap = new HashMap<>();
 		for (final MeasurementData data : dataList) {
-			actualVariableValueMap.put(data.getMeasurementVariable().getName(), data.getValue());
+			actualVariableValueMap.put(data.getLabel(), data.getValue());
 		}
 
 		final List<String> headerValues = this.designImportData.getRowDataMap().get(0);

@@ -44,7 +44,7 @@
 						.withOption('ajax',
 							function (d, callback) {
 								$.ajax({
-									type: 'GET',
+									type: 'POST',
 									url: studyEntryService.getStudyEntries() + getPageQueryParameters(d),
 									dataSrc: '',
 									success: function (res, status, xhr) {
@@ -74,7 +74,7 @@
 					/*if ($scope.columnsData[order.column]) {
 						pageQuery += '&sort=' + $scope.columnsData[order.column].termId + ',' + order.dir;
 					}*/
-					pageQuery += '&sort=entryNumber' + ',' + order.dir;
+					pageQuery += '&sort=8230' + ',' + order.dir;
 
 					return pageQuery;
 				}

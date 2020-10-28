@@ -1,5 +1,6 @@
 package com.efficio.fieldbook.web.study.germplasm;
 
+import org.apache.commons.lang.StringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
@@ -143,7 +144,7 @@ public class StudyEntryTransformer {
 
 					@Override
 					public String getStockIDs() {
-						return "";
+						return StringUtils.EMPTY;
 					}
 
 					@Override

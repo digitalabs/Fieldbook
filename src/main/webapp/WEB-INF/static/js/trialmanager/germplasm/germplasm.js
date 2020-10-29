@@ -428,14 +428,19 @@
 
 				$scope.openReplaceGermplasmModal = function(entryId) {
 					$uibModal.open({
-						templateUrl: '/Fieldbook/static/angular-templates/germplasm/replaceGermplasm.html',
-						controller: "replaceGermplasmCtrl",
-						size: 'md',
-						resolve: {
-							entryId: function () {
-								return entryId;
-							},
-						},
+						templateUrl: '/Fieldbook/static/js/trialmanager/germplasm-selector/germplasm-selector-modal.html',
+						controller: "GermplasmSelectorCtrl",
+						windowClass: 'modal-very-huge',
+					}).result.then((gids) => {
+						if (gids != null) {
+							// if there are multiple entries selected, get only the first entry for replacement
+							studyEntryService.replaceStudyGermplasm(entryId, gids[0]).then(function (response) {
+								showSuccessfulMessage('', $.germplasmMessages.replaceGermplasmSuccessful);
+								$rootScope.$emit("reloadStudyEntryTableData", {});
+							}, function(errResponse) {
+								showErrorMessage($.fieldbookMessages.errorServerError,  errResponse.errors[0].message);
+							});
+						}
 					});
 				};
 
@@ -559,77 +564,6 @@
 					table().ajax.reload();
 				}
 			}]);
-
-	manageTrialAppModule.controller('replaceGermplasmCtrl', ['$scope', '$rootScope', '$uibModalInstance', 'studyEntryService', 'entryId',
-		function ($scope, $rootScope, $uibModalInstance, studyEntryService, entryId) {
-			var ctrl = this;
-
-			$scope.cancel = function () {
-				$uibModalInstance.dismiss();
-			};
-
-			// Wrap 'showAlertMessage' global function to a controller function so that we can mock it in unit test.
-			ctrl.showAlertMessage = function (title, message) {
-				showAlertMessage(title, message);
-			};
-
-
-			$scope.performGermplasmReplacement = function () {
-				var newGid = $('#replaceGermplasmGID').val();
-				var regex = new RegExp('^[0-9]+$');
-				if (!regex.test(newGid)) {
-					ctrl.showAlertMessage('', 'Please enter valid GID.');
-				} else {
-					// if there are multiple entries selected, get only the first entry for replacement
-					studyEntryService.replaceStudyGermplasm(entryId, newGid).then(function (response) {
-						showSuccessfulMessage('', $.germplasmMessages.replaceGermplasmSuccessful);
-						$rootScope.$emit("reloadStudyEntryTableData", {});
-						$uibModalInstance.close();
-					}, function(errResponse) {
-						showErrorMessage($.fieldbookMessages.errorServerError,  errResponse.errors[0].message);
-						$uibModalInstance.close();
-					});
-				}
-
-			};
-		}
-	]);
-
-	manageTrialAppModule.controller('changeStudyEntryTypeCtrl', ['$scope', '$rootScope', '$uibModalInstance', 'studyEntryService', 'entryId', 'currentValue',
-		'studyEntryPropertyId',	function ($scope, $rootScope, $uibModalInstance, studyEntryService, entryId, currentValue, studyEntryPropertyId) {
-
-			$scope.selected = {};
-			$scope.entryTypes = [];
-			$scope.init = function () {
-				studyEntryService.getEntryTypes().then(function (entryTypes) {
-					buildEntryTypes(entryTypes);
-				})
-			};
-
-			$scope.cancel = function () {
-				$uibModalInstance.dismiss();
-			};
-
-
-			$scope.editEntryType = function () {
-				studyEntryService.updateStudyEntryProperty(entryId, $scope.selected.entryType.id, studyEntryPropertyId, 8255).then(function () {
-					$uibModalInstance.close();
-					$rootScope.$emit("reloadStudyEntryTableData", {});
-				});
-			};
-
-			function buildEntryTypes(entryTypes) {
-				entryTypes.forEach(function (entryType) {
-					$scope.entryTypes.push(entryType);
-					if(entryType.id === parseInt(currentValue)) {
-						$scope.selected.entryType = entryType;
-					}
-				});
-			}
-
-			$scope.init();
-		}
-	]);
 
 
 })();

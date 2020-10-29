@@ -559,6 +559,15 @@
 					}
 				};
 
+				$scope.showAddEntriesModal = function() {
+					$uibModal.open({
+						templateUrl: '/Fieldbook/static/angular-templates/germplasm/addNewEntriesModal.html',
+						controller: "AddNewEntriesController",
+						size: 'md'
+					});
+
+				};
+
 				$scope.reloadStudyEntryTableData = function() {
 					$scope.selectedItems = [];
 					table().ajax.reload();

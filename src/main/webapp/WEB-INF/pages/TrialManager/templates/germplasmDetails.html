@@ -37,12 +37,10 @@
 						<li>
 							<a href="javascript: void(0)" ng-show="hasGermplasmListSelected()" ng-click="validateGermplasmForReplacement()" th:text="#{replace.germplasm}" >Replace Germplasm</a>
 						</li>
+						<li>
+							<a href="javascript: void(0)" ng-show="hasGermplasmListSelected()" ng-click="showAddEntriesModal()" th:text="#{add.new.entries}" >Add New Entries</a>
+						</li>
 					</ul>
-					 <ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
-						 <li>
-							 <a href="javascript: void(0)" ng-show="hasGermplasmListSelected()" ng-click="showAddEntriesModal()" th:text="#{add.new.entries}" >Add New Entries</a>
-						 </li>
-					 </ul>
 				</div>
 			</div>
 

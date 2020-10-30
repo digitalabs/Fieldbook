@@ -37,10 +37,15 @@
 			return request.then(successHandler, failureHandler);
 		}
 
-		studyEntryService.saveStudyEntries = function(listId) {
+		studyEntryService.saveStudyEntries = function(listId, entryTypeId, itemIds) {
 			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/entries/generation/', {
-				germplasmListId: listId
-            });
+				"entryTypeId": entryTypeId,
+				"listId": listId,
+				"searchComposite": {
+					"itemIds": itemIds,
+					"searchRequest": null
+				}
+			});
 
 			return request.then(successHandler, failureHandler);
         }

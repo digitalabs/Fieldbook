@@ -6,6 +6,8 @@
 	module.controller('AddNewEntriesController', ['$scope', '$rootScope', '$uibModal', '$uibModalInstance', 'studyEntryService',
 		function ($scope, $rootScope, $uibModal, $uibModalInstance, studyEntryService) {
 
+			const CHECK_ENTRY_ID = 10180;
+
 			$scope.selected = {};
 			$scope.entryTypes = [];
 			$scope.selectedGids = [];
@@ -27,15 +29,44 @@
 					windowClass: 'modal-very-huge',
 				}).result.then((gids) => {
 					if (gids != null) {
-						$scope.selectedGids = gids;
-					}
-				});
+					$scope.selectedGids = gids;
+				}
+			});
 			};
+
+			$scope.addNewEntries = function () {
+				if(validateSelectedGIDs()) {
+					studyEntryService.saveStudyEntries(null, $scope.selected.entryType.id, $scope.selectedGids).then(function () {
+						showSuccessfulMessage('', $.germplasmMessages.addEntriesSuccess);
+						$uibModalInstance.close();
+						$rootScope.$emit("reloadStudyEntryTableData", {});
+					});
+				}
+			};
+
+			function validateSelectedGIDs() {
+				var selectedGidsString = String($scope.selectedGids).replace('[', '').replace(']', '');
+				//remove whiteSpace
+				selectedGidsString = selectedGidsString.split(/\s/).join('');
+
+				let regex = /[0-9]+(,[0-9]+)*/g;
+				if(regex.test(selectedGidsString)) {
+					var selectedGidArray = selectedGidsString.split(',');
+					$scope.selectedGids = [];
+					selectedGidArray.forEach(function(value) {
+						$scope.selectedGids.push(value);
+					});
+					return true;
+				} else {
+					showErrorMessage('', $.germplasmMessages.addEntriesGidsError);
+				}
+			}
 
 			function buildEntryTypes(entryTypes) {
 				entryTypes.forEach(function (entryType) {
 					$scope.entryTypes.push(entryType);
-					if(entryType.id === parseInt(currentValue)) {
+					//Set Check Entry as default value
+					if(entryType.id === CHECK_ENTRY_ID) {
 						$scope.selected.entryType = entryType;
 					}
 				});

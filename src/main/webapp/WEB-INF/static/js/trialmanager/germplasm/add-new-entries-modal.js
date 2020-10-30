@@ -38,7 +38,7 @@
 				if(validateSelectedGIDs()) {
 					studyEntryService.getExistingGids($scope.selectedGids).then(function () {
 						var message = $.germplasmMessages.addEntriesExistingGids.replace('{0}', $scope.selectedGids.join(', '));
-						var modalConfirmDelete = $scope.openConfirmModal(message, 'Continue', 'No');
+						var modalConfirmDelete = $scope.openConfirmModal(message, 'Yes', 'No');
 						modalConfirmDelete.result.then(function (shouldContinue) {
 							if (shouldContinue) {
 								proceedWithNewEntries();

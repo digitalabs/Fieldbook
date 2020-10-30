@@ -36,13 +36,25 @@
 
 			$scope.addNewEntries = function () {
 				if(validateSelectedGIDs()) {
-					studyEntryService.saveStudyEntries(null, $scope.selected.entryType.id, $scope.selectedGids).then(function () {
-						showSuccessfulMessage('', $.germplasmMessages.addEntriesSuccess);
-						$uibModalInstance.close();
-						$rootScope.$emit("reloadStudyEntryTableData", {});
+					studyEntryService.getExistingGids($scope.selectedGids).then(function () {
+						var message = $.germplasmMessages.addEntriesExistingGids.replace('{0}', $scope.selectedGids.join(', '));
+						var modalConfirmDelete = $scope.openConfirmModal(message, 'Continue', 'No');
+						modalConfirmDelete.result.then(function (shouldContinue) {
+							if (shouldContinue) {
+								proceedWithNewEntries();
+							}
+						});
 					});
 				}
 			};
+
+			function proceedWithNewEntries() {
+				studyEntryService.saveStudyEntries(null, $scope.selected.entryType.id, $scope.selectedGids).then(function () {
+					showSuccessfulMessage('', $.germplasmMessages.addEntriesSuccess);
+					$uibModalInstance.close();
+					$rootScope.$emit("reloadStudyEntryTableData", {});
+				});
+			}
 
 			function validateSelectedGIDs() {
 				var selectedGidsString = String($scope.selectedGids).replace('[', '').replace(']', '');

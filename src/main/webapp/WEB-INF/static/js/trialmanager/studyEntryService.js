@@ -69,6 +69,11 @@
 			return request.then(successHandler, failureHandler);
 		};
 
+		studyEntryService.getExistingGids = function (gids) {
+			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/entries/existing-gids/' + gids);
+			return request.then(successHandler, failureHandler);
+		}
+
         return studyEntryService;
 
     }

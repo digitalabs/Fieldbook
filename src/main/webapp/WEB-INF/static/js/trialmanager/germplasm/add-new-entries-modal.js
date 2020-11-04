@@ -36,19 +36,30 @@
 
 			$scope.addNewEntries = function () {
 				if(validateSelectedGIDs()) {
-					studyEntryService.getExistingGids($scope.selectedGids).then(function (existingGids) {
-						var message = $.germplasmMessages.addEntriesExistingGids.replace('{0}', existingGids);
-						var modalConfirmDelete = $scope.openConfirmModal(message, 'Yes', 'No');
-						modalConfirmDelete.result.then(function (shouldContinue) {
-							if (shouldContinue) {
-								proceedWithNewEntries();
-							}
+					studyEntryService.getStudyEntries().then(function (studyEntries) {
+						var gids = [];
+						studyEntries.forEach(function (studyEntry) {
+							gids.push(String(studyEntry.gid));
 						});
+						var existingGids = $scope.selectedGids.filter(function (gid) {
+							return gids.includes(String(gid));
+						});
+						if(existingGids.length === 0) {
+							proceedWithAddingNewEntries();
+						} else {
+							var message = $.germplasmMessages.addEntriesExistingGids.replace('{0}', existingGids);
+							var modalConfirmDelete = $scope.openConfirmModal(message, 'Yes', 'No');
+							modalConfirmDelete.result.then(function (shouldContinue) {
+								if (shouldContinue) {
+									proceedWithAddingNewEntries();
+								}
+							});
+						}
 					});
 				}
 			};
 
-			function proceedWithNewEntries() {
+			function proceedWithAddingNewEntries() {
 				studyEntryService.saveStudyEntries(null, $scope.selected.entryType.id, $scope.selectedGids).then(function () {
 					showSuccessfulMessage('', $.germplasmMessages.addEntriesSuccess);
 					$uibModalInstance.close();

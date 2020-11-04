@@ -45,7 +45,7 @@
 							function (d, callback) {
 								$.ajax({
 									type: 'POST',
-									url: studyEntryService.getStudyEntries() + getPageQueryParameters(d),
+									url: studyEntryService.getStudyEntriesUrl() + getPageQueryParameters(d),
 									dataSrc: '',
 									success: function (res, status, xhr) {
 										let json = {recordsTotal: 0, recordsFiltered: 0};

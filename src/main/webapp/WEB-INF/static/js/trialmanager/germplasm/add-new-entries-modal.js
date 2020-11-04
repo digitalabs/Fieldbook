@@ -64,6 +64,8 @@
 					showSuccessfulMessage('', $.germplasmMessages.addEntriesSuccess);
 					$uibModalInstance.close();
 					$rootScope.$emit("reloadStudyEntryTableData", {});
+				}, function(errResponse) {
+					showErrorMessage('',  errResponse.errors[0].message);
 				});
 			}
 

@@ -431,6 +431,11 @@
 						templateUrl: '/Fieldbook/static/js/trialmanager/germplasm-selector/germplasm-selector-modal.html',
 						controller: "GermplasmSelectorCtrl",
 						windowClass: 'modal-very-huge',
+						resolve: {
+							selectMultiple: function () {
+								return false;
+							}
+						}
 					}).result.then((gids) => {
 						if (gids != null) {
 							// if there are multiple entries selected, get only the first entry for replacement

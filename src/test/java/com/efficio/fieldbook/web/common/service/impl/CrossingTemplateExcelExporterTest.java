@@ -256,7 +256,6 @@ public class CrossingTemplateExcelExporterTest {
 		// Header added//
 		assertThat("FIELDMAP COLUMN", equalTo(sheet.getRow(0).getCell(7).getStringCellValue()));
 		assertThat("FIELDMAP RANGE", equalTo(sheet.getRow(0).getCell(8).getStringCellValue()));
-		assertThat("StockID", equalTo(sheet.getRow(0).getCell(9).getStringCellValue()));
 		assertThat("studyname", equalTo(sheet.getRow(1).getCell(0).getStringCellValue()));
 
 		// Row 1//
@@ -268,7 +267,6 @@ public class CrossingTemplateExcelExporterTest {
 		assertThat("-", equalTo(sheet.getRow(1).getCell(6).getStringCellValue()));
 		assertThat("1", equalTo(sheet.getRow(1).getCell(7).getStringCellValue()));
 		assertThat("100", equalTo(sheet.getRow(1).getCell(8).getStringCellValue()));
-		assertThat("8269", equalTo(sheet.getRow(1).getCell(9).getStringCellValue()));
 
 		// Row 2//
 		assertThat(2, equalTo((int) sheet.getRow(2).getCell(1).getNumericCellValue()));
@@ -279,7 +277,6 @@ public class CrossingTemplateExcelExporterTest {
 		assertThat("-", equalTo(sheet.getRow(2).getCell(6).getStringCellValue()));
 		assertThat("2", equalTo(sheet.getRow(2).getCell(7).getStringCellValue()));
 		assertThat("100", equalTo(sheet.getRow(2).getCell(8).getStringCellValue()));
-		assertThat("8269", equalTo(sheet.getRow(2).getCell(9).getStringCellValue()));
 
 	}
 
@@ -293,7 +290,6 @@ public class CrossingTemplateExcelExporterTest {
 		factors.add(this.createTestVariable(TermId.ENTRY_TYPE.getId(), "10170"));
 		factors.add(this.createTestVariable(TermId.FIELDMAP_COLUMN.getId(), "FIELDMAP COLUMN", "1"));
 		factors.add(this.createTestVariable(TermId.FIELDMAP_RANGE.getId(), "FIELDMAP RANGE", "100"));
-		factors.add(this.createTestVariable(TermId.STOCKID.getId(), "StockID", "8269"));
 		factors.add(this.createTestVariable(1001, "NFert_NO", "VALUE"));
 		experiments.add(this.intializeExperiments(factors, 0));
 
@@ -305,7 +301,6 @@ public class CrossingTemplateExcelExporterTest {
 		factors.add(this.createTestVariable(TermId.ENTRY_TYPE.getId(), "10170"));
 		factors.add(this.createTestVariable(TermId.FIELDMAP_COLUMN.getId(), "FIELDMAP COLUMN", "2"));
 		factors.add(this.createTestVariable(TermId.FIELDMAP_RANGE.getId(), "FIELDMAP RANGE", "100"));
-		factors.add(this.createTestVariable(TermId.STOCKID.getId(), "StockID", "8269"));
 
 		experiments.add(this.intializeExperiments(factors, 1));
 

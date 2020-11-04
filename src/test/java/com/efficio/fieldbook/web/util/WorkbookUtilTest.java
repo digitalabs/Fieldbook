@@ -393,19 +393,6 @@ public class WorkbookUtilTest {
 	}
 
 	@Test
-	public void testAddFactorsToMeasurementRowDataListForSTOCKID() {
-		final MeasurementRow row = MeasurementRowTestDataInitializer.createMeasurementRow();
-		final StandardVariable stdVariable =
-				StandardVariableTestDataInitializer.createStandardVariable(TermId.STOCKID.getId(), TermId.STOCKID.name());
-		final MeasurementVariable variable =
-				MeasurementVariableTestDataInitializer.createMeasurementVariable(TermId.STOCKID.getId(), TermId.STOCKID.name(), null);
-		variable.setDataTypeId(TermId.NUMERIC_VARIABLE.getId());
-		final ImportedGermplasm importedGermplasm = ImportedGermplasmTestDataInitializer.createImportedGermplasm();
-		WorkbookUtil.addFactorsToMeasurementRowDataList(row, stdVariable, true, variable, Collections.singletonList(importedGermplasm));
-		Assert.assertEquals(importedGermplasm.getStockIDs(), row.getDataList().get(4).getValue());
-	}
-
-	@Test
 	public void testAddFactorsToMeasurementRowDataListForENTRY_CODE() {
 		final MeasurementRow row = MeasurementRowTestDataInitializer.createMeasurementRow();
 		final StandardVariable stdVariable =

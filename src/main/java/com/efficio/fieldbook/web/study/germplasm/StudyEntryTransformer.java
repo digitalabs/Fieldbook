@@ -1,5 +1,6 @@
 package com.efficio.fieldbook.web.study.germplasm;
 
+import org.apache.commons.lang.StringUtils;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
@@ -62,7 +63,6 @@ public class StudyEntryTransformer {
 				}
 				importedGermplasm.setSource(studyEntryDto.getStudyEntryPropertyValue(TermId.SEED_SOURCE.getId()).orElse(""));
 				importedGermplasm.setGroupName(studyEntryDto.getStudyEntryPropertyValue(TermId.CROSS.getId()).orElse(""));
-				importedGermplasm.setStockIDs(studyEntryDto.getStudyEntryPropertyValue(TermId.STOCKID.getId()).orElse(""));
 				importedGermplasm.setIndex(studyEntryDto.getEntryNumber());
 				importedGermplasmList.add(importedGermplasm);
 			}
@@ -144,7 +144,7 @@ public class StudyEntryTransformer {
 
 					@Override
 					public String getStockIDs() {
-						return studyEntryDto.getStudyEntryPropertyValue(TermId.STOCKID.getId()).orElse("");
+						return StringUtils.EMPTY;
 					}
 
 					@Override

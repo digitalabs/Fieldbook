@@ -172,7 +172,7 @@ public class ExportStudyEntriesServiceImpl implements ExportStudyEntriesService 
 	}
 
 	boolean isInventoryVariable(final String termId) {
-		return termId.equals(String.valueOf(TermId.STOCKID.getId())) || termId.equals(String.valueOf(TermId.SEED_AMOUNT_G.getId()));
+		return termId.equals(String.valueOf(TermId.SEED_AMOUNT_G.getId()));
 	}
 
 	void addVariableToMap(final Map<Integer, Variable> variableMap, final int termId) {
@@ -274,8 +274,6 @@ public class ExportStudyEntriesServiceImpl implements ExportStudyEntriesService 
 				value = checkTypesNameMap.getOrDefault(entryTypeCategoricalId, "");
 			} else if (term == TermId.GROUPGID.getId()) {
 				value = studyEntryDto.getStudyEntryPropertyValue(TermId.GROUPGID.getId()).orElse("");
-			} else if (term == TermId.STOCKID.getId()) {
-				value = studyEntryDto.getStudyEntryPropertyValue(TermId.STOCKID.getId()).orElse("");
 			}
 		}
 		return value;

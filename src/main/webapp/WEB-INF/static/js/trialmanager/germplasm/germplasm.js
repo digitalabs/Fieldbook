@@ -571,6 +571,10 @@
 				$scope.reloadStudyEntryTableData = function() {
 					$scope.selectedItems = [];
 					table().ajax.reload();
+					$scope.showImportListBrowser = false;
+					$scope.showStudyEntriesTable = true;
+					$scope.showClearList = !studyStateService.hasGeneratedDesign();
+					$scope.showUpdateImportListButton = !studyStateService.hasGeneratedDesign();
 				}
 			}]);
 

@@ -31,8 +31,8 @@
 
 				loadTable();
 
-				$rootScope.$on("reloadStudyEntryTableData", function(){
-					$scope.reloadStudyEntryTableData();
+				$rootScope.$on("reloadStudyEntryTableData", function(setShowValues){
+					$scope.reloadStudyEntryTableData(setShowValues);
 				});
 
 				function table() {
@@ -573,13 +573,15 @@
 
 				};
 
-				$scope.reloadStudyEntryTableData = function() {
+				$scope.reloadStudyEntryTableData = function(setShowValues) {
 					$scope.selectedItems = [];
 					table().ajax.reload();
-					$scope.showImportListBrowser = false;
-					$scope.showStudyEntriesTable = true;
-					$scope.showClearList = !studyStateService.hasGeneratedDesign();
-					$scope.showUpdateImportListButton = !studyStateService.hasGeneratedDesign();
+					if(setShowValues) {
+						$scope.showImportListBrowser = false;
+						$scope.showStudyEntriesTable = true;
+						$scope.showClearList = !studyStateService.hasGeneratedDesign();
+						$scope.showUpdateImportListButton = !studyStateService.hasGeneratedDesign();
+					}
 				}
 			}]);
 

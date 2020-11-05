@@ -204,10 +204,10 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'studyStateService', 'TrialManagerDataService', '$http',
 		'$timeout', '_', '$localStorage', '$state', '$location', 'HasAnyAuthorityService', 'derivedVariableService', 'exportStudyModalService',
 		'importStudyModalService', 'createSampleModalService', 'derivedVariableModalService', '$uibModal', '$q', 'datasetService', 'InventoryService',
-		'studyContext', 'PERMISSIONS', 'LABEL_PRINTING_TYPE', 'HAS_LISTS_OR_SUB_OBS', 'HAS_GENERATED_DESIGN', 'germplasmStudySourceService',
+		'studyContext', 'PERMISSIONS', 'LABEL_PRINTING_TYPE', 'HAS_LISTS_OR_SUB_OBS', 'HAS_GENERATED_DESIGN', 'germplasmStudySourceService', 'studyEntryService',
 		function ($scope, $rootScope, studyStateService, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $location, HasAnyAuthorityService,
 				  derivedVariableService, exportStudyModalService, importStudyModalService, createSampleModalService, derivedVariableModalService, $uibModal, $q, datasetService, InventoryService,
-				  studyContext, PERMISSIONS, LABEL_PRINTING_TYPE, HAS_LISTS_OR_SUB_OBS, HAS_GENERATED_DESIGN, germplasmStudySourceService) {
+				  studyContext, PERMISSIONS, LABEL_PRINTING_TYPE, HAS_LISTS_OR_SUB_OBS, HAS_GENERATED_DESIGN, germplasmStudySourceService, studyEntryService) {
 
 			$scope.trialTabs = [
 				{
@@ -268,8 +268,15 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 				studyStateService.updateHasListsOrSubObs(HAS_LISTS_OR_SUB_OBS);
 				studyStateService.updateGeneratedDesign(HAS_GENERATED_DESIGN);
 
-			}
-			;
+				if(HAS_GENERATED_DESIGN) {
+					studyEntryService.getStudyEntriesMetadata().then(function (metadata) {
+						if(metadata.hasUnassignedStudyEntriesToPlot) {
+							showAlertMessage('', $.fieldbookMessages.studyEntryUnassignedWarning);
+						}
+					});
+				};
+
+			};
 
 			inventoryChangedDeRegister();
 			inventoryChangedDeRegister = $rootScope.$on("inventoryChanged", function () {

@@ -4,7 +4,7 @@
 	const module = angular.module('manageTrialApp');
 
 	module.controller('AddNewEntriesController', ['$scope', '$rootScope', '$uibModal', '$uibModalInstance', 'studyEntryService',
-		function ($scope, $rootScope, $uibModal, $uibModalInstance, studyEntryService) {
+		'TrialManagerDataService', function ($scope, $rootScope, $uibModal, $uibModalInstance, studyEntryService, TrialManagerDataService) {
 
 			const CHECK_ENTRY_ID = 10180;
 
@@ -68,7 +68,8 @@
 				studyEntryService.saveStudyEntries(null, $scope.selected.entryType.id, $scope.selectedGids).then(function () {
 					showSuccessfulMessage('', $.germplasmMessages.addEntriesSuccess);
 					$uibModalInstance.close();
-					$rootScope.$emit("reloadStudyEntryTableData", {});
+					TrialManagerDataService.applicationData.germplasmListSelected = true;
+					$rootScope.$emit("reloadStudyEntryTableData", true);
 				}, function(errResponse) {
 					showErrorMessage('',  errResponse.errors[0].message);
 				});

@@ -65,7 +65,7 @@
 			};
 
 			function proceedWithAddingNewEntries() {
-				studyEntryService.saveStudyEntries(null, $scope.selected.entryType.id, $scope.selectedGids).then(function () {
+				studyEntryService.saveStudyEntries($scope.selected.entryType.id, $scope.selectedGids).then(function () {
 					showSuccessfulMessage('', $.germplasmMessages.addEntriesSuccess);
 					$uibModalInstance.close();
 					TrialManagerDataService.applicationData.germplasmListSelected = true;

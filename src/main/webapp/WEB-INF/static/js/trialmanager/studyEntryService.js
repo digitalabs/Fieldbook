@@ -42,10 +42,9 @@
 			return request.then(successHandler, failureHandler);
 		};
 
-		studyEntryService.saveStudyEntries = function(listId, entryTypeId, itemIds) {
+		studyEntryService.saveStudyEntries = function(entryTypeId, itemIds) {
 			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/entries/generation/', {
 				"entryTypeId": entryTypeId,
-				"listId": listId,
 				"searchComposite": {
 					"itemIds": itemIds,
 					"searchRequest": null
@@ -54,6 +53,13 @@
 
 			return request.then(successHandler, failureHandler);
         };
+
+		studyEntryService.saveStudyEntriesList = function(listId) {
+			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/entries/generation-list/', {
+				"listId": listId
+			});
+			return request.then(successHandler, failureHandler);
+		};
 
 		studyEntryService.deleteEntries = function() {
 			var request = $http.delete(BASE_STUDY_URL + studyContext.studyId + '/entries');

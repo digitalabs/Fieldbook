@@ -18,6 +18,7 @@
 		TESTER_GID = 8839,
 		OBS_UNIT_ID = 8201;
 	var SAMPLES = -2;
+	var STOCK_ID = -1727;
 	var hiddenColumns = [OBS_UNIT_ID, TRIAL_INSTANCE];
 
 	subObservationModule.controller('SubObservationSetCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$stateParams',
@@ -1454,6 +1455,15 @@
 								return '<a class="gid-link" href="javascript: void(0)" ' +
 									'onclick="openGermplasmDetailsPopopWithGidAndDesig(\'' +
 									full.gid + '\',\'' + full.designation + '\')">' + EscapeHTML.escape(data.value) + '</a>';
+							}
+						});
+					} else if (columnData.termId === STOCK_ID) {
+						// STOCK_ID column
+						columnsDef.push({
+							targets: columns.length - 1,
+							orderable: false,
+							render: function (data, type, full, meta) {
+								return full.stockId;
 							}
 						});
 					} else if (columnData.termId === SAMPLES) {

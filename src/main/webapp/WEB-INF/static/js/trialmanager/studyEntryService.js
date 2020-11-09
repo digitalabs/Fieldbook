@@ -55,9 +55,7 @@
         };
 
 		studyEntryService.saveStudyEntriesList = function(listId) {
-			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/entries/generation-list/', {
-				"listId": listId
-			});
+			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/entries/generation-list/' + listId);
 			return request.then(successHandler, failureHandler);
 		};
 

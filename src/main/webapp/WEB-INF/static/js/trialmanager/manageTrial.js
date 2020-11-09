@@ -270,7 +270,7 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 
 				if(HAS_GENERATED_DESIGN) {
 					studyEntryService.getStudyEntriesMetadata().then(function (metadata) {
-						if(metadata.hasUnassignedStudyEntriesToPlot) {
+						if(metadata.hasUnassignedEntries) {
 							showAlertMessage('', $.fieldbookMessages.studyEntryUnassignedWarning);
 						}
 					});

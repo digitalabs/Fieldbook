@@ -43,7 +43,7 @@
 		};
 
 		studyEntryService.saveStudyEntries = function(entryTypeId, itemIds) {
-			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/entries/generation/', {
+			var request = $http.put(BASE_STUDY_URL + studyContext.studyId + '/entries/', {
 				"entryTypeId": entryTypeId,
 				"searchComposite": {
 					"itemIds": itemIds,
@@ -55,7 +55,7 @@
         };
 
 		studyEntryService.saveStudyEntriesList = function(listId) {
-			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/entries/generation-list/' + listId);
+			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/entries/generation/' + listId);
 			return request.then(successHandler, failureHandler);
 		};
 

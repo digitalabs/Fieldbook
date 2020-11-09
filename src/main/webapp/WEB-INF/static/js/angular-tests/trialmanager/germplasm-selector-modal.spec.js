@@ -28,7 +28,7 @@ describe('GermplasmSelectorCtrl:', function () {
 		module(function ($provide) {
 			$provide.value("studyContext", studyContextMock);
 			$provide.value("$uibModalInstance", uibModalInstanceMock);
-
+			$provide.value("selectMultiple", false);
 		});
 
 		inject(function ($injector) {

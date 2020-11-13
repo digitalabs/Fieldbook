@@ -231,8 +231,7 @@ function createFieldMap() {
 	}
 	var id = $(mode + ' #studyId').val(),
 		name = $(active + ' #studyName').val();
-
-	openStudyFieldmapTree(id, name);
+	showFieldMapPopUpCreate(id);
 }
 
 

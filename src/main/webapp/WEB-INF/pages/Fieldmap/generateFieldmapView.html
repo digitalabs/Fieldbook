@@ -199,7 +199,6 @@
 											</li>
 											<li>
 												<a th:href="@{/LabelPrinting/specifyLabelDetails/fieldmap}" href="" style="display: none" id="step3-create-labels-url"></a>
-												<a href="javascript: void(0);" id="step3-create-labels" th:text="#{tools.create.label.printing}">Create Labels</a>
 											</li>
 										</ul>
 									</div>
@@ -236,31 +235,6 @@
 						</div>
 					</div>
 				</div>
-				<div class="modal fade" id="create-label-confirmation">
-					<div class="modal-dialog">
-						<div class="modal-content">
-							<div class="modal-body">
-								<div class="row form-group">
-									<div class="col-xs-11 col-md-11">
-										<label class="modal-title fbk-modal-title" id="modal-title" th:text="#{common.form.confirmation.text}"></label>
-									</div>
-									<div class="col-xs-1 col-md-1">
-										<button type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
-									</div>
-								</div>
-								<div class="row form-group">
-									<div class="col-xs-12 col-md-12">
-										<label th:text="#{fieldmap.create.label.save.fieldmap}">Do you want to save the fieldmap?</label>
-									</div>
-								</div>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-default" data-dismiss="modal" onclick="javascript: redirectToCreateLabel();">No</button>
-								<button type="button" class="btn btn-primary" onclick="javascript: saveAndRedirectToCreateLabels();">Yes</button>
-							</div>
-						</div>
-					</div>
-				</div>
 			</form>
 		</div>
 	</div>
@@ -282,14 +256,6 @@ $(document).ready(function() {
 		isGenerated = true;
 	}
 	$('#saveAndRedirectToCreateLabel').val("0");
-	$('#step3-create-labels').on('click', function() {
-		if (isGenerated) {
-			//we show the prompt
-			$('#create-label-confirmation').modal('show');
-		} else {
-			redirectToCreateLabel();
-		}
-	});
  //for the workaround
 	$('#finishExport').on("click", function() {
 		var url = $('#exportToExcel').attr('href');
@@ -301,15 +267,6 @@ $(document).ready(function() {
 		$(this).html(ordering++);
 	});
 });
-
-function redirectToCreateLabel() {
-	var url =  $('#step3-create-labels-url').attr('href');
-	location.href = url;
-}
-function saveAndRedirectToCreateLabels() {
-	$('#saveAndRedirectToCreateLabel').val("1");
-	$('#fieldmapForm').submit();
-}
   //]]>
 </script>
 </div>

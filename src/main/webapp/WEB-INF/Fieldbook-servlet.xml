@@ -155,13 +155,8 @@
 	<bean id="verticalFieldMapLayoutIterator"
 		class="com.efficio.fieldbook.web.label.printing.service.impl.VerticalFieldMapLayoutIterator" />
 
-
 	<bean id="horizontalFieldMapLayoutIterator"
 		class="com.efficio.fieldbook.web.label.printing.service.impl.HorizontalFieldMapLayoutIterator" />
-
-
-	<bean id="labelPrintingService" class="com.efficio.fieldbook.service.LabelPrintingServiceImpl" />
-
 
 	<bean id="exportFieldmapService" class="com.efficio.fieldbook.service.ExportFieldmapServiceImpl" />
 
@@ -198,13 +193,6 @@
 		scope="session">
 		<aop:scoped-proxy />
 	</bean>
-
-	<bean id="userLabelPrinting"
-		class="com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting"
-		scope="session">
-		<aop:scoped-proxy />
-	</bean>
-
 
 	<bean id="paginationListSelection"
 		class="com.efficio.fieldbook.web.common.bean.PaginationListSelection"
@@ -588,10 +576,6 @@
 	<!-- Data Source and Transaction Configuration -->
 
 	<bean id="xaDataSources" class="org.generationcp.middleware.hibernate.XADataSources" />
-
-    <bean id="labelGeneratorFactory" class="com.efficio.fieldbook.util.labelprinting.LabelGeneratorFactory"/>
-    <bean id="excelLabelGenerator" class="com.efficio.fieldbook.util.labelprinting.ExcelLabelGenerator"/>
-    <bean id="pdfLabelGenerator" class="com.efficio.fieldbook.util.labelprinting.PDFLabelGenerator"/>
 
 	<bean id="workbenchHibernateSessionProvider"
 		class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider"

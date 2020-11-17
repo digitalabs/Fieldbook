@@ -805,7 +805,8 @@ function doEnterFieldDetailsPageLoad() {
 		prevFieldId = $('#' + getJquerySafeId('userFieldmap.fieldId')).val(),
 		prevBlockId = $('#' + getJquerySafeId('userFieldmap.blockId')).val();
 
-	$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val('');
+	$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val(defaultLocationId);
+
 	programLocationUrl = $('#programLocationUrl').val();
 	setSelectedTrialsAsDraggable();
 	calculateTotalPlots();
@@ -817,67 +818,14 @@ function doEnterFieldDetailsPageLoad() {
 
 	showBlockDetails(true, null);
 
+	showCorrectFieldLocationCombo();
+
 	// remove any other listeners for the location update
 	$(document).off('location-update');
 	$(document).on('location-update', recreateLocationCombo);
 
-	$('#showFavoriteLocation, #showAllLocationRadio, #showBreedingLocationOnlyRadio').on('change', function() {
-		showCorrectFieldLocationCombo();
-		initializeFieldSelect2({}, [], true);
-		initializeBlockSelect2({}, [], true);
-		showBlockDetails(true, null);
-	});
-
 	var numRowPerPlot = $('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val();
 	$('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val(defaultRowsPerPlot);
-
-	if (prevFieldId != '') {
-		var favLocationChkElem =  $('#showFavoriteLocation');
-		var isChecked = favLocationChkElem.is(':checked');
-
-		$('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val(numRowPerPlot);
-
-		if (isChecked) {
-
-			if ($("#showBreedingLocationOnlyRadio").is(':checked')) {
-				$('#s2id_fieldLocationIdBreedingFavorites').show();
-				$('#s2id_fieldLocationIdFavorite').hide();
-				$('#s2id_fieldLocationIdAll').hide();
-				$('#s2id_fieldLocationIdBreeding').hide();
-				setCorrectValueToFieldCombo (locationSuggestionsBreedingFav_obj, prevFieldLocationId, 'fieldLocationIdBreedingFavorite')
-			} else {
-				$('#s2id_fieldLocationIdBreedingFavorites').hide();
-				$('#s2id_fieldLocationIdFavorite').show();
-				$('#s2id_fieldLocationIdAll').hide();
-				$('#s2id_fieldLocationIdBreeding').hide();
-				setCorrectValueToFieldCombo (locationSuggestionsFav_obj, prevFieldLocationId, 'fieldLocationIdFavorite');
-			};
-
-		} else {
-
-			if ($("#showBreedingLocationOnlyRadio").is(':checked')) {
-				$('#s2id_fieldLocationIdBreedingFavorites').hide();
-				$('#s2id_fieldLocationIdFavorite').hide();
-				$('#s2id_fieldLocationIdAll').hide();
-				$('#s2id_fieldLocationIdBreeding').show();
-				setCorrectValueToFieldCombo (locationSuggestionsBreeding_obj, prevFieldLocationId, 'fieldLocationIdBreeding')
-			} else {
-				$('#s2id_fieldLocationIdBreedingFavorites').hide();
-				$('#s2id_fieldLocationIdFavorite').hide();
-				$('#s2id_fieldLocationIdAll').show();
-				$('#s2id_fieldLocationIdBreeding').hide();
-				setCorrectValueToFieldCombo (locationSuggestions, prevFieldLocationId, 'fieldLocationIdAll');
-			};
-		}
-	} else {
-		if (Object.keys(locationSuggestionsBreedingFav_obj).length > 0) {
-			$('#showFavoriteLocation').prop('checked', true);
-			$('#s2id_fieldLocationIdFavorite').hide();
-			$('#s2id_fieldLocationIdAll').hide();
-			$('#s2id_fieldLocationIdBreedingFavorites').show();
-			$('#s2id_fieldLocationIdBreeding').hide();
-		}
-	}
 
 	if (prevFieldId != '') {
 		loadFieldsDropdown($('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val());
@@ -912,47 +860,14 @@ function setCorrectValueToFieldCombo (ls_obj, locId, fieldInputId) {
 
 
 function showCorrectFieldLocationCombo() {
-	var isChecked = $('#showFavoriteLocation').is(':checked');
-	// if show favorite location is checked, hide all field locations, else,
-	// show only favorite locations
-	if (isChecked) {
+	// Default Location
 
-		if ($("#showBreedingLocationOnlyRadio").is(':checked')) {
-			$('#s2id_fieldLocationIdBreedingFavorites').show();
-			$('#s2id_fieldLocationIdFavorite').hide();
-		} else {
-			$('#s2id_fieldLocationIdBreedingFavorites').hide();
-			$('#s2id_fieldLocationIdFavorite').show();
-		}
-
-		$('#s2id_fieldLocationIdAll').hide();
-		$('#s2id_fieldLocationIdBreeding').hide();
-		if ($('#fieldLocationIdFavorite').select2('data') != null) {
-			$('#fieldLocationId').val($('#fieldLocationIdFavorite').select2('data').id);
-			$('#fieldLocationName').val($('#fieldLocationIdFavorite').select2('data').text);
-			$('#fieldLocationAbbreviation').val($('#fieldLocationIdFavorite').select2('data').abbr);
-		} else {
-			$('#fieldLocationId').val(0);
-			$('#fieldLocationName').val('');
-		}
-	} else {
-		$('#s2id_fieldLocationIdFavorite').hide();
-		$('#s2id_fieldLocationIdBreedingFavorites').hide();
-
-		if ($('#showAllLocationRadio').is(':checked')) {
-			$('#s2id_fieldLocationIdAll').show();
-			$('#s2id_fieldLocationIdBreeding').hide();
-		} else {
-			$('#s2id_fieldLocationIdBreeding').show();
-			$('#s2id_fieldLocationIdAll').hide();
-		}
-
-		// LocationIdAll is not null but it contains blank value so put AND condition
-		if ($('#fieldLocationIdAll').select2('data') != null && $('#fieldLocationIdAll').select2('data').id != "" ) {
-			$('#fieldLocationId').val($('#fieldLocationIdAll').select2('data').id);
-			$('#fieldLocationName').val($('#fieldLocationIdAll').select2('data').text);
-		}
-	}
+	$('#fieldLocationId').val(defaultLocationId);
+	$('#fieldLocationName').val(defaultLocationName);
+	setComboValues(locationSuggestions_obj, defaultLocationId, 'fieldLocationIdAll');
+	loadFieldsDropdown(defaultLocationId, '');
+	$('#s2id_fieldLocationIdAll').select2('disable');
+	$('#s2id_fieldLocationIdAll').show();
 }
 
 

@@ -31,8 +31,8 @@
 
 				loadTable();
 
-				$rootScope.$on("reloadStudyEntryTableData", function(){
-					$scope.reloadStudyEntryTableData();
+				$rootScope.$on("reloadStudyEntryTableData", function(setShowValues){
+					$scope.reloadStudyEntryTableData(setShowValues);
 				});
 
 				function table() {
@@ -45,7 +45,7 @@
 							function (d, callback) {
 								$.ajax({
 									type: 'POST',
-									url: studyEntryService.getStudyEntries() + getPageQueryParameters(d),
+									url: studyEntryService.getStudyEntriesUrl() + getPageQueryParameters(d),
 									dataSrc: '',
 									success: function (res, status, xhr) {
 										let json = {recordsTotal: 0, recordsFiltered: 0};
@@ -431,6 +431,11 @@
 						templateUrl: '/Fieldbook/static/js/trialmanager/germplasm-selector/germplasm-selector-modal.html',
 						controller: "GermplasmSelectorCtrl",
 						windowClass: 'modal-very-huge',
+						resolve: {
+							selectMultiple: function () {
+								return false;
+							}
+						}
 					}).result.then((gids) => {
 						if (gids != null) {
 							// if there are multiple entries selected, get only the first entry for replacement
@@ -462,7 +467,7 @@
 				$scope.saveStudyEntries = function (listId) {
 
 					studyEntryService.deleteEntries().then(function () {
-						studyEntryService.saveStudyEntries(listId).then(function(res){
+						studyEntryService.saveStudyEntriesList(listId).then(function(res){
 							TrialManagerDataService.applicationData.germplasmListSelected = true;
 							$scope.reloadStudyEntryTableData();
 							$scope.showImportListBrowser = false;
@@ -559,9 +564,24 @@
 					}
 				};
 
-				$scope.reloadStudyEntryTableData = function() {
+				$scope.showAddEntriesModal = function() {
+					$uibModal.open({
+						templateUrl: '/Fieldbook/static/angular-templates/germplasm/addNewEntriesModal.html',
+						controller: "AddNewEntriesController",
+						size: 'md'
+					});
+
+				};
+
+				$scope.reloadStudyEntryTableData = function(setShowValues) {
 					$scope.selectedItems = [];
 					table().ajax.reload();
+					if(setShowValues) {
+						$scope.showImportListBrowser = false;
+						$scope.showStudyEntriesTable = true;
+						$scope.showClearList = !studyStateService.hasGeneratedDesign();
+						$scope.showUpdateImportListButton = !studyStateService.hasGeneratedDesign();
+					}
 				}
 			}]);
 

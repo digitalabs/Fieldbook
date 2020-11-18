@@ -23,32 +23,46 @@
             return request.then(successHandler, failureHandler);
         };
 
-		studyEntryService.getStudyEntries = function() {
+		studyEntryService.getStudyEntriesUrl = function() {
 			return BASE_STUDY_URL + studyContext.studyId + '/entries';
-        }
+        };
+
+		studyEntryService.getStudyEntries = function() {
+			var request = $http.post(studyEntryService.getStudyEntriesUrl(), {});
+			return request.then(successHandler, failureHandler);
+		};
 
 		studyEntryService.getEntryTableColumns = function() {
 			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/entries/table/columns');
 			return request.then(successHandler, failureHandler);
-		}
+		};
 
 		studyEntryService.getEntryTypes = function() {
 			var request = $http.get(BASE_PROGRAM_URL + '/entry-types');
 			return request.then(successHandler, failureHandler);
-		}
+		};
 
-		studyEntryService.saveStudyEntries = function(listId) {
-			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/entries/generation/', {
-				germplasmListId: listId
-            });
+		studyEntryService.saveStudyEntries = function(entryTypeId, itemIds) {
+			var request = $http.put(BASE_STUDY_URL + studyContext.studyId + '/entries/', {
+				"entryTypeId": entryTypeId,
+				"searchComposite": {
+					"itemIds": itemIds,
+					"searchRequest": null
+				}
+			});
 
 			return request.then(successHandler, failureHandler);
-        }
+        };
+
+		studyEntryService.saveStudyEntriesList = function(listId) {
+			var request = $http.post(BASE_STUDY_URL + studyContext.studyId + '/entries/generation?listId=' + listId);
+			return request.then(successHandler, failureHandler);
+		};
 
 		studyEntryService.deleteEntries = function() {
 			var request = $http.delete(BASE_STUDY_URL + studyContext.studyId + '/entries');
 			return request.then(successHandler, failureHandler);
-		}
+		};
 
 		studyEntryService.updateStudyEntryProperty = function (entryId, newValue, studyEntryPropertyId, variableId) {
 			var request = $http.put(BASE_STUDY_URL + studyContext.studyId + '/entries/' + entryId + '/properties/' + variableId, {
@@ -57,7 +71,7 @@
 				"variableId": variableId
 			});
 			return request.then(successHandler, failureHandler);
-		}
+		};
 
 		studyEntryService.getStudyEntriesMetadata = function () {
 			var request = $http.get(BASE_STUDY_URL + studyContext.studyId + '/entries/metadata');

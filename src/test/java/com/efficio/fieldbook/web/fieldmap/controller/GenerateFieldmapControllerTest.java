@@ -1,11 +1,10 @@
 
 package com.efficio.fieldbook.web.fieldmap.controller;
 
-import java.io.File;
-import java.io.FileOutputStream;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.efficio.fieldbook.service.api.ExportFieldmapService;
+import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
+import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
@@ -16,24 +15,20 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 
-import com.efficio.fieldbook.service.api.ExportFieldmapService;
-import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.utils.test.LabelPrintingDataUtil;
-import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
-import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.FileOutputStream;
 
 public class GenerateFieldmapControllerTest {
 

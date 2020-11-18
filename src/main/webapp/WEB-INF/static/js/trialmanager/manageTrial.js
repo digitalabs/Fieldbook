@@ -918,6 +918,25 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 				});
 			}
 
+			$rootScope.openInventoryDetailsModal = function(gid) {
+
+				$uibModal.open({
+					templateUrl: '/Fieldbook/static/js/trialmanager/inventory/details/inventory-details-modal.html',
+					controller: 'InventoryDetailsCtrl',
+					windowClass: 'modal-very-huge',
+					resolve: {
+						gid: function () {
+							return gid;
+						}
+					}
+				}).result.finally(function () {
+					// Refresh and show the 'Crosses and Selections' tab
+					//TODO: review this!
+					// $rootScope.navigateToTab('germplasmStudySource', {reload: true});
+					// $rootScope.$broadcast('inventoryChanged');
+				});
+			}
+
 			$scope.showCreateSampleListModal = function () {
 				createSampleModalService.openDatasetOptionModal();
 			}

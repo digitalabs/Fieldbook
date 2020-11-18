@@ -16,7 +16,7 @@
 					<br/>
 					<div class="row form-group">
 						<div class="col-xs-12 col-md-12" >
-							<label class=""><em th:utext="#{label.indicate.mandatory.fields}"> indicates a mandatory field</em></label>
+							<label class=""><span class='required'>*</span><em> indicates a mandatory field</em></label>
 						</div>
 					</div>
 					<div class="row form-group">
@@ -72,8 +72,7 @@
 						</div>
 						<div class="row form-group" ng-class="formGroupClass('name')">
 							<div class="col-sm-6" style="padding-right: 0px;">
-							<label class="control-label label-bold"> Name for {{datasetType.name}} dataset: <span
-								class="required">*</span></label>
+							<label class="control-label label-bold"> Name for {{datasetType.name}} dataset: <span class="required">*</span></label>
 							</div>
 							<div class="col-sm-6" style="padding-left: 0px;">
 								<input type="text" name="name" ng-model="datasetName" ng-maxlength="100" pattern="^[a-zA-Z0-9\s(\\/:*?&quot;&lt;&gt;|.)]*$"

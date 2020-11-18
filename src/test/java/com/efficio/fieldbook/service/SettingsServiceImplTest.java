@@ -1,16 +1,11 @@
 
 package com.efficio.fieldbook.service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import com.efficio.fieldbook.service.api.FieldbookService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.junit.Assert;
@@ -22,8 +17,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SettingsServiceImplTest {
@@ -81,68 +78,6 @@ public class SettingsServiceImplTest {
 
 		Assert.assertFalse("Expecting to return false when the variable do not exist from germplasm descriptor OR experimental design.",
 				this.serviceDUT.isGermplasmListField(standardVariableId));
-	}
-
-	@Test
-	public void testRetrieveTraitsAsLabels() throws Exception {
-
-		final StandardVariable standardVariable = new StandardVariable();
-		final Set<VariableType> variableTypes = new HashSet<>();
-		variableTypes.add(VariableType.GERMPLASM_DESCRIPTOR);
-		standardVariable.setVariableTypes(variableTypes);
-
-		Mockito.when(fieldbookMiddlewareService.getStandardVariable(Mockito.anyInt(), Mockito.anyString())).thenReturn(standardVariable);
-
-		final List<MeasurementVariable> traits = this.initializeListOfVariates();
-
-		Mockito.when(this.workbook.getVariates()).thenReturn(traits);
-
-		final List<LabelFields> result = this.serviceDUT.retrieveTraitsAsLabels(this.workbook);
-
-		Assert.assertEquals("equal results", this.initializeListOfVariates().size(), result.size());
-	}
-
-	@Test
-	public void testRetrieveExperimentalDesignAsLabelsBlockNoIsAvailable() {
-
-		final StandardVariable standardVariable = new StandardVariable();
-		final Set<VariableType> variableTypes = new HashSet<>();
-		variableTypes.add(VariableType.GERMPLASM_DESCRIPTOR);
-		standardVariable.setVariableTypes(variableTypes);
-
-		Mockito.when(fieldbookMiddlewareService.getStandardVariable(TermId.BLOCK_NO.getId(), PROGRAM_UUID)).thenReturn(standardVariable);
-
-		final List<MeasurementVariable> factors = new ArrayList<>();
-		final MeasurementVariable blockNo = new MeasurementVariable();
-		blockNo.setTermId(TermId.BLOCK_NO.getId());
-		factors.add(blockNo);
-
-		Mockito.when(workbook.getFactors()).thenReturn(factors);
-
-		final List<LabelFields> result = this.serviceDUT.retrieveExperimentalDesignFactorsAsLabels(workbook);
-
-		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(TermId.BLOCK_NO.getId(), result.get(0).getId());
-		Assert.assertTrue(result.get(0).isGermplasmListField());
-
-
-	}
-
-	@Test
-	public void testRetrieveExperimentalDesignAsLabelsBlockNoIsNotAvailable() {
-
-		final List<MeasurementVariable> factors = new ArrayList<>();
-		final MeasurementVariable repNo = new MeasurementVariable();
-		repNo.setTermId(TermId.REP_NO.getId());
-		factors.add(repNo);
-
-		Mockito.when(workbook.getFactors()).thenReturn(factors);
-
-		final List<LabelFields> result = this.serviceDUT.retrieveExperimentalDesignFactorsAsLabels(workbook);
-
-		Assert.assertTrue(result.isEmpty());
-
-
 	}
 
 	private List<MeasurementVariable> initializeListOfVariates() {

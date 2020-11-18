@@ -14,7 +14,6 @@ package com.efficio.fieldbook.web.fieldmap.controller;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
-import com.efficio.fieldbook.web.label.printing.controller.LabelPrintingController;
 import com.efficio.fieldbook.web.trial.controller.OpenTrialController;
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
@@ -73,7 +72,6 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController {
 	 */
 	@RequestMapping(method = RequestMethod.POST)
 	public String saveFieldMap(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model) {
-
 		try {
 			if (this.userFieldmap != null && this.userFieldmap.getSelectedFieldMaps() != null && !this.userFieldmap.getSelectedFieldMaps()
 				.isEmpty()) {
@@ -88,12 +86,7 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController {
 			SaveFieldmapController.LOG.error(e.getMessage(), e);
 		}
 
-		if ("1".equalsIgnoreCase(form.getSaveAndRedirectToCreateLabel())) {
-			return "redirect:" + LabelPrintingController.URL + "/fieldmap";
-		}
-
 		return "redirect:" + OpenTrialController.URL + "/" + form.getUserFieldmap().getStudyId();
-
 	}
 
 	/**

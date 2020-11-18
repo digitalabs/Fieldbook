@@ -2,19 +2,14 @@ package com.efficio.fieldbook.service;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.SettingsService;
-import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
-import org.generationcp.commons.constant.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
+import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
@@ -23,9 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA. User: Daniel Villafuerte Date: 1/2/2015 Time: 9:48 AM
@@ -97,33 +90,6 @@ public class SettingsServiceImpl implements SettingsService {
 		}
 	}
 
-	@Override
-	public List<LabelFields> retrieveTrialSettingsAsLabels(final Workbook workbook) {
-		final List<LabelFields> details = new ArrayList<>();
-		final FieldbookUtil util = FieldbookUtil.getInstance();
-
-		final List<Integer> hiddenFields = util.buildVariableIDList(AppConstants.HIDE_STUDY_VARIABLE_DBCV_FIELDS.getString());
-		final List<Integer> basicDetailIDList = util.buildVariableIDList(AppConstants.HIDE_STUDY_FIELDS.getString());
-		final List<MeasurementVariable> measurementVariables = workbook.getStudyConditions();
-		final Map<String, MeasurementVariable> settingsMap = SettingsUtil.buildMeasurementVariableMap(measurementVariables);
-		for (final MeasurementVariable var : measurementVariables) {
-			if (!basicDetailIDList.contains(var.getTermId()) && !hiddenFields.contains(var.getTermId())) {
-				final LabelFields field =
-						new LabelFields(var.getName(), var.getTermId(), this.isGermplasmListField(var.getTermId()));
-
-				// set local name of id variable to local name of name variable
-				final String nameTermId = SettingsUtil.getNameCounterpart(var.getTermId(), AppConstants.ID_NAME_COMBINATION.getString());
-				if (settingsMap.get(nameTermId) != null) {
-					field.setName(settingsMap.get(nameTermId).getName());
-				}
-
-				details.add(field);
-			}
-		}
-
-		return details;
-	}
-
 	public boolean isGermplasmListField(final Integer id) {
 
 		try {
@@ -136,128 +102,6 @@ public class SettingsServiceImpl implements SettingsService {
 		}
 
 		return false;
-	}
-
-
-
-	@Override
-	public List<LabelFields> retrieveNurseryManagementDetailsAsLabels(final Workbook workbook) {
-		final List<LabelFields> details = new ArrayList<>();
-		final FieldbookUtil util = FieldbookUtil.getInstance();
-
-		final List<Integer> hiddenFields = util.buildVariableIDList(AppConstants.STUDY_BASIC_DETAIL_FIELDS_HIDDEN_LABELS.getString());
-		final List<MeasurementVariable> measurementVariables = workbook.getStudyConditions();
-		measurementVariables.addAll(workbook.getTrialConditions());
-		final Map<String, MeasurementVariable> settingsMap = SettingsUtil.buildMeasurementVariableMap(measurementVariables);
-		for (final MeasurementVariable var : measurementVariables) {
-			if (!hiddenFields.contains(var.getTermId())) {
-				final LabelFields field =
-						new LabelFields(var.getName(), var.getTermId(), this.isGermplasmListField(var.getTermId()));
-
-				// set local name of id variable to local name of name variable
-				final String nameTermId = SettingsUtil.getNameCounterpart(var.getTermId(), AppConstants.ID_NAME_COMBINATION.getString());
-				if (settingsMap.get(nameTermId) != null) {
-					field.setName(settingsMap.get(nameTermId).getName());
-				}
-
-				details.add(field);
-			}
-		}
-
-		return details;
-	}
-
-	@Override
-	public List<LabelFields> retrieveTraitsAsLabels(final Workbook workbook) {
-		final List<LabelFields> traitList = new ArrayList<>();
-		for (final MeasurementVariable var : workbook.getVariates()) {
-			traitList
-					.add(new LabelFields(var.getName(), var.getTermId(), this.isGermplasmListField(var.getTermId())));
-		}
-
-		return traitList;
-	}
-
-	@Override
-	public List<LabelFields> retrieveGermplasmDescriptorsAsLabels(final Workbook workbook) {
-		final List<LabelFields> detailList = new ArrayList<>();
-		final FieldbookUtil util = FieldbookUtil.getInstance();
-
-		final List<Integer> experimentalDesignVariables = util.buildVariableIDList(AppConstants.EXP_DESIGN_REQUIRED_VARIABLES.getString());
-
-		for (final MeasurementVariable var : workbook.getFactors()) {
-			// this condition is required so that treatment factors are not included in the list of factors for the germplasm tab
-			if (var.getTreatmentLabel() != null && !var.getTreatmentLabel().isEmpty() || experimentalDesignVariables
-					.contains(var.getTermId()) || var.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
-				continue;
-			}
-
-			if (var.getTermId() == TermId.OBS_UNIT_ID.getId()) {
-				continue;
-			}
-
-			// set all variables with trial design role to hidden
-			if (var.getRole() != PhenotypicType.TRIAL_DESIGN) {
-
-				final LabelFields field =
-						new LabelFields(var.getName(), var.getTermId(), this.isGermplasmListField(var.getTermId()));
-				detailList.add(field);
-			}
-
-		}
-
-		return detailList;
-	}
-
-	@Override
-	public List<LabelFields> retrieveTrialEnvironmentConditionsAsLabels(final Workbook workbook) {
-
-		final List<LabelFields> labelFieldsList = new ArrayList<>();
-
-		final List<Integer> hiddenFields =
-				FieldbookUtil.getInstance().buildVariableIDList(AppConstants.HIDE_STUDY_VARIABLE_DBCV_FIELDS.getString());
-
-		final Map<String, MeasurementVariable> factorsMeasurementVariableMap =
-				SettingsUtil.buildMeasurementVariableMap(workbook.getTrialConditions());
-
-		for (final MeasurementVariable var : workbook.getTrialConditions()) {
-
-			if (!hiddenFields.contains(var.getTermId()) && TermId.EXPERIMENT_DESIGN_FACTOR.getId() != var.getTermId()) {
-				final String variableName = var.getName();
-
-				final LabelFields field =
-						new LabelFields(variableName, var.getTermId(), this.isGermplasmListField(var.getTermId()));
-
-				// Set local name of ID variable to local name of NAME variable
-				final String nameTermId = SettingsUtil.getNameCounterpart(var.getTermId(), AppConstants.ID_NAME_COMBINATION.getString());
-				if (factorsMeasurementVariableMap.get(nameTermId) != null) {
-					field.setName(factorsMeasurementVariableMap.get(nameTermId).getName());
-				}
-				labelFieldsList.add(field);
-			}
-
-		}
-
-		return labelFieldsList;
-	}
-
-	@Override
-	public List<LabelFields> retrieveExperimentalDesignFactorsAsLabels(final Workbook workbook) {
-
-		final List<LabelFields> labelFieldsList = new ArrayList<>();
-
-		// Add BLOCK_NO experiment design factor if available
-		for (final MeasurementVariable var : workbook.getFactors()) {
-			if (TermId.BLOCK_NO.getId() == var.getTermId()) {
-				final LabelFields field =
-						new LabelFields(var.getName(), var.getTermId(), this.isGermplasmListField(var.getTermId()));
-				field.setName(var.getName());
-				labelFieldsList.add(field);
-			}
-		}
-
-		return labelFieldsList;
-
 	}
 
 	/**

@@ -32,6 +32,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.util.CrossExpansionProperties;
+import org.generationcp.middleware.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
@@ -137,11 +138,11 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController 
 			final FieldMapTrialInstanceInfo trialInfo =
 					this.userFieldmap.getSelectedTrialInstanceByDatasetIdAndEnvironmentId(datasetId, instanceId);
 			if (trialInfo != null) {
-				this.userFieldmap.setNumberOfRangesInBlock(trialInfo.getRangesInBlock());
-				this.userFieldmap.setNumberOfRowsInBlock(trialInfo.getRowsInBlock());
+				this.userFieldmap.setNumberOfRangesInBlock(Util.getIntValue(trialInfo.getRangesInBlock()));
+				this.userFieldmap.setNumberOfRowsInBlock(Util.getIntValue(trialInfo.getRowsInBlock()));
 				this.userFieldmap.setNumberOfEntries((long) this.userFieldmap.getAllSelectedFieldMapLabels(false).size());
-				this.userFieldmap.setNumberOfRowsPerPlot(trialInfo.getRowsPerPlot());
-				this.userFieldmap.setPlantingOrder(trialInfo.getPlantingOrder());
+				this.userFieldmap.setNumberOfRowsPerPlot(Util.getIntValue(trialInfo.getRowsPerPlot()));
+				this.userFieldmap.setPlantingOrder(Util.getIntValue(trialInfo.getPlantingOrder()));
 				this.userFieldmap.setBlockName(trialInfo.getBlockName());
 				this.userFieldmap.setFieldName(trialInfo.getFieldName());
 				this.userFieldmap.setLocationName(trialInfo.getLocationName());

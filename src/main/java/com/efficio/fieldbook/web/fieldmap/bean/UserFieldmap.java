@@ -481,6 +481,9 @@ public class UserFieldmap implements Serializable {
 	 * @return the number of columns in block
 	 */
 	public int getNumberOfColumnsInBlock() {
+		if (this.getNumberOfRowsPerPlot() == 0) {
+			return 0;
+		}
 		return this.getNumberOfRowsInBlock() / this.getNumberOfRowsPerPlot();
 	}
 

@@ -26,6 +26,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.commons.util.InstallationDirectoryUtil;
+import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -148,6 +149,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController 
 				this.userFieldmap.setLocationName(trialInfo.getLocationName());
 				this.userFieldmap.setFieldMapLabels(this.userFieldmap.getAllSelectedFieldMapLabels(false));
 				this.userFieldmap.setMachineRowCapacity(trialInfo.getMachineRowCapacity());
+				this.userFieldmap.setBlockId(trialInfo.getBlockId());
 
 				final FieldPlotLayoutIterator plotIterator = this.horizontalFieldMapLayoutIterator;
 				this.userFieldmap.setFieldmap(
@@ -169,7 +171,8 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController 
 		final FileExportInfo exportInfo;
 		try {
 			// changed selected name to block name for now
-			exportInfo = this.makeSafeFileName(this.userFieldmap.getBlockName());
+			final String fileName = StringUtil.isEmpty(this.userFieldmap.getBlockName()) ? this.userFieldmap.getLocationName() : this.userFieldmap.getBlockName();
+			exportInfo = this.makeSafeFileName(fileName);
 			this.exportFieldmapService.exportFieldMapToExcel(exportInfo.getFilePath(), this.userFieldmap);
 
 			return FieldbookUtil.createResponseEntityForFileDownload(exportInfo.getFilePath(), exportInfo.getDownloadFileName());

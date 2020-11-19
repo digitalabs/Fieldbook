@@ -285,8 +285,15 @@
 						columnsDef.push({
 							targets: columns.length - 1,
 							orderable: false,
-							render: function (data, type, full, meta) {
-								return full.lotCount;
+							createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
+								if (rowData.lotCount === 0) {
+									$(td).append('<span>-</span>');
+								} else {
+									$(td).html($compile('<a href ' +
+										` ng-click="openInventoryDetailsModal('${rowData.gid}')"> ` +
+										rowData.lotCount + '</a>')($rootScope));
+									$rootScope.$apply();
+								}
 							}
 						});
 

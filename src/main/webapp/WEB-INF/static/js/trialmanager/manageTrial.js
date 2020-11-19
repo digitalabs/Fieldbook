@@ -929,11 +929,6 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 							return gid;
 						}
 					}
-				}).result.finally(function () {
-					// Refresh and show the 'Crosses and Selections' tab
-					//TODO: review this!
-					// $rootScope.navigateToTab('germplasmStudySource', {reload: true});
-					// $rootScope.$broadcast('inventoryChanged');
 				});
 			}
 

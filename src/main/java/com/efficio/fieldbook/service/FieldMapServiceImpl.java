@@ -60,17 +60,13 @@ public class FieldMapServiceImpl implements FieldMapService {
 		final boolean isSerpentine = info.getPlantingOrder() == 2;
 		final Plot[][] plots = new Plot[totalColumns][totalRanges];
 
-		if (totalColumns == 0 && totalRanges == 0 && info.getBlockId() == 0) {
-			
-		}
-
 		final List<FieldMapLabel> labels = info.getFieldMapLabels();
 		this.initializeFieldMapArray(plots, totalColumns, totalRanges);
 		for (final FieldMapLabel label : labels) {
 			if (label.getColumn() != null && label.getRange() != null) {
 				final int column = label.getColumn();
 				final int range = label.getRange();
-				if ((column <= totalColumns && range <= totalRanges)) {
+				if (column <= totalColumns && range <= totalRanges) {
 					final Plot plot = plots[column - 1][range - 1];
 					plot.setColumn(column);
 					plot.setRange(range);

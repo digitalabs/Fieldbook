@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -173,9 +175,11 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 		String datasetId = null;
 		String environmentId = null;
 		final String fieldMapInfoJson;
+		Map<String, Boolean> validateFieldMap = new HashMap<>();
 		for (final FieldMapInfo fieldMapInfo : fieldMapInfoList) {
 			// for viewing of fieldmaps
 			final List<FieldMapDatasetInfo> datasetList = fieldMapInfo.getDatasetsWithFieldMap();
+			this.validateFieldMapDataSetInfo(datasetList, validateFieldMap);
 			if (datasetList != null && !datasetList.isEmpty()) {
 				final List<FieldMapTrialInstanceInfo> trials = datasetList.get(0).getTrialInstancesWithFieldMap();
 				if (trials != null && !trials.isEmpty()) {
@@ -192,6 +196,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 
 		result.put("fieldMapInfo", fieldMapInfoJson);
 		result.put("size", size);
+		result.put("hasInvalidValues", String.valueOf(validateFieldMap.get("hasInvalidValues")));
 		if (datasetId != null) {
 			result.put("datasetId", datasetId);
 		}
@@ -730,5 +735,20 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	@ModelAttribute("projectID")
 	public String getProgramID() {
 		return this.getCurrentProjectId();
+	}
+
+	private void validateFieldMapDataSetInfo(final List<FieldMapDatasetInfo> datasetList, final Map<String, Boolean> validatedFieldMapDatasetInfo) {
+		if (!CollectionUtils.isEmpty(datasetList)) {
+			List<FieldMapDatasetInfo> withFieldMap = datasetList.stream().filter(fieldMapDatasetInfo -> !CollectionUtils.isEmpty(fieldMapDatasetInfo.getTrialInstancesWithFieldMap())).collect(
+				Collectors.toList());
+			for (final FieldMapDatasetInfo fieldMapDatasetInfo : withFieldMap) {
+				List<FieldMapTrialInstanceInfo> invalidValues = fieldMapDatasetInfo.getTrialInstancesWithFieldMap().stream().filter(fieldMapTrialInstanceInfo -> fieldMapTrialInstanceInfo.isInValidValue()).collect(
+					Collectors.toList());
+
+				if (!validatedFieldMapDatasetInfo.containsKey("hasInvalidValues") || (validatedFieldMapDatasetInfo.containsKey("hasInvalidValues") && !validatedFieldMapDatasetInfo.get("hasInvalidValues"))) {
+					validatedFieldMapDatasetInfo.put("hasInvalidValues", !CollectionUtils.isEmpty(invalidValues));
+				}
+			}
+		}
 	}
 }

@@ -131,6 +131,8 @@ public class UserFieldmap implements Serializable {
 	/** The is new. */
 	private boolean isNew;
 
+	private boolean overlappingCoordinates;
+
 	/**
 	 * Checks if is new.
 	 *
@@ -971,4 +973,11 @@ public class UserFieldmap implements Serializable {
 		this.selectedFieldmapListToBeAdded = selectedFieldmapListToBeAdded;
 	}
 
+	public boolean isOverlappingCoordinates() {
+		return this.overlappingCoordinates;
+	}
+
+	public void setOverlappingCoordinates(final boolean overlappingCoordinates) {
+		this.overlappingCoordinates = overlappingCoordinates;
+	}
 }

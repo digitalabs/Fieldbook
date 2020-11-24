@@ -35,6 +35,7 @@
 				<input type="hidden" th:field="*{userFieldmap.generated}"/>
 				<input type="hidden" th:field="*{userFieldmap.studyId}"/>
 				<input type="hidden" th:field="*{saveAndRedirectToCreateLabel}"/>
+				<input type="hidden" th:field="*{userFieldmap.overlappingCoordinates}" />
 				<a th:href="@{/TrialManager}" href="" style="display: none" id="landing-page-url"></a>
 
 				<div>
@@ -73,9 +74,10 @@
 										<td th:class="${rowInd.even}? 'even ordering' : 'odd ordering'" th:text="${row.order}"></td>
 										<td th:class="${rowInd.even}? 'even' : 'odd'" th:text="${row.studyName}"></td>
 										<td th:class="${rowInd.even}? 'even' : 'odd'" th:text="${row.trialInstanceNo}"></td>
+										<td th:class="${rowInd.even}? 'even' : 'odd'" th:text="${row.locationName}"></td>
 										<td th:class="${rowInd.even}? 'even' : 'odd'" th:text="${row.entryCount}"></td>
 										<td th:class="${rowInd.even}? 'even' : 'odd'" th:text="${row.repCount}"></td>
-										<td th:class="${rowInd.even}? 'even' : 'odd'" th:text="${row.plotCount}"></td>
+
 									</tr>
 								</table>
 							</div>
@@ -244,6 +246,7 @@
 <div layout:fragment="page-script">
 <script type='text/javascript' th:inline="javascript">
 //<![CDATA[
+var overlappingFieldMapCoordinates = /*[[#{fieldmap.has.overlapping.plot}]]*/ '';
 
 function finishLoading() {
 	var url =  $('#landing-page-url').attr('href');
@@ -267,6 +270,10 @@ $(document).ready(function() {
 	$('.ordering').each(function() {
 		$(this).html(ordering++);
 	});
+
+	if ($('#'+getJquerySafeId("userFieldmap.overlappingCoordinates")).val() == 'true') {
+		showAlertMessage('', overlappingFieldMapCoordinates);
+	}
 });
   //]]>
 </script>

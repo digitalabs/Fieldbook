@@ -150,6 +150,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController 
 				this.userFieldmap.setFieldMapLabels(this.userFieldmap.getAllSelectedFieldMapLabels(false));
 				this.userFieldmap.setMachineRowCapacity(trialInfo.getMachineRowCapacity());
 				this.userFieldmap.setBlockId(trialInfo.getBlockId());
+				this.userFieldmap.setOverlappingCoordinates(trialInfo.isOverlappingCoordinates());
 
 				final FieldPlotLayoutIterator plotIterator = this.horizontalFieldMapLayoutIterator;
 				this.userFieldmap.setFieldmap(

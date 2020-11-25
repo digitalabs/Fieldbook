@@ -302,7 +302,14 @@
 						// LOTS
 						targets: 6,
 						createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
-							$(td).append('<span>' + (rowData.numberOfLots != 0 ? rowData.numberOfLots : '-') + '</span>');
+							if (rowData.numberOfLots === 0) {
+								$(td).append('<span>-</span>');
+							} else {
+								$(td).html($compile('<a href ' +
+									` ng-click="openInventoryDetailsModal('${rowData.gid}')"> ` +
+									rowData.numberOfLots + '</a>')($rootScope));
+								$rootScope.$apply();
+							}
 						}
 					},
 					{

@@ -183,12 +183,12 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 		String datasetId = null;
 		String environmentId = null;
 		final String fieldMapInfoJson;
-		final boolean hasInvalidValues = false;
+		boolean hasInvalidValues = false;
 		for (final FieldMapInfo fieldMapInfo : fieldMapInfoList) {
 			// for viewing of fieldmaps
 			final List<FieldMapDatasetInfo> datasetList = fieldMapInfo.getDatasetsWithFieldMap();
 			if (!hasInvalidValues) {
-				this.validateFieldMapDataSetInfo(datasetList);
+				hasInvalidValues = this.validateFieldMapDataSetInfo(datasetList);
 			}
 			if (datasetList != null && !datasetList.isEmpty()) {
 				final List<FieldMapTrialInstanceInfo> trials = datasetList.get(0).getTrialInstancesWithFieldMap();

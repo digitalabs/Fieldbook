@@ -345,7 +345,7 @@ function createStudyTree(fieldMapInfoList, hasFieldMap) {
 			createRow(getPrefixName('dataset', value.datasetId), getPrefixName('study', fieldMapInfo.fieldbookId), value.datasetName, value.datasetId, hasFieldMap, hasOneInstance);
 			$.each(value.trialInstances, function (index, childValue) {
 				if ((hasFieldMap && childValue.hasFieldMap) || !hasFieldMap) {
-					isFieldMapHasInvalidValues[childValue.instanceId] = childValue.inValidValue;
+					isFieldMapHasInvalidValues[childValue.instanceId] = childValue.hasInValidValue;
 					createRow(getPrefixName('trialInstance', childValue.environmentId), getPrefixName('dataset', value.datasetId), childValue, childValue.instanceId, hasFieldMap, hasOneInstance);
 				}
 			});

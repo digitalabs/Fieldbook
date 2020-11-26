@@ -271,7 +271,7 @@ $(document).ready(function() {
 		$(this).html(ordering++);
 	});
 
-	if ($('#'+getJquerySafeId("userFieldmap.overlappingCoordinates")).val() == 'true') {
+	if ($('#'+getJquerySafeId("userFieldmap.hasOverlappingCoordinates")).val() == 'true') {
 		showAlertMessage('', overlappingFieldMapCoordinates);
 	}
 });

@@ -59,6 +59,7 @@ public class OpenTrialController extends BaseTrialController {
 	private static final String HAS_GENERATED_DESIGN = "hasGeneratedDesign";
 	static final String ENVIRONMENT_DATA_TAB = "environmentData";
 	private static final String HAS_LISTS_OR_SUB_OBS = "hasListsOrSubObs";
+	private static final String HAS_MEANS_DATASET = "hasMeansDataset";
 	private static final Logger LOG = LoggerFactory.getLogger(OpenTrialController.class);
 	private static final String IS_DELETED_ENVIRONMENT = "0";
 	private static final String IS_PREVIEW_EDITABLE = "0";
@@ -276,6 +277,7 @@ public class OpenTrialController extends BaseTrialController {
 		final List<DatasetDTO> datasetDTOS = this.datasetService.getDatasets(trialId, new HashSet<>(datasetTypeIds));
 
 		final boolean hasListOrSubObs = !sampleListDTOS.isEmpty() || !datasetDTOS.isEmpty();
+		final boolean hasMeansDataset = trialWorkbook.getMeansDatasetId() != null && trialWorkbook.getMeansDatasetId() > 0;
 		model.addAttribute("basicDetailsData", this.prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false, trialId));
 		model.addAttribute("germplasmData", this.prepareGermplasmTabInfo(trialWorkbook.getFactors(), false));
 		model.addAttribute(OpenTrialController.ENVIRONMENT_DATA_TAB, this.prepareEnvironmentsTabInfo(trialWorkbook, false));
@@ -303,6 +305,7 @@ public class OpenTrialController extends BaseTrialController {
 		model.addAttribute("studyId", trialWorkbook.getStudyDetails().getId());
 		model.addAttribute("measurementDatasetId", trialWorkbook.getMeasurementDatesetId());
 		model.addAttribute("trialDatasetId", trialWorkbook.getTrialDatasetId());
+		model.addAttribute(OpenTrialController.HAS_MEANS_DATASET, hasMeansDataset);
 
 		this.setIsSuperAdminAttribute(model);
 	}

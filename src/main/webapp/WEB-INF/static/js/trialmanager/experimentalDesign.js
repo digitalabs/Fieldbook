@@ -109,7 +109,7 @@
 					};
 
 					$scope.isDeleteDesignDisable = function (){
-						return !studyStateService.hasGeneratedDesign() || studyStateService.hasListOrSubObs();
+						return !studyStateService.hasGeneratedDesign() || studyStateService.hasListOrSubObs() || studyStateService.hasMeansDataset();
 					};
 
 					$scope.deleteDesign = function () {

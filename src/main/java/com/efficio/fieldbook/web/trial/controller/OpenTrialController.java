@@ -282,7 +282,7 @@ public class OpenTrialController extends BaseTrialController {
 		final List<DatasetDTO> datasetDTOS = this.datasetService.getDatasets(trialId, new HashSet<>(datasetTypeIds));
 
 		final boolean hasListOrSubObs = !sampleListDTOS.isEmpty() || !datasetDTOS.isEmpty();
-		final boolean hasMeansDataset = studyService.studyHasGivenDatasetType(trialId, DatasetTypeEnum.MEANS_DATA.getId());
+		final boolean hasMeansDataset = this.studyService.studyHasGivenDatasetType(trialId, DatasetTypeEnum.MEANS_DATA.getId());
 		model.addAttribute("basicDetailsData", this.prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false, trialId));
 		model.addAttribute("germplasmData", this.prepareGermplasmTabInfo(trialWorkbook.getFactors(), false));
 		model.addAttribute(OpenTrialController.ENVIRONMENT_DATA_TAB, this.prepareEnvironmentsTabInfo(trialWorkbook, false));
@@ -585,8 +585,8 @@ public class OpenTrialController extends BaseTrialController {
 	}
 
 	private void updateEnvironmentThatIsGreaterThanDeletedEnvironment(final String deletedEnvironment, final MeasurementData data) {
-		final Integer deletedInstanceNo = Integer.valueOf(deletedEnvironment);
-		Integer currentInstanceNo = Integer.valueOf(data.getValue());
+		final int deletedInstanceNo = Integer.parseInt(deletedEnvironment);
+		int currentInstanceNo = Integer.parseInt(data.getValue());
 
 		if (deletedInstanceNo < currentInstanceNo) {
 			data.setValue(String.valueOf(--currentInstanceNo));

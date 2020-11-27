@@ -82,7 +82,8 @@ public class ExportFieldmapServiceImpl implements ExportFieldmapService {
 		final String blockNameValue = userFieldMap.getBlockName();
 
 		// Row, Range & Plot Details
-		final String rowRangePlotDetailsLabel = this.messageSource.getMessage("fieldmap.study.row.and.range.and.plot.details", null, locale);
+		final String rowRangePlotDetailsLabel =
+			this.messageSource.getMessage("fieldmap.study.row.and.range.and.plot.details", null, locale);
 		// ROW, RANGE AND PLOT DETAILS
 		final String blockCapacityLabel = this.messageSource.getMessage("fieldmap.label.block.capacity", null, locale);
 		// Block Capacity
@@ -101,8 +102,10 @@ public class ExportFieldmapServiceImpl implements ExportFieldmapService {
 		final String startingCoordinatesLabel = this.messageSource.getMessage("fieldmap.label.starting.coordinates", null, locale);
 		// Starting Coordinates
 		final String startingCoordinatesValue = userFieldMap.getStartingCoordinateString(this.messageSource); // Column 1, Range 1
-		final String plantingOrderLabel = this.messageSource.getMessage("fieldmap.label.planting.order", null, locale); // Planting Order
+		final String plantingOrderLabel =
+			this.messageSource.getMessage("fieldmap.label.planting.order", null, locale); // Planting Order
 		final String plantingOrderValue = userFieldMap.getPlantingOrderString(this.messageSource); // "Row/Column" or "Serpentine"
+
 
 		// FieldMap
 		final String fieldMapLabel = this.messageSource.getMessage("fieldmap.header.fieldmap", null, locale); // FIELD MAP
@@ -168,10 +171,10 @@ public class ExportFieldmapServiceImpl implements ExportFieldmapService {
 			summaryCell.setCellStyle(headerLabelStyle);
 
 			summarySheet.addMergedRegion(new CellRangeAddress(rowIndex - 1, // first row (0-based)
-					rowIndex - 1, // last row (0-based)
-					columnIndex, // first column (0-based)
-					columnIndex + 5 // last column (0-based)
-					));
+				rowIndex - 1, // last row (0-based)
+				columnIndex, // first column (0-based)
+				columnIndex + 5 // last column (0-based)
+			));
 
 			// Row 2: Space
 			row = summarySheet.createRow(rowIndex++);
@@ -234,100 +237,107 @@ public class ExportFieldmapServiceImpl implements ExportFieldmapService {
 			labelCell.setCellStyle(headerLabelStyle);
 
 			summarySheet.addMergedRegion(new CellRangeAddress(rowIndex - 1, // first row (0-based)
+				rowIndex - 1, // last row (0-based)
+				columnIndex - 1, // first column (0-based)
+				columnIndex // last column (0-based)
+			));
+
+			if (userFieldMap.getBlockId() != null) {
+
+				row.createCell(columnIndex++);
+				labelCell = row.createCell(columnIndex++);
+				labelCell.setCellValue(rowRangePlotDetailsLabel);
+				labelCell.setCellStyle(headerLabelStyle);
+
+				summarySheet.addMergedRegion(new CellRangeAddress(rowIndex - 1, // first row (0-based)
 					rowIndex - 1, // last row (0-based)
 					columnIndex - 1, // first column (0-based)
 					columnIndex // last column (0-based)
-					));
+				));
 
-			row.createCell(columnIndex++);
-			labelCell = row.createCell(columnIndex++);
-			labelCell.setCellValue(rowRangePlotDetailsLabel);
-			labelCell.setCellStyle(headerLabelStyle);
+				row.createCell(columnIndex++);
+				labelCell = row.createCell(columnIndex++);
+				labelCell.setCellValue(plantingDetailsLabel);
+				labelCell.setCellStyle(headerLabelStyle);
 
-			summarySheet.addMergedRegion(new CellRangeAddress(rowIndex - 1, // first row (0-based)
+				summarySheet.addMergedRegion(new CellRangeAddress(rowIndex - 1, // first row (0-based)
 					rowIndex - 1, // last row (0-based)
 					columnIndex - 1, // first column (0-based)
 					columnIndex // last column (0-based)
-					));
+				));
 
-			row.createCell(columnIndex++);
-			labelCell = row.createCell(columnIndex++);
-			labelCell.setCellValue(plantingDetailsLabel);
-			labelCell.setCellStyle(headerLabelStyle);
-
-			summarySheet.addMergedRegion(new CellRangeAddress(rowIndex - 1, // first row (0-based)
-					rowIndex - 1, // last row (0-based)
-					columnIndex - 1, // first column (0-based)
-					columnIndex // last column (0-based)
-					));
-
-			row.createCell(columnIndex++);
-
-			// Row 6: Field Location, Block Capacity, Starting Coordinates
-			row = summarySheet.createRow(rowIndex++);
-			columnIndex = 0;
-			labelCell = row.createCell(columnIndex++);
-			labelCell.setCellValue(fieldLocationLabel);
-			labelCell.setCellStyle(labelStyle);
-
-			row.createCell(columnIndex++).setCellValue(fieldLocationValue);
-			labelCell = row.createCell(columnIndex++);
-			labelCell.setCellValue(blockCapacityLabel);
-			labelCell.setCellStyle(labelStyle);
-
-			row.createCell(columnIndex++).setCellValue(blockCapacityValue);
-
-			labelCell = row.createCell(columnIndex++);
-			labelCell.setCellValue(startingCoordinatesLabel);
-			labelCell.setCellStyle(labelStyle);
-
-			row.createCell(columnIndex++).setCellValue(startingCoordinatesValue);
-
-			// Row 7: Field Name, Rows Per Plot, Planting Order
-			row = summarySheet.createRow(rowIndex++);
-			columnIndex = 0;
-			labelCell = row.createCell(columnIndex++);
-			labelCell.setCellValue(fieldNameLabel);
-			labelCell.setCellStyle(labelStyle);
-
-			row.createCell(columnIndex++).setCellValue(fieldNameValue);
-			labelCell = row.createCell(columnIndex++);
-			labelCell.setCellValue(rowsPerPlotLabel);
-			labelCell.setCellStyle(labelStyle);
-
-			row.createCell(columnIndex++).setCellValue(String.valueOf(rowsPerPlotValue));
-			labelCell = row.createCell(columnIndex++);
-			labelCell.setCellValue(plantingOrderLabel);
-			labelCell.setCellStyle(labelStyle);
-
-			row.createCell(columnIndex++).setCellValue(plantingOrderValue);
-
-			// Row 8: Block Name, Columns
-			row = summarySheet.createRow(rowIndex++);
-			columnIndex = 0;
-			labelCell = row.createCell(columnIndex++);
-			labelCell.setCellValue(blockNameLabel);
-			labelCell.setCellStyle(labelStyle);
-
-			row.createCell(columnIndex++).setCellValue(blockNameValue);
-			labelCell = row.createCell(columnIndex++);
-			labelCell.setCellValue(columnsLabel);
-			labelCell.setCellStyle(labelStyle);
-
-			row.createCell(columnIndex++).setCellValue(String.valueOf(columnsValue));
-
-			labelCell = row.createCell(columnIndex++);
-			labelCell.setCellValue(machineCapacityLabel);
-			labelCell.setCellStyle(labelStyle);
-
-			row.createCell(columnIndex++).setCellValue(String.valueOf(machineCapacityValue));
-
-			// Row 9: Space
-			row = summarySheet.createRow(rowIndex++);
-
-			for (int columnsResize = 0; columnsResize < columnIndex; columnsResize++) {
-				summarySheet.autoSizeColumn(columnsResize);
 			}
+
+				row.createCell(columnIndex++);
+
+				// Row 6: Field Location, Block Capacity, Starting Coordinates
+				row = summarySheet.createRow(rowIndex++);
+				columnIndex = 0;
+				labelCell = row.createCell(columnIndex++);
+				labelCell.setCellValue(fieldLocationLabel);
+				labelCell.setCellStyle(labelStyle);
+
+				row.createCell(columnIndex++).setCellValue(fieldLocationValue);
+
+			if (userFieldMap.getBlockId() != null) {
+				labelCell = row.createCell(columnIndex++);
+				labelCell.setCellValue(blockCapacityLabel);
+				labelCell.setCellStyle(labelStyle);
+				row.createCell(columnIndex++).setCellValue(blockCapacityValue);
+
+				labelCell = row.createCell(columnIndex++);
+				labelCell.setCellValue(startingCoordinatesLabel);
+				labelCell.setCellStyle(labelStyle);
+
+				row.createCell(columnIndex++).setCellValue(startingCoordinatesValue);
+
+				// Row 7: Field Name, Rows Per Plot, Planting Order
+				row = summarySheet.createRow(rowIndex++);
+				columnIndex = 0;
+				labelCell = row.createCell(columnIndex++);
+				labelCell.setCellValue(fieldNameLabel);
+				labelCell.setCellStyle(labelStyle);
+
+				row.createCell(columnIndex++).setCellValue(fieldNameValue);
+				labelCell = row.createCell(columnIndex++);
+				labelCell.setCellValue(rowsPerPlotLabel);
+				labelCell.setCellStyle(labelStyle);
+
+				row.createCell(columnIndex++).setCellValue(String.valueOf(rowsPerPlotValue));
+				labelCell = row.createCell(columnIndex++);
+				labelCell.setCellValue(plantingOrderLabel);
+				labelCell.setCellStyle(labelStyle);
+
+				row.createCell(columnIndex++).setCellValue(plantingOrderValue);
+
+				// Row 8: Block Name, Columns
+				row = summarySheet.createRow(rowIndex++);
+				columnIndex = 0;
+				labelCell = row.createCell(columnIndex++);
+				labelCell.setCellValue(blockNameLabel);
+				labelCell.setCellStyle(labelStyle);
+
+				row.createCell(columnIndex++).setCellValue(blockNameValue);
+				labelCell = row.createCell(columnIndex++);
+				labelCell.setCellValue(columnsLabel);
+				labelCell.setCellStyle(labelStyle);
+
+				row.createCell(columnIndex++).setCellValue(String.valueOf(columnsValue));
+
+				labelCell = row.createCell(columnIndex++);
+				labelCell.setCellValue(machineCapacityLabel);
+				labelCell.setCellStyle(labelStyle);
+
+				row.createCell(columnIndex++).setCellValue(String.valueOf(machineCapacityValue));
+
+				// Row 9: Space
+				row = summarySheet.createRow(rowIndex++);
+
+				for (int columnsResize = 0; columnsResize < columnIndex; columnsResize++) {
+					summarySheet.autoSizeColumn(columnsResize);
+				}
+			}
+
 
 			// Get FieldMap data
 			// we reset the row index

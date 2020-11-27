@@ -131,6 +131,8 @@ public class UserFieldmap implements Serializable {
 	/** The is new. */
 	private boolean isNew;
 
+	private boolean hasOverlappingCoordinates;
+
 	/**
 	 * Checks if is new.
 	 *
@@ -481,6 +483,9 @@ public class UserFieldmap implements Serializable {
 	 * @return the number of columns in block
 	 */
 	public int getNumberOfColumnsInBlock() {
+		if (this.getNumberOfRowsPerPlot() == 0) {
+			return 0;
+		}
 		return this.getNumberOfRowsInBlock() / this.getNumberOfRowsPerPlot();
 	}
 
@@ -968,4 +973,11 @@ public class UserFieldmap implements Serializable {
 		this.selectedFieldmapListToBeAdded = selectedFieldmapListToBeAdded;
 	}
 
+	public boolean isHasOverlappingCoordinates() {
+		return this.hasOverlappingCoordinates;
+	}
+
+	public void setHasOverlappingCoordinates(final boolean hasOverlappingCoordinates) {
+		this.hasOverlappingCoordinates = hasOverlappingCoordinates;
+	}
 }

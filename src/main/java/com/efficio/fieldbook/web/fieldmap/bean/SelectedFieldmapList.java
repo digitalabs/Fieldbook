@@ -45,6 +45,7 @@ public class SelectedFieldmapList implements Serializable {
 								row.setDatasetId(dataset.getDatasetId());
 								row.setInstanceId(trial.getInstanceId());
 								row.setDatasetName(dataset.getDatasetName());
+								row.setLocationName(trial.getLocationName());
 								this.rows.add(row);
 							}
 						}

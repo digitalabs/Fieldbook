@@ -23,6 +23,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.domain.samplelist.SampleListDTO;
+import org.generationcp.middleware.enumeration.DatasetTypeEnum;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.manager.ontology.api.TermDataManager;
@@ -34,6 +35,7 @@ import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.generationcp.middleware.service.api.dataset.DatasetTypeService;
 import org.generationcp.middleware.service.api.study.StudyEntryDto;
 import org.generationcp.middleware.service.api.study.StudyEntryService;
+import org.generationcp.middleware.service.api.study.StudyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -76,6 +78,9 @@ public class OpenTrialController extends BaseTrialController {
 
 	@Resource
 	private TermDataManager termDataManager;
+
+	@Resource
+	private StudyService studyService;
 
 	/**
 	 * The Inventory list manager.
@@ -277,7 +282,7 @@ public class OpenTrialController extends BaseTrialController {
 		final List<DatasetDTO> datasetDTOS = this.datasetService.getDatasets(trialId, new HashSet<>(datasetTypeIds));
 
 		final boolean hasListOrSubObs = !sampleListDTOS.isEmpty() || !datasetDTOS.isEmpty();
-		final boolean hasMeansDataset = trialWorkbook.getMeansDatasetId() != null && trialWorkbook.getMeansDatasetId() > 0;
+		final boolean hasMeansDataset = studyService.studyHasGivenDatasetType(trialId, DatasetTypeEnum.MEANS_DATA.getId());
 		model.addAttribute("basicDetailsData", this.prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false, trialId));
 		model.addAttribute("germplasmData", this.prepareGermplasmTabInfo(trialWorkbook.getFactors(), false));
 		model.addAttribute(OpenTrialController.ENVIRONMENT_DATA_TAB, this.prepareEnvironmentsTabInfo(trialWorkbook, false));

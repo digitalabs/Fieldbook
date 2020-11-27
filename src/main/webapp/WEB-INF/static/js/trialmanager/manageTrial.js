@@ -919,6 +919,20 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 				});
 			}
 
+			$rootScope.openInventoryDetailsModal = function(gid) {
+
+				$uibModal.open({
+					templateUrl: '/Fieldbook/static/js/trialmanager/inventory/details/inventory-details-modal.html',
+					controller: 'InventoryDetailsCtrl',
+					windowClass: 'modal-very-huge',
+					resolve: {
+						gid: function () {
+							return gid;
+						}
+					}
+				});
+			}
+
 			$scope.showCreateSampleListModal = function () {
 				createSampleModalService.openDatasetOptionModal();
 			}

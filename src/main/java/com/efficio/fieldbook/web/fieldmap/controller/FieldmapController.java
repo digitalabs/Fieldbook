@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,24 +51,32 @@ import com.efficio.fieldbook.web.util.SessionUtility;
 
 /**
  * The Class FieldmapController.
- *
+ * <p>
  * This is the initial controller for the fieldmap generation. It handles the step 1 of 3 of the fieldmap process.
  */
 @Controller
 @RequestMapping({FieldmapController.URL})
 public class FieldmapController extends AbstractBaseFieldbookController {
 
-	/** The Constant LOG. */
+	/**
+	 * The Constant LOG.
+	 */
 	private static final Logger LOG = LoggerFactory.getLogger(FieldmapController.class);
 
-	/** The Constant URL. */
+	/**
+	 * The Constant URL.
+	 */
 	public static final String URL = "/Fieldmap/enterFieldDetails";
 
-	/** The user field map. */
+	/**
+	 * The user field map.
+	 */
 	@Resource
 	private UserFieldmap userFieldmap;
 
-	/** The fieldbook middleware service. */
+	/**
+	 * The fieldbook middleware service.
+	 */
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
 
@@ -137,7 +147,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 				trialIds.add(Integer.parseInt(id));
 			}
 			final List<FieldMapInfo> fieldMapInfoList =
-					this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(trialIds, this.crossExpansionProperties);
+				this.fieldbookMiddlewareService.getFieldMapInfoOfTrial(trialIds, this.crossExpansionProperties);
 
 			this.clearFields();
 			this.userFieldmap.setUserFieldmapInfo(fieldMapInfoList);
@@ -173,9 +183,13 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 		String datasetId = null;
 		String environmentId = null;
 		final String fieldMapInfoJson;
+		boolean hasInvalidValues = false;
 		for (final FieldMapInfo fieldMapInfo : fieldMapInfoList) {
 			// for viewing of fieldmaps
 			final List<FieldMapDatasetInfo> datasetList = fieldMapInfo.getDatasetsWithFieldMap();
+			if (!hasInvalidValues) {
+				hasInvalidValues = this.validateFieldMapDataSetInfo(datasetList);
+			}
 			if (datasetList != null && !datasetList.isEmpty()) {
 				final List<FieldMapTrialInstanceInfo> trials = datasetList.get(0).getTrialInstancesWithFieldMap();
 				if (trials != null && !trials.isEmpty()) {
@@ -192,6 +206,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 
 		result.put("fieldMapInfo", fieldMapInfoJson);
 		result.put("size", size);
+		result.put("hasInvalidValues", String.valueOf(hasInvalidValues));
 		if (datasetId != null) {
 			result.put("datasetId", datasetId);
 		}
@@ -461,7 +476,7 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 			for (final FieldMapInfo fieldMapInfo : fieldMapInfoList) {
 				if (fieldMapInfo.getFieldbookId().equals(fieldbookId)) {
 					this.userFieldmap.getSelectedFieldMaps().get(ctr).getDataSet(datasetId).getTrialInstance(instanceId)
-							.setOrder(orderId);
+						.setOrder(orderId);
 					break;
 				}
 				ctr++;
@@ -730,5 +745,21 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	@ModelAttribute("projectID")
 	public String getProgramID() {
 		return this.getCurrentProjectId();
+	}
+
+	public boolean validateFieldMapDataSetInfo(final List<FieldMapDatasetInfo> datasetList) {
+		if (!CollectionUtils.isEmpty(datasetList)) {
+			final List<FieldMapDatasetInfo> withFieldMap = datasetList.stream()
+				.filter(fieldMapDatasetInfo -> !CollectionUtils.isEmpty(fieldMapDatasetInfo.getTrialInstancesWithFieldMap())).collect(
+					Collectors.toList());
+			for (final FieldMapDatasetInfo fieldMapDatasetInfo : withFieldMap) {
+				final boolean hasInvalidValues = fieldMapDatasetInfo.getTrialInstancesWithFieldMap().stream()
+					.anyMatch(fieldMapTrialInstanceInfo -> fieldMapTrialInstanceInfo.isHasInValidValue());
+				if (hasInvalidValues) {
+					return hasInvalidValues;
+				}
+			}
+		}
+		return false;
 	}
 }

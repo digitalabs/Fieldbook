@@ -26,12 +26,14 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.commons.util.InstallationDirectoryUtil;
+import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.ToolName;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.util.CrossExpansionProperties;
+import org.generationcp.middleware.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
@@ -137,16 +139,18 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController 
 			final FieldMapTrialInstanceInfo trialInfo =
 					this.userFieldmap.getSelectedTrialInstanceByDatasetIdAndEnvironmentId(datasetId, instanceId);
 			if (trialInfo != null) {
-				this.userFieldmap.setNumberOfRangesInBlock(trialInfo.getRangesInBlock());
-				this.userFieldmap.setNumberOfRowsInBlock(trialInfo.getRowsInBlock());
+				this.userFieldmap.setNumberOfRangesInBlock(Util.getIntValue(trialInfo.getRangesInBlock()));
+				this.userFieldmap.setNumberOfRowsInBlock(Util.getIntValue(trialInfo.getRowsInBlock()));
 				this.userFieldmap.setNumberOfEntries((long) this.userFieldmap.getAllSelectedFieldMapLabels(false).size());
-				this.userFieldmap.setNumberOfRowsPerPlot(trialInfo.getRowsPerPlot());
-				this.userFieldmap.setPlantingOrder(trialInfo.getPlantingOrder());
+				this.userFieldmap.setNumberOfRowsPerPlot(Util.getIntValue(trialInfo.getRowsPerPlot()));
+				this.userFieldmap.setPlantingOrder(Util.getIntValue(trialInfo.getPlantingOrder()));
 				this.userFieldmap.setBlockName(trialInfo.getBlockName());
 				this.userFieldmap.setFieldName(trialInfo.getFieldName());
 				this.userFieldmap.setLocationName(trialInfo.getLocationName());
 				this.userFieldmap.setFieldMapLabels(this.userFieldmap.getAllSelectedFieldMapLabels(false));
 				this.userFieldmap.setMachineRowCapacity(trialInfo.getMachineRowCapacity());
+				this.userFieldmap.setBlockId(trialInfo.getBlockId());
+				this.userFieldmap.setHasOverlappingCoordinates(trialInfo.isHasOverlappingCoordinates());
 
 				final FieldPlotLayoutIterator plotIterator = this.horizontalFieldMapLayoutIterator;
 				this.userFieldmap.setFieldmap(
@@ -168,7 +172,8 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController 
 		final FileExportInfo exportInfo;
 		try {
 			// changed selected name to block name for now
-			exportInfo = this.makeSafeFileName(this.userFieldmap.getBlockName());
+			final String fileName = StringUtil.isEmpty(this.userFieldmap.getBlockName()) ? this.userFieldmap.getLocationName() : this.userFieldmap.getBlockName();
+			exportInfo = this.makeSafeFileName(fileName);
 			this.exportFieldmapService.exportFieldMapToExcel(exportInfo.getFilePath(), this.userFieldmap);
 
 			return FieldbookUtil.createResponseEntityForFileDownload(exportInfo.getFilePath(), exportInfo.getDownloadFileName());

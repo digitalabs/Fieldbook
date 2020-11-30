@@ -290,7 +290,7 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 
 			function loadCrossesAndSelectionsTab() {
 				germplasmStudySourceService.searchGermplasmStudySources({}, 0, 1).then((germplasmStudySourceTable) => {
-					if (germplasmStudySourceTable.data.length) {
+					if (germplasmStudySourceTable.length) {
 						$scope.crossesAndSelectionsTab.hidden = false;
 					}
 				});
@@ -299,7 +299,7 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 			function loadInventoryTab() {
 				InventoryService.searchStudyTransactions({}, 0, 1).then((transactionsTable) => {
 					$scope.safeApply(function () {
-						$scope.inventoryTab.hidden = !transactionsTable.data.length;
+						$scope.inventoryTab.hidden = !transactionsTable.length;
 						// If the Inventory tab becomes hidden, if no transactions left, navigate to Observations tab to show its content
 						if ($scope.inventoryTab.hidden && $scope.tabSelected === 'inventory') {
 							$scope.navigateToSubObsTab(studyContext.measurementDatasetId);

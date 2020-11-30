@@ -224,7 +224,6 @@ public class OpenTrialControllerTest {
 
 		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(OpenTrialControllerTest.STUDY_ID))
 			.thenThrow(MiddlewareQueryException.class);
-		Mockito.when(this.studyService.studyHasGivenDatasetType(Mockito.anyInt(), Mockito.anyInt())).thenReturn(false);
 
 		final String out = this.openTrialController.openTrial(this.createTrialForm, OpenTrialControllerTest.STUDY_ID, this.model,
 			this.httpSession, this.redirectAttributes, null);

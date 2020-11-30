@@ -51,6 +51,7 @@ import org.generationcp.middleware.service.api.SampleListService;
 import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.generationcp.middleware.service.api.dataset.DatasetTypeService;
 import org.generationcp.middleware.service.api.study.StudyEntryService;
+import org.generationcp.middleware.service.api.study.StudyService;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.generationcp.middleware.util.Util;
 import org.generationcp.middleware.utils.test.UnitTestDaoIDGenerator;
@@ -158,6 +159,9 @@ public class OpenTrialControllerTest {
 	@Mock
 	private StudyEntryTransformer studyEntryTransformer;
 
+	@Mock
+	private StudyService studyService;
+
 	@Before
 	public void setUp() {
 		final DmsProject dmsProject = this.createDmsProject();
@@ -200,6 +204,8 @@ public class OpenTrialControllerTest {
 			WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, StudyTypeDto.getTrialDto());
 		WorkbookTestDataInitializer.setTrialObservations(workbook);
 		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(OpenTrialControllerTest.STUDY_ID)).thenReturn(workbook);
+		Mockito.when(this.studyService.studyHasGivenDatasetType(Mockito.anyInt(), Mockito.anyInt())).thenReturn(false);
+
 		final Study study = new Study();
 		study.setStudyType(StudyTypeDto.getTrialDto());
 
@@ -218,6 +224,7 @@ public class OpenTrialControllerTest {
 
 		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(OpenTrialControllerTest.STUDY_ID))
 			.thenThrow(MiddlewareQueryException.class);
+		Mockito.when(this.studyService.studyHasGivenDatasetType(Mockito.anyInt(), Mockito.anyInt())).thenReturn(false);
 
 		final String out = this.openTrialController.openTrial(this.createTrialForm, OpenTrialControllerTest.STUDY_ID, this.model,
 			this.httpSession, this.redirectAttributes, null);
@@ -247,6 +254,7 @@ public class OpenTrialControllerTest {
 		try {
 			Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(ArgumentMatchers.anyInt())).thenReturn(workbook);
 			this.mockStandardVariables(workbook.getAllVariables());
+			Mockito.when(this.studyService.studyHasGivenDatasetType(Mockito.anyInt(), Mockito.anyInt())).thenReturn(false);
 			this.openTrialController.openTrial(new CreateTrialForm(), OpenTrialControllerTest.STUDY_ID, new ExtendedModelMap(), mockSession,
 				Mockito.mock(RedirectAttributes.class), null);
 		} catch (final MiddlewareException e) {
@@ -277,6 +285,7 @@ public class OpenTrialControllerTest {
 
 			Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(ArgumentMatchers.anyInt())).thenReturn(workbook);
 			this.mockStandardVariables(workbook.getAllVariables());
+			Mockito.when(this.studyService.studyHasGivenDatasetType(Mockito.anyInt(), Mockito.anyInt())).thenReturn(false);
 
 			this.openTrialController.openTrial(new CreateTrialForm(), OpenTrialControllerTest.STUDY_ID, model, new MockHttpSession(),
 				Mockito.mock(RedirectAttributes.class), null);

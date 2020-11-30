@@ -478,7 +478,7 @@ public class OpenTrialControllerTest {
 			workbook.getObservations().size() - OpenTrialControllerTest.NO_OF_OBSERVATIONS, filteredObservations.size());
 
 		// expecting the trial instance no are in incremental order
-		final Integer noOfTrialInstances = OpenTrialControllerTest.NO_OF_TRIAL_INSTANCES - 1;
+		final int noOfTrialInstances = OpenTrialControllerTest.NO_OF_TRIAL_INSTANCES - 1;
 		for (final MeasurementRow row : filteredObservations) {
 			final List<MeasurementData> dataList = row.getDataList();
 			for (final MeasurementData data : dataList) {
@@ -487,7 +487,7 @@ public class OpenTrialControllerTest {
 
 					if (var != null && data.getMeasurementVariable().getName() != null
 						&& "TRIAL_INSTANCE".equalsIgnoreCase(var.getName())) {
-						final Integer currentTrialInstanceNo = Integer.valueOf(data.getValue());
+						final int currentTrialInstanceNo = Integer.parseInt(data.getValue());
 						Assert.assertTrue("Expecting trial instance the next trial instance no is within the "
 							+ "possible range of trial instance no but didn't.", currentTrialInstanceNo <= noOfTrialInstances);
 					}
@@ -1137,7 +1137,7 @@ public class OpenTrialControllerTest {
 
 	@Test
 	public void testPrepareBasicDetailsTabInfo() throws ParseException {
-		final Integer trialID = 1011;
+		final int trialID = 1011;
 		final StudyDetails studyDetails = this.createTestStudyDetails(trialID);
 		final String startDate = Util.convertDate(studyDetails.getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
 		final String endDate = Util.convertDate(studyDetails.getEndDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
@@ -1158,7 +1158,7 @@ public class OpenTrialControllerTest {
 
 	@Test
 	public void testPrepareBasicDetailsTabInfoWithNullDates() throws ParseException {
-		final Integer trialID = 1011;
+		final int trialID = 1011;
 		final StudyDetails studyDetails = this.createTestStudyDetails(trialID);
 		studyDetails.setEndDate(null);
 		studyDetails.setStudyUpdate(null);
@@ -1179,7 +1179,7 @@ public class OpenTrialControllerTest {
 
 	@Test
 	public void testPrepareBasicDetailsTabInfoWithNoCreatorInfo() throws ParseException {
-		final Integer trialID = 1011;
+		final int trialID = 1011;
 		final StudyDetails studyDetails = this.createTestStudyDetails(trialID);
 		studyDetails.setCreatedBy("");
 		final String startDate = Util.convertDate(studyDetails.getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
@@ -1198,7 +1198,7 @@ public class OpenTrialControllerTest {
 
 	@Test
 	public void testPrepareBasicDetailsTabInfoWhenParentFolderIsRootFolder() throws ParseException {
-		final Integer trialID = 1011;
+		final int trialID = 1011;
 		final StudyDetails studyDetails = this.createTestStudyDetails(trialID);
 		studyDetails.setParentFolderId(DmsProject.SYSTEM_FOLDER_ID);
 		final String startDate = Util.convertDate(studyDetails.getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);

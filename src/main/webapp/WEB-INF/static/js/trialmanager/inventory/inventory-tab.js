@@ -29,7 +29,8 @@
 							})),
 							success: function (res, status, xhr) {
 								let json = {recordsTotal: 0, recordsFiltered: 0}
-								json.recordsTotal = json.recordsFiltered = xhr.getResponseHeader('X-Total-Count');
+								json.recordsTotal = xhr.getResponseHeader('X-Total-Count');
+								json.recordsFiltered = xhr.getResponseHeader('X-Filtered-Count');
 								json.data = res;
 								callback(json);
 							},
@@ -533,15 +534,15 @@
 
 			function confirmTransactionsForCancellation(request) {
 				InventoryService.searchStudyTransactions(request).then((transactionsTable) => {
-					var numberOfItemsSelected = transactionsTable.data.length;
+					var numberOfItemsSelected = transactionsTable.length;
 					if (numberOfItemsSelected) {
 						// Check that all selected items have Pending Status
-						var allSelectedItemsPending = transactionsTable.data.every((item) => {
+						var allSelectedItemsPending = transactionsTable.every((item) => {
 							return item.transactionStatus === 'Pending';
 						});
 
 						if (allSelectedItemsPending) {
-							var selectedItemIds = transactionsTable.data.map((item) => {
+							var selectedItemIds = transactionsTable.map((item) => {
 								return item.transactionId;
 							});
 							var modalConfirmCancellation = $scope.openConfirmModal($.fieldbookMessages.confirmCancelPendingTransactionsMessage.replace('{0}', numberOfItemsSelected), 'Confirm', 'Cancel');

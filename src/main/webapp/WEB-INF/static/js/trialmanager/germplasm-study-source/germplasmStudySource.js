@@ -26,7 +26,8 @@
 							data: JSON.stringify(addFilters({})),
 							success: function (res, status, xhr) {
 								let json = {recordsTotal: 0, recordsFiltered: 0}
-								json.recordsTotal = json.recordsFiltered = xhr.getResponseHeader('X-Total-Count');
+								json.recordsFiltered = xhr.getResponseHeader('X-Filtered-Count');
+								json.recordsTotal = xhr.getResponseHeader('X-Total-Count');
 								json.data = res;
 								callback(json);
 							},

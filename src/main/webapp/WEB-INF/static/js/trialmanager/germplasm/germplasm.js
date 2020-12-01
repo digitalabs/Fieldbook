@@ -406,22 +406,22 @@
 					return studyStateService.hasGeneratedDesign();
 				};
 
-				$scope.validateGermplasmForReplacement = function() {
+				$scope.validateGermplasmForReplacement = function () {
 					germplasmStudySourceService.searchGermplasmStudySources({}, 0, 1).then((germplasmStudySourceTable) => {
 
-					// Check if study has advance or cross list
-					if (germplasmStudySourceTable.data.length > 0) {
-						showAlertMessage('', $.germplasmMessages.studyHasCrossesOrSelections);
-					} else {
-						if ($scope.selectedItems.length === 0) {
-							showAlertMessage('', $.germplasmMessages.selectEntryForReplacement);
-						} else if ($scope.selectedItems.length !== 1) {
-							showAlertMessage('', $.germplasmMessages.selectOnlyOneEntryForReplacement);
+						// Check if study has advance or cross list
+						if (germplasmStudySourceTable.length > 0) {
+							showAlertMessage('', $.germplasmMessages.studyHasCrossesOrSelections);
 						} else {
-							$scope.replaceGermplasm($scope.selectedItems[0]);
+							if ($scope.selectedItems.length === 0) {
+								showAlertMessage('', $.germplasmMessages.selectEntryForReplacement);
+							} else if ($scope.selectedItems.length !== 1) {
+								showAlertMessage('', $.germplasmMessages.selectOnlyOneEntryForReplacement);
+							} else {
+								$scope.replaceGermplasm($scope.selectedItems[0]);
+							}
 						}
-					}
-				});
+					});
 				};
 
 				$scope.toggleSelect = function (data) {

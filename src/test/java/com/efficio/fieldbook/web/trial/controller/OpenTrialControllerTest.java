@@ -51,6 +51,7 @@ import org.generationcp.middleware.service.api.SampleListService;
 import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.generationcp.middleware.service.api.dataset.DatasetTypeService;
 import org.generationcp.middleware.service.api.study.StudyEntryService;
+import org.generationcp.middleware.service.api.study.StudyService;
 import org.generationcp.middleware.service.api.user.UserService;
 import org.generationcp.middleware.util.Util;
 import org.generationcp.middleware.utils.test.UnitTestDaoIDGenerator;
@@ -158,6 +159,9 @@ public class OpenTrialControllerTest {
 	@Mock
 	private StudyEntryTransformer studyEntryTransformer;
 
+	@Mock
+	private StudyService studyService;
+
 	@Before
 	public void setUp() {
 		final DmsProject dmsProject = this.createDmsProject();
@@ -200,6 +204,8 @@ public class OpenTrialControllerTest {
 			WorkbookTestDataInitializer.getTestWorkbook(OpenTrialControllerTest.NO_OF_OBSERVATIONS, StudyTypeDto.getTrialDto());
 		WorkbookTestDataInitializer.setTrialObservations(workbook);
 		Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(OpenTrialControllerTest.STUDY_ID)).thenReturn(workbook);
+		Mockito.when(this.studyService.studyHasGivenDatasetType(Mockito.anyInt(), Mockito.anyInt())).thenReturn(false);
+
 		final Study study = new Study();
 		study.setStudyType(StudyTypeDto.getTrialDto());
 
@@ -247,6 +253,7 @@ public class OpenTrialControllerTest {
 		try {
 			Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(ArgumentMatchers.anyInt())).thenReturn(workbook);
 			this.mockStandardVariables(workbook.getAllVariables());
+			Mockito.when(this.studyService.studyHasGivenDatasetType(Mockito.anyInt(), Mockito.anyInt())).thenReturn(false);
 			this.openTrialController.openTrial(new CreateTrialForm(), OpenTrialControllerTest.STUDY_ID, new ExtendedModelMap(), mockSession,
 				Mockito.mock(RedirectAttributes.class), null);
 		} catch (final MiddlewareException e) {
@@ -277,6 +284,7 @@ public class OpenTrialControllerTest {
 
 			Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(ArgumentMatchers.anyInt())).thenReturn(workbook);
 			this.mockStandardVariables(workbook.getAllVariables());
+			Mockito.when(this.studyService.studyHasGivenDatasetType(Mockito.anyInt(), Mockito.anyInt())).thenReturn(false);
 
 			this.openTrialController.openTrial(new CreateTrialForm(), OpenTrialControllerTest.STUDY_ID, model, new MockHttpSession(),
 				Mockito.mock(RedirectAttributes.class), null);
@@ -469,7 +477,7 @@ public class OpenTrialControllerTest {
 			workbook.getObservations().size() - OpenTrialControllerTest.NO_OF_OBSERVATIONS, filteredObservations.size());
 
 		// expecting the trial instance no are in incremental order
-		final Integer noOfTrialInstances = OpenTrialControllerTest.NO_OF_TRIAL_INSTANCES - 1;
+		final int noOfTrialInstances = OpenTrialControllerTest.NO_OF_TRIAL_INSTANCES - 1;
 		for (final MeasurementRow row : filteredObservations) {
 			final List<MeasurementData> dataList = row.getDataList();
 			for (final MeasurementData data : dataList) {
@@ -478,7 +486,7 @@ public class OpenTrialControllerTest {
 
 					if (var != null && data.getMeasurementVariable().getName() != null
 						&& "TRIAL_INSTANCE".equalsIgnoreCase(var.getName())) {
-						final Integer currentTrialInstanceNo = Integer.valueOf(data.getValue());
+						final int currentTrialInstanceNo = Integer.parseInt(data.getValue());
 						Assert.assertTrue("Expecting trial instance the next trial instance no is within the "
 							+ "possible range of trial instance no but didn't.", currentTrialInstanceNo <= noOfTrialInstances);
 					}
@@ -1128,7 +1136,7 @@ public class OpenTrialControllerTest {
 
 	@Test
 	public void testPrepareBasicDetailsTabInfo() throws ParseException {
-		final Integer trialID = 1011;
+		final int trialID = 1011;
 		final StudyDetails studyDetails = this.createTestStudyDetails(trialID);
 		final String startDate = Util.convertDate(studyDetails.getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
 		final String endDate = Util.convertDate(studyDetails.getEndDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
@@ -1149,7 +1157,7 @@ public class OpenTrialControllerTest {
 
 	@Test
 	public void testPrepareBasicDetailsTabInfoWithNullDates() throws ParseException {
-		final Integer trialID = 1011;
+		final int trialID = 1011;
 		final StudyDetails studyDetails = this.createTestStudyDetails(trialID);
 		studyDetails.setEndDate(null);
 		studyDetails.setStudyUpdate(null);
@@ -1170,7 +1178,7 @@ public class OpenTrialControllerTest {
 
 	@Test
 	public void testPrepareBasicDetailsTabInfoWithNoCreatorInfo() throws ParseException {
-		final Integer trialID = 1011;
+		final int trialID = 1011;
 		final StudyDetails studyDetails = this.createTestStudyDetails(trialID);
 		studyDetails.setCreatedBy("");
 		final String startDate = Util.convertDate(studyDetails.getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);
@@ -1189,7 +1197,7 @@ public class OpenTrialControllerTest {
 
 	@Test
 	public void testPrepareBasicDetailsTabInfoWhenParentFolderIsRootFolder() throws ParseException {
-		final Integer trialID = 1011;
+		final int trialID = 1011;
 		final StudyDetails studyDetails = this.createTestStudyDetails(trialID);
 		studyDetails.setParentFolderId(DmsProject.SYSTEM_FOLDER_ID);
 		final String startDate = Util.convertDate(studyDetails.getStartDate(), Util.DATE_AS_NUMBER_FORMAT, Util.FRONTEND_DATE_FORMAT);

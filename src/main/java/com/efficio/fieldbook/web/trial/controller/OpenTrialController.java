@@ -23,6 +23,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.domain.samplelist.SampleListDTO;
+import org.generationcp.middleware.enumeration.DatasetTypeEnum;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.InventoryDataManager;
 import org.generationcp.middleware.manager.ontology.api.TermDataManager;
@@ -34,6 +35,7 @@ import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.generationcp.middleware.service.api.dataset.DatasetTypeService;
 import org.generationcp.middleware.service.api.study.StudyEntryDto;
 import org.generationcp.middleware.service.api.study.StudyEntryService;
+import org.generationcp.middleware.service.api.study.StudyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -59,6 +61,7 @@ public class OpenTrialController extends BaseTrialController {
 	private static final String HAS_GENERATED_DESIGN = "hasGeneratedDesign";
 	static final String ENVIRONMENT_DATA_TAB = "environmentData";
 	private static final String HAS_LISTS_OR_SUB_OBS = "hasListsOrSubObs";
+	private static final String HAS_MEANS_DATASET = "hasMeansDataset";
 	private static final Logger LOG = LoggerFactory.getLogger(OpenTrialController.class);
 	private static final String IS_DELETED_ENVIRONMENT = "0";
 	private static final String IS_PREVIEW_EDITABLE = "0";
@@ -75,6 +78,9 @@ public class OpenTrialController extends BaseTrialController {
 
 	@Resource
 	private TermDataManager termDataManager;
+
+	@Resource
+	private StudyService studyService;
 
 	/**
 	 * The Inventory list manager.
@@ -276,6 +282,7 @@ public class OpenTrialController extends BaseTrialController {
 		final List<DatasetDTO> datasetDTOS = this.datasetService.getDatasets(trialId, new HashSet<>(datasetTypeIds));
 
 		final boolean hasListOrSubObs = !sampleListDTOS.isEmpty() || !datasetDTOS.isEmpty();
+		final boolean hasMeansDataset = this.studyService.studyHasGivenDatasetType(trialId, DatasetTypeEnum.MEANS_DATA.getId());
 		model.addAttribute("basicDetailsData", this.prepareBasicDetailsTabInfo(trialWorkbook.getStudyDetails(), false, trialId));
 		model.addAttribute("germplasmData", this.prepareGermplasmTabInfo(trialWorkbook.getFactors(), false));
 		model.addAttribute(OpenTrialController.ENVIRONMENT_DATA_TAB, this.prepareEnvironmentsTabInfo(trialWorkbook, false));
@@ -303,6 +310,7 @@ public class OpenTrialController extends BaseTrialController {
 		model.addAttribute("studyId", trialWorkbook.getStudyDetails().getId());
 		model.addAttribute("measurementDatasetId", trialWorkbook.getMeasurementDatesetId());
 		model.addAttribute("trialDatasetId", trialWorkbook.getTrialDatasetId());
+		model.addAttribute(OpenTrialController.HAS_MEANS_DATASET, hasMeansDataset);
 
 		this.setIsSuperAdminAttribute(model);
 	}
@@ -577,8 +585,8 @@ public class OpenTrialController extends BaseTrialController {
 	}
 
 	private void updateEnvironmentThatIsGreaterThanDeletedEnvironment(final String deletedEnvironment, final MeasurementData data) {
-		final Integer deletedInstanceNo = Integer.valueOf(deletedEnvironment);
-		Integer currentInstanceNo = Integer.valueOf(data.getValue());
+		final int deletedInstanceNo = Integer.parseInt(deletedEnvironment);
+		int currentInstanceNo = Integer.parseInt(data.getValue());
 
 		if (deletedInstanceNo < currentInstanceNo) {
 			data.setValue(String.valueOf(--currentInstanceNo));

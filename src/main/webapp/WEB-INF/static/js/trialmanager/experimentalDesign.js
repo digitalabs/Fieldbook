@@ -109,7 +109,7 @@
 					};
 
 					$scope.isDeleteDesignDisable = function (){
-						return !studyStateService.hasGeneratedDesign() || studyStateService.hasListOrSubObs();
+						return !studyStateService.hasGeneratedDesign() || studyStateService.hasListOrSubObs() || studyStateService.hasMeansDataset();
 					};
 
 					$scope.deleteDesign = function () {
@@ -276,7 +276,7 @@
 								});
 							} else {
 								showAlertMessage('', 'All instances cannot be regenerated due to internal validations (presence of ' +
-									'samples or inventory transactions or subobservations or advance/cross list).');
+									'samples, inventory transactions, subobservations, means data or advance/cross list).');
 							}
 						});
 					};

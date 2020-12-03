@@ -23,16 +23,7 @@
 			};
 
 			$scope.openSelectGermplasmForAddingEntries = function() {
-				$uibModal.open({
-					templateUrl: '/Fieldbook/static/js/trialmanager/germplasm-selector/germplasm-selector-modal.html',
-					controller: "GermplasmSelectorCtrl",
-					windowClass: 'modal-very-huge',
-					resolve: {
-						selectMultiple: function () {
-							return true;
-						}
-					}
-				}).result.then((gids) => {
+				$rootScope.openGermplasmSelectorModal(true).then((gids) => {
 					if (gids != null) {
 						$scope.selectedGids = gids;
 					}

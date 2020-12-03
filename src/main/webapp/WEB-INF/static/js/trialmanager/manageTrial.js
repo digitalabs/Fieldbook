@@ -815,6 +815,19 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 				return modalInstance;
 			};
 
+			$rootScope.openGermplasmSelectorModal = function (selectMultiple) {
+				return $uibModal.open({
+					templateUrl: '/Fieldbook/static/js/trialmanager/germplasm-selector/germplasm-selector-modal.html',
+					controller: "GermplasmSelectorCtrl",
+					windowClass: 'modal-very-huge',
+					resolve: {
+						selectMultiple: function () {
+							return selectMultiple;
+						}
+					}
+				}).result;
+			};
+
 			$scope.showExportStudyModal = function () {
 				exportStudyModalService.openDatasetOptionModal();
 			}

@@ -330,6 +330,7 @@
 				$scope.totalItems = 0;
 				$scope.selectedItems = {};
 				$scope.isAllPagesSelected = false;
+				$scope.allItems = {};
 
 				$scope.isPageSelected = function () {
 					var pageItemIds = getPageItemIds();
@@ -350,11 +351,20 @@
 				$scope.onSelectAllPages = function () {
 					$scope.isAllPagesSelected = !$scope.isAllPagesSelected;
 					table().columns(0).visible(!$scope.isAllPagesSelected);
-					$scope.selectedItems = {};
+					if ($scope.isAllPagesSelected) {
+						if ($scope.size($scope.allItems) <= 0) {
+							setAllItems();
+						} else {
+							$scope.selectedItems = $scope.allItems;
+						}
+					} else {
+						$scope.selectedItems = {};
+					}
+
 				};
 
 				$scope.getRecordsFiltered = function () {
-					return table().context[0].json && table().context[0].json['recordsFiltered'];
+					return table().context[0]._iRecordsTotal && table().context[0]._iRecordsTotal;
 				};
 
 				$scope.isSelected = function (itemId) {
@@ -409,6 +419,19 @@
 
 				function table() {
 					return $scope.nested.dtInstance.DataTable;
+				}
+
+				function setAllItems() {
+					// Prevent from reloading
+					var size = $scope.getRecordsFiltered();
+					germplasmStudySourceService.searchGermplasmStudySourcesApi({}, 0, size).then((germplasmStudySourceTable) => {
+						germplasmStudySourceTable.data.forEach(function (item, index) {
+							$scope.allItems[item.gid] = true;
+						});
+						if ($scope.isAllPagesSelected) {
+							$scope.selectedItems = $scope.allItems;
+						}
+					});
 				}
 
 				dtOptionsDeferred.resolve(dtOptions);

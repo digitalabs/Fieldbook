@@ -204,10 +204,10 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'studyStateService', 'TrialManagerDataService', '$http',
 		'$timeout', '_', '$localStorage', '$state', '$location', 'HasAnyAuthorityService', 'derivedVariableService', 'exportStudyModalService',
 		'importStudyModalService', 'createSampleModalService', 'derivedVariableModalService', '$uibModal', '$q', 'datasetService', 'InventoryService',
-		'studyContext', 'PERMISSIONS', 'LABEL_PRINTING_TYPE', 'HAS_LISTS_OR_SUB_OBS', 'HAS_GENERATED_DESIGN', 'germplasmStudySourceService', 'studyEntryService',
+		'studyContext', 'PERMISSIONS', 'LABEL_PRINTING_TYPE', 'HAS_LISTS_OR_SUB_OBS', 'HAS_GENERATED_DESIGN', 'germplasmStudySourceService', 'studyEntryService', 'HAS_MEANS_DATASET',
 		function ($scope, $rootScope, studyStateService, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $location, HasAnyAuthorityService,
 				  derivedVariableService, exportStudyModalService, importStudyModalService, createSampleModalService, derivedVariableModalService, $uibModal, $q, datasetService, InventoryService,
-				  studyContext, PERMISSIONS, LABEL_PRINTING_TYPE, HAS_LISTS_OR_SUB_OBS, HAS_GENERATED_DESIGN, germplasmStudySourceService, studyEntryService) {
+				  studyContext, PERMISSIONS, LABEL_PRINTING_TYPE, HAS_LISTS_OR_SUB_OBS, HAS_GENERATED_DESIGN, germplasmStudySourceService, studyEntryService, HAS_MEANS_DATASET) {
 
 			$scope.trialTabs = [
 				{
@@ -267,6 +267,7 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 
 				studyStateService.updateHasListsOrSubObs(HAS_LISTS_OR_SUB_OBS);
 				studyStateService.updateGeneratedDesign(HAS_GENERATED_DESIGN);
+				studyStateService.updateHasMeansDataset(HAS_MEANS_DATASET);
 
 				if(HAS_GENERATED_DESIGN) {
 					studyEntryService.getStudyEntriesMetadata().then(function (metadata) {
@@ -290,7 +291,7 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 
 			function loadCrossesAndSelectionsTab() {
 				germplasmStudySourceService.searchGermplasmStudySources({}, 0, 1).then((germplasmStudySourceTable) => {
-					if (germplasmStudySourceTable.data.length) {
+					if (germplasmStudySourceTable.length) {
 						$scope.crossesAndSelectionsTab.hidden = false;
 					}
 				});
@@ -299,7 +300,7 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 			function loadInventoryTab() {
 				InventoryService.searchStudyTransactions({}, 0, 1).then((transactionsTable) => {
 					$scope.safeApply(function () {
-						$scope.inventoryTab.hidden = !transactionsTable.data.length;
+						$scope.inventoryTab.hidden = !transactionsTable.length;
 						// If the Inventory tab becomes hidden, if no transactions left, navigate to Observations tab to show its content
 						if ($scope.inventoryTab.hidden && $scope.tabSelected === 'inventory') {
 							$scope.navigateToSubObsTab(studyContext.measurementDatasetId);
@@ -812,6 +813,19 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 					}
 				});
 				return modalInstance;
+			};
+
+			$rootScope.openGermplasmSelectorModal = function (selectMultiple) {
+				return $uibModal.open({
+					templateUrl: '/Fieldbook/static/js/trialmanager/germplasm-selector/germplasm-selector-modal.html',
+					controller: "GermplasmSelectorCtrl",
+					windowClass: 'modal-very-huge',
+					resolve: {
+						selectMultiple: function () {
+							return selectMultiple;
+						}
+					}
+				}).result;
 			};
 
 			$scope.showExportStudyModal = function () {

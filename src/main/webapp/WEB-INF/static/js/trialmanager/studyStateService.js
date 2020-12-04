@@ -8,7 +8,8 @@
                     // hasUnsavedData becomes true when adding/deleting environments and variables in a study.
                     hasUnsavedData: false,
                     hasGeneratedDesign: false,
-                    hasListOrSubObs: false
+                    hasListOrSubObs: false,
+                    hasMeansDataset: false
                 },
 
                 updateOccurred: function () {
@@ -37,6 +38,14 @@
 
                 updateHasListsOrSubObs: function (status) {
                     return service.state.hasListOrSubObs = status;
+                },
+
+                hasMeansDataset: function () {
+                    return service.state.hasMeansDataset;
+                },
+
+                updateHasMeansDataset: function (status) {
+                    return service.state.hasMeansDataset = status;
                 }
             };
             return service;

@@ -355,16 +355,7 @@
 				$scope.onSelectAllPages = function () {
 					$scope.isAllPagesSelected = !$scope.isAllPagesSelected;
 					table().columns(0).visible(!$scope.isAllPagesSelected);
-					if ($scope.isAllPagesSelected) {
-						if ($scope.size($scope.allItems) <= 0) {
-							setAllItems();
-						} else {
-							$scope.selectedItems = $scope.allItems;
-						}
-					} else {
-						$scope.selectedItems = {};
-					}
-
+					$scope.selectedItems = {};
 				};
 
 				$scope.getRecordsFiltered = function () {
@@ -388,8 +379,8 @@
 				};
 
 				$scope.openLotCreationModal = function () {
-					if ($scope.size($scope.selectedItems)) {
-						lotService.saveSearchRequest({gids: Object.keys($scope.selectedItems)})
+					if ($scope.size($scope.selectedItems) || $scope.isAllPagesSelected) {
+						lotService.saveSearchRequest({gids: Object.keys($scope.selectedItems), studyId: studyContext.study})
 							.then((searchDto) => {
 								$uibModal.open({
 									templateUrl: '/Fieldbook/static/js/trialmanager/inventory/lot-creation/lot-creation-modal.html',
@@ -423,19 +414,6 @@
 
 				function table() {
 					return $scope.nested.dtInstance.DataTable;
-				}
-
-				function setAllItems() {
-					// Prevent from reloading
-					var size = $scope.getRecordsFiltered();
-					germplasmStudySourceService.searchGermplasmStudySourcesApi({}, 0, size).then((germplasmStudySourceTable) => {
-						germplasmStudySourceTable.data.forEach(function (item, index) {
-							$scope.allItems[item.gid] = true;
-						});
-						if ($scope.isAllPagesSelected) {
-							$scope.selectedItems = $scope.allItems;
-						}
-					});
 				}
 
 				dtOptionsDeferred.resolve(dtOptions);

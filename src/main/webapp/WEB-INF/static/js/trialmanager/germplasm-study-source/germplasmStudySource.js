@@ -334,7 +334,6 @@
 				$scope.totalItems = 0;
 				$scope.selectedItems = {};
 				$scope.isAllPagesSelected = false;
-				$scope.allItems = {};
 
 				$scope.isPageSelected = function () {
 					var pageItemIds = getPageItemIds();

@@ -379,7 +379,11 @@
 
 				$scope.openLotCreationModal = function () {
 					if ($scope.size($scope.selectedItems) || $scope.isAllPagesSelected) {
-						lotService.saveSearchRequest({gids: Object.keys($scope.selectedItems), studyId: studyContext.study})
+						let searchParam = {gids: Object.keys($scope.selectedItems)};
+						if ($scope.isAllPagesSelected) {
+							searchParam = {gids: Object.keys($scope.selectedItems), studyId: studyContext.studyId};
+						}
+						lotService.saveSearchRequest(searchParam)
 							.then((searchDto) => {
 								$uibModal.open({
 									templateUrl: '/Fieldbook/static/js/trialmanager/inventory/lot-creation/lot-creation-modal.html',

@@ -1,7 +1,7 @@
 (function () {
 	'use strict';
 
-	var germplasmStudySourceModule = angular.module('germplasm-study-source', []);
+	var germplasmStudySourceModule = angular.module('germplasm-study-source', [])
 
 	germplasmStudySourceModule.controller('GermplasmStudySourceCtrl',
 		['$rootScope', '$scope', '$q', '$compile', '$uibModal', 'studyContext', 'DTOptionsBuilder', 'germplasmStudySourceService', 'lotService',
@@ -85,6 +85,11 @@
 					});
 					return request;
 				}
+
+				$scope.keyPressed = function(e) {
+					showErrorAlert('error');
+					$scope.onSelectAllPages();
+				};
 
 				$scope.columns = {
 					checkbox: {
@@ -358,7 +363,7 @@
 				};
 
 				$scope.getRecordsFiltered = function () {
-					return table().context[0]._iRecordsTotal && table().context[0]._iRecordsTotal;
+					return table().context[0].json && table().context[0].json['recordsFiltered'];
 				};
 
 				$scope.isSelected = function (itemId) {
@@ -379,12 +384,7 @@
 
 				$scope.openLotCreationModal = function () {
 					if ($scope.size($scope.selectedItems) || $scope.isAllPagesSelected) {
-						let searchParam = {gids: Object.keys($scope.selectedItems)};
-						if ($scope.isAllPagesSelected) {
-							searchParam = {gids: Object.keys($scope.selectedItems), studyId: studyContext.studyId};
-						}
-						lotService.saveSearchRequest(searchParam)
-							.then((searchDto) => {
+						lotService.saveSearchRequest({gids: Object.keys($scope.selectedItems)}).then((searchDto) => {
 								$uibModal.open({
 									templateUrl: '/Fieldbook/static/js/trialmanager/inventory/lot-creation/lot-creation-modal.html',
 									controller: 'LotCreationCtrl',

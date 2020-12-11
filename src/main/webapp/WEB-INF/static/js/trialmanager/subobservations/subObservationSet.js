@@ -1217,7 +1217,7 @@
 			}
 
 			$scope.allTableItems = function () {
-				return table().context[0]._iRecordsTotal && table().context[0]._iRecordsTotal;
+				return table().context[0].json && table().context[0].json['recordsFiltered'];
 			};
 
 			$scope.isPageSelected = function () {

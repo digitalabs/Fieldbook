@@ -26,6 +26,7 @@ import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
@@ -367,6 +368,14 @@ public class CrossingSettingsController extends SettingsController {
 	@RequestMapping(value = "/getHybridMethods", method = RequestMethod.GET)
 	public Set<Integer> getHybridMethods() {
 		return this.crossExpansionProperties.getHybridBreedingMethods();
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/getLocationIdFromFirstEnviroment", method = RequestMethod.GET)
+	public String getLocationIdFromEnviroment() {
+		return this.studySelection.getWorkbook().getTrialObservations().get(0).getDataList().stream()
+			.filter(measurementData -> measurementData.getMeasurementVariable().getTermId() == TermId.LOCATION_ID.getId()).findFirst().get()
+			.getValue();
 	}
 
 	/** This is used for the Review Imported Cross (no temporary list created yet as in Design Crosses **/

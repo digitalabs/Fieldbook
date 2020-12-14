@@ -144,6 +144,22 @@ var ImportCrosses = {
 		}
 	},
 
+	retrieveLocationIdFromFirstEnviroment: function () {
+		return $.ajax({
+			url: ImportCrosses.CROSSES_URL + '/getLocationIdFromFirstEnviroment',
+			type: 'GET',
+			cache: false,
+			async: false,
+			success: function (data) {
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				console.log('The following error occurred: ' + textStatus, errorThrown);
+			},
+			complete: function () {
+			}
+		});
+	},
+
 	showOrHideApplyGroupingOptionDiv : function () {
 		if(!ImportCrosses.hybridMethods.includes(parseInt($('#breedingMethodDropdown').select2('val')))) {
 			$("#applyGroupingOptionDiv").hide();
@@ -357,9 +373,10 @@ var ImportCrosses = {
 		'use strict';
 		var crossSettingsPopupModal = $('#crossSettingsModal');
 		crossSettingsPopupModal.modal({ backdrop: 'static', keyboard: true });
-
-		LocationsFunctions.processLocationDropdownAndFavoritesCheckbox('locationDropdown', 'locationFavoritesOnlyCheckbox',
-			'showAllLocationOnlyRadio', 'showBreedingLocationOnlyRadio');
+		ImportCrosses.retrieveLocationIdFromFirstEnviroment().done(function (locationId) {
+			LocationsFunctions.processLocationDropdownAndFavoritesCheckbox('locationDropdown', 'locationFavoritesOnlyCheckbox',
+				'showAllLocationOnlyRadio', 'showBreedingLocationOnlyRadio', undefined, undefined, locationId);
+		});
 
 		ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
 

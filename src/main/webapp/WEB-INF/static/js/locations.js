@@ -75,16 +75,26 @@ if (typeof (LocationsFunctions) === 'undefined') {
 				var $filters = $favFilter.add($allFilter).add($breedingFilter);
 
 				var applyFilter = function () {
+					var containsLocationSelected = false;
+					var lastSelectedLocation = $('#' + getJquerySafeId(locationSelectID)).select2('val');
 					if ($favFilter.is(':checked')) {
 						if ($breedingFilter.is(':checked')) {
+							containsLocationSelected = LocationsFunctions.existsLocationInDropdown(lastSelectedLocation, favoriteBreedingPossibleValues);
 							LocationsFunctions.createSelect2Dropdown(favoriteBreedingPossibleValues, locationSelectID);
 						} else {
+							containsLocationSelected = LocationsFunctions.existsLocationInDropdown(lastSelectedLocation, favoritePossibleValues);
 							LocationsFunctions.createSelect2Dropdown(favoritePossibleValues, locationSelectID);
 						}
 					} else if ($allFilter.is(':checked')) {
+						containsLocationSelected = LocationsFunctions.existsLocationInDropdown(lastSelectedLocation, allPossibleValues);
 						LocationsFunctions.createSelect2Dropdown(allPossibleValues, locationSelectID);
 					} else {
+						containsLocationSelected = LocationsFunctions.existsLocationInDropdown(lastSelectedLocation, possibleValues);
 						LocationsFunctions.createSelect2Dropdown(possibleValues, locationSelectID);
+					}
+
+					if (!containsLocationSelected) {
+						$('#' + getJquerySafeId(locationSelectID)).select2('val', '');
 					}
 				};
 				applyFilter();
@@ -94,7 +104,7 @@ if (typeof (LocationsFunctions) === 'undefined') {
 				}
 
 				$filters.on('change', function() {
-					// get previous value of dropdown first
+					applyFilter();
 					var currentSelected = $('#' + getJquerySafeId(locationSelectID)).select2('data');
 
 					if (currentSelected && currentSelected.id) {
@@ -202,6 +212,10 @@ if (typeof (LocationsFunctions) === 'undefined') {
 
 		retrieveCurrentProjectID: function() {
 			return $.get('/Fieldbook/breedingMethod/programID');
+		},
+
+		existsLocationInDropdown(locationId, locationPossibleValues) {
+			return locationId && locationPossibleValues && locationPossibleValues.some(location => location.id == parseInt(locationId));
 		}
 
 	};

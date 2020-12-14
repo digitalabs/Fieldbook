@@ -693,6 +693,10 @@ var ImportCrosses = {
 			valid = false;
 			showErrorMessage('', $.fieldbookMessages.errorNoHarvestMonth);
 		}
+		if (!importSettings.additionalDetailsSetting.harvestLocationId) {
+			valid = false;
+			showErrorMessage('', $.fieldbookMessages.errorNoHarvestLocation);
+		}
 		if (importSettings.isUseManualSettingsForNaming) {
 			if (!importSettings.crossNameSetting.prefix || importSettings.crossNameSetting.prefix === '') {
 				valid = false;

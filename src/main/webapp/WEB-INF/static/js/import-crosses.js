@@ -776,7 +776,12 @@ var ImportCrosses = {
 		settingObject.applyNewGroupToPreviousCrosses = !$('#applyGroupingCheckBox').prop('checked');
 		settingObject.isUseManualSettingsForNaming = $('input:radio[name=manualNamingSettings]:checked').val() === 'true';
 		settingObject.additionalDetailsSetting = {};
-		settingObject.additionalDetailsSetting.harvestLocationId = $('#locationDropdown').select2('val');
+
+		var locationSelected = $('#locationDropdown').select2('data');
+		if (locationSelected && locationSelected.id) {
+			settingObject.additionalDetailsSetting.harvestLocationId = locationSelected.id;
+		}
+		
 		if ($('#harvestYearDropdown').val() !== '' && $('#harvestMonthDropdown').val() !== '') {
 			settingObject.additionalDetailsSetting.harvestDate = $('#harvestYearDropdown').val() + '-' + $('#harvestMonthDropdown').val() + '-01';
 		}

@@ -79,6 +79,10 @@
 										<a ng-click="printLabels()" id="label-printing-url-link"
 										   th:text="#{study.studydetails.action.printLabels}">Print Labels</a>
 									</li>
+									<li ng-show="showPreparePlantingInventoryAction()">
+										<a ng-click="preparePlanting();" id="prepare-planting-inventory-link"
+										   th:text="#{study.studydetails.action.observationunits.prepare.plating}">Prepare planting inventory</a>
+									</li>
 								</ul>
 							</li>
 
@@ -109,10 +113,6 @@
 									<li>
 										<a href="javascript: subObservationUnitDatasetSelector();" id="create-sub-Observation-link"
 										   th:text="#{study.studydetails.action.observationunits.create}">Create sub-observation units</a>
-									</li>
-									<li ng-show="hasAnyAuthority(PERMISSIONS.PREPARE_PLANTING_PERMISSIONS)">
-										<a ng-click="preparePlanting();" id="prepare-planting-inventory-link"
-										   th:text="#{study.studydetails.action.observationunits.prepare.plating}">Prepare planting inventory</a>
 									</li>
 									<li>
 										<a ng-click="ChangePlotEntry();" id="change-plot-entry-link"

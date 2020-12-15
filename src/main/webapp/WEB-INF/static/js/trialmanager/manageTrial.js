@@ -508,6 +508,11 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 				return TrialManagerDataService.applicationData.germplasmListSelected;
 			};
 
+			$scope.showPreparePlantingInventoryAction = function () {
+				return $scope.hasDesignGenerated &&
+					HasAnyAuthorityService.hasAnyAuthority(PERMISSIONS.PREPARE_PLANTING_PERMISSIONS);
+			}
+
 			$scope.displayGermplasmOrMeasurmentOnlyActions = function () {
 				return this.hasGermplasmListSelected() || studyStateService.hasGeneratedDesign();
 			};

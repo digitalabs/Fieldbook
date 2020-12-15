@@ -57,7 +57,7 @@ import java.util.Set;
 public class AngularSelectSheetController extends AbstractBaseETLController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AngularSelectSheetController.class);
-	public static final String URL = "/etl/workbook/step2";
+		public static final String URL = "/etl/workbook/step2";
 
 	private static final int ROW_COUNT_PER_SCREEN = 10;
 	private static final int MAX_DISPLAY_CHARACTER_PER_ROW = 60;

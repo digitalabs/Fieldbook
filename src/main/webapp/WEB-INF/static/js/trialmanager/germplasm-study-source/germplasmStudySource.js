@@ -29,6 +29,7 @@
 								json.recordsFiltered = xhr.getResponseHeader('X-Filtered-Count');
 								json.recordsTotal = xhr.getResponseHeader('X-Total-Count');
 								json.data = res;
+								setRecordsFiltered(json.recordsFiltered);
 								callback(json);
 							},
 							contentType: 'application/json',
@@ -358,7 +359,8 @@
 				};
 
 				$scope.getRecordsFiltered = function () {
-					return table().context[0].json && table().context[0].json['recordsFiltered'];
+					// Replacing this as table().context doesn't contain json property
+					return $scope.recordsFiltered && $scope.recordsFiltered;
 				};
 
 				$scope.isSelected = function (itemId) {
@@ -378,9 +380,8 @@
 				};
 
 				$scope.openLotCreationModal = function () {
-					if ($scope.size($scope.selectedItems)) {
-						lotService.saveSearchRequest({gids: Object.keys($scope.selectedItems)})
-							.then((searchDto) => {
+					if ($scope.size($scope.selectedItems) || $scope.isAllPagesSelected) {
+						lotService.saveSearchRequest({gids: Object.keys($scope.selectedItems)}).then((searchDto) => {
 								$uibModal.open({
 									templateUrl: '/Fieldbook/static/js/trialmanager/inventory/lot-creation/lot-creation-modal.html',
 									controller: 'LotCreationCtrl',
@@ -413,6 +414,10 @@
 
 				function table() {
 					return $scope.nested.dtInstance.DataTable;
+				}
+
+				function setRecordsFiltered(recordsFiltered) {
+					$scope.recordsFiltered = recordsFiltered;
 				}
 
 				dtOptionsDeferred.resolve(dtOptions);

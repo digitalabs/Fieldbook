@@ -1,7 +1,7 @@
 (function () {
 	'use strict';
 
-	var germplasmStudySourceModule = angular.module('germplasm-study-source', [])
+	var germplasmStudySourceModule = angular.module('germplasm-study-source', []);
 
 	germplasmStudySourceModule.controller('GermplasmStudySourceCtrl',
 		['$rootScope', '$scope', '$q', '$compile', '$uibModal', 'studyContext', 'DTOptionsBuilder', 'germplasmStudySourceService', 'lotService',

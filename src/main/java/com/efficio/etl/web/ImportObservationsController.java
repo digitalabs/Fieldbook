@@ -189,7 +189,7 @@ public class ImportObservationsController extends AbstractBaseETLController {
 			importData.setConditions(referenceWorkbook.getConditions());
 			this.dataImportService.addExptDesignVariableIfNotExists(importData, importData.getFactors(), programUUID);
 			this.dataImportService.addLocationIDVariableIfNotExists(importData, importData.getFactors(), programUUID);
-			this.dataImportService.addEntryTypeVariableIfNotExists(importData, importData.getFactors(), programUUID);
+			this.dataImportService.addEntryTypeVariableIfNotExists(importData, programUUID);
 			this.dataImportService.assignLocationIdVariableToEnvironmentDetailSection(importData);
 			this.dataImportService.removeLocationNameVariableIfExists(importData);
 			this.dataImportService.populatePossibleValuesForCategoricalVariates(importData.getConditions(), programUUID);

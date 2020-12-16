@@ -229,7 +229,7 @@ public class ImportObservationsControllerTest {
 		Assert.assertEquals("redirect:/etl/fileUpload", returnValue);
 		Mockito.verify(this.dataImportService).addLocationIDVariableIfNotExists(importData, importData.getFactors(), PROGRAM_UUID);
 		Mockito.verify(this.dataImportService).assignLocationIdVariableToEnvironmentDetailSection(importData);
-		Mockito.verify(this.dataImportService).addEntryTypeVariableIfNotExists(importData, importData.getFactors(), PROGRAM_UUID);
+		Mockito.verify(this.dataImportService).addEntryTypeVariableIfNotExists(importData, PROGRAM_UUID);
 		Mockito.verify(this.dataImportService).removeLocationNameVariableIfExists(importData);
 		Mockito.verify(this.dataImportService).parseWorkbookDescriptionSheet(workbook, CURRENT_IBDB_USER_ID);
 		Mockito.verify(this.etlService).saveProjectData(importData, ImportObservationsControllerTest.PROGRAM_UUID);

@@ -3,14 +3,14 @@
 
 	var datasetOptionModal = angular.module('datasetOptionModal', ['ui.bootstrap', 'ngSanitize', 'ui.select', 'datasets-api']);
 
-	datasetOptionModal.directive('datasetOptionModal', ['datasetService', 'DATASET_TYPES_OBSERVATION_IDS',
-		function (datasetService, DATASET_TYPES_OBSERVATION_IDS) {
+	datasetOptionModal.directive('datasetOptionModal', ['datasetService', 'helpLinkService', 'DATASET_TYPES_OBSERVATION_IDS',
+		function (datasetService, helpLinkService, DATASET_TYPES_OBSERVATION_IDS) {
 		return {
 			restrict: 'E',
 			require: '?ngModel',
 			scope: {
 				modalTitle: '=',
-				helpToolUrl: '=',
+				helpLink: '=',
 				message: '=',
 				selected: '=',
 				onContinue: '&'
@@ -38,6 +38,12 @@
 					datasetService.getDatasets(DATASET_TYPES_OBSERVATION_IDS).then(function (datasets) {
 						$scope.datasets = datasets;
 					});
+
+					if ($scope.helpLink) {
+						helpLinkService.helpLink($scope.helpLink).then(function (url) {
+							$scope.helpLinkUrl = url;
+						});
+					}
 				}
 
 				ctrl.init();

@@ -10,6 +10,7 @@
 			require: '?ngModel',
 			scope: {
 				modalTitle: '=',
+				helpToolUrl: '=',
 				message: '=',
 				selected: '=',
 				onContinue: '&'

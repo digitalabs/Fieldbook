@@ -843,12 +843,13 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 
 			$scope.printLabels = function () {
 				$uibModal.open({
-					template: '<dataset-option-modal modal-title="modalTitle" message="message"' +
+					template: '<dataset-option-modal modal-title="modalTitle" help-tool-url="helpToolUrl"  message="message"' +
 						' selected="selected" on-continue="forkPrintLabelFlows()"></dataset-option-modal>',
 					size: 'md',
 					controller: ['$scope', 'studyContext', function (scope, studyContext) {
 
 						scope.modalTitle = 'Create planting labels';
+						scope.helpToolUrl = 'https://bmspro.io/2193/training/bms-user-manual/label-design';
 						scope.message = 'Please choose the dataset you would like to print from:';
 						scope.selected = {datasetId: studyContext.measurementDatasetId};
 

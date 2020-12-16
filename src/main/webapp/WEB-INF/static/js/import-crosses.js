@@ -144,6 +144,22 @@ var ImportCrosses = {
 		}
 	},
 
+	retrieveLocationIdFromFirstEnviroment: function () {
+		return $.ajax({
+			url: ImportCrosses.CROSSES_URL + '/getLocationIdFromFirstEnviroment',
+			type: 'GET',
+			cache: false,
+			async: false,
+			success: function (data) {
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				console.log('The following error occurred: ' + textStatus, errorThrown);
+			},
+			complete: function () {
+			}
+		});
+	},
+
 	showOrHideApplyGroupingOptionDiv : function () {
 		if(!ImportCrosses.hybridMethods.includes(parseInt($('#breedingMethodDropdown').select2('val')))) {
 			$("#applyGroupingOptionDiv").hide();
@@ -357,9 +373,10 @@ var ImportCrosses = {
 		'use strict';
 		var crossSettingsPopupModal = $('#crossSettingsModal');
 		crossSettingsPopupModal.modal({ backdrop: 'static', keyboard: true });
-
-		LocationsFunctions.processLocationDropdownAndFavoritesCheckbox('locationDropdown', 'locationFavoritesOnlyCheckbox',
-			'showAllLocationOnlyRadio', 'showBreedingLocationOnlyRadio');
+		ImportCrosses.retrieveLocationIdFromFirstEnviroment().done(function (locationId) {
+			LocationsFunctions.processLocationDropdownAndFavoritesCheckbox('locationDropdown', 'locationFavoritesOnlyCheckbox',
+				'showAllLocationOnlyRadio', 'showBreedingLocationOnlyRadio', undefined, undefined, locationId);
+		});
 
 		ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
 
@@ -693,6 +710,10 @@ var ImportCrosses = {
 			valid = false;
 			showErrorMessage('', $.fieldbookMessages.errorNoHarvestMonth);
 		}
+		if (!importSettings.additionalDetailsSetting.harvestLocationId) {
+			valid = false;
+			showErrorMessage('', $.fieldbookMessages.errorNoHarvestLocation);
+		}
 		if (importSettings.isUseManualSettingsForNaming) {
 			if (!importSettings.crossNameSetting.prefix || importSettings.crossNameSetting.prefix === '') {
 				valid = false;
@@ -772,7 +793,12 @@ var ImportCrosses = {
 		settingObject.applyNewGroupToPreviousCrosses = !$('#applyGroupingCheckBox').prop('checked');
 		settingObject.isUseManualSettingsForNaming = $('input:radio[name=manualNamingSettings]:checked').val() === 'true';
 		settingObject.additionalDetailsSetting = {};
-		settingObject.additionalDetailsSetting.harvestLocationId = $('#locationDropdown').select2('val');
+
+		var locationSelected = $('#locationDropdown').select2('data');
+		if (locationSelected && locationSelected.id) {
+			settingObject.additionalDetailsSetting.harvestLocationId = locationSelected.id;
+		}
+		
 		if ($('#harvestYearDropdown').val() !== '' && $('#harvestMonthDropdown').val() !== '') {
 			settingObject.additionalDetailsSetting.harvestDate = $('#harvestYearDropdown').val() + '-' + $('#harvestMonthDropdown').val() + '-01';
 		}

@@ -36,9 +36,9 @@ if (typeof (LocationsFunctions) === 'undefined') {
 		// function that prepares and initializes both the Select2 dropdown containing the location list as well as the checkbox that toggles between displaying only favorite
 		// locations or no. locationConversionFunction is provided as a parameter in case developers wish to change the construction of each select2 item, tho built-in function
 		// will be used by default if this is not provided
-		processLocationDropdownAndFavoritesCheckbox: function(locationSelectID, favoritesCheckboxID, allRadioButtonId, breedingLocationOnlyRadio, locationType, locationConversionFunction) {
+		processLocationDropdownAndFavoritesCheckbox: function(locationSelectID, favoritesCheckboxID, allRadioButtonId, breedingLocationOnlyRadio, locationType, locationConversionFunction, locationIdValue) {
 			LocationsFunctions.retrieveLocations().done(function(data) {
-				if (! locationConversionFunction) {
+				if (!locationConversionFunction) {
 					locationConversionFunction = LocationsFunctions.convertLocationToSelectItem;
 				}
 
@@ -49,9 +49,22 @@ if (typeof (LocationsFunctions) === 'undefined') {
 					possibleValues = LocationsFunctions.convertLocationsToSelectItemList(data.allSeedStorageLocations, locationConversionFunction);
 				}
 
-				$('#locationFavoritesOnlyCheckbox').prop('checked',
-					data && data.allBreedingFavoritesLocations && data.allBreedingFavoritesLocations.length > 0);
+				var isBreeding, isFavorite = false;
+				if (locationIdValue) {
+					var locationIdEnviroment = parseInt(locationIdValue);
+					isBreeding = data.allBreedingLocations && data.allBreedingLocations.some(location => location.locid == locationIdEnviroment);
+					if (isBreeding) {
+						$('#' + breedingLocationOnlyRadio).prop("checked", true);
+						isFavorite = data.allBreedingFavoritesLocations && data.allBreedingFavoritesLocations.some(location => location.locid == locationIdEnviroment);
+					} else {
+						$('#' + allRadioButtonId).prop("checked", true);
+						isFavorite = data.favoriteLocations && data.favoriteLocations.some(location => location.locid == locationIdEnviroment);
+					}
+				} else {
+					isFavorite = data && data.allBreedingFavoritesLocations && data.allBreedingFavoritesLocations.length > 0;
+				}
 
+				$('#' + favoritesCheckboxID).prop('checked', isFavorite);
 				var allPossibleValues = LocationsFunctions.convertLocationsToSelectItemList(data.allLocations, locationConversionFunction);
 				var favoritePossibleValues = LocationsFunctions.convertLocationsToSelectItemList(data.favoriteLocations, locationConversionFunction);
 				var favoriteBreedingPossibleValues = LocationsFunctions.convertLocationsToSelectItemList(data.allBreedingFavoritesLocations, locationConversionFunction);
@@ -62,25 +75,37 @@ if (typeof (LocationsFunctions) === 'undefined') {
 				var $filters = $favFilter.add($allFilter).add($breedingFilter);
 
 				var applyFilter = function () {
+					var containsLocationSelected = false;
+					var lastSelectedLocation = $('#' + getJquerySafeId(locationSelectID)).select2('val');
 					if ($favFilter.is(':checked')) {
 						if ($breedingFilter.is(':checked')) {
+							containsLocationSelected = LocationsFunctions.existsLocationInDropdown(lastSelectedLocation, favoriteBreedingPossibleValues);
 							LocationsFunctions.createSelect2Dropdown(favoriteBreedingPossibleValues, locationSelectID);
 						} else {
+							containsLocationSelected = LocationsFunctions.existsLocationInDropdown(lastSelectedLocation, favoritePossibleValues);
 							LocationsFunctions.createSelect2Dropdown(favoritePossibleValues, locationSelectID);
 						}
 					} else if ($allFilter.is(':checked')) {
+						containsLocationSelected = LocationsFunctions.existsLocationInDropdown(lastSelectedLocation, allPossibleValues);
 						LocationsFunctions.createSelect2Dropdown(allPossibleValues, locationSelectID);
 					} else {
+						containsLocationSelected = LocationsFunctions.existsLocationInDropdown(lastSelectedLocation, possibleValues);
 						LocationsFunctions.createSelect2Dropdown(possibleValues, locationSelectID);
+					}
+
+					if (!containsLocationSelected) {
+						$('#' + getJquerySafeId(locationSelectID)).select2('val', '');
 					}
 				};
 				applyFilter();
 
-				$filters.on('change', function() {
-					// get previous value of dropdown first
-					var currentSelected = $('#' + getJquerySafeId(locationSelectID)).select2('data');
+				if (locationIdValue) {
+					$('#' + getJquerySafeId(locationSelectID)).select2('val', locationIdValue);
+				}
 
+				$filters.on('change', function() {
 					applyFilter();
+					var currentSelected = $('#' + getJquerySafeId(locationSelectID)).select2('data');
 
 					if (currentSelected && currentSelected.id) {
 						$('#' + getJquerySafeId(locationSelectID)).select2('val', currentSelected.id);
@@ -93,7 +118,7 @@ if (typeof (LocationsFunctions) === 'undefined') {
 					'location-update',
 					function() {
 						LocationsFunctions.processLocationDropdownAndFavoritesCheckbox(locationSelectID, favoritesCheckboxID,
-							allRadioButtonId, breedingLocationOnlyRadio, locationType, locationConversionFunction);
+							allRadioButtonId, breedingLocationOnlyRadio, locationType, locationConversionFunction, locationIdValue);
 					    //Recreate the location combo to make sure that the changes made are reflected in the UI
 						recreateLocationCombo();
 				});
@@ -187,6 +212,10 @@ if (typeof (LocationsFunctions) === 'undefined') {
 
 		retrieveCurrentProjectID: function() {
 			return $.get('/Fieldbook/breedingMethod/programID');
+		},
+
+		existsLocationInDropdown(locationId, locationPossibleValues) {
+			return locationId && locationPossibleValues && locationPossibleValues.some(location => location.id == parseInt(locationId));
 		}
 
 	};

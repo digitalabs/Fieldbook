@@ -15,6 +15,12 @@
 					<label>Selected:</label>
 					<span class="control-label-bold">{{isAllPagesSelected ? getRecordsFiltered() : size(selectedItems)}}</span>
 				</div>
+				<div class="form-group  checkbox-inline">
+					<label style="margin-left: 15px">
+						<input type="checkbox" ng-checked="isAllPagesSelected" ng-click="onSelectAllPages()" id="check-select-all">
+						Select all pages</input>
+					</label>
+				</div>
 			</form>
 		</div>
 

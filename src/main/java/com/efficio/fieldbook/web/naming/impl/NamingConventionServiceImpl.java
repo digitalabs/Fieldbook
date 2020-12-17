@@ -74,9 +74,11 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 
 				for (final String name : names) {
-					final ImportedGermplasm germplasm = germplasmIterator.next();
-					germplasm.setDesig(name);
-					this.assignNames(germplasm);
+					if (germplasmIterator.hasNext()) {
+						final ImportedGermplasm germplasm = germplasmIterator.next();
+						germplasm.setDesig(name);
+						this.assignNames(germplasm);
+					}
 				}
 
 				// Pass the key sequence map to the next entry to process

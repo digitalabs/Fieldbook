@@ -873,18 +873,19 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 
 			$scope.showGeoJSONModal = function (isViewGeoJSON) {
 				datasetService.getDatasetInstances(studyContext.measurementDatasetId).then((datasetInstances) => {
-					let instances = datasetInstances.filter((instance) => instance.hasFieldLayout);
-					if (!instances || !instances.length) {
-						return showErrorMessage('', noLayoutError);
-					}
+					let instances = [];
 
 					if (isViewGeoJSON) {
-						instances = instances.filter((instance) => instance.hasGeoJSON)
+						instances = datasetInstances.filter((instance) => instance.hasGeoJSON)
 						if (!instances.length) {
 							return showErrorMessage('', geoReferenceViewNotAvailableError);
 						}
 					} else {
-						instances = instances.filter((instance) => instance.hasFieldLayout && !instance.hasGeoJSON)
+						instances = datasetInstances.filter((instance) => instance.hasFieldLayout);
+						if (!instances || !instances.length) {
+							return showErrorMessage('', noLayoutError);
+						}
+						instances = instances.filter((instance) => !instance.hasGeoJSON)
 						if (!instances.length) {
 							return showErrorMessage('', geoReferenceCreateNotAvailableError);
 						}

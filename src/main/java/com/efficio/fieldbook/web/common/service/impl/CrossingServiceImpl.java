@@ -30,11 +30,19 @@ import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.PedigreeDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
-import org.generationcp.middleware.pojos.*;
+import org.generationcp.middleware.pojos.Attribute;
+import org.generationcp.middleware.pojos.Germplasm;
+import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.pojos.Methods;
+import org.generationcp.middleware.pojos.Name;
+import org.generationcp.middleware.pojos.Progenitor;
+import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.germplasm.GermplasmNameSetting;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.PedigreeService;
 import org.generationcp.middleware.service.api.dataset.DatasetService;
+import org.generationcp.middleware.service.api.study.StudyInstanceService;
+import org.generationcp.middleware.service.impl.study.StudyInstance;
 import org.generationcp.middleware.service.pedigree.PedigreeFactory;
 import org.generationcp.middleware.util.CrossExpansionProperties;
 import org.generationcp.middleware.util.Util;
@@ -45,7 +53,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.generationcp.middleware.service.api.dataset.ObservationUnitUtils.fromMeasurementRow;
 
@@ -107,6 +122,9 @@ public class CrossingServiceImpl implements CrossingService {
 	@Resource
 	private StudyDataManager studyDataManager;
 
+	@Resource
+	private StudyInstanceService studyInstanceService;
+
 
 	@Override
 	public ImportedCrossesList parseFile(final MultipartFile file) throws FileParsingException {
@@ -129,13 +147,16 @@ public class CrossingServiceImpl implements CrossingService {
 
 		private final Workbook workbook;
 		private final Map<String, String> locationIdNameMap;
+		private final Map<Integer, StudyInstance> studyInstanceMap;
 		private final List<MeasurementVariable> environmentVariables;
 
 		CrossSourceStudy(final Workbook workbook, final Map<String, String> locationIdNameMap,
+			final Map<Integer, StudyInstance> studyInstanceMap,
 			final List<MeasurementVariable> environmentVariables) {
 			this.workbook = workbook;
 			this.locationIdNameMap = locationIdNameMap;
 			this.environmentVariables = environmentVariables;
+			this.studyInstanceMap = studyInstanceMap;
 		}
 
 		Workbook getWorkbook() {
@@ -148,6 +169,10 @@ public class CrossingServiceImpl implements CrossingService {
 
 		List<MeasurementVariable> getEnvironmentVariables() {
 			return this.environmentVariables;
+		}
+
+		public Map<Integer, StudyInstance> getStudyInstanceMap() {
+			return studyInstanceMap;
 		}
 	}
 
@@ -202,10 +227,14 @@ public class CrossingServiceImpl implements CrossingService {
 
 	private CrossSourceStudy getCrossSourceStudyData(final Workbook workbook){
 		final Map<String, String> locationIdNameMap = this.studyDataManager.createInstanceLocationIdToNameMapFromStudy(workbook.getStudyDetails().getId());
+		final Map<Integer, StudyInstance> studyInstanceMap =
+			this.studyInstanceService.getStudyInstances(workbook.getStudyDetails().getId()).stream().collect(
+				Collectors.toMap(StudyInstance::getInstanceNumber, i -> i));
+
 		final List<MeasurementVariable> environmentVariables =
 			this.datasetService.getObservationSetVariables(workbook.getTrialDatasetId(), Collections.singletonList(
 				VariableType.ENVIRONMENT_DETAIL.getId()));
-		return new CrossSourceStudy(workbook, locationIdNameMap, environmentVariables);
+		return new CrossSourceStudy(workbook, locationIdNameMap, studyInstanceMap, environmentVariables);
 	}
 
 	@Override
@@ -232,6 +261,7 @@ public class CrossingServiceImpl implements CrossingService {
 					fromMeasurementRow(maleWorkbook.getTrialObservationByTrialInstanceNo(1))),
 					Pair.of(femaleWorkbook.getConditions(), maleWorkbook.getConditions()),
 					Pair.of(femaleStudyData.getLocationIdNameMap(), maleStudyData.getLocationIdNameMap()),
+					Pair.of(femaleStudyData.getStudyInstanceMap(), maleStudyData.getStudyInstanceMap()),
 					Pair.of(femaleStudyData.getEnvironmentVariables(), maleStudyData.getEnvironmentVariables()),
 					importedCross);
 

@@ -2,7 +2,10 @@
 package com.efficio.fieldbook.web.trial.controller;
 
 import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.common.bean.*;
+import com.efficio.fieldbook.web.common.bean.ChoiceKeyVal;
+import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
+import com.efficio.fieldbook.web.common.bean.TableHeader;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.naming.impl.AdvancingSourceListFactory;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
@@ -28,7 +31,11 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.domain.ontology.*;
+import org.generationcp.middleware.domain.ontology.DataType;
+import org.generationcp.middleware.domain.ontology.Property;
+import org.generationcp.middleware.domain.ontology.Scale;
+import org.generationcp.middleware.domain.ontology.Variable;
+import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -42,6 +49,8 @@ import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.dataset.DatasetService;
+import org.generationcp.middleware.service.api.study.StudyInstanceService;
+import org.generationcp.middleware.service.impl.study.StudyInstance;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,7 +67,12 @@ import org.springframework.ui.Model;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Random;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AdvancingControllerTest {
@@ -115,6 +129,9 @@ public class AdvancingControllerTest {
 
 	@Mock
 	private NamingConventionService namingConventionService;
+
+	@Mock
+	private StudyInstanceService studyInstanceService;
 
 	@InjectMocks
 	private final AdvancingController advancingController = Mockito.spy(new AdvancingController());
@@ -233,6 +250,14 @@ public class AdvancingControllerTest {
 
 	@Test
 	public void testPostAdvanceStudy_ThrowsRuleException() throws MiddlewareException, FieldbookException, RuleException {
+		final List<StudyInstance> studyInstances = new ArrayList<>();
+		final StudyInstance studyInstance = new StudyInstance();
+		studyInstance.setLocationAbbreviation("LABBR");
+		studyInstance.setInstanceNumber(1);
+		studyInstances.add(studyInstance);
+
+		Mockito.doReturn(studyInstances).when(studyInstanceService).getStudyInstances(Mockito.anyInt());
+
 		final Method method = new Method();
 		method.setMtype("DER");
 		final AdvancingStudyForm form = this.preparePostAdvanceStudy(method);
@@ -636,6 +661,15 @@ public class AdvancingControllerTest {
 	@Test
 	public void testGenerateGermplasmList() throws MiddlewareQueryException {
 
+		final List<StudyInstance> studyInstances = new ArrayList<>();
+		final StudyInstance studyInstance = new StudyInstance();
+		studyInstance.setLocationAbbreviation("LABBR");
+		studyInstance.setInstanceNumber(1);
+		studyInstances.add(studyInstance);
+
+		Mockito.doReturn(studyInstances).when(studyInstanceService).getStudyInstances(Mockito.anyInt());
+
+
 		final AdvancingSourceList rows = new AdvancingSourceList();
 		rows.setRows(new ArrayList<>());
 
@@ -653,6 +687,7 @@ public class AdvancingControllerTest {
 		ig.setGpid1(0);
 		ig.setGpid2(0);
 		ig.setGnpgs(-1);
+		advancingSource.setStudyId(1);
 		advancingSource.setGermplasm(ig);
 
 		// Names
@@ -665,6 +700,7 @@ public class AdvancingControllerTest {
 		sourceGermplasmName.setLocationId(9);
 		sourceGermplasmName.setNdate(19860501);
 		sourceGermplasmName.setReferenceId(1);
+		advancingSource.setStudyId(1);
 		advancingSource.getNames().add(sourceGermplasmName);
 
 		final Method breedingMethod =
@@ -691,18 +727,23 @@ public class AdvancingControllerTest {
 				generateSeedSource(ArgumentMatchers.any(),
 						ArgumentMatchers.any(),
 						ArgumentMatchers.eq("1"), ArgumentMatchers.eq("2"), ArgumentMatchers.eq(STUDY_NAME),
-						ArgumentMatchers.isNull(), ArgumentMatchers.isNull(), ArgumentMatchers.anyList())).thenReturn(testSeedSource1);
+					ArgumentMatchers.isNull(), ArgumentMatchers.isNull(), ArgumentMatchers.anyMap(), ArgumentMatchers.anyList()))
+			.thenReturn(testSeedSource1);
 		final String testSeedSource2 = "MEX-DrySeason-N1-1-2";
 		Mockito.when(this.seedSourceGenerator.
 				generateSeedSource(ArgumentMatchers.any(),
 						ArgumentMatchers.anyList(),
 						ArgumentMatchers.eq("2"), ArgumentMatchers.eq("2"), ArgumentMatchers.eq(STUDY_NAME),
-						ArgumentMatchers.isNull(), ArgumentMatchers.isNull(), ArgumentMatchers.anyList())).thenReturn(testSeedSource2);
+					ArgumentMatchers.isNull(), ArgumentMatchers.isNull(), ArgumentMatchers.anyMap(), ArgumentMatchers.anyList()))
+			.thenReturn(testSeedSource2);
 
 		this.prepareMockWorkbook();
 
 		final AdvancingStudy advancingParameters = new AdvancingStudy();
 		advancingParameters.setCheckAdvanceLinesUnique(false);
+		final Study study = new Study();
+		study.setId(1);
+		advancingParameters.setStudy(study);
 		final List<ImportedGermplasm> igList = this.advancingController.generateGermplasmList(rows, advancingParameters);
 		org.junit.Assert.assertNotNull(igList);
 		org.junit.Assert.assertFalse(igList.isEmpty());

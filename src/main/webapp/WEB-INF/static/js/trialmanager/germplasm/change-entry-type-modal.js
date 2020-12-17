@@ -20,7 +20,7 @@
 
 
 			$scope.editEntryType = function () {
-				studyEntryService.updateStudyEntryProperty(entryIds, 8255, $scope.selected.entryType.id).then(function (response) {
+				studyEntryService.updateStudyEntriesProperty(entryIds, 8255, $scope.selected.entryType.id).then(function (response) {
 					showSuccessfulMessage('',$.germplasmMessages.editEntryTypeSuccess);
 					$uibModalInstance.close();
 					$rootScope.$emit("reloadStudyEntryTableData", {});

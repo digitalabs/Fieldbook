@@ -562,7 +562,7 @@
 					}
 				};
 
-				$scope.setEntryType = function() {
+				$scope.setEntryTypeByBatch = function() {
 					if ($scope.selectedItems.length === 0) {
 						showAlertMessage('', $.germplasmMessages.setEntryTypeSelectEntry);
 					} else {

@@ -213,8 +213,7 @@
 								createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
 									$(td).val("");
 									$(td).append($compile('<a class="check-href edit-check' + rowData.entryId + '" href="javascript: void(0)" ' +
-										'ng-click="showPopOverCheck(\'' + rowData.entryId + '\',\'' + rowData.properties['8255'].value + '\',\'' +
-										true + '\')">' +
+										'ng-click="showPopOverCheck(\'' + rowData.entryId + '\',\'' + rowData.properties['8255'].value + '\')">' +
 										getCategoricalValue(rowData.properties['8255'].value, columnData) + '</a>')($scope));
 								},
 								render: function (data, type, full, meta) {
@@ -540,8 +539,8 @@
 					$rootScope.navigateToTab('germplasm', {reload: true});
 				};
 
-				$scope.showPopOverCheck = function(entryIds, currentValue, checkForGeneratedDesign) {
-					if(!checkForGeneratedDesign || !studyStateService.hasGeneratedDesign()) {
+				$scope.showPopOverCheck = function(entryIds, currentValue) {
+					if(!studyStateService.hasGeneratedDesign()) {
 						if(!Array.isArray(entryIds)) {
 							entryIds = [parseInt(entryIds)];
 						}
@@ -566,7 +565,7 @@
 					if ($scope.selectedItems.length === 0) {
 						showAlertMessage('', $.germplasmMessages.setEntryTypeSelectEntry);
 					} else {
-						$scope.showPopOverCheck($scope.selectedItems, null, false);
+						$scope.showPopOverCheck($scope.selectedItems, null);
 					}
 				};
 

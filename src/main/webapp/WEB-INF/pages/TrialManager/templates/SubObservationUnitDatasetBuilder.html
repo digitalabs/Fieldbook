@@ -16,7 +16,7 @@
 					<br/>
 					<div class="row form-group">
 						<div class="col-xs-12 col-md-12" >
-							<label class=""><span class='required'>*</span><em> indicates a mandatory field</em></label>
+							<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
 						</div>
 					</div>
 					<div class="row form-group">
@@ -67,7 +67,7 @@
 						<br/>
 						<div class="row form-group">
 							<div class="col-xs-12 col-md-12">
-								<label class=""><em th:utext="#{label.indicate.mandatory.fields}"> indicates a mandatory field</em></label>
+								<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
 							</div>
 						</div>
 						<div class="row form-group" ng-class="formGroupClass('name')">

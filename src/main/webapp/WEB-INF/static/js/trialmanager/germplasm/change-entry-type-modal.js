@@ -3,8 +3,8 @@
 
 	const module = angular.module('manageTrialApp');
 
-	module.controller('changeStudyEntryTypeCtrl', ['$scope', '$rootScope', '$uibModalInstance', 'studyEntryService', 'entryId', 'currentValue',
-		'studyEntryPropertyId',	function ($scope, $rootScope, $uibModalInstance, studyEntryService, entryId, currentValue, studyEntryPropertyId) {
+	module.controller('changeStudyEntryTypeCtrl', ['$scope', '$rootScope', '$uibModalInstance', 'studyEntryService', 'entryIds', 'currentValue',
+		function ($scope, $rootScope, $uibModalInstance, studyEntryService, entryIds, currentValue) {
 
 			$scope.selected = {};
 			$scope.entryTypes = [];
@@ -20,20 +20,26 @@
 
 
 			$scope.editEntryType = function () {
-				studyEntryService.updateStudyEntryProperty(entryId, $scope.selected.entryType.id, studyEntryPropertyId, 8255).then(function () {
+				studyEntryService.updateStudyEntriesProperty(entryIds, 8255, $scope.selected.entryType.id).then(function (response) {
 					showSuccessfulMessage('',$.germplasmMessages.editEntryTypeSuccess);
 					$uibModalInstance.close();
 					$rootScope.$emit("reloadStudyEntryTableData", {});
+				}, function(errResponse) {
+					$uibModalInstance.close();
+					showErrorMessage($.fieldbookMessages.errorServerError,  errResponse.errors[0].message);
 				});
 			};
 
 			function buildEntryTypes(entryTypes) {
 				entryTypes.forEach(function (entryType) {
 					$scope.entryTypes.push(entryType);
-					if(entryType.id === parseInt(currentValue)) {
+					if(currentValue && entryType.id === parseInt(currentValue)) {
 						$scope.selected.entryType = entryType;
 					}
 				});
+				if(!currentValue) {
+					$scope.selected.entryType = $scope.entryTypes[0];
+				}
 			}
 
 			$scope.init();

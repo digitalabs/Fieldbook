@@ -64,11 +64,14 @@
 			return request.then(successHandler, failureHandler);
 		};
 
-		studyEntryService.updateStudyEntryProperty = function (entryId, newValue, studyEntryPropertyId, variableId) {
-			var request = $http.put(BASE_STUDY_URL + studyContext.studyId + '/entries/' + entryId + '/properties/' + variableId, {
-				"studyEntryPropertyId": studyEntryPropertyId,
-				"value": newValue,
-				"variableId": variableId
+		studyEntryService.updateStudyEntriesProperty = function (entryIds, variableId, newValue) {
+			var request = $http.put(BASE_STUDY_URL + studyContext.studyId + '/entries/properties', {
+				"searchComposite": {
+					"itemIds": entryIds,
+					"searchRequest": null
+				},
+				"variableId": variableId,
+				"value": newValue
 			});
 			return request.then(successHandler, failureHandler);
 		};

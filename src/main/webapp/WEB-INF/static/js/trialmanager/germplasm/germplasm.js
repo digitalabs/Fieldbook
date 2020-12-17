@@ -213,8 +213,7 @@
 								createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
 									$(td).val("");
 									$(td).append($compile('<a class="check-href edit-check' + rowData.entryId + '" href="javascript: void(0)" ' +
-										'ng-click="showPopOverCheck(\'' + rowData.entryId + '\',\'' + rowData.properties['8255'].value + '\',\'' +
-										rowData.properties['8255'].studyEntryPropertyId + '\')">' +
+										'ng-click="showPopOverCheck(\'' + rowData.entryId + '\',\'' + rowData.properties['8255'].value + '\')">' +
 										getCategoricalValue(rowData.properties['8255'].value, columnData) + '</a>')($scope));
 								},
 								render: function (data, type, full, meta) {
@@ -540,25 +539,33 @@
 					$rootScope.navigateToTab('germplasm', {reload: true});
 				};
 
-				$scope.showPopOverCheck = function(entryId, currentValue, studyEntryPropertyId) {
+				$scope.showPopOverCheck = function(entryIds, currentValue) {
 					if(!studyStateService.hasGeneratedDesign()) {
+						if(!Array.isArray(entryIds)) {
+							entryIds = [parseInt(entryIds)];
+						}
 						$uibModal.open({
 							templateUrl: '/Fieldbook/static/angular-templates/germplasm/changeStudyEntryTypeModal.html',
 							controller: "changeStudyEntryTypeCtrl",
 							size: 'md',
 							resolve: {
-								entryId: function () {
-									return entryId;
+								entryIds: function () {
+									return entryIds;
 								},
 								currentValue: function () {
 									return currentValue;
-								},
-								studyEntryPropertyId: function () {
-									return studyEntryPropertyId;
 								}
 							},
 							controllerAs: 'ctrl'
 						});
+					}
+				};
+
+				$scope.setEntryTypeByBatch = function() {
+					if ($scope.selectedItems.length === 0) {
+						showAlertMessage('', $.germplasmMessages.setEntryTypeSelectEntry);
+					} else {
+						$scope.showPopOverCheck($scope.selectedItems, null);
 					}
 				};
 

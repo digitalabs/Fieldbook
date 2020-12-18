@@ -99,12 +99,12 @@ public class ImportObservationsControllerTest {
 		Mockito.verify(this.etlService).saveProjectData(importData, ImportObservationsControllerTest.PROGRAM_UUID);
 		Mockito.verify(this.dataImportService).removeLocationNameVariableIfExists(importData);
 
-		ArgumentCaptor<List<String>> errorsCaptor = ArgumentCaptor.forClass(ArrayList.class);
+		final ArgumentCaptor<List<String>> errorsCaptor = ArgumentCaptor.forClass(ArrayList.class);
 		Mockito.verify(this.model, Mockito.times(2)).addAttribute(ArgumentMatchers.eq("errors"), errorsCaptor.capture());
-		List<String> projectDataErrorsList = errorsCaptor.getValue();
+		final List<String> projectDataErrorsList = errorsCaptor.getValue();
 		Assert.assertTrue(projectDataErrorsList.isEmpty());
 
-		ArgumentCaptor<Boolean> hasErrorsCaptor = ArgumentCaptor.forClass(Boolean.class);
+		final ArgumentCaptor<Boolean> hasErrorsCaptor = ArgumentCaptor.forClass(Boolean.class);
 		Mockito.verify(this.model, Mockito.times(2)).addAttribute(ArgumentMatchers.eq("hasErrors"), hasErrorsCaptor.capture());
 		Assert.assertFalse(hasErrorsCaptor.getValue());
 	}
@@ -152,12 +152,12 @@ public class ImportObservationsControllerTest {
 		final String returnValue =
 			this.importObservationsController.processImport(this.uploadForm, 1, this.model, this.session, this.request);
 
-		ArgumentCaptor<List<String>> errorsCaptor = ArgumentCaptor.forClass(ArrayList.class);
+		final ArgumentCaptor<List<String>> errorsCaptor = ArgumentCaptor.forClass(ArrayList.class);
 		Mockito.verify(this.model).addAttribute(ArgumentMatchers.eq("errors"), errorsCaptor.capture());
-		List<String> projectDataErrorsList = errorsCaptor.getValue();
+		final List<String> projectDataErrorsList = errorsCaptor.getValue();
 		Assert.assertTrue(projectDataErrorsList.contains(errorMessage));
 
-		ArgumentCaptor<Boolean> hasErrorsCaptor = ArgumentCaptor.forClass(Boolean.class);
+		final ArgumentCaptor<Boolean> hasErrorsCaptor = ArgumentCaptor.forClass(Boolean.class);
 		Mockito.verify(this.model).addAttribute(ArgumentMatchers.eq("hasErrors"), hasErrorsCaptor.capture());
 		Assert.assertTrue(hasErrorsCaptor.getValue());
 
@@ -195,12 +195,12 @@ public class ImportObservationsControllerTest {
 		final String returnValue =
 			this.importObservationsController.processImport(this.uploadForm, 1, this.model, this.session, this.request);
 
-		ArgumentCaptor<List<String>> errorsCaptor = ArgumentCaptor.forClass(ArrayList.class);
+		final ArgumentCaptor<List<String>> errorsCaptor = ArgumentCaptor.forClass(ArrayList.class);
 		Mockito.verify(this.model).addAttribute(ArgumentMatchers.eq("errors"), errorsCaptor.capture());
-		List<String> projectDataErrorsList = errorsCaptor.getValue();
+		final List<String> projectDataErrorsList = errorsCaptor.getValue();
 		Assert.assertTrue(projectDataErrorsList.contains(errorMessage));
 
-		ArgumentCaptor<Boolean> hasErrorsCaptor = ArgumentCaptor.forClass(Boolean.class);
+		final ArgumentCaptor<Boolean> hasErrorsCaptor = ArgumentCaptor.forClass(Boolean.class);
 		Mockito.verify(this.model).addAttribute(ArgumentMatchers.eq("hasErrors"), hasErrorsCaptor.capture());
 		Assert.assertTrue(hasErrorsCaptor.getValue());
 
@@ -229,6 +229,7 @@ public class ImportObservationsControllerTest {
 		Assert.assertEquals("redirect:/etl/fileUpload", returnValue);
 		Mockito.verify(this.dataImportService).addLocationIDVariableIfNotExists(importData, importData.getFactors(), PROGRAM_UUID);
 		Mockito.verify(this.dataImportService).assignLocationIdVariableToEnvironmentDetailSection(importData);
+		Mockito.verify(this.dataImportService).addEntryTypeVariableIfNotExists(importData, PROGRAM_UUID);
 		Mockito.verify(this.dataImportService).removeLocationNameVariableIfExists(importData);
 		Mockito.verify(this.dataImportService).parseWorkbookDescriptionSheet(workbook, CURRENT_IBDB_USER_ID);
 		Mockito.verify(this.etlService).saveProjectData(importData, ImportObservationsControllerTest.PROGRAM_UUID);

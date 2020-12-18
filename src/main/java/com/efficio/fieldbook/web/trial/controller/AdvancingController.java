@@ -14,7 +14,11 @@ package com.efficio.fieldbook.web.trial.controller;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.*;
+import com.efficio.fieldbook.web.common.bean.ChoiceKeyVal;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.TableHeader;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.naming.impl.AdvancingSourceListFactory;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.trial.bean.AdvanceType;
@@ -55,6 +59,8 @@ import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.dataset.DatasetService;
+import org.generationcp.middleware.service.api.study.StudyInstanceService;
+import org.generationcp.middleware.service.impl.study.StudyInstance;
 import org.generationcp.middleware.util.TimerWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +70,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -72,7 +83,17 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.generationcp.middleware.service.api.dataset.ObservationUnitUtils.fromMeasurementRow;
 
@@ -134,6 +155,8 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	@Resource
 	private StudyDataManager studyDataManager;
 
+	@Resource
+	private StudyInstanceService studyInstanceService;
 
 	@Override
 	public String getContentName() {
@@ -364,6 +387,10 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		int index = 1;
 		final TimerWatch timer = new TimerWatch("advance");
 		final Map<String, String> locationIdNameMap = this.studyDataManager.createInstanceLocationIdToNameMapFromStudy(this.userSelection.getWorkbook().getStudyDetails().getId());
+		final Map<Integer, StudyInstance> studyInstanceMap =
+			this.studyInstanceService.getStudyInstances(advancingParameters.getStudy().getId()).stream()
+				.collect(Collectors.toMap(StudyInstance::getInstanceNumber, i -> i));
+
 		final List<MeasurementVariable> environmentVariables =
 				this.datasetService.getObservationSetVariables(this.userSelection.getWorkbook().getTrialDatasetId(), Collections.singletonList(
 						VariableType.ENVIRONMENT_DETAIL.getId()));
@@ -391,7 +418,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 						sampleNo = String.valueOf(sampleIterator.next().getSampleNumber());
 					}
 					this.addImportedGermplasmToList(list, row, row.getBreedingMethod(), index++, selectionNumber,
-							advancingParameters, sampleNo, locationIdNameMap, environmentVariables);
+						advancingParameters, sampleNo, locationIdNameMap, studyInstanceMap, environmentVariables);
 					selectionNumber++;
 				}
 
@@ -404,6 +431,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	protected void addImportedGermplasmToList(final List<ImportedGermplasm> list, final AdvancingSource source,
 											  final Method breedingMethod, final int index, final int selectionNumber,
 											  final AdvancingStudy advancingParameters, final String plantNo, final Map<String, String> locationIdNameMap,
+		final Map<Integer, StudyInstance> studyInstanceMap,
 											  final List<MeasurementVariable> environmentVariables) {
 
 		String selectionNumberToApply = null;
@@ -418,10 +446,13 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			selectionNumberToApply = String.valueOf(selectionNumber);
 		}
 
+		// StudyId + InstanceNo -> Get the Instance with the locationId and pass a locations map by id and get the abbreviation
+
 		// set the seed source string for the new Germplasm
 		final String seedSource = this.seedSourceGenerator
 				.generateSeedSource(fromMeasurementRow(this.userSelection.getWorkbook().getTrialObservationByTrialInstanceNo(Integer.valueOf(source.getTrialInstanceNumber()))),
-						this.userSelection.getWorkbook().getConditions(), selectionNumberToApply, source.getPlotNumber(), this.userSelection.getWorkbook().getStudyName(), plantNo, locationIdNameMap, environmentVariables);
+					this.userSelection.getWorkbook().getConditions(), selectionNumberToApply, source.getPlotNumber(),
+					this.userSelection.getWorkbook().getStudyName(), plantNo, locationIdNameMap, studyInstanceMap, environmentVariables);
 
 		// Use index as germplasm name for now
 		final ImportedGermplasm germplasm =

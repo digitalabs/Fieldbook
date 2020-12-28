@@ -611,7 +611,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	@Override
 	public List<Enumeration> getCheckTypeList() {
-		return this.ontologyService.getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID())
+		return this.ontologyService.getStandardVariable(TermId.ENTRY_TYPE.getId(), this.contextUtil.getCurrentProgramUUID())
 			.getEnumerations();
 	}
 

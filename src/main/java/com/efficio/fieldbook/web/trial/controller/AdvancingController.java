@@ -294,7 +294,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 
 		final AdvancingStudy advancingStudy = new AdvancingStudy(study, form.getMethodChoice(), form.getLineChoice(), lineSelected, form.getHarvestDate(), form.getHarvestLocationId(),
 				harvestLocationAbbreviation, form.getAdvanceBreedingMethodId(), form.getAllPlotsChoice(), form.getLineVariateId(), form.getMethodVariateId(), form.getPlotVariateId(),
-				false, form.getSelectedReplications(), form.getSelectedTrialInstances(), AdvanceType.fromLowerCaseName(form.getAdvanceType()));
+				false, form.getSelectedTrialInstances(), form.getSelectedReplications(), AdvanceType.fromLowerCaseName(form.getAdvanceType()));
 		boolean observationsLoaded = this.fieldbookMiddlewareService.loadAllObservations(this.userSelection.getWorkbook());
 
 		try {

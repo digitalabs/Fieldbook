@@ -6,7 +6,7 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.data.initializer.SettingDetailTestDataInitializer;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.generationcp.middleware.ContextHolder;
 import org.generationcp.middleware.domain.dms.PhenotypicType;

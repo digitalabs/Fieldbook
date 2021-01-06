@@ -44,7 +44,7 @@ import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
 import com.google.common.base.Optional;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 public class WorkbookUtilTest {
 

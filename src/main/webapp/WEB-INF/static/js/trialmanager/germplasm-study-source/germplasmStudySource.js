@@ -385,6 +385,7 @@
 								$uibModal.open({
 									templateUrl: '/Fieldbook/static/js/trialmanager/inventory/lot-creation/lot-creation-modal.html',
 									controller: 'LotCreationCtrl',
+									windowClass: 'app-modal-window',
 									resolve: {
 										searchResultDbId: function () {
 											return searchDto.result.searchResultDbId;

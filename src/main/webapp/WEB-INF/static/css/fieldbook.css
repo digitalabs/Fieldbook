@@ -2524,3 +2524,8 @@ th.dt-head-nowrap {
 div.dt-button-collection {
     width: 180px !important;
 }
+
+.app-modal-window .modal-dialog {
+    width: 730px;
+    height: 690px;
+}

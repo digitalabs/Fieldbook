@@ -84,7 +84,7 @@ public class AdvancingSourceListFactory {
 
 				advancingSourceCandidate.setTrialInstanceNumber(row.getMeasurementDataValue(TermId.TRIAL_INSTANCE_FACTOR.getId()));
 
-				// If study is Trail then setting data if trail instance is not null
+				// If study is Trial, then setting data if trial instance is not null
 				if (advancingSourceCandidate.getTrialInstanceNumber() != null) {
 					final MeasurementRow trialInstanceObservations = workbook.getTrialObservationByTrialInstanceNo(
 							Integer.valueOf(advancingSourceCandidate.getTrialInstanceNumber()));
@@ -96,6 +96,7 @@ public class AdvancingSourceListFactory {
 
 				// Setting conditions for Breeders Cross ID
 				advancingSourceCandidate.setConditions(workbook.getConditions());
+				advancingSourceCandidate.setReplicationNumber(row.getMeasurementDataValue(TermId.REP_NO.getId()));
 
 
 				Integer methodId = null;

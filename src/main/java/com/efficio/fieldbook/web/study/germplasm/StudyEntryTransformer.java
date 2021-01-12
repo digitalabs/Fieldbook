@@ -35,7 +35,7 @@ public class StudyEntryTransformer {
 	public List<ImportedGermplasm> tranformToImportedGermplasm(final List<StudyEntryDto> studyEntries) {
 
 		final Map<Integer, String> checkTypesDescriptionMap =
-			this.ontologyService.getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID())
+			this.ontologyService.getStandardVariable(TermId.ENTRY_TYPE.getId(), this.contextUtil.getCurrentProgramUUID())
 				.getEnumerations().stream().collect(Collectors.toMap(Enumeration::getId, Enumeration::getDescription));
 
 		final List<ImportedGermplasm> importedGermplasmList = new ArrayList<>();
@@ -73,7 +73,7 @@ public class StudyEntryTransformer {
 	public List<GermplasmExportSource> tranformToGermplasmExportSource(final List<StudyEntryDto> studyEntries) {
 
 		final Map<Integer, String> checkTypesDescriptionMap =
-			this.ontologyService.getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID())
+			this.ontologyService.getStandardVariable(TermId.ENTRY_TYPE.getId(), this.contextUtil.getCurrentProgramUUID())
 				.getEnumerations().stream().collect(Collectors.toMap(Enumeration::getId, Enumeration::getDescription));
 
 		final List<GermplasmExportSource> germplasmExportSourceList = new ArrayList<>();

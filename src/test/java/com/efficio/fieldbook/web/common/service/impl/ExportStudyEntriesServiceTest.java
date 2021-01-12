@@ -142,8 +142,8 @@ public class ExportStudyEntriesServiceTest {
 			this.ontologyService.getStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(), this.contextUtil.getCurrentProgramUUID()))
 			.thenReturn(this.createStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(),
 				ExportStudyEntriesServiceTest.ENTRY_NUMBER_STORAGE));
-		Mockito.when(this.ontologyService.getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID()))
-			.thenReturn(this.createStandardVariable(TermId.CHECK.getId(), ExportStudyEntriesServiceTest.CHECK));
+		Mockito.when(this.ontologyService.getStandardVariable(TermId.ENTRY_TYPE.getId(), this.contextUtil.getCurrentProgramUUID()))
+			.thenReturn(this.createStandardVariable(TermId.ENTRY_TYPE.getId(), ExportStudyEntriesServiceTest.CHECK));
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(this.workbook);
 		Mockito.when(this.workbook.getStudyDetails()).thenReturn(this.studyDetails);
 		Mockito.when(this.importedGermplasmList.getImportedGermplasms()).thenReturn(importedGermplasms);
@@ -158,7 +158,7 @@ public class ExportStudyEntriesServiceTest {
 
 		final StandardVariable checkStandardVariable = new StandardVariable();
 		checkStandardVariable.setEnumerations(Arrays.asList(new Enumeration(1, "T", "TEST ENTRY", 1)));
-		Mockito.when(this.ontologyService.getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID()))
+		Mockito.when(this.ontologyService.getStandardVariable(TermId.ENTRY_TYPE.getId(), this.contextUtil.getCurrentProgramUUID()))
 			.thenReturn(checkStandardVariable);
 
 		Mockito.when(ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), TermId.SEED_AMOUNT_G.getId(), false))
@@ -359,7 +359,7 @@ public class ExportStudyEntriesServiceTest {
 		visibleColumnMap.put(String.valueOf(TermId.SEED_SOURCE.getId()), true);
 		visibleColumnMap.put(String.valueOf(TermId.ENTRY_CODE.getId()), true);
 		visibleColumnMap.put(String.valueOf(TermId.ENTRY_NUMBER_STORAGE.getId()), false);
-		visibleColumnMap.put(String.valueOf(TermId.CHECK.getId()), false);
+		visibleColumnMap.put(String.valueOf(TermId.ENTRY_TYPE.getId()), false);
 
 		return visibleColumnMap;
 

@@ -11,7 +11,7 @@
 
 package com.efficio.fieldbook.web.fieldmap.controller;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.generationcp.commons.util.StringUtil;

@@ -52,7 +52,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 /**
  * The Class FieldbookServiceImpl.
@@ -345,7 +354,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 			final List<Location> breedingLocations = this.fieldbookMiddlewareService.getAllBreedingLocations();
 
 			for (final Location location : breedingLocations) {
-				if (location.getUniqueID() == null || location.getUniqueID().equals(programUUID)) {
+				if (location.getProgramUUID() == null || location.getProgramUUID().equals(programUUID)) {
 					breedingLocationsOfCurrentProgram.add(location);
 				}
 			}

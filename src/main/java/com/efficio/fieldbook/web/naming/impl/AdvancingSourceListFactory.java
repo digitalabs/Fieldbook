@@ -128,7 +128,7 @@ public class AdvancingSourceListFactory {
 					gids.add(Integer.valueOf(germplasm.getGid()));
 				}
 
-				final MeasurementData checkData = row.getMeasurementData(TermId.CHECK.getId());
+				final MeasurementData checkData = row.getMeasurementData(TermId.ENTRY_TYPE.getId());
 				String check = null;
 				if (checkData != null) {
 					check = checkData.getcValueId();

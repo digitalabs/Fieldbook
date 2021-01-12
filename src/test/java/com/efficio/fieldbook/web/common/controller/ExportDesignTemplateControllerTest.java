@@ -23,7 +23,7 @@ import org.springframework.context.MessageSource;
 
 import com.efficio.fieldbook.web.importdesign.exporter.controller.ExportDesignTemplateController;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 public class ExportDesignTemplateControllerTest {
 	

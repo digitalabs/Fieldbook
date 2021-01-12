@@ -231,7 +231,7 @@ public class ExportStudyEntriesServiceImpl implements ExportStudyEntriesService 
 		final List<SettingDetail> factorsList = this.userSelection.getPlotsLevelList();
 		final List<StudyEntryDto> studyEntries = this.studyEntryService.getStudyEntries(studyId);
 		final Map<Integer, String> checkTypesNameMap =
-			this.ontologyService.getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID())
+			this.ontologyService.getStandardVariable(TermId.ENTRY_TYPE.getId(), this.contextUtil.getCurrentProgramUUID())
 				.getEnumerations().stream().collect(Collectors.toMap(Enumeration::getId, Enumeration::getName));
 
 		for (final StudyEntryDto studyEntryDto : studyEntries) {
@@ -267,7 +267,7 @@ public class ExportStudyEntriesServiceImpl implements ExportStudyEntriesService 
 				value = studyEntryDto.getStudyEntryPropertyValue(TermId.CROSS.getId()).orElse("");
 			} else if (term.intValue() == TermId.DESIG.getId()) {
 				value = studyEntryDto.getDesignation();
-			} else if (term.intValue() == TermId.CHECK.getId()) {
+			} else if (term.intValue() == TermId.ENTRY_TYPE.getId()) {
 				// get the code of ENTRY_TYPE - CATEGORICAL FACTOR
 				final Optional<String> entryTypeString = studyEntryDto.getStudyEntryPropertyValue(TermId.ENTRY_TYPE.getId());
 				final Integer entryTypeCategoricalId = entryTypeString.isPresent()? Integer.valueOf(entryTypeString.get()) : 0;

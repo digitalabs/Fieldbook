@@ -452,7 +452,7 @@ public class ETLServiceTest {
 		final List<String> errors = new ArrayList<>();
 		this.etlService.setMaxRowLimit(100);
 		Assert.assertTrue(this.etlService.isObservationOverMaximumLimit(this.userSelection, errors, this.workbook));
-		Assert.assertTrue(!errors.isEmpty());
+		Assert.assertFalse(errors.isEmpty());
 	}
 
 	@Test
@@ -474,7 +474,7 @@ public class ETLServiceTest {
 		emptyWorkbook.createSheet();
 
 		Assert.assertFalse(this.etlService.isWorkbookHasObservationRecords(this.userSelection, errors, emptyWorkbook));
-		Assert.assertTrue(!errors.isEmpty());
+		Assert.assertFalse(errors.isEmpty());
 		Assert.assertEquals("error.observation.no.records", errors.get(0));
 	}
 

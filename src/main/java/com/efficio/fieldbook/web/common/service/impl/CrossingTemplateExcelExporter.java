@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -107,7 +108,7 @@ public class CrossingTemplateExcelExporter {
 	void writeStudyListSheet(final Sheet studyListSheet, final int studyId, final String studyName) {
 
 		final int measurementDataSetId = this.fieldbookMiddlewareService.getMeasurementDatasetId(studyId);
-		final List<Experiment> experiments = this.studyDataManager.getExperimentsOfFirstInstance(measurementDataSetId, 0, Integer.MAX_VALUE);
+		final List<Experiment> experiments = this.studyDataManager.getExperiments(measurementDataSetId, Collections.singletonList(1), null);
 		final VariableTypeList treatmentFactorVariables = this.studyDataManager.getTreatmentFactorVariableTypes(measurementDataSetId);
 
 		int rowIndex = 1;

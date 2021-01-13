@@ -204,7 +204,7 @@ public class AdvancingControllerTest {
 
 
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1)).getMethodById(Integer.valueOf(form.getAdvanceBreedingMethodId()));
-		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1)).loadAllObservations(Mockito.any());
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1)).loadObservations(Mockito.any(), ArgumentMatchers.eq(Arrays.asList(1,2,3)), ArgumentMatchers.eq(Collections.singletonList(1)));
 		final ArgumentCaptor<AdvancingStudy> advanceInfoCaptor = ArgumentCaptor.forClass(AdvancingStudy.class);
 		Mockito.verify(this.advancingSourceListFactory).createAdvancingSourceList(ArgumentMatchers.any(), advanceInfoCaptor.capture(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any());
 		final AdvancingStudy advanceInfo = advanceInfoCaptor.getValue();
@@ -229,7 +229,7 @@ public class AdvancingControllerTest {
 
 
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.never()).getMethodById(ArgumentMatchers.anyInt());
-		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1)).loadAllObservations(Mockito.any());
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1)).loadObservations(Mockito.any(), Mockito.any(), Mockito.any());
 		Mockito.verify(this.namingConventionService, Mockito.times(1)).generateAdvanceListNames(ArgumentMatchers.anyList(), ArgumentMatchers.eq(false), ArgumentMatchers.anyList());
 
 	}
@@ -406,7 +406,6 @@ public class AdvancingControllerTest {
 		WorkbookTestDataInitializer.setTrialObservations(workbook);
 		workbook.getStudyDetails().setId(1011);
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
-        Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(Mockito.anyInt())).thenReturn(workbook);
 		final Variable variable = this.createSelectionVariable();
 		final MeasurementVariable measurementVariable = new MeasurementVariable();
 		measurementVariable.setTermId(205);

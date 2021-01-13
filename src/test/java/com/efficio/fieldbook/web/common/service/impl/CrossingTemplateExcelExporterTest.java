@@ -48,6 +48,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -215,7 +216,7 @@ public class CrossingTemplateExcelExporterTest {
 				.thenReturn(measurementDataSetId);
 
 		final List<Experiment> experiments = this.intializeExperiments();
-		Mockito.when(this.studyDataManager.getExperimentsOfFirstInstance(measurementDataSetId, 0, Integer.MAX_VALUE)).thenReturn
+		Mockito.when(this.studyDataManager.getExperiments(measurementDataSetId, Collections.singletonList(1), null)).thenReturn
 			(experiments);
 		Mockito.when(this.studyDataManager.getTreatmentFactorVariableTypes(measurementDataSetId)).thenReturn(
 			VariableTypeListTestDataInitializer.createTreatmentFactorsVariableTypeList());
@@ -247,7 +248,7 @@ public class CrossingTemplateExcelExporterTest {
 
 		final List<Experiment> experiments = this.intializeExperimentsWithAddUserDescriptors();
 
-		Mockito.when(this.studyDataManager.getExperimentsOfFirstInstance(measurementDataSetId, 0, Integer.MAX_VALUE)).thenReturn
+		Mockito.when(this.studyDataManager.getExperiments(measurementDataSetId, Collections.singletonList(1), null)).thenReturn
 			(experiments);
 		final Sheet sheet = this.workbook.getSheetAt(3);
 		this.exporter.writeStudyListSheet(sheet,

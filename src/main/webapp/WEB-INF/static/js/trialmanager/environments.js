@@ -306,65 +306,6 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 
 			$scope.initiateManageLocationModal = function () {
 				openManageLocations();
-				$(document).off('location-update').on('location-update', $scope.updateLocationValues);
-			};
-
-			// Re-populate the possible values for Location variable
-			$scope.updateLocationValues = function () {
-				// FIXME: Move this service to BMSAPI
-				$http.get('/Fieldbook/locations/getLocations').then(function (returnVal) {
-					if (returnVal.data.success === '1') {
-
-						var locationSettingVariable = $scope.settings.managementDetails.m_vals[LOCATION_ID];
-						// clear and copy of array is performed so as to preserve previous reference
-						// and have changes applied to all components with a copy of the previous reference
-						clearArray(locationSettingVariable.possibleValues);
-						clearArray(locationSettingVariable.possibleValuesFavorite);
-						clearArray(locationSettingVariable.allFavoriteValues);
-						clearArray(locationSettingVariable.allValues);
-
-						locationSettingVariable.possibleValues.push.apply(locationSettingVariable.possibleValues,
-							convertLocationsToPossibleValues(returnVal.data.allBreedingLocations));
-						locationSettingVariable.possibleValuesFavorite.push.apply(
-							locationSettingVariable.possibleValuesFavorite,
-							convertLocationsToPossibleValues(returnVal.data.allBreedingFavoritesLocations));
-						locationSettingVariable.allFavoriteValues.push.apply(
-							locationSettingVariable.allFavoriteValues,
-							convertLocationsToPossibleValues(returnVal.data.favoriteLocations));
-						locationSettingVariable.allValues.push.apply(
-							locationSettingVariable.allValues,
-							convertLocationsToPossibleValues(returnVal.data.allLocations));
-
-						ctrl.createPossibleValuesById($scope.settings.managementDetails.m_vals[LOCATION_ID]);
-					}
-				});
-
-				function clearArray(targetArray) {
-					// current internet research suggests that this is the fastest way of clearing an array
-					while (targetArray.length > 0) {
-						targetArray.pop();
-					}
-				}
-
-				function convertLocationsToPossibleValues(locations) {
-					var possibleValues = [];
-
-					$.each(locations, function (key, value) {
-						var locNameDisplay = value.lname;
-						if (value.labbr != null && value.labbr !== '') {
-							locNameDisplay += ' - (' + value.labbr + ')';
-						}
-
-						possibleValues.push({
-							id: value.locid,
-							key: value.locid + '',
-							name: locNameDisplay,
-							description: locNameDisplay
-						});
-					});
-
-					return possibleValues;
-				}
 			};
 
 			ctrl.updateInstanceVariables = function (type, entriesIncreased) {
@@ -636,21 +577,13 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			},
 			templateUrl: '/Fieldbook/static/angular-templates/instanceInlineEditor.html',
 			link: function ($scope, element, attrs) {
-				if ($scope.hasDropdownOptions) {
-					$scope.initializeDropdown();
-					$scope.updateDropdownValuesFavorites();
-				}
 				// Stop bubbling of click event so to not interfere with
 				// the container's click event.
 				$(element).click(function (event) {
 					event.stopPropagation();
 				});
 			},
-			controller: function ($scope, LOCATION_ID, UNSPECIFIED_LOCATION_ID, BREEDING_METHOD_ID, BREEDING_METHOD_CODE, $http) {
-
-				var LOCATION_LOOKUP_BREEDING_LOCATION = '1';
-				var LOCATION_LOOKUP_ALL_LOCATION = '2';
-
+			controller: function ($scope, LOCATION_ID, UNSPECIFIED_LOCATION_ID, BREEDING_METHOD_ID, BREEDING_METHOD_CODE, $http, locationService) {
 				$scope.variableDefinition = $scope.settings.val($scope.settingkey);
 				$scope.widgetType = $scope.variableDefinition.variable.widgetType.$name ?
 					$scope.variableDefinition.variable.widgetType.$name : $scope.variableDefinition.variable.widgetType;
@@ -660,59 +593,9 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				$scope.isBreedingMethod = parseInt(BREEDING_METHOD_ID, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10) ||
 					parseInt(BREEDING_METHOD_CODE, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);
 
-				$scope.localData = {locationLookup: null, useFavorites: null};
-
-				$scope.$watch('localData.locationLookup', function (newValue, oldValue) {
-					if (!angular.equals(newValue, oldValue)) {
-						if (angular.equals(newValue, LOCATION_LOOKUP_BREEDING_LOCATION)) {
-							$scope.localData.dropdownValues = $scope.localData.useFavorites ? $scope.variableDefinition.possibleValuesFavorite
-								: $scope.variableDefinition.possibleValues;
-						} else {
-							$scope.localData.dropdownValues = $scope.localData.useFavorites ? $scope.variableDefinition.allFavoriteValues
-								: $scope.variableDefinition.allValues;
-						}
-					}
-				});
-
-				$scope.$watch('localData.useFavorites', function (newValue, oldValue) {
-					if (!angular.equals(newValue, oldValue)) {
-						$scope.updateDropdownValuesFavorites();
-					}
-				});
-
-				$scope.isFavoriteLocation = function (locationId) {
-					return $scope.variableDefinition.possibleValuesFavorite.some(function (locationPossibleValue) {
-						return parseInt(locationId) === locationPossibleValue.id;
-					});
-				};
-
-				$scope.isBreedingLocation = function (locationId) {
-					return $scope.variableDefinition.possibleValues.some(function (locationPossibleValue) {
-						return parseInt(locationId) === locationPossibleValue.id;
-					});
-				};
-
-				$scope.updateDropdownValuesFavorites = function () {
-					if ($scope.localData.useFavorites) {
-						if ($scope.localData.locationLookup === LOCATION_LOOKUP_BREEDING_LOCATION) {
-							$scope.localData.dropdownValues = $scope.variableDefinition.possibleValuesFavorite;
-						} else {
-							$scope.localData.dropdownValues = $scope.variableDefinition.allFavoriteValues;
-						}
-					} else {
-						if ($scope.localData.locationLookup === LOCATION_LOOKUP_BREEDING_LOCATION) {
-							$scope.localData.dropdownValues = $scope.variableDefinition.possibleValues;
-						} else {
-							$scope.localData.dropdownValues = $scope.variableDefinition.allValues;
-						}
-					}
-				};
-
-				$scope.initializeDropdown = function () {
-					$scope.localData.locationLookup = $scope.isBreedingLocation($scope.valuecontainer[LOCATION_ID]) ?
-						LOCATION_LOOKUP_BREEDING_LOCATION : LOCATION_LOOKUP_ALL_LOCATION;
-					$scope.localData.useFavorites = $scope.isFavoriteLocation($scope.valuecontainer[LOCATION_ID]);
-				};
+				$scope.locationChanged = function () {
+					$scope.instance.change();
+				}
 
 			}
 		};

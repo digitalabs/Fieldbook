@@ -164,7 +164,7 @@ public class ETLServiceTest {
 		Mockito.when(this.ontologyService.getStandardVariable(TermId.ENTRY_TYPE.getId(), ETLServiceTest.PROGRAM_UUID))
 			.thenReturn(standardVariable);
 		Mockito.when(standardVariable.getEnumerations())
-			.thenReturn(Collections.singletonList(new Enumeration(TermId.CHECK.getId(), TermId.CHECK.name(), "", 0)));
+			.thenReturn(Collections.singletonList(new Enumeration(TermId.ENTRY_TYPE.getId(), TermId.ENTRY_TYPE.name(), "", 0)));
 		Mockito.when(this.studyDataManager.getStudyTypeByName(Mockito.anyString())).thenReturn(StudyTypeDto.getTrialDto());
 	}
 
@@ -383,8 +383,8 @@ public class ETLServiceTest {
 	public void testRetrieveAvailableEntryTypes() {
 		final Map<String, Integer> availableEntryTypes = this.etlService
 			.retrieveAvailableEntryTypes(ETLServiceTest.PROGRAM_UUID);
-		Assert.assertEquals("The map should contain the id  of " + TermId.CHECK.name(),
-			String.valueOf(TermId.CHECK.getId()), availableEntryTypes.get(TermId.CHECK.name()).toString());
+		Assert.assertEquals("The map should contain the id  of " + TermId.ENTRY_TYPE.name(),
+			String.valueOf(TermId.ENTRY_TYPE.getId()), availableEntryTypes.get(TermId.ENTRY_TYPE.name()).toString());
 	}
 
 	@Test

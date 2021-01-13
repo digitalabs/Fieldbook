@@ -132,8 +132,8 @@ public class ExportStudyEntriesControllerTest {
 				this.ontologyService.getStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(), this.contextUtil.getCurrentProgramUUID()))
 				.thenReturn(this.createStandardVariable(TermId.ENTRY_NUMBER_STORAGE.getId(),
 						ExportStudyEntriesControllerTest.ENTRY_NUMBER_STORAGE));
-		Mockito.when(this.ontologyService.getStandardVariable(TermId.CHECK.getId(), this.contextUtil.getCurrentProgramUUID()))
-				.thenReturn(this.createStandardVariable(TermId.CHECK.getId(), ExportStudyEntriesControllerTest.CHECK));
+		Mockito.when(this.ontologyService.getStandardVariable(TermId.ENTRY_TYPE.getId(), this.contextUtil.getCurrentProgramUUID()))
+				.thenReturn(this.createStandardVariable(TermId.ENTRY_TYPE.getId(), ExportStudyEntriesControllerTest.CHECK));
 		Mockito.doReturn(this.getPlotLevelList()).when(this.userSelection).getPlotsLevelList();
 
 		Mockito.when(this.fieldbookMiddlewareService.getGermplasmListById(ArgumentMatchers.anyInt())).thenReturn(this.getGermplasmList());
@@ -220,14 +220,14 @@ public class ExportStudyEntriesControllerTest {
 	@Test
 	public void test_getVisibleColumnsMapStudy() {
 
-		final String[] termIds = new String[] {String.valueOf(TermId.CHECK.getId())};
+		final String[] termIds = new String[] {String.valueOf(TermId.ENTRY_TYPE.getId())};
 		final Map<String, Boolean> result = this.exportStudyEntriesController.getVisibleColumnsMap(termIds);
 
 		Assert.assertTrue(result.get(String.valueOf(TermId.GID.getId())));
 		Assert.assertTrue(result.get(String.valueOf(TermId.DESIG.getId())));
 		Assert.assertTrue(result.get(String.valueOf(TermId.ENTRY_NO.getId())));
 
-		Assert.assertTrue(result.get(String.valueOf(TermId.CHECK.getId())));
+		Assert.assertTrue(result.get(String.valueOf(TermId.ENTRY_TYPE.getId())));
 
 		Assert.assertFalse(result.get(String.valueOf(TermId.ENTRY_CODE.getId())));
 		Assert.assertFalse(result.get(String.valueOf(TermId.CROSS.getId())));
@@ -252,7 +252,7 @@ public class ExportStudyEntriesControllerTest {
 		Assert.assertTrue(result.get(String.valueOf(TermId.SEED_SOURCE.getId())));
 
 		Assert.assertNull(result.get(String.valueOf(TermId.ENTRY_NUMBER_STORAGE.getId())));
-		Assert.assertNull(result.get(String.valueOf(TermId.CHECK.getId())));
+		Assert.assertNull(result.get(String.valueOf(TermId.ENTRY_TYPE.getId())));
 	}
 
 	@Test
@@ -270,7 +270,7 @@ public class ExportStudyEntriesControllerTest {
 		Assert.assertTrue(result.get(String.valueOf(TermId.CROSS.getId())));
 		Assert.assertTrue(result.get(String.valueOf(TermId.SEED_SOURCE.getId())));
 		Assert.assertTrue(result.get(String.valueOf(TermId.ENTRY_NUMBER_STORAGE.getId())));
-		Assert.assertTrue(result.get(String.valueOf(TermId.CHECK.getId())));
+		Assert.assertTrue(result.get(String.valueOf(TermId.ENTRY_TYPE.getId())));
 	}
 
 	private List<SettingDetail> getPlotLevelList() {
@@ -294,7 +294,7 @@ public class ExportStudyEntriesControllerTest {
 		visibleColumnMap.put(String.valueOf(TermId.SEED_SOURCE.getId()), true);
 		visibleColumnMap.put(String.valueOf(TermId.ENTRY_CODE.getId()), true);
 		visibleColumnMap.put(String.valueOf(TermId.ENTRY_NUMBER_STORAGE.getId()), false);
-		visibleColumnMap.put(String.valueOf(TermId.CHECK.getId()), false);
+		visibleColumnMap.put(String.valueOf(TermId.ENTRY_TYPE.getId()), false);
 
 		return visibleColumnMap;
 

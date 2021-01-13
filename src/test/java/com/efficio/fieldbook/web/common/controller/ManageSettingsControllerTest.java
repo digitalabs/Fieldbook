@@ -45,7 +45,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ManageSettingsControllerTest {

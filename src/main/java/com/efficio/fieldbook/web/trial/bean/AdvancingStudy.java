@@ -69,7 +69,7 @@ public class AdvancingStudy implements Serializable {
 
 	}
 
-	public AdvancingStudy(Study study, String methodChoice, String lineChoice, String lineSelected, String harvestDate, String harvestLocationId, String harvestLocationAbbreviation, String breedingMethodId, String allPlotsChoice, Integer lineVariateId, Integer methodVariateId, Integer plotVariateId, boolean isCheckAdvanceLinesUnique, Set<String> selectedTrialInstances, Set<String> selectedReplications, AdvanceType advanceType) {
+	public AdvancingStudy(final Study study, final String methodChoice, final String lineChoice, final String lineSelected, final String harvestDate, final String harvestLocationId, final String harvestLocationAbbreviation, final String breedingMethodId, final String allPlotsChoice, final Integer lineVariateId, final Integer methodVariateId, final Integer plotVariateId, final boolean isCheckAdvanceLinesUnique, final Set<String> selectedTrialInstances, final Set<String> selectedReplications, final AdvanceType advanceType) {
 		this.study = study;
 		this.methodChoice = methodChoice;
 		this.lineChoice = lineChoice;
@@ -92,7 +92,7 @@ public class AdvancingStudy implements Serializable {
 		return this.selectedTrialInstances;
 	}
 
-	public void setSelectedTrialInstances(Set<String> selectedTrialInstances) {
+	public void setSelectedTrialInstances(final Set<String> selectedTrialInstances) {
 		this.selectedTrialInstances = selectedTrialInstances;
 	}
 
@@ -100,7 +100,7 @@ public class AdvancingStudy implements Serializable {
 		return this.selectedReplications;
 	}
 	
-	public void setSelectedReplications(Set<String> selectedReplications) {
+	public void setSelectedReplications(final Set<String> selectedReplications) {
 		this.selectedReplications = selectedReplications;
 	}
 
@@ -108,7 +108,7 @@ public class AdvancingStudy implements Serializable {
 		return this.study;
 	}
 
-	public void setStudy(Study study) {
+	public void setStudy(final Study study) {
 		this.study = study;
 	}
 
@@ -126,7 +126,7 @@ public class AdvancingStudy implements Serializable {
 	 *
 	 * @param harvestLocationAbbreviation the new harvest location abbreviation
 	 */
-	public void setHarvestLocationAbbreviation(String harvestLocationAbbreviation) {
+	public void setHarvestLocationAbbreviation(final String harvestLocationAbbreviation) {
 		this.harvestLocationAbbreviation = harvestLocationAbbreviation;
 	}
 
@@ -144,7 +144,7 @@ public class AdvancingStudy implements Serializable {
 	 *
 	 * @param harvestLocationId the new harvest location id
 	 */
-	public void setHarvestLocationId(String harvestLocationId) {
+	public void setHarvestLocationId(final String harvestLocationId) {
 		this.harvestLocationId = harvestLocationId;
 	}
 
@@ -162,7 +162,7 @@ public class AdvancingStudy implements Serializable {
 	 *
 	 * @param harvestDate the new harvest date
 	 */
-	public void setHarvestDate(String harvestDate) {
+	public void setHarvestDate(final String harvestDate) {
 		this.harvestDate = harvestDate;
 	}
 
@@ -180,7 +180,7 @@ public class AdvancingStudy implements Serializable {
 	 *
 	 * @param breedingMethodId the new breeding method id
 	 */
-	public void setBreedingMethodId(String breedingMethodId) {
+	public void setBreedingMethodId(final String breedingMethodId) {
 		this.breedingMethodId = breedingMethodId;
 	}
 
@@ -198,7 +198,7 @@ public class AdvancingStudy implements Serializable {
 	 *
 	 * @param methodChoice the new method choice
 	 */
-	public void setMethodChoice(String methodChoice) {
+	public void setMethodChoice(final String methodChoice) {
 		this.methodChoice = methodChoice;
 	}
 
@@ -216,7 +216,7 @@ public class AdvancingStudy implements Serializable {
 	 *
 	 * @param lineChoice the new line choice
 	 */
-	public void setLineChoice(String lineChoice) {
+	public void setLineChoice(final String lineChoice) {
 		this.lineChoice = lineChoice;
 	}
 
@@ -239,7 +239,7 @@ public class AdvancingStudy implements Serializable {
 	/**
 	 * @param allPlotsChoice the allPlotsChoice to set
 	 */
-	public void setAllPlotsChoice(String allPlotsChoice) {
+	public void setAllPlotsChoice(final String allPlotsChoice) {
 		this.allPlotsChoice = allPlotsChoice;
 	}
 
@@ -248,7 +248,7 @@ public class AdvancingStudy implements Serializable {
 	 *
 	 * @param lineSelected the new line selected
 	 */
-	public void setLineSelected(String lineSelected) {
+	public void setLineSelected(final String lineSelected) {
 		this.lineSelected = lineSelected;
 	}
 
@@ -262,7 +262,7 @@ public class AdvancingStudy implements Serializable {
 	/**
 	 * @param lineVariateId the lineVariateId to set
 	 */
-	public void setLineVariateId(Integer lineVariateId) {
+	public void setLineVariateId(final Integer lineVariateId) {
 		this.lineVariateId = lineVariateId;
 	}
 
@@ -276,7 +276,7 @@ public class AdvancingStudy implements Serializable {
 	/**
 	 * @param methodVariateId the methodVariateId to set
 	 */
-	public void setMethodVariateId(Integer methodVariateId) {
+	public void setMethodVariateId(final Integer methodVariateId) {
 		this.methodVariateId = methodVariateId;
 	}
 
@@ -290,7 +290,7 @@ public class AdvancingStudy implements Serializable {
 	/**
 	 * @param plotVariateId the plotVariateId to set
 	 */
-	public void setPlotVariateId(Integer plotVariateId) {
+	public void setPlotVariateId(final Integer plotVariateId) {
 		this.plotVariateId = plotVariateId;
 	}
 
@@ -298,7 +298,7 @@ public class AdvancingStudy implements Serializable {
 		return this.isCheckAdvanceLinesUnique;
 	}
 
-	public void setCheckAdvanceLinesUnique(boolean isCheckAdvanceLinesUnique) {
+	public void setCheckAdvanceLinesUnique(final boolean isCheckAdvanceLinesUnique) {
 		this.isCheckAdvanceLinesUnique = isCheckAdvanceLinesUnique;
 	}
 
@@ -306,7 +306,7 @@ public class AdvancingStudy implements Serializable {
 		return advanceType;
 	}
 
-	public void setAdvanceType(AdvanceType advanceType) {
+	public void setAdvanceType(final AdvanceType advanceType) {
 		this.advanceType = advanceType;
 	}
 

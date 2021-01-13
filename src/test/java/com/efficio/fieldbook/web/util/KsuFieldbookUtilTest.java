@@ -153,7 +153,7 @@ public class KsuFieldbookUtilTest {
 	public void testGetHeaderNames() {
 		
 		final List<MeasurementVariable> variables = WorkbookDataUtil.createFactors();
-		final MeasurementVariable check = MeasurementVariableTestDataInitializer.createMeasurementVariableWithName(TermId.CHECK.getId(), TermId.CHECK.name());
+		final MeasurementVariable check = MeasurementVariableTestDataInitializer.createMeasurementVariableWithName(TermId.ENTRY_TYPE.getId(), TermId.ENTRY_TYPE.name());
 		variables.add(check);
 		
 		final List<String> headers = KsuFieldbookUtil.getHeaderNames(variables);

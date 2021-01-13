@@ -8,6 +8,7 @@ import com.efficio.fieldbook.web.common.bean.TableHeader;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.naming.impl.AdvancingSourceListFactory;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
+import com.efficio.fieldbook.web.trial.bean.AdvanceType;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
 import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
@@ -54,6 +55,7 @@ import org.generationcp.middleware.service.impl.study.StudyInstance;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -68,7 +70,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -191,18 +195,42 @@ public class AdvancingControllerTest {
 		final AdvancingStudyForm form = this.preparePostAdvanceStudy(method);
 
 		// scenario 1, has a method choice and breeding method not a Generative
-		Map<String, Object> output = this.advancingController.postAdvanceStudy(form, null, null);
+		final Map<String, Object> output = this.advancingController.postAdvanceStudy(form, null, null);
 
 		Assert.assertEquals("should be successful", "1", output.get("isSuccess"));
 		Assert.assertEquals("should have at least 1 imported germplasm list",3, output.get("listSize"));
 		Assert.assertNotNull("should have advance germplasm change details", output.get("advanceGermplasmChangeDetails"));
 		Assert.assertNotNull("should have generated unique id", output.get("uniqueId"));
 
+
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1)).getMethodById(Integer.valueOf(form.getAdvanceBreedingMethodId()));
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1)).loadObservations(Mockito.any(), ArgumentMatchers.eq(Arrays.asList(1,2,3)), ArgumentMatchers.eq(Collections.singletonList(1)));
+		final ArgumentCaptor<AdvancingStudy> advanceInfoCaptor = ArgumentCaptor.forClass(AdvancingStudy.class);
+		Mockito.verify(this.advancingSourceListFactory).createAdvancingSourceList(ArgumentMatchers.any(), advanceInfoCaptor.capture(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any());
+		final AdvancingStudy advanceInfo = advanceInfoCaptor.getValue();
+		Assert.assertEquals(AdvanceType.fromLowerCaseName(form.getAdvanceType()), advanceInfo.getAdvanceType());
+		Assert.assertEquals(form.getSelectedReplications(), advanceInfo.getSelectedReplications());
+		Assert.assertEquals(form.getSelectedTrialInstances(), advanceInfo.getSelectedTrialInstances());
+		Mockito.verify(this.namingConventionService, Mockito.times(1)).generateAdvanceListNames(ArgumentMatchers.anyList(), ArgumentMatchers.eq(false), ArgumentMatchers.anyList());
+
+	}
+
+	@Test
+	public void testPostAdvanceStudy_NullMethodChoice() throws MiddlewareException, FieldbookException, RuleException {
+
+		final AdvancingStudyForm form = this.preparePostAdvanceStudy();
 		form.setMethodChoice(null);
-		output = this.advancingController.postAdvanceStudy(form, null, null);
+		final Map<String, Object> output = this.advancingController.postAdvanceStudy(form, null, null);
+
 		Assert.assertEquals("should be successful", "1", output.get("isSuccess"));
-		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(2)).loadAllObservations(Mockito.any());
-		Mockito.verify(this.namingConventionService, Mockito.times(2)).generateAdvanceListNames(ArgumentMatchers.anyList(), ArgumentMatchers.eq(false), ArgumentMatchers.anyList());
+		Assert.assertEquals("should have at least 1 imported germplasm list",3, output.get("listSize"));
+		Assert.assertNotNull("should have advance germplasm change details", output.get("advanceGermplasmChangeDetails"));
+		Assert.assertNotNull("should have generated unique id", output.get("uniqueId"));
+
+
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.never()).getMethodById(ArgumentMatchers.anyInt());
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1)).loadObservations(Mockito.any(), Mockito.any(), Mockito.any());
+		Mockito.verify(this.namingConventionService, Mockito.times(1)).generateAdvanceListNames(ArgumentMatchers.anyList(), ArgumentMatchers.eq(false), ArgumentMatchers.anyList());
 
 	}
 
@@ -286,31 +314,38 @@ public class AdvancingControllerTest {
 		Assert.assertEquals("should have error message", "error.message", output.get("message"));
 	}
 
-	private AdvancingStudyForm preparePostAdvanceStudy(final Method method)
-			throws MiddlewareException, FieldbookException {
-
-		final AdvancingStudyForm form = new AdvancingStudyForm();
-		form.setStudyId("1");
-		// setup
-		form.setMethodChoice("1");
-		form.setAdvanceBreedingMethodId("10");
+	private AdvancingStudyForm preparePostAdvanceStudy()
+		throws MiddlewareException, FieldbookException {
 
 		final Integer studyId = new Random().nextInt();
-
+		final AdvancingStudyForm form = new AdvancingStudyForm();
 		form.setStudyId(studyId.toString());
+		form.setAdvanceType(AdvanceType.SAMPLE.getLowerCaseName());
+		form.setSelectedReplications(Collections.singleton("1"));
+		form.setSelectedTrialInstances(new HashSet<>(Arrays.asList("1", "2", "3")));
 		final Study study = new Study();
 		study.setId(studyId);
 		Mockito.doReturn(study).when(this.fieldbookMiddlewareService).getStudy(studyId);
 		Mockito.doReturn(this.createTestAdvancingSourceList()).when(this.advancingSourceListFactory).createAdvancingSourceList(ArgumentMatchers.any(),
-				ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.anyMap(), ArgumentMatchers.anyMap());
+			ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.anyMap(), ArgumentMatchers.anyMap());
 		this.prepareMockWorkbook();
 
+
+		Mockito.doNothing().when(this.paginationListSelection).addAdvanceDetails(ArgumentMatchers.anyString(), ArgumentMatchers.eq(form));
+
+		return form;
+	}
+
+	private AdvancingStudyForm preparePostAdvanceStudy(final Method method)
+			throws MiddlewareException, FieldbookException {
+
+		final AdvancingStudyForm form = this.preparePostAdvanceStudy();
+		form.setMethodChoice("1");
+		form.setAdvanceBreedingMethodId("10");
 
 		Mockito.when(this.fieldbookMiddlewareService.getMethodById(ArgumentMatchers.anyInt())).thenReturn(method);
 		Mockito.when(this.messageSource.getMessage(ArgumentMatchers.eq("study.save.advance.error.generative.method"),
 				ArgumentMatchers.any(String[].class), ArgumentMatchers.eq(LocaleContextHolder.getLocale()))).thenReturn("error.message");
-
-		Mockito.doNothing().when(this.paginationListSelection).addAdvanceDetails(ArgumentMatchers.anyString(), ArgumentMatchers.eq(form));
 
 		return form;
 	}
@@ -371,7 +406,6 @@ public class AdvancingControllerTest {
 		WorkbookTestDataInitializer.setTrialObservations(workbook);
 		workbook.getStudyDetails().setId(1011);
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
-        Mockito.when(this.fieldbookMiddlewareService.getStudyDataSet(Mockito.anyInt())).thenReturn(workbook);
 		final Variable variable = this.createSelectionVariable();
 		final MeasurementVariable measurementVariable = new MeasurementVariable();
 		measurementVariable.setTermId(205);
@@ -628,7 +662,7 @@ public class AdvancingControllerTest {
 		variable.addVariableType(VariableType.SELECTION_METHOD);
 		variable.setAllowsFormula(false);
 		variable.setId(205);
-		Scale scale = new Scale();
+		final Scale scale = new Scale();
 		scale.setDataType(DataType.NUMERIC_VARIABLE);
 		scale.setName("Number");
 		scale.setDefinition("Number");
@@ -636,7 +670,7 @@ public class AdvancingControllerTest {
 		scale.setVocabularyId(1030);
 		scale.setObsolete(false);
 
-		Property property = new Property();
+		final Property property = new Property();
 		property.setName("Breeding method");
 		property.setId(2600);
 		property.setVocabularyId(1010);
@@ -644,7 +678,7 @@ public class AdvancingControllerTest {
 		property.setObsolete(false);
 		property.addClass("Breedingprocess");
 
-		org.generationcp.middleware.domain.ontology.Method method = new org.generationcp.middleware.domain.ontology.Method();
+		final org.generationcp.middleware.domain.ontology.Method method = new org.generationcp.middleware.domain.ontology.Method();
 
 		method.setName("Counted");
 		method.setDefinition("Counting method");

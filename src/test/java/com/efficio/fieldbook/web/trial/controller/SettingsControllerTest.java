@@ -6,13 +6,11 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.data.initializer.SettingDetailTestDataInitializer;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.generationcp.middleware.ContextHolder;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.etl.MeasurementData;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.DataType;
@@ -96,16 +94,6 @@ public class SettingsControllerTest {
 				.thenReturn(Arrays.asList(this.testValueReference));
 	}
 
-	private MeasurementData getSampleMeasurementData(final Integer variableTermId, final String data) {
-		final MeasurementData measurementData = new MeasurementData();
-		measurementData.setLabel("LABEL_" + variableTermId);
-		final MeasurementVariable measurementVariable = new MeasurementVariable();
-		measurementVariable.setTermId(variableTermId);
-		measurementData.setValue(data);
-		measurementData.setMeasurementVariable(measurementVariable);
-		return measurementData;
-	}
-
 	private List<SettingDetail> createSettingDetailVariables() {
 		final List<SettingDetail> variables = new ArrayList<>();
 		variables.add(this.createSettingDetail(TermId.TRIAL_INSTANCE_FACTOR.getId(), ""));
@@ -123,22 +111,6 @@ public class SettingsControllerTest {
 		variable.setCvTermId(cvTermId);
 		final SettingDetail settingDetail = new SettingDetail(variable, null, value, false);
 		return settingDetail;
-	}
-
-	private Method createMethod(final int id, final String name, final String code, final String uniqueID) {
-		final Method method = new Method();
-		method.setMid(id);
-		method.setMname(name);
-		method.setMcode(code);
-		method.setUniqueID(uniqueID);
-		return method;
-	}
-
-	private MeasurementVariable createMeasurementVariable(final String value) {
-		final MeasurementVariable measurementVariable = new MeasurementVariable();
-		measurementVariable.setName("TEST");
-		measurementVariable.setValue(value);
-		return measurementVariable;
 	}
 
 	public static void checkVariableSecionIdModelAttributes(final ExtendedModelMap model) {

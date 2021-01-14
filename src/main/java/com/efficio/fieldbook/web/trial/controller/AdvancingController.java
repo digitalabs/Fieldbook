@@ -190,12 +190,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
         form.setSelectedReplications(Sets.newHashSet("1"));
         form.setStudyId(Integer.toString(studyId));
 
-
-		final Workbook workbook = this.fieldbookMiddlewareService.getStudyDataSet(this.userSelection.getWorkbook().getStudyDetails().getId());
 		final DatasetDTO datasetDTO = this.datasetService.getDataset(this.userSelection.getWorkbook().getMeasurementDatesetId());
-		// FIXME BMS-4454
-		this.fieldbookMiddlewareService.loadAllObservations(workbook);
-		this.userSelection.getWorkbook().setObservations(workbook.getObservations());
 
 		// FIXME The Observation, Traits, and selections aren't loaded dynamically on the workbook is for that I reload the observation and the variables.
 		final List<SettingDetail> detailList = new ArrayList<>();
@@ -295,7 +290,8 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		final AdvancingStudy advancingStudy = new AdvancingStudy(study, form.getMethodChoice(), form.getLineChoice(), lineSelected, form.getHarvestDate(), form.getHarvestLocationId(),
 				harvestLocationAbbreviation, form.getAdvanceBreedingMethodId(), form.getAllPlotsChoice(), form.getLineVariateId(), form.getMethodVariateId(), form.getPlotVariateId(),
 				false, form.getSelectedTrialInstances(), form.getSelectedReplications(), AdvanceType.fromLowerCaseName(form.getAdvanceType()));
-		final boolean observationsLoaded = this.fieldbookMiddlewareService.loadAllObservations(this.userSelection.getWorkbook());
+		final boolean observationsLoaded = this.fieldbookMiddlewareService.loadObservations(this.userSelection.getWorkbook(), advancingStudy.getSelectedTrialInstances().stream().map(i -> Integer.valueOf(i)).collect(Collectors.toList()),
+			advancingStudy.getSelectedReplications() != null ? advancingStudy.getSelectedReplications().stream().map(i -> Integer.valueOf(i)).collect(Collectors.toList()) : null);
 
 		try {
 

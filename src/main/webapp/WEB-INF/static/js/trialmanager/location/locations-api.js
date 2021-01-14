@@ -1,9 +1,7 @@
 (function () {
 	'use strict';
 
-	var locationsApiModule = angular.module('locations-api', ['fieldbook-utils']);
-
-	locationsApiModule.factory('locationService', ['$http', '$q', 'studyContext', 'serviceUtilities',
+	angular.module('manageTrialApp').factory('locationService', ['$http', '$q', 'studyContext', 'serviceUtilities',
 		function ($http, $q, studyContext, serviceUtilities) {
 
 			var BASE_URL = '/bmsapi/crops/' + studyContext.cropName;
@@ -32,7 +30,7 @@
 
 		}]);
 
-	locationsApiModule.directive('locationsSelect', ['locationService', function (locationService) {
+	angular.module('manageTrialApp').directive('locationsSelect', ['locationService', function (locationService) {
 		return {
 			restrict: 'EA',
 			scope: {

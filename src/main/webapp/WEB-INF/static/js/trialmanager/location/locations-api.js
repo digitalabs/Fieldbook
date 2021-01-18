@@ -11,16 +11,15 @@
 			var locationService = {};
 
 			locationService.getLocations = function (locationTypes, favoriteLocation, name, page, size) {
-				var request = $http.get(BASE_URL + '/locations', angular.merge({
-					params: {
-						programUUID: studyContext.programId,
-						locationTypes: locationTypes,
-						favoriteLocations: favoriteLocation,
-						name: name,
-						page: page,
-						size: size
-					}
-				}));
+
+				var locationSearchRequest = {
+					"favourites": favoriteLocation,
+					"locationName": name,
+					"locationTypes": locationTypes,
+					"programUUID": studyContext.programId
+				};
+
+				var request = $http.post(BASE_URL + '/locations?page=' + page + '&size=' + size, locationSearchRequest);
 				return request.then(((response) => {
 					return response;
 				}), failureHandler);

@@ -489,27 +489,51 @@ div.DTFC_RightWrapper table.table-curved {
 .block-ui-message-custom {
     display: inline-block;
 }
-.modal-autofit {
-	width: 90%;
+/* legacy dialogs */
+.modal-autofit.modal-dialog {
+    width: 90%;
 }
-.modal-extra-large {
+.modal-extra-large.modal-dialog {
     width: 950px;
 }
-.modal-large {
+.modal-large.modal-dialog {
     width: 800px;
 }
-.modal-extra-medium {
+.modal-extra-medium.modal-dialog {
     width: 700px;
 }
-.modal-medium {
+.modal-medium.modal-dialog {
     width: 650px;
 }
-.modal-small {
+.modal-small.modal-dialog {
     width: 500px;
 }
-.modal-extra-small{
+.modal-extra-small.modal-dialog {
     width: 400px;
 }
+/* angular modals / ui-bootstrap */
+.modal-autofit > .modal-dialog {
+    width: 90%;
+}
+.modal-extra-large > .modal-dialog {
+    width: 950px;
+}
+.modal-large > .modal-dialog {
+    width: 800px;
+}
+.modal-extra-medium > .modal-dialog {
+    width: 700px;
+}
+.modal-medium > .modal-dialog {
+    width: 650px;
+}
+.modal-small > .modal-dialog {
+    width: 500px;
+}
+.modal-extra-small > .modal-dialog {
+    width: 400px;
+}
+
 #studyTreeModal .modal-dialog{
     width: 400px;
 }

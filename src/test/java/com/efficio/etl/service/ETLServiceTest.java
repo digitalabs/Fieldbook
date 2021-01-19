@@ -136,6 +136,7 @@ public class ETLServiceTest {
 	private static final String PLOT_NO = "PLOT_NO";
 	private static final String REP_NO = "REP_NO";
 	private static final String ALEU_COL_1_5 = "ALEU_COL_1_5";
+	private static final String ENTRY_TYPE = "ENTRY_TYPE";
 
 	private static final int STUDY_ID = 1;
 	private static final int STUDY_DATASET_ID = 2;
@@ -451,7 +452,7 @@ public class ETLServiceTest {
 		final List<String> errors = new ArrayList<>();
 		this.etlService.setMaxRowLimit(100);
 		Assert.assertTrue(this.etlService.isObservationOverMaximumLimit(this.userSelection, errors, this.workbook));
-		Assert.assertTrue(!errors.isEmpty());
+		Assert.assertFalse(errors.isEmpty());
 	}
 
 	@Test
@@ -473,7 +474,7 @@ public class ETLServiceTest {
 		emptyWorkbook.createSheet();
 
 		Assert.assertFalse(this.etlService.isWorkbookHasObservationRecords(this.userSelection, errors, emptyWorkbook));
-		Assert.assertTrue(!errors.isEmpty());
+		Assert.assertFalse(errors.isEmpty());
 		Assert.assertEquals("error.observation.no.records", errors.get(0));
 	}
 
@@ -861,6 +862,38 @@ public class ETLServiceTest {
 			.getMeasurementVariablesByPhenotypic(PhenotypicType.VARIATE).get(variableDTO.getHeaderName());
 		Assert.assertEquals(variableDTO.getHeaderName(), measurementVariable.getName());
 		Assert.assertEquals(variableDTO.getId().toString(), String.valueOf(measurementVariable.getTermId()));
+	}
+
+	@Test
+	public void testCheckForMismatchedHeadersFileNoEntryType() {
+
+		final List<MeasurementVariable> studyHeaders = new ArrayList<>();
+		final MeasurementVariable trialInstance = new MeasurementVariable();
+		trialInstance.setRole(PhenotypicType.TRIAL_ENVIRONMENT);
+		trialInstance.setName(TRIAL_INSTANCE);
+		final MeasurementVariable entryNo = new MeasurementVariable();
+		entryNo.setRole(PhenotypicType.GERMPLASM);
+		entryNo.setName(ENTRY_NO);
+		final MeasurementVariable repNo = new MeasurementVariable();
+		repNo.setRole(PhenotypicType.TRIAL_DESIGN);
+		repNo.setName(REP_NO);
+		final MeasurementVariable entryType = new MeasurementVariable();
+		entryType.setRole(PhenotypicType.GERMPLASM);
+		entryType.setName(ENTRY_TYPE);
+		entryType.setTermId(TermId.ENTRY_TYPE.getId());
+		studyHeaders.add(trialInstance);
+		studyHeaders.add(entryNo);
+		studyHeaders.add(repNo);
+		studyHeaders.add(entryType);
+
+		final List<String> fileHeaders = new ArrayList<>();
+		fileHeaders.add(TRIAL_INSTANCE);
+		fileHeaders.add(ENTRY_NO);
+		fileHeaders.add(REP_NO);
+
+		final Map<String, List<Message>> errors = this.etlService.checkForMismatchedHeaders(fileHeaders, studyHeaders, false);
+		Assert.assertTrue(errors.isEmpty());
+
 	}
 
 	private Map<PhenotypicType, LinkedHashMap<String, MeasurementVariable>> createPhenotyicMapTestData() {

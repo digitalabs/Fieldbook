@@ -891,6 +891,10 @@ public class ETLServiceImpl implements ETLService {
 				if((studyHeader.getAlias() != null && fileHeaderMap.get(studyHeader.getAlias().toUpperCase()) != null)) {
 					continue;
 				}
+				// IBP-4255: Allow user to upload file w/o ENTRY_TYPE
+				else if (studyHeader.getTermId() == TermId.ENTRY_TYPE.getId()) {
+					continue;
+				}
 				missingHeaders.append(studyHeader.getName());
 				missingHeaders.append(delimeter);
 			}

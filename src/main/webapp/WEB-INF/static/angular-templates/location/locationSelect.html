@@ -1,0 +1,25 @@
+<ui-select ng-model="valuecontainer[targetkey]"
+		   on-select="onLocationSelect()"
+		   tagging-label="false"
+		   append-to-body="true"
+		   theme="select2">
+	<ui-select-match
+		class="ui-select-match">
+		<span ng-bind="$select.selected.name"></span>
+	</ui-select-match>
+	<ui-select-choices refresh="fetch($select)" refresh-delay="300" repeat="locationItem.id as locationItem in locationItems | filter: $select.search track by $index">
+		<div title="{{::locationItem.name}} - ({{::locationItem.abbreviation}})">{{::locationItem.name}} - ({{::locationItem.abbreviation}})</div>
+		<button class="btn btn-xs btn-default" style="width: 100%; margin-top:5px;" ng-if="$index == $select.items.length-1 && loadMore" title="{{locationItem.name}}" ng-click="fetch($select, $event);">Load more...
+		</button>
+	</ui-select-choices>
+</ui-select>
+<div class="possibleValuesDiv">
+	<input type="radio" name="location-lookup" ng-model="localData.locationLookup" value="1" ng-click="fetch()">
+	<span th:text="#{show.breeding.location}">Breeding locations</span> &nbsp;
+	<input type="radio" name="location-lookup" ng-model="localData.locationLookup" value="2" ng-click="fetch()">
+	<span th:text="#{show.all.location}">All locations types</span> &nbsp;
+</div>
+<div class="possibleValuesDiv">
+	<input type="checkbox" name="location-favorite" ng-model="localData.useFavorites" ng-click="fetch()">
+	<span th:text="#{show.favorite.location}">Show only favorite locations </span>
+</div>

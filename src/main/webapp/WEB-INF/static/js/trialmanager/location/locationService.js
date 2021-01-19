@@ -37,31 +37,7 @@
 				valuecontainer: '=',
 				onLocationSelect: ' &'
 			},
-			template: '<ui-select ng-model="valuecontainer[targetkey]"\n' +
-				'   on-select="onLocationSelect()"\n' +
-				'   tagging-label="false"\n' +
-				'   append-to-body="true"\n' +
-				'   theme="select2">' +
-				'<ui-select-match\n' +
-				'class="ui-select-match">\n' +
-				'<span ng-bind="$select.selected.name"></span>\n' +
-				'</ui-select-match>\n' +
-				'     <ui-select-choices refresh="fetch($select)" refresh-delay="300" repeat="locationItem.id as locationItem in locationItems | filter: $select.search track by $index">\n' +
-				'          <div title="{{::locationItem.name}} - ({{::locationItem.abbreviation}})">{{::locationItem.name}} - ({{::locationItem.abbreviation}})</div>\n' +
-				'          <button class="btn btn-xs btn-default" style="width: 100%; margin-top:5px;" ng-if="$index == $select.items.length-1 && loadMore" title="{{locationItem.name}}" ng-click="fetch($select, $event);">Load more...\n' +
-				'          </button>\n' +
-				'     </ui-select-choices>\n' +
-				'</ui-select>\n' +
-				'<div class="possibleValuesDiv">\n' +
-				'     <input type="radio" name="location-lookup" ng-model="localData.locationLookup" value="1" ng-click="fetch()">\n' +
-				'     <span th:text="#{show.breeding.location}">Breeding locations</span> &nbsp;\n' +
-				'     <input type="radio" name="location-lookup" ng-model="localData.locationLookup" value="2" ng-click="fetch()">\n' +
-				'     <span th:text="#{show.all.location}">All locations types</span> &nbsp;\n' +
-				'     </div>\n' +
-				'<div class="possibleValuesDiv">\n' +
-				'     <input type="checkbox" name="location-favorite" ng-model="localData.useFavorites" ng-click="fetch()">\n' +
-				'     <span th:text="#{show.favorite.location}">Show only favorite locations </span>\n' +
-				'</div>',
+			templateUrl: '/Fieldbook/static/angular-templates/location/locationSelect.html',
 			link: function (scope, element, attrs, paginationCtrl) {
 			},
 			controller: ['$scope', 'locationService', function ($scope, locationService) {

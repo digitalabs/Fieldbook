@@ -10,10 +10,10 @@
 
 			var locationService = {};
 
-			locationService.getLocations = function (locationTypes, favoriteLocation, name, page, size) {
+			locationService.getLocations = function (locationTypes, favoritesOnly, name, page, size) {
 
 				var locationSearchRequest = {
-					"favourites": favoriteLocation,
+					"favoritesOnly": favoritesOnly,
 					"locationName": name,
 					"locationTypes": locationTypes,
 					"programUUID": studyContext.programId

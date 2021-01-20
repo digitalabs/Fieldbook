@@ -78,7 +78,6 @@ module.exports = function (config) {
 			'WEB-INF/static/js/trialmanager/environments.js',
 			'WEB-INF/static/js/trialmanager/experimentalDesign.js',
 			'WEB-INF/static/js/trialmanager/subobservations/subObservationSet.js',
-			'WEB-INF/static/js/trialmanager/showSettingFormElementNew.js',
 			'WEB-INF/static/js/trialmanager/germplasm-selector/germplasm-selector-modal.js',
 			'WEB-INF/static/js/trialmanager/datasetService.js',
 			'WEB-INF/static/js/trialmanager/exportStudy.js',

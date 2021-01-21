@@ -15,6 +15,8 @@ import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedCross;
@@ -59,6 +61,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormatSymbols;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(CrossingSettingsController.URL)
@@ -261,6 +264,28 @@ public class CrossingSettingsController extends SettingsController {
 
 		return monthList;
 
+	}
+
+	/**
+	 * Validates the Breeding Methods in the import file
+	 *
+	 * @return a JSON result object
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/validateBreedingMethods", method = RequestMethod.GET)
+	public Map<String, Object> validateBreedingMethods() {
+		final Map<String, Object> out = new HashMap<>();
+		final Set<String> breedingMethods = this.studySelection.getImportedCrossesList().getImportedCrosses().stream()
+				.filter(cross -> !StringUtils.isEmpty(cross.getRawBreedingMethod())).map(ImportedCross::getRawBreedingMethod).collect(
+					Collectors.toSet());
+		final List<String> nonGenerativeBreedingMethodCodes = this.germplasmDataManager.getNonGenerativeMethodCodes(breedingMethods);
+		out.put(CrossingSettingsController.SUCCESS_KEY, Boolean.TRUE);
+		if(!CollectionUtils.isEmpty(nonGenerativeBreedingMethodCodes)) {
+			out.put(CrossingSettingsController.SUCCESS_KEY, Boolean.TRUE);
+			out.put(CrossingSettingsController.ERROR, this.messageSource.getMessage("error.crossing.non.generative.method",
+				new String[] {StringUtils.join(nonGenerativeBreedingMethodCodes, ", ")}, LocaleContextHolder.getLocale()));
+		}
+		return out;
 	}
 
 	/**

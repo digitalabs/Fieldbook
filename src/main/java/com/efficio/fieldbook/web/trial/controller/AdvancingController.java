@@ -25,6 +25,8 @@ import com.efficio.fieldbook.web.trial.bean.AdvanceType;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
 import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
 import com.google.common.collect.Sets;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.constant.AppConstants;
@@ -216,7 +218,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		final String currentYear = sdf.format(currentDate);
 		form.setHarvestYear(currentYear);
 		form.setHarvestMonth(sdfMonth.format(currentDate));
-		
+
         form.setSelectedTrialInstances(selectedInstances);
 
 		model.addAttribute("yearChoices", this.generateYearChoices(Integer.parseInt(currentYear)));
@@ -275,7 +277,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	 * @param model the model
 	 * @return the string
 	 * @throws MiddlewareQueryException the middleware query exception
-	 * @throws FieldbookException 
+	 * @throws FieldbookException
 	 */
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
@@ -728,7 +730,19 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		}
 		return this.fieldbookMiddlewareService.countPlotsWithRecordedVariatesInDataset(this.userSelection.getWorkbook()
 				.getMeasurementDatesetId(), idParams);
+	}
 
+	@ResponseBody
+	@RequestMapping(value = "/checkForNonMaintenanceAndDerivativeMethods/{id}/{trialInstances}", method = RequestMethod.GET)
+	public Map<String, String> checkForNonMaintenanceAndDerivativeMethods(@PathVariable final String id, @PathVariable final Set<String> trialInstances) throws MiddlewareQueryException {
+		final Map<String, String> result = new HashMap<>();
+		final List<String> nonAdvancingMethods = this.studyDataManager.getNonMaintenanceAndDerivativeMethods(this.userSelection.getWorkbook()
+			.getMeasurementDatesetId(), id, new ArrayList<>(trialInstances));
+		if(!CollectionUtils.isEmpty(nonAdvancingMethods)) {
+			result.put("errors", this.messageSource.getMessage("error.advancing.study.non.maintenance.derivative.method",
+				new String[] {StringUtils.join(nonAdvancingMethods, ", ")}, LocaleContextHolder.getLocale()));
+		}
+		return result;
 	}
 
 	@ResponseBody

@@ -1435,18 +1435,44 @@ function validateBreedingMethod() {
 			cache: false,
 			async: false,
 			success: function(data) {
+
 				if (data == 0) {
 					var newMessage = noMethodValueErrorTrial.replace(new RegExp(/\{0\}/g), $('#methodVariateId').select2('data').text);
 					showErrorMessage('page-advance-modal-message', newMessage);
 
 					valid = false;
+				} else {
+					valid = validateBreedingMethodValues(id);
 				}
+
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				console.log('The following error occured: ' + textStatus, errorThrown);
 			}
 		});
 	}
+	return valid;
+}
+
+function validateBreedingMethodValues(id) {
+	var valid = true;
+	$.ajax({
+		url: '/Fieldbook/StudyManager/advance/study//checkForNonMaintenanceAndDerivativeMethods/' + id + '/' +
+			$('#selectedTrialInstances').val(),
+		type: 'GET',
+		cache: false,
+		async: false,
+		success: function(data) {
+			if (data.errors) {
+				showErrorMessage('page-advance-modal-message', data.errors);
+				valid = false;
+			}
+
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			console.log('The following error occured: ' + textStatus, errorThrown);
+		}
+	});
 	return valid;
 }
 

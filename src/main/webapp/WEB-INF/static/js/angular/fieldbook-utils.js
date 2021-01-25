@@ -383,72 +383,10 @@
                     $scope.isBreedingMethod = parseInt(BREEDING_METHOD_ID, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10) ||
 						parseInt(BREEDING_METHOD_CODE, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);
 
-					$scope.localData = {};
-					var showAll = $scope.isBreedingMethod ? true : $scope.valuecontainer[$scope.targetkey];
-					$scope.localData.useFavorites = !showAll;
-					$scope.lookupLocation =  showAll ? 2 : 1;
-
-					$scope.updateDropdownValuesFavorites = function() {
-						if ($scope.localData.useFavorites) {
-							if ($scope.lookupLocation == 1) {
-								$scope.dropdownValues = $scope.variableDefinition.possibleValuesFavorite;
-							} else {
-								$scope.dropdownValues = $scope.variableDefinition.allFavoriteValues;
-							}
-						} else {
-							if ($scope.lookupLocation == 1) {
-								$scope.dropdownValues = $scope.variableDefinition.possibleValues;
-							} else {
-								$scope.dropdownValues = $scope.variableDefinition.allValues;
-							}
-						}
-					};
-
-					$scope.updateDropdownValuesBreedingLocation = function() { // Change state for breeding
-						$scope.dropdownValues = ($scope.localData.useFavorites) ? $scope.variableDefinition.possibleValuesFavorite : $scope.variableDefinition.possibleValues;
-						$scope.lookupLocation = 1;
-					};
-
-					$scope.updateDropdownValuesAllLocation = function() { // Change state for all locations radio
-						$scope.dropdownValues = ($scope.localData.useFavorites) ? $scope.variableDefinition.allFavoriteValues : $scope.variableDefinition.allValues;
-						$scope.lookupLocation = 2;
-					};
-
-					// if the value of the dropdown from existing data matches from the list of favorites, we set the checkbox as true
-					var useFavorites = function(currentVal) {
-
-						if (currentVal) {
-							return false;
-						} else if ($scope.variableDefinition.possibleValuesFavorite) {
-							if($scope.isBreedingMethod){
-								//If isBreedingMethod returns false
-								false;
-							}else{
-								return $scope.variableDefinition.possibleValuesFavorite.length > 0;
-							}
-						}
-
-						return $scope.localData.useFavorites;
-					};
 
 					if ($scope.hasDropdownOptions) {
-                        var currentVal = $scope.valuecontainer[$scope.targetkey];
 
-						// lets fix current val if its an object so that it only contains the id
-						if($scope.isBreedingMethod){
-							if (currentVal && currentVal.key) {
-								currentVal = currentVal.key;
-							}
-						}else{
-							if (typeof currentVal !== 'undefined' && currentVal !== null && typeof currentVal.id !== 'undefined' && currentVal.id) {
-								currentVal = currentVal.id;
-							}
-						}
-
-
-						$scope.localData.useFavorites = useFavorites(currentVal);
-
-						$scope.updateDropdownValuesFavorites();
+						$scope.dropdownValues = $scope.variableDefinition.allValues;
 						$scope.lookUpValues = [];
 
 						angular.forEach($scope.dropdownValues, function(value) {
@@ -483,78 +421,6 @@
 
                     }
 
-					// TODO: add code that can handle display of favorite methods, as well as update of possible values in case of click of manage methods
-					if ($scope.isLocation) {
-						$scope.clearArray = function(targetArray) {
-							// current internet research suggests that this is the fastest way of clearing an array
-							while (targetArray.length > 0) {
-								targetArray.pop();
-							}
-						};
-
-						$scope.updateLocationValues = function () {
-							if (!$scope.variableDefinition.locationUpdated) {
-								$http
-									.get('/Fieldbook/locations/getLocations')
-									.then(
-										function (returnVal) {
-											if (returnVal.data.success === '1') {
-												$scope.variableDefinition.locationUpdated = true;
-												// clear and copy of array is performed so as to preserve previous reference
-												// and have changes applied to all components with a copy of the previous
-												// reference
-												$scope.clearArray($scope.variableDefinition.allValues);
-												$scope.clearArray($scope.variableDefinition.possibleValues);
-												$scope.clearArray($scope.variableDefinition.possibleValuesFavorite);
-												$scope.clearArray($scope.variableDefinition.allFavoriteValues);
-
-												$scope.variableDefinition.allValues.push.apply(
-													$scope.variableDefinition.allValues, $scope
-														.convertLocationsToPossibleValues(returnVal.data.allLocations));
-												$scope.variableDefinition.possibleValues.push.apply(
-													$scope.variableDefinition.possibleValues, $scope
-														.convertLocationsToPossibleValues(returnVal.data.allBreedingLocations));
-												$scope.variableDefinition.allFavoriteValues.push.apply(
-													$scope.variableDefinition.allFavoriteValues, $scope
-														.convertLocationsToPossibleValues(returnVal.data.favoriteLocations));
-												$scope.variableDefinition.possibleValuesFavorite.push
-													.apply(
-														$scope.variableDefinition.possibleValuesFavorite,
-														$scope
-															.convertLocationsToPossibleValues(returnVal.data.allBreedingFavoritesLocations));
-												$scope.updateDropdownValuesFavorites();
-											}
-										});
-							}
-						};
-
-						$scope.convertLocationsToPossibleValues = function(locations) {
-							var possibleValues = [];
-
-							$.each(locations, function(key, value) {
-								var locNameDisplay = value.lname;
-								if (value.labbr != null && value.labbr != '') {
-									locNameDisplay  += ' - (' + value.labbr + ')';
-								}
-
-								possibleValues.push({
-									id: value.locid,
-									name: locNameDisplay,
-									description: value.lname
-								});
-							});
-
-							return possibleValues;
-						};
-
-						$scope.initiateManageLocationModal = function() {
-							$scope.variableDefinition.locationUpdated = false;
-							openManageLocations();
-						};
-
-						$(document).off('location-update');
-						$(document).on('location-update', $scope.updateLocationValues);
-					}
 				}
 			};
 		}])

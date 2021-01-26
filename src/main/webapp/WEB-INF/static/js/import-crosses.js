@@ -125,7 +125,7 @@ var ImportCrosses = {
 		});
 
 		BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox',
-			'showAllMethodOnlyRadio', 'showBreedingMethodOnlyRadio');
+			'showAllMethodOnlyRadio', true);
 
 	},
 

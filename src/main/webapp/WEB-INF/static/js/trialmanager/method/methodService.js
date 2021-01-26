@@ -28,7 +28,8 @@
 			scope: {
 				targetkey: '=',
 				valuecontainer: '=',
-				onMethodSelect: ' &'
+				onMethodSelect: ' &',
+				hideTypes: '='
 			},
 			templateUrl: '/Fieldbook/static/angular-templates/method/methodSelect.html',
 			link: function (scope, element, attrs, paginationCtrl) {
@@ -43,8 +44,6 @@
 
 				$scope.methodItems = [];
 				$scope.localData = {methodType: ALL_METHODS, useFavorites: false};
-				$scope.localData = {methodType: ALL_METHODS, useFavorites: false};
-
 
 				$scope.fetch = function ($select, $event) {
 					// no event means first load!
@@ -56,9 +55,9 @@
 					}
 
 					var methodTypes = [];
-					if ($scope.localData.methodType == DER_MAN_ONLY) {
+					if ($scope.localData.methodType === DER_MAN_ONLY) {
 						methodTypes = DERIVATIVE_MAINTENANCE;
-					} else if ($scope.localData.methodType == GENERATIVE_ONLY ) {
+					} else if ($scope.localData.methodType === GENERATIVE_ONLY ) {
 						methodTypes = GENERATIVE;
 					}
 

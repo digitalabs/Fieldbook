@@ -8,15 +8,15 @@
 		<div title="{{::methodItem.name}} - {{::methodItem.code}}">{{::methodItem.name}} - {{::methodItem.code}}</div>
 	</ui-select-choices>
 </ui-select>
-<div class="possibleValuesDiv">
-	<!--	<div ng-if="showDerivativeAndMaintenanceOnly">-->
-	<!--		<input type="radio" name="methodType" ng-model="localData.methodType" value="1" ng-click="fetch()">-->
-	<!--		<span th:text="#{show.derivative.maintenance.method}">Derivative and Maintenance methods</span> &nbsp;-->
-	<!--	</div>-->
-	<!--	<div ng-if="showGenerativeOnly">-->
-	<!--		<input type="radio" name="methodType" ng-model="localData.methodType" value="2" ng-click="fetch()">-->
-	<!--		<span th:text="#{show.generative.method}">Generative methods</span> &nbsp;-->
-	<!--	</div>-->
+<div ng-if="hideTypes !== true"  class="possibleValuesDiv">
+	<div ng-if="localData.methodType == 1">
+		<input type="radio" name="methodType" ng-model="localData.methodType" value="1" ng-click="fetch()">
+		<span th:text="#{show.derivative.maintenance.method}">Derivative and Maintenance methods</span> &nbsp;
+	</div>
+	<div ng-if="localData.methodType == 2">
+		<input type="radio" name="methodType" ng-model="localData.methodType" value="2" ng-click="fetch()">
+		<span th:text="#{show.generative.method}">Generative methods</span> &nbsp;
+	</div>
 	<input type="radio" name="methodType" ng-model="localData.methodType" value="3" ng-click="fetch()">
 	<span th:text="#{show.all.methods}">All methods</span> &nbsp;
 </div>

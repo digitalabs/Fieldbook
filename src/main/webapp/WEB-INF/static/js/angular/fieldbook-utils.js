@@ -385,20 +385,13 @@
 
 
 					if ($scope.hasDropdownOptions) {
-
 						$scope.dropdownValues = $scope.variableDefinition.allValues;
 						$scope.lookUpValues = [];
 
 						angular.forEach($scope.dropdownValues, function(value) {
 							var idNumber;
 							var curVal;
-							if($scope.isBreedingMethod){
-								if ($scope.valuecontainer[$scope.targetkey]) {
-									idNumber = $scope.valuecontainer[$scope.targetkey];
-								}
-								$scope.lookUpValues[value.key] = value;
-								curVal = value.key;
-							}else{
+							if(!$scope.isBreedingMethod){
 								if (!isNaN($scope.valuecontainer[$scope.targetkey])) {
 									idNumber = parseInt($scope.valuecontainer[$scope.targetkey]);
 								}

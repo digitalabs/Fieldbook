@@ -3,23 +3,20 @@
 		   tagging-label="false"
 		   append-to-body="true"
 		   theme="select2">
-	<ui-select-match
-		class="ui-select-match">
-		<span ng-bind="$select.selected.name"></span>
-	</ui-select-match>
-	<ui-select-choices refresh="fetch($select)" refresh-delay="300" repeat="methodItem.id as methodItem in methodItems | filter: $select.search track by $index">
+	<ui-select-match placeholder="Please Choose">{{$select.selected.name}} - {{ $select.selected.code }}</ui-select-match>
+	<ui-select-choices refresh="fetch($select)" refresh-delay="300" repeat="methodItem.code as methodItem in methodItems | filter: $select.search track by $index">
 		<div title="{{::methodItem.name}} - {{::methodItem.code}}">{{::methodItem.name}} - {{::methodItem.code}}</div>
 	</ui-select-choices>
 </ui-select>
 <div class="possibleValuesDiv">
-<!--	<div ng-if="showDerivativeAndMaintenanceOnly">-->
-<!--		<input type="radio" name="methodType" ng-model="localData.methodType" value="1" ng-click="fetch()">-->
-<!--		<span th:text="#{show.derivative.maintenance.method}">Derivative and Maintenance methods</span> &nbsp;-->
-<!--	</div>-->
-<!--	<div ng-if="showGenerativeOnly">-->
-<!--		<input type="radio" name="methodType" ng-model="localData.methodType" value="2" ng-click="fetch()">-->
-<!--		<span th:text="#{show.generative.method}">Generative methods</span> &nbsp;-->
-<!--	</div>-->
+	<!--	<div ng-if="showDerivativeAndMaintenanceOnly">-->
+	<!--		<input type="radio" name="methodType" ng-model="localData.methodType" value="1" ng-click="fetch()">-->
+	<!--		<span th:text="#{show.derivative.maintenance.method}">Derivative and Maintenance methods</span> &nbsp;-->
+	<!--	</div>-->
+	<!--	<div ng-if="showGenerativeOnly">-->
+	<!--		<input type="radio" name="methodType" ng-model="localData.methodType" value="2" ng-click="fetch()">-->
+	<!--		<span th:text="#{show.generative.method}">Generative methods</span> &nbsp;-->
+	<!--	</div>-->
 	<input type="radio" name="methodType" ng-model="localData.methodType" value="3" ng-click="fetch()">
 	<span th:text="#{show.all.methods}">All methods</span> &nbsp;
 </div>

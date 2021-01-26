@@ -272,19 +272,37 @@ public class CrossingSettingsController extends SettingsController {
 	 * @return a JSON result object
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/validateBreedingMethods", method = RequestMethod.GET)
-	public Map<String, Object> validateBreedingMethods() {
+	@RequestMapping(value = "/validateBreedingMethods/{isBasedOnImportFile}/{breedingMethodId}", method = RequestMethod.GET)
+	public Map<String, Object> validateBreedingMethods(@PathVariable final boolean isBasedOnImportFile, @PathVariable final int breedingMethodId) {
 		final Map<String, Object> out = new HashMap<>();
-		final Set<String> breedingMethods = this.studySelection.getImportedCrossesList().getImportedCrosses().stream()
+
+		if(isBasedOnImportFile) {
+			final Set<String> breedingMethods = this.studySelection.getImportedCrossesList().getImportedCrosses().stream()
 				.filter(cross -> !StringUtils.isEmpty(cross.getRawBreedingMethod())).map(ImportedCross::getRawBreedingMethod).collect(
 					Collectors.toSet());
-		final List<String> nonGenerativeBreedingMethodCodes = this.germplasmDataManager.getNonGenerativeMethodCodes(breedingMethods);
-		out.put(CrossingSettingsController.SUCCESS_KEY, Boolean.TRUE);
-		if(!CollectionUtils.isEmpty(nonGenerativeBreedingMethodCodes)) {
-			out.put(CrossingSettingsController.SUCCESS_KEY, Boolean.TRUE);
-			out.put(CrossingSettingsController.ERROR, this.messageSource.getMessage("error.crossing.non.generative.method",
-				new String[] {StringUtils.join(nonGenerativeBreedingMethodCodes, ", ")}, LocaleContextHolder.getLocale()));
+			final List<String> nonGenerativeBreedingMethodCodes = this.germplasmDataManager.getNonGenerativeMethodCodes(breedingMethods);
+			if (!CollectionUtils.isEmpty(nonGenerativeBreedingMethodCodes)) {
+				out.put(CrossingSettingsController.ERROR, this.messageSource.getMessage("error.crossing.non.generative.method",
+					new String[] {StringUtils.join(nonGenerativeBreedingMethodCodes, ", ")}, LocaleContextHolder.getLocale()));
+				return out;
+			}
+
+			final List<String> methodCodesWithOneMPRGN = this.germplasmDataManager.getMethodCodesWithOneMPRGN(breedingMethods);
+			if (!CollectionUtils.isEmpty(methodCodesWithOneMPRGN)) {
+				out.put(CrossingSettingsController.ERROR, this.messageSource.getMessage("error.crossing.method.mprgn.equals.one",
+					new String[] {StringUtils.join(methodCodesWithOneMPRGN, ", ")}, LocaleContextHolder.getLocale()));
+			}
+		} else {
+			final Method breedingMethod = this.germplasmDataManager.getMethodByID(breedingMethodId);
+			if(!MethodType.GENERATIVE.getCode().equals(breedingMethod.getMtype())) {
+				out.put(CrossingSettingsController.ERROR, this.messageSource.getMessage("error.crossing.selected.non.generative.method",
+					new String[] {breedingMethod.getMcode()}, LocaleContextHolder.getLocale()));
+			} else if (breedingMethod.getMprgn() == 1 ) {
+				out.put(CrossingSettingsController.ERROR, this.messageSource.getMessage("error.crossing.selected.method.mprgn.equals.one",
+					new String[] {breedingMethod.getMcode()}, LocaleContextHolder.getLocale()));
+			}
 		}
+
 		return out;
 	}
 

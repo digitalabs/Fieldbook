@@ -740,9 +740,11 @@ public class CrossingServiceImpl implements CrossingService {
 	}
 
 	private void processBreedingMethodParental(final ImportedCross importedCross) {
-		// If polycross, automatically return as "Single Cross""
+		// If polycross, automatically return as "SELECTED POLLEN CROSS"
 		if (importedCross.isPolyCross()) {
-			importedCross.setBreedingMethodId(Methods.SINGLE_CROSS.getMethodID());
+			importedCross.setBreedingMethodId(Methods.SELECTED_POLLEN_CROSS.getMethodID());
+		} else if(importedCross.getMaleGids().get(0) == 0) {
+			importedCross.setBreedingMethodId(Methods.OPEN_POLLINATION_HALF_SIB.getMethodID());
 		} else {
 			final Integer femaleGid = Integer.parseInt(importedCross.getFemaleGid());
 			final Integer maleGid = importedCross.getMaleGids().get(0);

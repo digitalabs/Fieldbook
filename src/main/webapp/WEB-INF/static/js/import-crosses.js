@@ -110,6 +110,8 @@ var ImportCrosses = {
 			if (ImportCrosses.isBreedingMethodSelectedValid()) {
 				$('#crossSetBreedingMethodModal').modal('hide');
 				setTimeout(ImportCrosses.showImportSettingsPopup, 500);
+			} else {
+				showErrorMessage('', $.fieldbookMessages.errorMethodMissing);
 			}
 		});
 
@@ -695,28 +697,7 @@ var ImportCrosses = {
 		var radioValue = $('#selectMethodForAllCrosses').prop('checked');
 		var breedingMethodId = $('#breedingMethodDropdown').select2('val');
 		if (radioValue && (!breedingMethodId || breedingMethodId === '')) {
-			showErrorMessage('', $.fieldbookMessages.errorMethodMissing);
 			return false;
-		} else if($('#selectMethodInImportFile').prop('checked')) {
-			var valid = true;
-			$.ajax({
-				url: ImportCrosses.CROSSES_URL + '/validateBreedingMethods',
-				type: 'GET',
-				cache: false,
-				async: false,
-				success: function(data) {
-					if (data.error) {
-						showErrorMessage('', data.error);
-						valid = false;
-					}
-
-				},
-				error: function(jqXHR, textStatus, errorThrown) {
-					console.log('The following error occured: ' + textStatus, errorThrown);
-				}
-			});
-			return valid;
-
 		} else {
 			return true;
 		}
@@ -817,7 +798,7 @@ var ImportCrosses = {
 		if (locationSelected && locationSelected.id) {
 			settingObject.additionalDetailsSetting.harvestLocationId = locationSelected.id;
 		}
-
+		
 		if ($('#harvestYearDropdown').val() !== '' && $('#harvestMonthDropdown').val() !== '') {
 			settingObject.additionalDetailsSetting.harvestDate = $('#harvestYearDropdown').val() + '-' + $('#harvestMonthDropdown').val() + '-01';
 		}

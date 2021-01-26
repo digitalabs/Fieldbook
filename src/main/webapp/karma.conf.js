@@ -78,7 +78,6 @@ module.exports = function (config) {
 			'WEB-INF/static/js/trialmanager/environments.js',
 			'WEB-INF/static/js/trialmanager/experimentalDesign.js',
 			'WEB-INF/static/js/trialmanager/subobservations/subObservationSet.js',
-			'WEB-INF/static/js/trialmanager/showSettingFormElementNew.js',
 			'WEB-INF/static/js/trialmanager/germplasm-selector/germplasm-selector-modal.js',
 			'WEB-INF/static/js/trialmanager/datasetService.js',
 			'WEB-INF/static/js/trialmanager/exportStudy.js',
@@ -92,6 +91,7 @@ module.exports = function (config) {
 			'WEB-INF/static/js/trialmanager/observations/change-plot-entry-modal.js',
 			'WEB-INF/static/js/trialmanager/observations/change-plot-entry-service.js',
 			'WEB-INF/static/js/trialmanager/location/locationService.js',
+			'WEB-INF/static/js/trialmanager/method/methodService.js',
 
 			// unit test files
 			'WEB-INF/static/js/angular-tests/lib/angular-mocks.js',

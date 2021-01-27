@@ -55,7 +55,7 @@ public class GenerateFieldmapControllerTest {
 	@InjectMocks
 	private GenerateFieldmapController generateFieldmapCtrlToTest;
 
-	private InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
+	private final InstallationDirectoryUtil installationDirectoryUtil = new InstallationDirectoryUtil();
 
 	@Before
 	public void setup() {
@@ -73,7 +73,7 @@ public class GenerateFieldmapControllerTest {
 		Mockito.when(this.request.getHeader("User-Agent")).thenReturn("RANDOM_BROWSER");
 
 		/* Call method to test, collect the output */
-		ResponseEntity<FileSystemResource> output = generateFieldmapCtrlToTest.exportExcel(this.request);
+		final ResponseEntity<FileSystemResource> output = this.generateFieldmapCtrlToTest.exportExcel(this.request);
 
 		// Verify that we performed the export operation
 		final ArgumentCaptor<String> filenameCaptor = ArgumentCaptor.forClass(String.class);
@@ -104,13 +104,13 @@ public class GenerateFieldmapControllerTest {
 		/*
 		 * Call method to test, expect the controller to throw an exception
 		 */
-		generateFieldmapCtrlToTest.exportExcel(this.request);
+		this.generateFieldmapCtrlToTest.exportExcel(this.request);
 
 	}
 
 	@Test
 	public void testMakeSafeFileName() throws Exception {
-		FileExportInfo exportInfo = this.generateFieldmapCtrlToTest.makeSafeFileName(GenerateFieldmapControllerTest.BLOCK_NAME);
+		final FileExportInfo exportInfo = this.generateFieldmapCtrlToTest.makeSafeFileName(GenerateFieldmapControllerTest.BLOCK_NAME);
 		final String[] outputFiles = exportInfo.getDownloadFileName().split("_");
 		final StringBuilder expected = new StringBuilder();
 		expected.append("_");

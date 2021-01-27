@@ -3,9 +3,9 @@
 		   tagging-label="false"
 		   append-to-body="true"
 		   theme="select2">
-	<ui-select-match placeholder="Please Choose">{{$select.selected.name}} - {{ $select.selected.code }}</ui-select-match>
+	<ui-select-match>{{$select.selected.displayDescription}}</ui-select-match>
 	<ui-select-choices refresh="fetch($select)" refresh-delay="300" repeat="methodItem.code as methodItem in methodItems | filter: $select.search track by $index">
-		<div title="{{::methodItem.name}} - {{::methodItem.code}}">{{::methodItem.name}} - {{::methodItem.code}}</div>
+		<div title="{{::methodItem.displayDescription}}">{{::methodItem.displayDescription}}</div>
 	</ui-select-choices>
 </ui-select>
 <div ng-if="hideTypes !== true"  class="possibleValuesDiv">

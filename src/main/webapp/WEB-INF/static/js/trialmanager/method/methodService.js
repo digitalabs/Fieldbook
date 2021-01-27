@@ -14,6 +14,12 @@
 
 				var request = $http.get(BASE_URL + '/breedingmethods?programUUID=' + studyContext.programId + '&favoritesOnly=' + favoritesOnly + '&methodTypes=' + methodTypes);
 				return request.then(((response) => {
+					// Concatenate name and code to form displayDescription
+					angular.forEach(response.data, function (method) {
+						method.displayDescription = method.name + ' - ' + method.code;
+					});
+					// Add a "Please Choose" option for resetting value to empty
+					response.data.unshift({"code":"", "name":"", "displayDescription":"Please Choose"});
 					return response;
 				}), failureHandler);
 			};

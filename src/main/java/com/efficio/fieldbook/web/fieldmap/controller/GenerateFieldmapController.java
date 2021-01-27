@@ -25,6 +25,7 @@ import org.generationcp.commons.constant.AppConstants;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.commons.util.ExportFileName;
 import org.generationcp.commons.util.InstallationDirectoryUtil;
 import org.generationcp.commons.util.StringUtil;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
@@ -184,7 +185,8 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController 
 	}
 
 	FileExportInfo makeSafeFileName(final String filename) throws IOException {
-		final String cleanFilename = filename.replace(" ", "") + "-" + DateUtil.getCurrentDateAsStringValue();
+		final String cleanFilename = ExportFileName.getInstance().generateFileName(filename.replace(" ", ""), AppConstants.EXPORT_XLS_SUFFIX
+			.getString(), false);
 		final String outputFilepath = this.installationDirectoryUtil.getTempFileInOutputDirectoryForProjectAndTool(cleanFilename, AppConstants.EXPORT_XLS_SUFFIX.getString(), this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
 		return new FileExportInfo(outputFilepath, cleanFilename + AppConstants.EXPORT_XLS_SUFFIX.getString());
 	}

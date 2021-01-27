@@ -62,8 +62,8 @@ public class ExportStudyEntriesController extends AbstractBaseFieldbookControlle
 
 	@ResponseBody
 	@RequestMapping(value = "/exportGermplasmList/{exportType}", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
-	public String exportStudyEntries(@ModelAttribute("exportGermplasmListForm") ExportGermplasmListForm exportGermplasmListForm,
-									 @PathVariable int exportType, HttpServletResponse response) throws GermplasmListExporterException {
+	public String exportStudyEntries(@ModelAttribute("exportGermplasmListForm") final ExportGermplasmListForm exportGermplasmListForm,
+									 @PathVariable final int exportType, final HttpServletResponse response) throws GermplasmListExporterException {
 
 		final String[] clientVisibleColumnTermIds = exportGermplasmListForm.getGermplasmListVisibleColumns().split(",");
 		final Map<String, Boolean> visibleColumnsMap = this.getVisibleColumnsMap(clientVisibleColumnTermIds);

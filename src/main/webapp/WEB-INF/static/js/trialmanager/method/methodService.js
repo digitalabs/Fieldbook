@@ -29,7 +29,8 @@
 				targetkey: '=',
 				valuecontainer: '=',
 				onMethodSelect: ' &',
-				hideTypes: '='
+				hideTypes: '=',
+				hideFavorites: '='
 			},
 			templateUrl: '/Fieldbook/static/angular-templates/method/methodSelect.html',
 			link: function (scope, element, attrs, paginationCtrl) {

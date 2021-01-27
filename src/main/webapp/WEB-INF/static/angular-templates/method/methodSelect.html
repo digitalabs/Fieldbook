@@ -20,7 +20,7 @@
 	<input type="radio" name="methodType" ng-model="localData.methodType" value="3" ng-click="fetch()">
 	<span th:text="#{show.all.methods}">All methods</span> &nbsp;
 </div>
-<div class="possibleValuesDiv">
+<div ng-if="hideFavorites !== true" class="possibleValuesDiv">
 	<input type="checkbox" name="method-favorite" ng-model="localData.useFavorites" ng-click="fetch()">
 	<span th:text="#{show.favorite.method}">Show only favorite methods </span>
 </div>

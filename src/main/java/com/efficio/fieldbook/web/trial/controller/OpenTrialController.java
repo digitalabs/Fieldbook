@@ -21,6 +21,7 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Term;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.domain.samplelist.SampleListDTO;
 import org.generationcp.middleware.enumeration.DatasetTypeEnum;
@@ -140,6 +141,11 @@ public class OpenTrialController extends BaseTrialController {
 	@ModelAttribute("unspecifiedLocationId")
 	public Integer unspecifiedLocationId() {
 		return this.getUnspecifiedLocationId();
+	}
+
+	@ModelAttribute("breedingMethodCodeScale")
+	public Integer breedingMethodCodeScale() {
+		return TermId.BREEDING_METHOD_SCALE.getId();
 	}
 
 	@ModelAttribute("operationMode")

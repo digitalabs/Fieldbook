@@ -363,7 +363,7 @@
 						uiSelect2.compile(tElement, tAttrs);
 					}
 				},
-				controller: function($scope, LOCATION_ID, BREEDING_METHOD_ID, BREEDING_METHOD_CODE, $http) {
+				controller: function($scope, BREEDING_METHOD_ID, BREEDING_METHOD_CODE) {
 					if ($scope.settingkey === undefined) {
 						$scope.settingkey = $scope.targetkey;
 					}
@@ -377,8 +377,6 @@
 					$scope.widgetType = $scope.variableDefinition.variable.widgetType.$name ?
 						$scope.variableDefinition.variable.widgetType.$name : $scope.variableDefinition.variable.widgetType;
 					$scope.hasDropdownOptions = $scope.widgetType === 'DROPDOWN';
-
-					$scope.isLocation = parseInt(LOCATION_ID, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);
 
                     $scope.isBreedingMethod = parseInt(BREEDING_METHOD_ID, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10) ||
 						parseInt(BREEDING_METHOD_CODE, 10) === parseInt($scope.variableDefinition.variable.cvTermId, 10);

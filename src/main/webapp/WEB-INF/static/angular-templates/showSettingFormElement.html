@@ -1,6 +1,6 @@
 <div ng-switch="widgetType">
     <div ng-switch-when="DROPDOWN">
-        <div ng-if="!isLocation && !isBreedingMethod">
+        <div ng-if="!isBreedingMethod">
             <ui-select name="name" theme="select2" search-enabled="false" ng-model="valuecontainer[targetkey]" ng-disabled="blockInput" style="width:100%" ng-change="changefunction()"
                        append-to-body="true">
                 <ui-select-match placeholder="Please Choose">{{valuecontainer[targetkey].description}}</ui-select-match>
@@ -8,9 +8,6 @@
                     <div ng-bind-html="option.description"></div>
                 </ui-select-choices>
             </ui-select>
-        </div>
-        <div ng-if="isLocation">
-            <locations-select valuecontainer="valuecontainer" targetkey="targetkey" on-location-select="changefunction()"></locations-select>
         </div>
         <div ng-if="isBreedingMethod">
             <methods-select valuecontainer="valuecontainer" targetkey="targetkey" on-method-select="changefunction()" hide-types="true" ></methods-select>

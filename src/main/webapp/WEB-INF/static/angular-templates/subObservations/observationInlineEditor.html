@@ -1,5 +1,8 @@
+<methods-select ng-if="isBreedingMethod" on-method-select="methodChanged()"
+				hide-types="true" hide-favorites="true" valuecontainer="valuecontainer" targetkey="targetkey"></methods-select>
+
 <input type="text"
-	   ng-if="columnData.dataTypeCode === 'N' || columnData.dataTypeCode === 'T'"
+	   ng-if="(columnData.dataTypeCode === 'N' || columnData.dataTypeCode === 'T') && !isBreedingMethod"
 	   ng-blur="observation.change()"
 	   ng-keyup="doBlur($event)"
 	   ng-model="observation.value"

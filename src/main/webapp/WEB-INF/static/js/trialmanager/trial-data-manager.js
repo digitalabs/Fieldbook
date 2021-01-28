@@ -30,10 +30,7 @@
 			var settingRegistry = {};
 			var settingsArray = [];
 			var saveEventListeners = {};
-            var TRIAL_LOCATION_NAME_INDEX = 8180;
 			var LOCATION_NAME_ID = 8190;
-			var TRIAL_INSTANCE_INDEX = 8170;
-			var selectedEnviromentOnMeasurementTab = {};
 			var propagateChange = function(targetRegistry, dataKey, newValue) {
 				if (targetRegistry[dataKey]) {
 					angular.forEach(targetRegistry[dataKey], function(updateFunction) {
@@ -219,7 +216,6 @@
 					advanceType: 'study',
 					hasNewInstanceAdded: false,
 					germplasmListSelected: GERMPLASM_LIST_SIZE > 0,
-					germplasmChangesUnsaved: false,
 					designTypes: [],
 					deleteEnvironmentCallback: function() {}
 				},

@@ -552,6 +552,7 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/createSample.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/derivedVariable.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/location/locationService.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/method/methodService.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/lib/angular/xlsx.full.min.js}"></script>
 
 	<!-- constants here -->
@@ -695,6 +696,7 @@
 			).constant('HAS_GENERATED_DESIGN', /*[[${hasGeneratedDesign}]]*/ ''
 			).constant('EXPERIMENTAL_DESIGN_SPECIAL_DATA', /*[[${experimentalDesignSpecialData}]]*/ ''
 			).constant('UNSPECIFIED_LOCATION_ID', /*[[${unspecifiedLocationId}]]*/ ''
+			).constant('BREEDING_METHOD_SCALE', /*[[${breedingMethodCodeScale}]]*/ ''
 			).constant('HAS_MEANS_DATASET', /*[[${hasMeansDataset}]]*/ ''
 			).constant('DESIGN_TYPE',
 				{

@@ -9,7 +9,7 @@
 
 	<properties>
         <ibpcommons.version>${project.version}</ibpcommons.version>
-		<spring.version>4.1.6.RELEASE</spring.version>
+		<spring.version>4.3.7.RELEASE</spring.version>
 		<spring.security.version>3.2.5.RELEASE</spring.security.version>
 		<envConfig>${user.name}</envConfig>
 		<node.version>v8.11.3</node.version>

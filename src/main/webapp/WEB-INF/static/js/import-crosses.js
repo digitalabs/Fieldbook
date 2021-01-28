@@ -481,7 +481,7 @@ var ImportCrosses = {
 			$("#breedingMethodSelectionDiv :input").attr("disabled", true);
 			$('#breedingMethodDropdown').select2('val', null);
 		}
-
+		$(".breeding-method-selector :input").attr("disabled", true);
 		if ($('#selectMethodInImportFile').prop('checked') && ImportCrosses.hasHybridMethod) {
 			$("#applyGroupingOptionDiv").show();
 		} else {

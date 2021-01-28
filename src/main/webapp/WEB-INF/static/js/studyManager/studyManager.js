@@ -19,7 +19,7 @@ function checkMethod() { //TODO ADVANCE
 
 		$('#method-variates-section').hide();
 		$('.method-selection-div').find('input,select').prop('disabled', false);
-
+		$('.breeding-method-selector :input').attr('disabled', true);
 		changeAdvanceBreedingMethod();
 	} else {
 		$('#method-variates-section').show();

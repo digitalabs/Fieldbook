@@ -74,26 +74,27 @@
 								</div>
 							</div>
 
-							<div class="row form-group">
+							<div class="breeding-method-selector">
+								<div class="row form-group">
 
-								<div class="col-sm-offset-6 col-xs-6 method-selection-div">
-									<label class="radio-inline non-maize-control">
-										<input id="showDerivativeAndMaintenanceRadio" name="advance_study_method_filter" value="1" type="radio" checked="checked" /> <span th:text="#{show.derivative.maintenance.method}">Derivative and Maintenance methods</span>
-										&nbsp;&nbsp;
-									</label>
+									<div class="col-sm-offset-6 col-xs-6 method-selection-div">
+										<label class="radio-inline non-maize-control">
+											<input id="showDerivativeAndMaintenanceRadio" name="advance_study_method_filter" value="1" type="radio" checked="checked" th:disabled="true"/> <span th:text="#{show.derivative.maintenance.method}">Derivative and Maintenance methods</span>
+											&nbsp;&nbsp;
+										</label>
+									</div>
+
 								</div>
+								<div class="row form-group">
 
-							</div>
+									<div class="col-sm-offset-6 col-xs-6 method-selection-div">
+										<label class="radio-inline non-maize-control">
+											<input id="showAllMethodsRadio" name="advance_study_method_filter" value="2" type="radio" th:disabled="true"/> <span th:text="#{show.all.methods}">All methods</span>
+											&nbsp;&nbsp;
+										</label>
+									</div>
 
-							<div class="row form-group">
-
-								<div class="col-sm-offset-6 col-xs-6 method-selection-div">
-									<label class="radio-inline non-maize-control">
-										<input id="showAllMethodsRadio" name="advance_study_method_filter" value="2" type="radio" /> <span th:text="#{show.all.methods}">All methods</span>
-										&nbsp;&nbsp;
-									</label>
 								</div>
-
 							</div>
 
 							<div class="row form-group">
@@ -429,8 +430,8 @@ $(function() {
 	$('#showFavoriteLocation, #showAllLocationOnlyRadio, #showBreedingLocationOnlyRadio').on('change', function() {
 		showCorrectLocationCombo();
 	});
-	
-	$('#showFavoriteMethod, #showAllMethodsRadio, #showDerivativeAndMaintenanceRadio').on('change', function() {
+
+	$('#showFavoriteMethod').on('change', function() {
 		showCorrectMethodCombo();
 	});
 
@@ -445,7 +446,7 @@ $(function() {
 
 	initializeMethodSelect2(methodSuggestions, methodSuggestions_obj, 'methodIdAll');
 	initializeMethodSelect2(methodSuggestionsFav, methodSuggestionsFav_obj, 'methodIdFavorite');
-	
+
 	setFavoriteMethodCheckbox();
 
 	var inputStudyLevelMethodElm = $('input.study-level-method');

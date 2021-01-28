@@ -8,7 +8,7 @@ import com.efficio.fieldbook.web.common.form.ExportGermplasmListForm;
 import com.efficio.fieldbook.web.common.service.ExportStudyEntriesService;
 import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
-import org.generationcp.commons.util.ExportFileName;
+import org.generationcp.commons.util.FileNameGenerator;
 import org.generationcp.commons.util.FileUtils;
 import org.generationcp.commons.util.InstallationDirectoryUtil;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -115,9 +115,9 @@ public class ExportStudyEntriesController extends AbstractBaseFieldbookControlle
 			try {
 				// TODO Extract export type "1" and "2" to meaningful constants or export type enum
 				if (exportType == 1) {
-					downloadFileName = ExportFileName.getInstance().generateFileName(EXPORTED_GERMPLASM_LIST, AppConstants.EXPORT_XLS_SUFFIX.getString());;
+					downloadFileName = FileNameGenerator.generateFileName(EXPORTED_GERMPLASM_LIST, AppConstants.EXPORT_XLS_SUFFIX.getString());;
 					outputFileNamePath =
-						this.installationDirectoryUtil.getTempFileInOutputDirectoryForProjectAndTool(ExportFileName.getInstance()
+						this.installationDirectoryUtil.getTempFileInOutputDirectoryForProjectAndTool(FileNameGenerator
 								.generateFileName(EXPORTED_GERMPLASM_LIST),
 							AppConstants.EXPORT_XLS_SUFFIX.getString(), this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
 
@@ -125,7 +125,7 @@ public class ExportStudyEntriesController extends AbstractBaseFieldbookControlle
 					response.setContentType(FileUtils.MIME_MS_EXCEL);
 
 				} else if (exportType == 2) {
-					downloadFileName = ExportFileName.getInstance().generateFileName(EXPORTED_GERMPLASM_LIST, AppConstants.EXPORT_CSV_SUFFIX.getString());
+					downloadFileName = FileNameGenerator.generateFileName(EXPORTED_GERMPLASM_LIST, AppConstants.EXPORT_CSV_SUFFIX.getString());
 					outputFileNamePath = this.installationDirectoryUtil.getTempFileInOutputDirectoryForProjectAndTool(
 						EXPORTED_GERMPLASM_LIST,
 						AppConstants.EXPORT_CSV_SUFFIX.getString(), this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);

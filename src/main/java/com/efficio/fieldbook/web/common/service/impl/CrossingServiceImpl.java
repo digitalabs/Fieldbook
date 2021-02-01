@@ -172,7 +172,7 @@ public class CrossingServiceImpl implements CrossingService {
 		}
 
 		public Map<Integer, StudyInstance> getStudyInstanceMap() {
-			return studyInstanceMap;
+			return this.studyInstanceMap;
 		}
 	}
 
@@ -537,7 +537,7 @@ public class CrossingServiceImpl implements CrossingService {
 	Germplasm createGermplasm(final ImportedCross cross, final Integer userId, final Integer harvestLocationId,
 		final String harvestDate) {
 
-		Germplasm germplasm;
+		final Germplasm germplasm;
 
 		// Retrieve the germplasm (cross) from database: In case of Study
 		// -> Crossing workflows, we expect the GID to always
@@ -570,7 +570,7 @@ public class CrossingServiceImpl implements CrossingService {
 
 	Name createName(final Germplasm germplasm, final ImportedCross cross, final Integer userId, final Integer harvestLocationId) {
 
-		Name name;
+		final Name name;
 
 		// In case of Study
 		// -> Crossing workflows, we expect the GID to always

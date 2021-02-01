@@ -314,7 +314,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 
 
 			final List<AdvanceGermplasmChangeDetail> changeDetails = new ArrayList<>();
-			final AdvancingSourceList list = getAdvancingSourceList(advancingStudy);
+			final AdvancingSourceList list = this.getAdvancingSourceList(advancingStudy);
 			final List<ImportedGermplasm> importedGermplasmList = this.createAdvanceList(advancingStudy, changeDetails, list);
 			final long id = DateUtil.getCurrentDate().getTime();
 			this.getPaginationListSelection().addAdvanceDetails(Long.toString(id), form);
@@ -343,7 +343,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			// Important to clear out the observations collection from user session, once we are done with it to keep heap memory under
 			// control. For large trials/nurseries the observations collection can be huge.
 			if (observationsLoaded) {
-				userSelection.getWorkbook().getObservations().clear();
+				this.userSelection.getWorkbook().getObservations().clear();
 			}
 		}
 		return results;
@@ -660,7 +660,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		}
 		// now we need to set the entry id again
 		for (int i = 0; i < importedGermplasmList.size(); i++) {
-			final Integer newEntryNumber = i + 1;
+			final int newEntryNumber = i + 1;
 			importedGermplasmList.get(i).setEntryNumber(newEntryNumber);
 			importedGermplasmList.get(i).setEntryCode(FieldbookUtil.generateEntryCode(newEntryNumber));
 

@@ -280,7 +280,7 @@ public class CrossingServiceImplTest {
 		studyInstance.setInstanceNumber(1);
 		studyInstances.add(studyInstance);
 
-		Mockito.doReturn(studyInstances).when(studyInstanceService).getStudyInstances(Mockito.anyInt());
+		Mockito.doReturn(studyInstances).when(this.studyInstanceService).getStudyInstances(Mockito.anyInt());
 
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
 		workbook.getStudyDetails().setId(new Random().nextInt());

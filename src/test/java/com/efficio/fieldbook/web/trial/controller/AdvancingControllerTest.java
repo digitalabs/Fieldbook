@@ -77,6 +77,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AdvancingControllerTest {
@@ -690,6 +691,24 @@ public class AdvancingControllerTest {
 		variable.setProperty(property);
 		variable.setMethod(method);
 		return variable;
+	}
+
+	@Test
+	public void testCheckForNonMaintenanceAndDerivativeMethods() {
+		final Workbook workbook = new Workbook();
+		workbook.setMeasurementDatesetId(1);
+		final Set<String> trialInstances = new HashSet<>(Arrays.asList("1", "2"));
+		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
+		final String generativeMethod = "UGM";
+		Mockito.when(this.studyDataManager.getNonMaintenanceAndDerivativeMethods(1, "1", new ArrayList<>(trialInstances)))
+			.thenReturn(Collections.singletonList(generativeMethod));
+		final String errorMessage = "error.advancing.study.non.maintenance.derivative.method";
+		Mockito.when(this.messageSource.getMessage(ArgumentMatchers.anyString(), ArgumentMatchers.any(String[].class),
+			ArgumentMatchers.eq(LocaleContextHolder.getLocale()))).thenReturn(errorMessage);
+
+		final Map<String, String> result = this.advancingController.checkForNonMaintenanceAndDerivativeMethods("1", trialInstances);
+		Assert.assertEquals(errorMessage, result.get("errors"));
+
 	}
 
 	@Test

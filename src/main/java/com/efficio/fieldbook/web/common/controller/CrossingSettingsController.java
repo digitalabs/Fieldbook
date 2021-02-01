@@ -280,17 +280,20 @@ public class CrossingSettingsController extends SettingsController {
 			final Set<String> breedingMethods = this.studySelection.getImportedCrossesList().getImportedCrosses().stream()
 				.filter(cross -> !StringUtils.isEmpty(cross.getRawBreedingMethod())).map(ImportedCross::getRawBreedingMethod).collect(
 					Collectors.toSet());
-			final List<String> nonGenerativeBreedingMethodCodes = this.germplasmDataManager.getNonGenerativeMethodCodes(breedingMethods);
-			if (!CollectionUtils.isEmpty(nonGenerativeBreedingMethodCodes)) {
-				out.put(CrossingSettingsController.ERROR, this.messageSource.getMessage("error.crossing.non.generative.method",
-					new String[] {StringUtils.join(nonGenerativeBreedingMethodCodes, ", ")}, LocaleContextHolder.getLocale()));
-				return out;
-			}
+			if(!CollectionUtils.isEmpty(breedingMethods)) {
+				final List<String> nonGenerativeBreedingMethodCodes =
+					this.germplasmDataManager.getNonGenerativeMethodCodes(breedingMethods);
+				if (!CollectionUtils.isEmpty(nonGenerativeBreedingMethodCodes)) {
+					out.put(CrossingSettingsController.ERROR, this.messageSource.getMessage("error.crossing.non.generative.method",
+						new String[] {StringUtils.join(nonGenerativeBreedingMethodCodes, ", ")}, LocaleContextHolder.getLocale()));
+					return out;
+				}
 
-			final List<String> methodCodesWithOneMPRGN = this.germplasmDataManager.getMethodCodesWithOneMPRGN(breedingMethods);
-			if (!CollectionUtils.isEmpty(methodCodesWithOneMPRGN)) {
-				out.put(CrossingSettingsController.ERROR, this.messageSource.getMessage("error.crossing.method.mprgn.equals.one",
-					new String[] {StringUtils.join(methodCodesWithOneMPRGN, ", ")}, LocaleContextHolder.getLocale()));
+				final List<String> methodCodesWithOneMPRGN = this.germplasmDataManager.getMethodCodesWithOneMPRGN(breedingMethods);
+				if (!CollectionUtils.isEmpty(methodCodesWithOneMPRGN)) {
+					out.put(CrossingSettingsController.ERROR, this.messageSource.getMessage("error.crossing.method.mprgn.equals.one",
+						new String[] {StringUtils.join(methodCodesWithOneMPRGN, ", ")}, LocaleContextHolder.getLocale()));
+				}
 			}
 		} else {
 			final Method breedingMethod = this.germplasmDataManager.getMethodByID(breedingMethodId);

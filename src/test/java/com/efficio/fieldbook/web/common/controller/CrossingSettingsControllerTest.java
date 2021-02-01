@@ -45,6 +45,8 @@ import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
+import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.pojos.MethodType;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.germplasm.GermplasmParent;
 import org.generationcp.middleware.pojos.presets.ProgramPreset;
@@ -550,6 +552,67 @@ public class CrossingSettingsControllerTest {
 		Assert.assertEquals(CrossingSettingsControllerTest.TEST_DUPLICATE, data.get(tableHeaderList.get(CrossesListUtil.DUPLICATE_INDEX)));
 		Assert.assertEquals(CrossingSettingsControllerTest.FEMALE_PEDIGREE, data.get(tableHeaderList.get(CrossesListUtil.FEMALE_PEDIGREE)));
 		Assert.assertEquals(CrossingSettingsControllerTest.MALE_PEDIGREE1, data.get(tableHeaderList.get(CrossesListUtil.MALE_PEDIGREE)));
+	}
+
+	@Test
+	public void testValidateBreedingMethodsBasedOnImportFileWithNonGenerativeMethod() {
+		final ImportedCross cross = new ImportedCross();
+		cross.setRawBreedingMethod("UBM");
+		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();
+		importedCrossesList.setImportedGermplasms(Collections.singletonList(cross));
+		Mockito.when(this.studySelection.getImportedCrossesList()).thenReturn(importedCrossesList);
+		Mockito.when(this.germplasmDataManager.getNonGenerativeMethodCodes(Collections.singleton(cross.getRawBreedingMethod())))
+			.thenReturn(Collections.singletonList(cross.getRawBreedingMethod()));
+
+		final String errorMessage = "error.crossing.non.generative.method";
+		Mockito.when(this.messageSource.getMessage(ArgumentMatchers.anyString(), ArgumentMatchers.any(String[].class),
+			ArgumentMatchers.eq(LocaleContextHolder.getLocale()))).thenReturn(errorMessage);
+		final Map<String, Object> result = this.crossingSettingsController.validateBreedingMethods(true, 0);
+		Assert.assertEquals(errorMessage, result.get(CrossingSettingsController.ERROR));
+	}
+
+	@Test
+	public void testValidateBreedingMethodsBasedOnImportFileWithMprgnEqualsOne() {
+		final ImportedCross cross = new ImportedCross();
+		cross.setRawBreedingMethod("UBM");
+		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();
+		importedCrossesList.setImportedGermplasms(Collections.singletonList(cross));
+		Mockito.when(this.studySelection.getImportedCrossesList()).thenReturn(importedCrossesList);
+		Mockito.when(this.germplasmDataManager.getMethodCodesWithOneMPRGN(Collections.singleton(cross.getRawBreedingMethod())))
+			.thenReturn(Collections.singletonList(cross.getRawBreedingMethod()));
+
+		final String errorMessage = "error.crossing.method.mprgn.equals.one";
+		Mockito.when(this.messageSource.getMessage(ArgumentMatchers.anyString(), ArgumentMatchers.any(String[].class),
+			ArgumentMatchers.eq(LocaleContextHolder.getLocale()))).thenReturn(errorMessage);
+		final Map<String, Object> result = this.crossingSettingsController.validateBreedingMethods(true, 0);
+		Assert.assertEquals(errorMessage, result.get(CrossingSettingsController.ERROR));
+	}
+
+	@Test
+	public void testValidateBreedingMethodNonGenerative() {
+		final Method method = new Method();
+		method.setMid(1);
+		method.setMtype(MethodType.DERIVATIVE.getCode());
+		Mockito.when(this.germplasmDataManager.getMethodByID(method.getMid())).thenReturn(method);
+		final String errorMessage = "error.crossing.selected.non.generative.method";
+		Mockito.when(this.messageSource.getMessage(ArgumentMatchers.anyString(), ArgumentMatchers.any(String[].class),
+			ArgumentMatchers.eq(LocaleContextHolder.getLocale()))).thenReturn(errorMessage);
+		final Map<String, Object> result = this.crossingSettingsController.validateBreedingMethods(false, method.getMid());
+		Assert.assertEquals(errorMessage, result.get(CrossingSettingsController.ERROR));
+	}
+
+	@Test
+	public void testValidateBreedingMethodMprgnEqualsOne() {
+		final Method method = new Method();
+		method.setMid(1);
+		method.setMtype(MethodType.GENERATIVE.getCode());
+		method.setMprgn(1);
+		Mockito.when(this.germplasmDataManager.getMethodByID(method.getMid())).thenReturn(method);
+		final String errorMessage = "error.crossing.selected.method.mprgn.equals.one";
+		Mockito.when(this.messageSource.getMessage(ArgumentMatchers.anyString(), ArgumentMatchers.any(String[].class),
+			ArgumentMatchers.eq(LocaleContextHolder.getLocale()))).thenReturn(errorMessage);
+		final Map<String, Object> result = this.crossingSettingsController.validateBreedingMethods(false, method.getMid());
+		Assert.assertEquals(errorMessage, result.get(CrossingSettingsController.ERROR));
 	}
 
 	@Test

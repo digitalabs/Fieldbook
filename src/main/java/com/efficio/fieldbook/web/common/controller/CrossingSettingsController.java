@@ -26,6 +26,9 @@ import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.middleware.api.breedingmethod.BreedingMethodDTO;
+import org.generationcp.middleware.api.breedingmethod.BreedingMethodSearchRequest;
+import org.generationcp.middleware.api.breedingmethod.BreedingMethodService;
 import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -114,6 +117,9 @@ public class CrossingSettingsController extends SettingsController {
 
 	@Resource
 	private UserService userService;
+
+	@Resource
+	private BreedingMethodService breedingMethodService;
 
 	/**
 	 * The germplasm list manager.
@@ -281,15 +287,24 @@ public class CrossingSettingsController extends SettingsController {
 				.filter(cross -> !StringUtils.isEmpty(cross.getRawBreedingMethod())).map(ImportedCross::getRawBreedingMethod).collect(
 					Collectors.toSet());
 			if(!CollectionUtils.isEmpty(breedingMethods)) {
-				final List<String> nonGenerativeBreedingMethodCodes =
-					this.germplasmDataManager.getNonGenerativeMethodCodes(breedingMethods);
-				if (!CollectionUtils.isEmpty(nonGenerativeBreedingMethodCodes)) {
+				final BreedingMethodSearchRequest breedingMethodSearchRequest = new BreedingMethodSearchRequest(null,
+					new ArrayList<>(breedingMethods), false);
+				breedingMethodSearchRequest.setMethodTypes(Collections.singletonList(MethodType.GENERATIVE.getCode()));
+				final List<BreedingMethodDTO> generativeBreedingMethodDtos = this.breedingMethodService
+					.getBreedingMethods(breedingMethodSearchRequest);
+
+				if (generativeBreedingMethodDtos.size() != breedingMethods.size()) {
+					final List<String> generativeBreedingMethodCodes = generativeBreedingMethodDtos.stream().map(BreedingMethodDTO::getCode)
+						.collect(Collectors.toList());
+					final List<String> nonGenerativeBreedingMethodCodes = breedingMethods.stream()
+						.filter(method -> !generativeBreedingMethodCodes.contains(method)).collect(Collectors.toList());
 					out.put(CrossingSettingsController.ERROR, this.messageSource.getMessage("error.crossing.non.generative.method",
 						new String[] {StringUtils.join(nonGenerativeBreedingMethodCodes, ", ")}, LocaleContextHolder.getLocale()));
 					return out;
 				}
 
-				final List<String> methodCodesWithOneMPRGN = this.germplasmDataManager.getMethodCodesWithOneMPRGN(breedingMethods);
+				final List<String> methodCodesWithOneMPRGN = generativeBreedingMethodDtos.stream()
+					.filter(dto -> dto.getNumberOfProgenitors() == 1).map(BreedingMethodDTO::getCode).collect(Collectors.toList());
 				if (!CollectionUtils.isEmpty(methodCodesWithOneMPRGN)) {
 					out.put(CrossingSettingsController.ERROR, this.messageSource.getMessage("error.crossing.method.mprgn.equals.one",
 						new String[] {StringUtils.join(methodCodesWithOneMPRGN, ", ")}, LocaleContextHolder.getLocale()));

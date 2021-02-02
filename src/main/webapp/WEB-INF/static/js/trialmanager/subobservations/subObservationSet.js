@@ -1695,12 +1695,21 @@
 					columnData: '=',
 					isCategoricalDescriptionView: '='
 				},
-				controller: function ($scope) {
+				controller: function ($scope, BREEDING_METHOD_SCALE) {
+					$scope.targetkey = 'observationValue';
+					$scope.valuecontainer = {observationValue : $scope.observation.value};
+					$scope.isBreedingMethod = parseInt(BREEDING_METHOD_SCALE, 10) === parseInt($scope.columnData.scaleId, 10);
 					$scope.doBlur = function ($event) {
 						if ($event.keyCode === 13) {
 							$event.target.blur();
 						}
 					}
+
+					$scope.valuecontainer.onOpenClose = function(isOpen) {
+						$scope.observation.value = $scope.valuecontainer.observationValue;
+						$scope.observation.onOpenClose(isOpen);
+					}
+
 				}
 			};
 		})

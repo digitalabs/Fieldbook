@@ -75,9 +75,6 @@ public class SettingsServiceImpl implements SettingsService {
 
 			final List<ValueReference> possibleValues = this.fieldbookService.getAllPossibleValues(id);
 			final SettingDetail settingDetail = new SettingDetail(svar, possibleValues, null, false);
-			if (id == TermId.BREEDING_METHOD_ID.getId() || id == TermId.BREEDING_METHOD_CODE.getId()) {
-				settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
-			}
 			settingDetail.setPossibleValuesToJson(possibleValues);
 			final List<ValueReference> possibleValuesFavorite = this.fieldbookService.getAllPossibleValuesFavorite(id, programUUID, false);
 			settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);

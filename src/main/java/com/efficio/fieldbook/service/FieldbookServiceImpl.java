@@ -290,22 +290,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		if (possibleValues.isEmpty()) {
 			DataType dataType = variable.getScale().getDataType();
 
-			// hacks to override the dataType(s)
-			if (TermId.BREEDING_METHOD_CODE.getId() == variable.getId()
-				|| TermId.BREEDING_METHOD_VARIATE_CODE.getId() == variable.getId()) {
-				dataType = DataType.BREEDING_METHOD;
-			}
-
 			switch (dataType) {
-				case BREEDING_METHOD:
-					possibleValues.add(new ValueReference(0, AppConstants.PLEASE_CHOOSE.getString(),
-						AppConstants.PLEASE_CHOOSE.getString()));
-					final List<ValueReference> allBreedingMethods = this.getAllBreedingMethods(
-						filtered,
-						this.contextUtil.getCurrentProgramUUID());
-					possibleValues.addAll(allBreedingMethods);
-					this.possibleValuesCache.addPossibleValuesByDataType(DataType.BREEDING_METHOD, allBreedingMethods);
-					break;
 				case LOCATION:
 					possibleValues = this.getLocations(filtered);
 					this.possibleValuesCache.addLocations(filtered, possibleValues);
@@ -377,23 +362,7 @@ public class FieldbookServiceImpl implements FieldbookService {
 		List<ValueReference> possibleValuesFavorite = new ArrayList<>();
 		DataType dataType = variable.getScale().getDataType();
 
-		// hacks to override the dataType(s)
-		if (TermId.BREEDING_METHOD_CODE.getId() == variable.getId()) {
-			dataType = DataType.BREEDING_METHOD;
-		}
-
-		if (DataType.BREEDING_METHOD.equals(dataType)) {
-			final List<Integer> methodIds = this.fieldbookMiddlewareService.getFavoriteProjectMethods(programUUID);
-			final List<ValueReference> list = new ArrayList<>();
-			list.add(new ValueReference(0, AppConstants.PLEASE_CHOOSE.getString(),
-				AppConstants.PLEASE_CHOOSE.getString()));
-			possibleValuesFavorite = list;
-
-			if (methodIds != null && !methodIds.isEmpty()) {
-				possibleValuesFavorite.addAll(this.getFavoriteBreedingMethods(methodIds, filtered));
-			}
-
-		} else if (DataType.LOCATION.equals(dataType)) {
+		if (DataType.LOCATION.equals(dataType)) {
 			final List<Integer> locationIds = this.fieldbookMiddlewareService
 				.getFavoriteProjectLocationIds(programUUID);
 
@@ -407,29 +376,6 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return possibleValuesFavorite;
 	}
 
-	public List<ValueReference> getFavoriteBreedingMethods(
-		final List<Integer> methodIDList,
-		final Boolean isFilterOutGenerative) {
-		final List<Method> methods = this.fieldbookMiddlewareService.getFavoriteMethods(
-			methodIDList,
-			isFilterOutGenerative);
-		return this.convertMethodsToValueReferences(methods);
-	}
-
-	private List<ValueReference> convertMethodsToValueReferences(final List<Method> methods) {
-		final List<ValueReference> list = new ArrayList<>();
-		if (methods != null && !methods.isEmpty()) {
-			for (final Method method : methods) {
-				if (method != null) {
-					final ValueReference valueReference = new ValueReference(method.getMid(), method.getMdesc(),
-						method.getMname() + " - " + method.getMcode());
-					valueReference.setKey(method.getMcode());
-					list.add(valueReference);
-				}
-			}
-		}
-		return list;
-	}
 
 	@Override
 	public List<ValueReference> getAllBreedingMethods(final boolean isFilterOutGenerative, final String programUUID) {

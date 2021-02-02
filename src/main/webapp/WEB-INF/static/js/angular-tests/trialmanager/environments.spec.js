@@ -87,7 +87,6 @@ describe('Measurement Controller', function () {
 		module('ui.router');
 		module('designImportApp');
 		module('ngLodash');
-		module('showSettingFormElementNew');
 		module('manageTrialApp');
 
 		module(function ($provide) {

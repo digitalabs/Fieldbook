@@ -278,11 +278,11 @@ public class CrossingSettingsController extends SettingsController {
 	 * @return a JSON result object
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/validateBreedingMethods/{isBasedOnImportFile}/{breedingMethodId}", method = RequestMethod.GET)
-	public Map<String, Object> validateBreedingMethods(@PathVariable final boolean isBasedOnImportFile, @PathVariable final int breedingMethodId) {
+	@RequestMapping(value = "/validateBreedingMethods", method = RequestMethod.GET)
+	public Map<String, Object> validateBreedingMethods(@RequestParam(required = false) final Integer breedingMethodId) {
 		final Map<String, Object> out = new HashMap<>();
 
-		if(isBasedOnImportFile) {
+		if(breedingMethodId == null) {
 			final Set<String> breedingMethods = this.studySelection.getImportedCrossesList().getImportedCrosses().stream()
 				.filter(cross -> !StringUtils.isEmpty(cross.getRawBreedingMethod())).map(ImportedCross::getRawBreedingMethod).collect(
 					Collectors.toSet());

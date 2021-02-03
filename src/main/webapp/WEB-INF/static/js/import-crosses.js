@@ -699,10 +699,10 @@ var ImportCrosses = {
 			return false;
 		} else if($('#selectMethodInImportFile').prop('checked') || $('#selectMethodForAllCrosses').prop('checked')) {
 			var valid = true;
-			var isBasedOnImportFile = $('#selectMethodInImportFile').prop('checked');
-			breedingMethodId = !breedingMethodId || breedingMethodId === '' ? 0 : breedingMethodId;
+			var validateBreedingMethodUrl = $('#selectMethodInImportFile').prop('checked') ? '/validateBreedingMethods':
+				'/validateBreedingMethods?breedingMethodId=' + breedingMethodId;
 			$.ajax({
-				url: ImportCrosses.CROSSES_URL + '/validateBreedingMethods/' + isBasedOnImportFile + '/' + breedingMethodId,
+				url: ImportCrosses.CROSSES_URL +  validateBreedingMethodUrl,
 				type: 'GET',
 				cache: false,
 				async: false,

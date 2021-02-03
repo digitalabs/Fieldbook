@@ -58,6 +58,7 @@ import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.pojos.MethodType;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.dataset.DatasetService;
@@ -736,8 +737,10 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/checkForNonMaintenanceAndDerivativeMethods/{id}/{trialInstances}", method = RequestMethod.GET)
 	public Map<String, String> checkForNonMaintenanceAndDerivativeMethods(@PathVariable final String id, @PathVariable final Set<String> trialInstances) throws MiddlewareQueryException {
 		final Map<String, String> result = new HashMap<>();
-		final List<String> nonAdvancingMethods = this.studyDataManager.getNonMaintenanceAndDerivativeMethods(this.userSelection.getWorkbook()
+		final List<Method> methods = this.studyDataManager.getMethodsFromExperiments(this.userSelection.getWorkbook()
 			.getMeasurementDatesetId(), id, new ArrayList<>(trialInstances));
+		final Set<String> nonAdvancingMethods = methods.stream().filter(method ->
+			!MethodType.getAdvancingMethodTypes().contains(method.getMtype())).map(Method::getMcode).collect(Collectors.toSet());
 		if(!CollectionUtils.isEmpty(nonAdvancingMethods)) {
 			result.put("errors", this.messageSource.getMessage("error.advancing.study.non.maintenance.derivative.method",
 				new String[] {StringUtils.join(nonAdvancingMethods, ", ")}, LocaleContextHolder.getLocale()));

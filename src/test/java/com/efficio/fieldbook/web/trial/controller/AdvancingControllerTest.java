@@ -45,6 +45,7 @@ import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.pojos.MethodType;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
@@ -699,9 +700,10 @@ public class AdvancingControllerTest {
 		workbook.setMeasurementDatesetId(1);
 		final Set<String> trialInstances = new HashSet<>(Arrays.asList("1", "2"));
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
-		final String generativeMethod = "UGM";
-		Mockito.when(this.studyDataManager.getNonMaintenanceAndDerivativeMethods(1, "1", new ArrayList<>(trialInstances)))
-			.thenReturn(Collections.singletonList(generativeMethod));
+		final Method method = new Method();
+		method.setMtype(MethodType.GENERATIVE.getCode());
+		Mockito.when(this.studyDataManager.getMethodsFromExperiments(1, "1", new ArrayList<>(trialInstances)))
+			.thenReturn(Collections.singletonList(method));
 		final String errorMessage = "error.advancing.study.non.maintenance.derivative.method";
 		Mockito.when(this.messageSource.getMessage(ArgumentMatchers.anyString(), ArgumentMatchers.any(String[].class),
 			ArgumentMatchers.eq(LocaleContextHolder.getLocale()))).thenReturn(errorMessage);

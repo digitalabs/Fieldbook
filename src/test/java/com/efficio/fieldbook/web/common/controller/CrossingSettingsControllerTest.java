@@ -30,6 +30,9 @@ import org.generationcp.commons.settings.CrossNameSetting;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.middleware.api.breedingmethod.BreedingMethodDTO;
+import org.generationcp.middleware.api.breedingmethod.BreedingMethodSearchRequest;
+import org.generationcp.middleware.api.breedingmethod.BreedingMethodService;
 import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.middleware.data.initializer.GermplasmTestDataInitializer;
 import org.generationcp.middleware.domain.etl.StudyDetails;
@@ -155,6 +158,9 @@ public class CrossingSettingsControllerTest {
 
 	@Mock
 	private StudyEntryService studyEntryService;
+
+	@Mock
+	private BreedingMethodService breedingMethodService;
 
 	private CrossesListUtil crossesListUtil;
 
@@ -561,13 +567,12 @@ public class CrossingSettingsControllerTest {
 		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();
 		importedCrossesList.setImportedGermplasms(Collections.singletonList(cross));
 		Mockito.when(this.studySelection.getImportedCrossesList()).thenReturn(importedCrossesList);
-		Mockito.when(this.germplasmDataManager.getNonGenerativeMethodCodes(Collections.singleton(cross.getRawBreedingMethod())))
-			.thenReturn(Collections.singletonList(cross.getRawBreedingMethod()));
-
+		Mockito.when(this.breedingMethodService.getBreedingMethods(ArgumentMatchers.any(BreedingMethodSearchRequest.class)))
+			.thenReturn(new ArrayList<>());
 		final String errorMessage = "error.crossing.non.generative.method";
 		Mockito.when(this.messageSource.getMessage(ArgumentMatchers.anyString(), ArgumentMatchers.any(String[].class),
 			ArgumentMatchers.eq(LocaleContextHolder.getLocale()))).thenReturn(errorMessage);
-		final Map<String, Object> result = this.crossingSettingsController.validateBreedingMethods(true, 0);
+		final Map<String, Object> result = this.crossingSettingsController.validateBreedingMethods(null);
 		Assert.assertEquals(errorMessage, result.get(CrossingSettingsController.ERROR));
 	}
 
@@ -578,13 +583,14 @@ public class CrossingSettingsControllerTest {
 		final ImportedCrossesList importedCrossesList = new ImportedCrossesList();
 		importedCrossesList.setImportedGermplasms(Collections.singletonList(cross));
 		Mockito.when(this.studySelection.getImportedCrossesList()).thenReturn(importedCrossesList);
-		Mockito.when(this.germplasmDataManager.getMethodCodesWithOneMPRGN(Collections.singleton(cross.getRawBreedingMethod())))
-			.thenReturn(Collections.singletonList(cross.getRawBreedingMethod()));
-
+		final BreedingMethodDTO method = new BreedingMethodDTO();
+		method.setNumberOfProgenitors(1);
+		Mockito.when(this.breedingMethodService.getBreedingMethods(ArgumentMatchers.any(BreedingMethodSearchRequest.class)))
+			.thenReturn(Collections.singletonList(method));
 		final String errorMessage = "error.crossing.method.mprgn.equals.one";
 		Mockito.when(this.messageSource.getMessage(ArgumentMatchers.anyString(), ArgumentMatchers.any(String[].class),
 			ArgumentMatchers.eq(LocaleContextHolder.getLocale()))).thenReturn(errorMessage);
-		final Map<String, Object> result = this.crossingSettingsController.validateBreedingMethods(true, 0);
+		final Map<String, Object> result = this.crossingSettingsController.validateBreedingMethods(null);
 		Assert.assertEquals(errorMessage, result.get(CrossingSettingsController.ERROR));
 	}
 
@@ -597,7 +603,7 @@ public class CrossingSettingsControllerTest {
 		final String errorMessage = "error.crossing.selected.non.generative.method";
 		Mockito.when(this.messageSource.getMessage(ArgumentMatchers.anyString(), ArgumentMatchers.any(String[].class),
 			ArgumentMatchers.eq(LocaleContextHolder.getLocale()))).thenReturn(errorMessage);
-		final Map<String, Object> result = this.crossingSettingsController.validateBreedingMethods(false, method.getMid());
+		final Map<String, Object> result = this.crossingSettingsController.validateBreedingMethods(method.getMid());
 		Assert.assertEquals(errorMessage, result.get(CrossingSettingsController.ERROR));
 	}
 
@@ -611,7 +617,7 @@ public class CrossingSettingsControllerTest {
 		final String errorMessage = "error.crossing.selected.method.mprgn.equals.one";
 		Mockito.when(this.messageSource.getMessage(ArgumentMatchers.anyString(), ArgumentMatchers.any(String[].class),
 			ArgumentMatchers.eq(LocaleContextHolder.getLocale()))).thenReturn(errorMessage);
-		final Map<String, Object> result = this.crossingSettingsController.validateBreedingMethods(false, method.getMid());
+		final Map<String, Object> result = this.crossingSettingsController.validateBreedingMethods(method.getMid());
 		Assert.assertEquals(errorMessage, result.get(CrossingSettingsController.ERROR));
 	}
 

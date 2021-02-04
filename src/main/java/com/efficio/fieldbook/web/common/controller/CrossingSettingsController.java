@@ -291,7 +291,7 @@ public class CrossingSettingsController extends SettingsController {
 					new ArrayList<>(breedingMethods), false);
 				breedingMethodSearchRequest.setMethodTypes(Collections.singletonList(MethodType.GENERATIVE.getCode()));
 				final List<BreedingMethodDTO> generativeBreedingMethodDtos = this.breedingMethodService
-					.getBreedingMethods(breedingMethodSearchRequest);
+					.getBreedingMethods(breedingMethodSearchRequest, null);
 
 				if (generativeBreedingMethodDtos.size() != breedingMethods.size()) {
 					final List<String> generativeBreedingMethodCodes = generativeBreedingMethodDtos.stream().map(BreedingMethodDTO::getCode)

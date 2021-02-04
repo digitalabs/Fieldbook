@@ -45,6 +45,7 @@ import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.pojos.MethodType;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
@@ -77,6 +78,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AdvancingControllerTest {
@@ -284,7 +286,7 @@ public class AdvancingControllerTest {
 		studyInstance.setInstanceNumber(1);
 		studyInstances.add(studyInstance);
 
-		Mockito.doReturn(studyInstances).when(studyInstanceService).getStudyInstances(Mockito.anyInt());
+		Mockito.doReturn(studyInstances).when(this.studyInstanceService).getStudyInstances(Mockito.anyInt());
 
 		final Method method = new Method();
 		method.setMtype("DER");
@@ -317,9 +319,9 @@ public class AdvancingControllerTest {
 	private AdvancingStudyForm preparePostAdvanceStudy()
 		throws MiddlewareException, FieldbookException {
 
-		final Integer studyId = new Random().nextInt();
+		final int studyId = new Random().nextInt();
 		final AdvancingStudyForm form = new AdvancingStudyForm();
-		form.setStudyId(studyId.toString());
+		form.setStudyId(Integer.toString(studyId));
 		form.setAdvanceType(AdvanceType.SAMPLE.getLowerCaseName());
 		form.setSelectedReplications(Collections.singleton("1"));
 		form.setSelectedTrialInstances(new HashSet<>(Arrays.asList("1", "2", "3")));
@@ -443,10 +445,10 @@ public class AdvancingControllerTest {
 
 	@Test
     public void testApplyChangeDetailsSuccess() throws IOException {
-        final List<ImportedGermplasm> importedGermplasmList = generateGermplasm();
+        final List<ImportedGermplasm> importedGermplasmList = this.generateGermplasm();
         Mockito.when(this.userSelection.getImportedAdvancedGermplasmList()).thenReturn(importedGermplasmList);
 
-        final AdvanceGermplasmChangeDetail[] advanceGermplasmChangeDetailArray = generateAdvanceGermPlasmChangeDetails();
+        final AdvanceGermplasmChangeDetail[] advanceGermplasmChangeDetailArray = this.generateAdvanceGermPlasmChangeDetails();
         final ObjectMapper mapper = new ObjectMapper();
         final String responseData = mapper.writeValueAsString(advanceGermplasmChangeDetailArray);
 
@@ -473,7 +475,7 @@ public class AdvancingControllerTest {
 
     @Test
     public void testShowAdvanceNurserySuccess(){
-        final List<ImportedGermplasm> importedGermplasmList = generateGermplasm();
+        final List<ImportedGermplasm> importedGermplasmList = this.generateGermplasm();
         Mockito.when(this.userSelection.getImportedAdvancedGermplasmList()).thenReturn(importedGermplasmList);
 
         final Term fromOntology = new Term();
@@ -514,7 +516,7 @@ public class AdvancingControllerTest {
     @Test
     public void testDeleteAdvanceNurseryEntriesSuccess(){
 
-        final List<ImportedGermplasm> importedGermplasmList = generateGermplasm();
+        final List<ImportedGermplasm> importedGermplasmList = this.generateGermplasm();
         Mockito.when(this.userSelection.getImportedAdvancedGermplasmList()).thenReturn(importedGermplasmList);
 
         Mockito.when(this.request.getParameter("entryNums")).thenReturn("0,1,2");
@@ -560,7 +562,7 @@ public class AdvancingControllerTest {
     @Test
     public void testCheckMethodTypeModeLineSuccess(){
         final Workbook workBook = new Workbook();
-        final List<MeasurementRow> observations = generateMeasurementRows();
+        final List<MeasurementRow> observations = this.generateMeasurementRows();
         workBook.setObservations(observations);
         Mockito.when(this.userSelection.getWorkbook()).thenReturn(workBook);
 
@@ -576,7 +578,7 @@ public class AdvancingControllerTest {
     @Test
     public void testCheckMethodTypeModeBulkSuccess(){
         final Workbook workBook = new Workbook();
-        final List<MeasurementRow> observations = generateMeasurementRows();
+        final List<MeasurementRow> observations = this.generateMeasurementRows();
         workBook.setObservations(observations);
         Mockito.when(this.userSelection.getWorkbook()).thenReturn(workBook);
 
@@ -593,7 +595,7 @@ public class AdvancingControllerTest {
     @Test
     public void testCheckMethodTypeModeMixedSuccess(){
         final Workbook workBook = new Workbook();
-        final List<MeasurementRow> observations = generateMeasurementRows();
+        final List<MeasurementRow> observations = this.generateMeasurementRows();
         workBook.setObservations(observations);
         Mockito.when(this.userSelection.getWorkbook()).thenReturn(workBook);
 
@@ -693,6 +695,25 @@ public class AdvancingControllerTest {
 	}
 
 	@Test
+	public void testCheckForNonMaintenanceAndDerivativeMethods() {
+		final Workbook workbook = new Workbook();
+		workbook.setMeasurementDatesetId(1);
+		final Set<String> trialInstances = new HashSet<>(Arrays.asList("1", "2"));
+		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
+		final Method method = new Method();
+		method.setMtype(MethodType.GENERATIVE.getCode());
+		Mockito.when(this.studyDataManager.getMethodsFromExperiments(1, "1", new ArrayList<>(trialInstances)))
+			.thenReturn(Collections.singletonList(method));
+		final String errorMessage = "error.advancing.study.non.maintenance.derivative.method";
+		Mockito.when(this.messageSource.getMessage(ArgumentMatchers.anyString(), ArgumentMatchers.any(String[].class),
+			ArgumentMatchers.eq(LocaleContextHolder.getLocale()))).thenReturn(errorMessage);
+
+		final Map<String, String> result = this.advancingController.checkForNonMaintenanceAndDerivativeMethods("1", trialInstances);
+		Assert.assertEquals(errorMessage, result.get("errors"));
+
+	}
+
+	@Test
 	public void testGenerateGermplasmList() throws MiddlewareQueryException {
 
 		final List<StudyInstance> studyInstances = new ArrayList<>();
@@ -701,7 +722,7 @@ public class AdvancingControllerTest {
 		studyInstance.setInstanceNumber(1);
 		studyInstances.add(studyInstance);
 
-		Mockito.doReturn(studyInstances).when(studyInstanceService).getStudyInstances(Mockito.anyInt());
+		Mockito.doReturn(studyInstances).when(this.studyInstanceService).getStudyInstances(Mockito.anyInt());
 
 
 		final AdvancingSourceList rows = new AdvancingSourceList();

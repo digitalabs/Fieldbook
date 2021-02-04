@@ -128,7 +128,7 @@
 		  init-method="init">
 		<constructor-arg value="${upload.directory}" />
 	</bean>
-	
+
 	<bean id="crossingService"
 		class="com.efficio.fieldbook.web.common.service.impl.CrossingServiceImpl" />
 
@@ -284,6 +284,11 @@
 
 	<bean id="ontologyVariableManager" factory-bean="managerFactory"
 		factory-method="getOntologyVariableDataManager" scope="request">
+		<aop:scoped-proxy />
+	</bean>
+
+	<bean id="breedingMethodService" factory-bean="managerFactory"
+		  factory-method="getBreedingMethodService" scope="request">
 		<aop:scoped-proxy />
 	</bean>
 

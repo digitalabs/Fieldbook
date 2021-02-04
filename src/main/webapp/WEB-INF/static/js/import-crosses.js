@@ -110,8 +110,6 @@ var ImportCrosses = {
 			if (ImportCrosses.isBreedingMethodSelectedValid()) {
 				$('#crossSetBreedingMethodModal').modal('hide');
 				setTimeout(ImportCrosses.showImportSettingsPopup, 500);
-			} else {
-				showErrorMessage('', $.fieldbookMessages.errorMethodMissing);
 			}
 		});
 
@@ -125,7 +123,7 @@ var ImportCrosses = {
 		});
 
 		BreedingMethodsFunctions.processMethodDropdownAndFavoritesCheckbox('breedingMethodDropdown', 'showFavoritesOnlyCheckbox',
-			'showAllMethodOnlyRadio', 'showBreedingMethodOnlyRadio');
+			'showAllMethodOnlyRadio', true);
 
 	},
 
@@ -483,7 +481,7 @@ var ImportCrosses = {
 			$("#breedingMethodSelectionDiv :input").attr("disabled", true);
 			$('#breedingMethodDropdown').select2('val', null);
 		}
-
+		$(".breeding-method-selector :input").attr("disabled", true);
 		if ($('#selectMethodInImportFile').prop('checked') && ImportCrosses.hasHybridMethod) {
 			$("#applyGroupingOptionDiv").show();
 		} else {
@@ -697,7 +695,30 @@ var ImportCrosses = {
 		var radioValue = $('#selectMethodForAllCrosses').prop('checked');
 		var breedingMethodId = $('#breedingMethodDropdown').select2('val');
 		if (radioValue && (!breedingMethodId || breedingMethodId === '')) {
+			showErrorMessage('', $.fieldbookMessages.errorMethodMissing);
 			return false;
+		} else if($('#selectMethodInImportFile').prop('checked') || $('#selectMethodForAllCrosses').prop('checked')) {
+			var valid = true;
+			var validateBreedingMethodUrl = $('#selectMethodInImportFile').prop('checked') ? '/validateBreedingMethods':
+				'/validateBreedingMethods?breedingMethodId=' + breedingMethodId;
+			$.ajax({
+				url: ImportCrosses.CROSSES_URL +  validateBreedingMethodUrl,
+				type: 'GET',
+				cache: false,
+				async: false,
+				success: function(data) {
+					if (data.error) {
+						showErrorMessage('', data.error);
+						valid = false;
+					}
+
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					console.log('The following error occured: ' + textStatus, errorThrown);
+				}
+			});
+			return valid;
+
 		} else {
 			return true;
 		}
@@ -798,7 +819,7 @@ var ImportCrosses = {
 		if (locationSelected && locationSelected.id) {
 			settingObject.additionalDetailsSetting.harvestLocationId = locationSelected.id;
 		}
-		
+
 		if ($('#harvestYearDropdown').val() !== '' && $('#harvestMonthDropdown').val() !== '') {
 			settingObject.additionalDetailsSetting.harvestDate = $('#harvestYearDropdown').val() + '-' + $('#harvestMonthDropdown').val() + '-01';
 		}

@@ -15,6 +15,8 @@ import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.generationcp.commons.constant.ToolSection;
 import org.generationcp.commons.parsing.FileParsingException;
 import org.generationcp.commons.parsing.pojo.ImportedCross;
@@ -24,6 +26,9 @@ import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.service.SettingsPresetService;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.middleware.api.breedingmethod.BreedingMethodDTO;
+import org.generationcp.middleware.api.breedingmethod.BreedingMethodSearchRequest;
+import org.generationcp.middleware.api.breedingmethod.BreedingMethodService;
 import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.middleware.domain.gms.GermplasmListType;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -59,6 +64,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormatSymbols;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(CrossingSettingsController.URL)
@@ -111,6 +117,9 @@ public class CrossingSettingsController extends SettingsController {
 
 	@Resource
 	private UserService userService;
+
+	@Resource
+	private BreedingMethodService breedingMethodService;
 
 	/**
 	 * The germplasm list manager.
@@ -261,6 +270,58 @@ public class CrossingSettingsController extends SettingsController {
 
 		return monthList;
 
+	}
+
+	/**
+	 * Validates the Breeding Methods in the import file
+	 *
+	 * @return a JSON result object
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/validateBreedingMethods", method = RequestMethod.GET)
+	public Map<String, Object> validateBreedingMethods(@RequestParam(required = false) final Integer breedingMethodId) {
+		final Map<String, Object> out = new HashMap<>();
+
+		if(breedingMethodId == null) {
+			final Set<String> breedingMethods = this.studySelection.getImportedCrossesList().getImportedCrosses().stream()
+				.filter(cross -> !StringUtils.isEmpty(cross.getRawBreedingMethod())).map(ImportedCross::getRawBreedingMethod).collect(
+					Collectors.toSet());
+			if(!CollectionUtils.isEmpty(breedingMethods)) {
+				final BreedingMethodSearchRequest breedingMethodSearchRequest = new BreedingMethodSearchRequest(null,
+					new ArrayList<>(breedingMethods), false);
+				breedingMethodSearchRequest.setMethodTypes(Collections.singletonList(MethodType.GENERATIVE.getCode()));
+				final List<BreedingMethodDTO> generativeBreedingMethodDtos = this.breedingMethodService
+					.getBreedingMethods(breedingMethodSearchRequest);
+
+				if (generativeBreedingMethodDtos.size() != breedingMethods.size()) {
+					final List<String> generativeBreedingMethodCodes = generativeBreedingMethodDtos.stream().map(BreedingMethodDTO::getCode)
+						.collect(Collectors.toList());
+					final List<String> nonGenerativeBreedingMethodCodes = breedingMethods.stream()
+						.filter(method -> !generativeBreedingMethodCodes.contains(method)).collect(Collectors.toList());
+					out.put(CrossingSettingsController.ERROR, this.messageSource.getMessage("error.crossing.non.generative.method",
+						new String[] {StringUtils.join(nonGenerativeBreedingMethodCodes, ", ")}, LocaleContextHolder.getLocale()));
+					return out;
+				}
+
+				final List<String> methodCodesWithOneMPRGN = generativeBreedingMethodDtos.stream()
+					.filter(dto -> dto.getNumberOfProgenitors() == 1).map(BreedingMethodDTO::getCode).collect(Collectors.toList());
+				if (!CollectionUtils.isEmpty(methodCodesWithOneMPRGN)) {
+					out.put(CrossingSettingsController.ERROR, this.messageSource.getMessage("error.crossing.method.mprgn.equals.one",
+						new String[] {StringUtils.join(methodCodesWithOneMPRGN, ", ")}, LocaleContextHolder.getLocale()));
+				}
+			}
+		} else {
+			final Method breedingMethod = this.germplasmDataManager.getMethodByID(breedingMethodId);
+			if(!MethodType.GENERATIVE.getCode().equals(breedingMethod.getMtype())) {
+				out.put(CrossingSettingsController.ERROR, this.messageSource.getMessage("error.crossing.selected.non.generative.method",
+					new String[] {breedingMethod.getMcode()}, LocaleContextHolder.getLocale()));
+			} else if (breedingMethod.getMprgn() == 1 ) {
+				out.put(CrossingSettingsController.ERROR, this.messageSource.getMessage("error.crossing.selected.method.mprgn.equals.one",
+					new String[] {breedingMethod.getMcode()}, LocaleContextHolder.getLocale()));
+			}
+		}
+
+		return out;
 	}
 
 	/**

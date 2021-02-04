@@ -25,6 +25,8 @@ import com.efficio.fieldbook.web.trial.bean.AdvanceType;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
 import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
 import com.google.common.collect.Sets;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.constant.AppConstants;
@@ -56,6 +58,7 @@ import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.pojos.MethodType;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.dataset.DatasetService;
@@ -216,7 +219,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		final String currentYear = sdf.format(currentDate);
 		form.setHarvestYear(currentYear);
 		form.setHarvestMonth(sdfMonth.format(currentDate));
-		
+
         form.setSelectedTrialInstances(selectedInstances);
 
 		model.addAttribute("yearChoices", this.generateYearChoices(Integer.parseInt(currentYear)));
@@ -275,7 +278,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	 * @param model the model
 	 * @return the string
 	 * @throws MiddlewareQueryException the middleware query exception
-	 * @throws FieldbookException 
+	 * @throws FieldbookException
 	 */
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
@@ -312,7 +315,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 
 
 			final List<AdvanceGermplasmChangeDetail> changeDetails = new ArrayList<>();
-			final AdvancingSourceList list = getAdvancingSourceList(advancingStudy);
+			final AdvancingSourceList list = this.getAdvancingSourceList(advancingStudy);
 			final List<ImportedGermplasm> importedGermplasmList = this.createAdvanceList(advancingStudy, changeDetails, list);
 			final long id = DateUtil.getCurrentDate().getTime();
 			this.getPaginationListSelection().addAdvanceDetails(Long.toString(id), form);
@@ -341,7 +344,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			// Important to clear out the observations collection from user session, once we are done with it to keep heap memory under
 			// control. For large trials/nurseries the observations collection can be huge.
 			if (observationsLoaded) {
-				userSelection.getWorkbook().getObservations().clear();
+				this.userSelection.getWorkbook().getObservations().clear();
 			}
 		}
 		return results;
@@ -658,7 +661,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		}
 		// now we need to set the entry id again
 		for (int i = 0; i < importedGermplasmList.size(); i++) {
-			final Integer newEntryNumber = i + 1;
+			final int newEntryNumber = i + 1;
 			importedGermplasmList.get(i).setEntryNumber(newEntryNumber);
 			importedGermplasmList.get(i).setEntryCode(FieldbookUtil.generateEntryCode(newEntryNumber));
 
@@ -728,7 +731,21 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		}
 		return this.fieldbookMiddlewareService.countPlotsWithRecordedVariatesInDataset(this.userSelection.getWorkbook()
 				.getMeasurementDatesetId(), idParams);
+	}
 
+	@ResponseBody
+	@RequestMapping(value = "/checkForNonMaintenanceAndDerivativeMethods/{id}/{trialInstances}", method = RequestMethod.GET)
+	public Map<String, String> checkForNonMaintenanceAndDerivativeMethods(@PathVariable final String id, @PathVariable final Set<String> trialInstances) throws MiddlewareQueryException {
+		final Map<String, String> result = new HashMap<>();
+		final List<Method> methods = this.studyDataManager.getMethodsFromExperiments(this.userSelection.getWorkbook()
+			.getMeasurementDatesetId(), id, new ArrayList<>(trialInstances));
+		final Set<String> nonAdvancingMethods = methods.stream().filter(method ->
+			!MethodType.getAdvancingMethodTypes().contains(method.getMtype())).map(Method::getMcode).collect(Collectors.toSet());
+		if(!CollectionUtils.isEmpty(nonAdvancingMethods)) {
+			result.put("errors", this.messageSource.getMessage("error.advancing.study.non.maintenance.derivative.method",
+				new String[] {StringUtils.join(nonAdvancingMethods, ", ")}, LocaleContextHolder.getLocale()));
+		}
+		return result;
 	}
 
 	@ResponseBody

@@ -238,12 +238,19 @@ public class CrossingServiceImplTest {
 	@Test
 	public void testProcessCrossBreedingMethodBasedOnParental() {
 		this.crossSetting.getBreedingMethodSetting().setMethodId(null);
-		this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
+		final ImportedCross cross = new ImportedCross();
+		final ImportedGermplasmParent femaleParent =
+			new ImportedGermplasmParent(CrossingServiceImplTest.TEST_FEMALE_GID_1, "FEMALE-12345", "");
+		femaleParent.setPlotNo(1);
+		cross.setFemaleParent(femaleParent);
+		final ImportedGermplasmParent maleParent = new ImportedGermplasmParent(0, "UNKNOWN", "UNKNOWN");
+		maleParent.setPlotNo(2);
+		cross.setMaleParents(Lists.newArrayList(maleParent));
+		cross.setDesig("Cros12345");
+		cross.setBreedingMethodId(123);
+		this.importedCrossesList.addImportedCrosses(cross);
 
-		this.setupMockCallsForGermplasm(CrossingServiceImplTest.TEST_FEMALE_GID_1);
-		this.setupMockCallsForGermplasm(CrossingServiceImplTest.TEST_MALE_GID_1);
-		this.setupMockCallsForGermplasm(CrossingServiceImplTest.TEST_FEMALE_GID_2);
-		this.setupMockCallsForGermplasm(CrossingServiceImplTest.TEST_MALE_GID_2);
+		this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
 
 		for (final ImportedCross importedCross : this.importedCrossesList.getImportedCrosses()) {
 			Assert.assertNotNull(
@@ -253,7 +260,9 @@ public class CrossingServiceImplTest {
 				"A method based on parental lines must be assigned to germplasms if user does not select a breeding method", 0,
 				importedCross.getBreedingMethodId());
 			if (importedCross.isPolyCross()) {
-				assertEquals(Methods.SINGLE_CROSS.getMethodID(), importedCross.getBreedingMethodId());
+				assertEquals(Methods.SELECTED_POLLEN_CROSS.getMethodID(), importedCross.getBreedingMethodId());
+			} else if (importedCross.getMaleParents().get(0).getGid().equals(0)) {
+				assertEquals(Methods.OPEN_POLLINATION_HALF_SIB.getMethodID(), importedCross.getBreedingMethodId());
 			}
 		}
 	}
@@ -271,7 +280,7 @@ public class CrossingServiceImplTest {
 		studyInstance.setInstanceNumber(1);
 		studyInstances.add(studyInstance);
 
-		Mockito.doReturn(studyInstances).when(studyInstanceService).getStudyInstances(Mockito.anyInt());
+		Mockito.doReturn(studyInstances).when(this.studyInstanceService).getStudyInstances(Mockito.anyInt());
 
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
 		workbook.getStudyDetails().setId(new Random().nextInt());

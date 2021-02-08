@@ -303,7 +303,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 				if ("GEN".equals(method.getMtype())) {
 					form.setErrorInAdvance(this.messageSource.getMessage("study.save.advance.error.generative.method",
 							new String[] {}, LocaleContextHolder.getLocale()));
-					form.setGermplasmList(new ArrayList<ImportedGermplasm>());
+					form.setGermplasmList(new ArrayList<>());
 					form.setEntries(0);
 					results.put(AdvancingController.IS_SUCCESS, "0");
 					results.put(AdvancingController.LIST_SIZE, 0);
@@ -734,8 +734,8 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/checkForNonMaintenanceAndDerivativeMethods/{id}/{trialInstances}", method = RequestMethod.GET)
-	public Map<String, String> checkForNonMaintenanceAndDerivativeMethods(@PathVariable final String id, @PathVariable final Set<String> trialInstances) throws MiddlewareQueryException {
+	@RequestMapping(value = "/checkForNonMaintenanceAndDerivativeMethods/{id}", method = RequestMethod.GET)
+	public Map<String, String> checkForNonMaintenanceAndDerivativeMethods(@PathVariable final Integer id, @RequestParam final Set<String> trialInstances) throws MiddlewareQueryException {
 		final Map<String, String> result = new HashMap<>();
 		final List<Method> methods = this.studyDataManager.getMethodsFromExperiments(this.userSelection.getWorkbook()
 			.getMeasurementDatesetId(), id, new ArrayList<>(trialInstances));
@@ -750,35 +750,27 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/checkMethodTypeMode/{methodVariateId}", method = RequestMethod.GET)
-	public String checkMethodTypeMode(@PathVariable final int methodVariateId) throws MiddlewareQueryException {
-		final List<MeasurementRow> observations = this.userSelection.getWorkbook().getObservations();
-		if (observations != null && !observations.isEmpty()) {
-			final Set<Integer> methodIds = new HashSet<>();
-			for (final MeasurementRow row : observations) {
-				final String value = row.getMeasurementDataValue(methodVariateId);
-				if (value != null && NumberUtils.isNumber(value)) {
-					methodIds.add(Double.valueOf(value).intValue());
+	public String checkMethodTypeMode(@PathVariable final int methodVariateId, @RequestParam final Set<String> trialInstances) throws MiddlewareQueryException {
+		final List<Method> methods = this.studyDataManager.getMethodsFromExperiments(this.userSelection.getWorkbook()
+			.getMeasurementDatesetId(), methodVariateId, new ArrayList<>(trialInstances));
+
+		if (!methods.isEmpty()) {
+			boolean isBulk = false;
+			boolean isLine = false;
+			for (final Method method : methods) {
+				if (method.isBulkingMethod() != null && method.isBulkingMethod()) {
+					isBulk = true;
+				} else if (method.isBulkingMethod() != null && !method.isBulkingMethod()) {
+					isLine = true;
+				}
+				if (isBulk && isLine) {
+					return "MIXED";
 				}
 			}
-			if (!methodIds.isEmpty()) {
-				final List<Method> methods = this.germplasmDataManager.getMethodsByIDs(new ArrayList<>(methodIds));
-				boolean isBulk = false;
-				boolean isLine = false;
-				for (final Method method : methods) {
-					if (method.isBulkingMethod() != null && method.isBulkingMethod()) {
-						isBulk = true;
-					} else if (method.isBulkingMethod() != null && !method.isBulkingMethod()) {
-						isLine = true;
-					}
-					if (isBulk && isLine) {
-						return "MIXED";
-					}
-				}
-				if (isBulk) {
-					return "BULK";
-				} else {
-					return "LINE";
-				}
+			if (isBulk) {
+				return "BULK";
+			} else {
+				return "LINE";
 			}
 		}
 		final Locale locale = LocaleContextHolder.getLocale();

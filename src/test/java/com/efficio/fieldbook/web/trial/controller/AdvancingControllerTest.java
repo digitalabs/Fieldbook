@@ -571,7 +571,7 @@ public class AdvancingControllerTest {
         nonBulkMethod.setGeneq(1510);
         methods.add(nonBulkMethod);
         Mockito.when(this.germplasmDataManager.getMethodsByIDs(Mockito.isA(List.class))).thenReturn(methods);
-        final String methodType = this.advancingController.checkMethodTypeMode(12);
+        final String methodType = this.advancingController.checkMethodTypeMode(12, Collections.singleton("1"));
         Assert.assertEquals("LINE",methodType);
     }
 
@@ -588,7 +588,7 @@ public class AdvancingControllerTest {
         methods.add(bulkMethod);
 
         Mockito.when(this.germplasmDataManager.getMethodsByIDs(Mockito.isA(List.class))).thenReturn(methods);
-        final String methodType = this.advancingController.checkMethodTypeMode(12);
+        final String methodType = this.advancingController.checkMethodTypeMode(12, Collections.singleton("1"));
         Assert.assertEquals("BULK",methodType);
     }
 
@@ -611,7 +611,7 @@ public class AdvancingControllerTest {
 
 
         Mockito.when(this.germplasmDataManager.getMethodsByIDs(Mockito.isA(List.class))).thenReturn(methods);
-        final String methodType = this.advancingController.checkMethodTypeMode(12);
+        final String methodType = this.advancingController.checkMethodTypeMode(12, Collections.singleton("1"));
         Assert.assertEquals("MIXED",methodType);
     }
 
@@ -624,7 +624,7 @@ public class AdvancingControllerTest {
         Mockito.when(this.userSelection.getWorkbook()).thenReturn(workBook);
         Mockito.when(this.messageSource.getMessage(Mockito.isA(String.class),Mockito.any(Object[].class),Mockito.isA(Locale.class))).thenReturn("The nursery has no methods defined under");
 
-        final String methodType = this.advancingController.checkMethodTypeMode(12);
+        final String methodType = this.advancingController.checkMethodTypeMode(12, Collections.singleton("1"));
         Assert.assertTrue(methodType.contains("The nursery has no methods defined under"));
     }
 
@@ -702,13 +702,13 @@ public class AdvancingControllerTest {
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
 		final Method method = new Method();
 		method.setMtype(MethodType.GENERATIVE.getCode());
-		Mockito.when(this.studyDataManager.getMethodsFromExperiments(1, "1", new ArrayList<>(trialInstances)))
+		Mockito.when(this.studyDataManager.getMethodsFromExperiments(1, 1, new ArrayList<>(trialInstances)))
 			.thenReturn(Collections.singletonList(method));
 		final String errorMessage = "error.advancing.study.non.maintenance.derivative.method";
 		Mockito.when(this.messageSource.getMessage(ArgumentMatchers.anyString(), ArgumentMatchers.any(String[].class),
 			ArgumentMatchers.eq(LocaleContextHolder.getLocale()))).thenReturn(errorMessage);
 
-		final Map<String, String> result = this.advancingController.checkForNonMaintenanceAndDerivativeMethods("1", trialInstances);
+		final Map<String, String> result = this.advancingController.checkForNonMaintenanceAndDerivativeMethods(1, trialInstances);
 		Assert.assertEquals(errorMessage, result.get("errors"));
 
 	}

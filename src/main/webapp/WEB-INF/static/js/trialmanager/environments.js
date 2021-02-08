@@ -577,6 +577,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 			},
 			templateUrl: '/Fieldbook/static/angular-templates/instanceInlineEditor.html',
 			link: function ($scope, element, attrs) {
+				$scope.initializeDropdownForCategoricalVariable();
 				// Stop bubbling of click event so to not interfere with
 				// the container's click event.
 				$(element).click(function (event) {
@@ -584,6 +585,7 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				});
 			},
 			controller: function ($scope, LOCATION_ID, UNSPECIFIED_LOCATION_ID, BREEDING_METHOD_ID, BREEDING_METHOD_CODE, $http, locationService) {
+				$scope.localData = {};
 				$scope.variableDefinition = $scope.settings.val($scope.settingkey);
 				$scope.widgetType = $scope.variableDefinition.variable.widgetType.$name ?
 					$scope.variableDefinition.variable.widgetType.$name : $scope.variableDefinition.variable.widgetType;
@@ -596,6 +598,12 @@ environmentModalConfirmationText, environmentConfirmLabel, showAlertMessage, sho
 				$scope.locationChanged = function () {
 					$scope.instance.change();
 				}
+
+				$scope.initializeDropdownForCategoricalVariable = function () {
+					if ($scope.hasDropdownOptions && !$scope.isLocation && !$scope.isBreedingMethod) {
+						$scope.localData.dropdownValues = $scope.variableDefinition.allValues;
+					}
+				};
 
 			}
 		};

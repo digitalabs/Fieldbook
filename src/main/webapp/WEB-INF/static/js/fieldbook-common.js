@@ -1454,11 +1454,36 @@ function validateBreedingMethod() {
 	return valid;
 }
 
+function displaySectionsPerMethodVariateValues() { //TODO advance
+	'use strict';
+	var id = $('#methodVariateId').val();
+	var trialInstances = $('#selectedTrialInstances').val();
+	if (id !== '') {
+		$.ajax({
+			url: '/Fieldbook/StudyManager/advance/study/checkMethodTypeMode/' + id
+				+ '?trialInstances=' + encodeURIComponent(trialInstances),
+			type: 'GET',
+			cache: false,
+			success: function(data) {
+				if (data === 'LINE') {
+					$('.lines-section').css('display', 'block');
+				} else if (data === 'BULK') {
+					$('.bulk-section').css('display', 'block');
+				} else if (data === 'MIXED') {
+					$('.lines-section').css('display', 'block');
+					$('.bulk-section').css('display', 'block');
+				}
+			}
+		});
+	}
+}
+
 function validateBreedingMethodValues(id) {
 	var valid = true;
+	var trialInstances = $('#selectedTrialInstances').val();
 	$.ajax({
-		url: '/Fieldbook/StudyManager/advance/study//checkForNonMaintenanceAndDerivativeMethods/' + id + '/' +
-			$('#selectedTrialInstances').val(),
+		url: '/Fieldbook/StudyManager/advance/study/checkForNonMaintenanceAndDerivativeMethods/' + id
+			+ '?trialInstances=' + encodeURIComponent(trialInstances),
 		type: 'GET',
 		cache: false,
 		async: false,

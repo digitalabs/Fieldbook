@@ -48,28 +48,6 @@ function checkMethod() { //TODO ADVANCE
 	}
 }
 
-function displaySectionsPerMethodVariateValues() { //TODO ADVANCE
-	'use strict';
-	var id = $('#methodVariateId').val();
-	if (id !== '') {
-		$.ajax({
-			url: '/Fieldbook/StudyManager/advance/study/checkMethodTypeMode/' + id,
-			type: 'GET',
-			cache: false,
-			success: function(data) {
-				if (data === 'LINE') {
-					$('.lines-section').css('display', 'block');
-				} else if (data === 'BULK') {
-					$('.bulk-section').css('display', 'block');
-				} else if (data === 'MIXED') {
-					$('.lines-section').css('display', 'block');
-					$('.bulk-section').css('display', 'block');
-				}
-			}
-		});
-	}
-}
-
 function lineMethod() { //TODO ADVANCE
 	var $lineCheckBox = $('input[type=checkbox][name=lineChoice]');
 

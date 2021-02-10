@@ -107,16 +107,10 @@ public class AdvancingControllerTest {
     private HttpServletRequest request;
 
     @Mock
-    private HttpSession session;
-
-    @Mock
     private FieldbookProperties fieldbookProperties;
 
     @Mock
     private ContextUtil contextUtil;
-
-    @Mock
-    private GermplasmDataManager germplasmDataManager;
 
 	@Mock
 	private DatasetService datasetService;
@@ -197,7 +191,7 @@ public class AdvancingControllerTest {
 		final AdvancingStudyForm form = this.preparePostAdvanceStudy(method);
 
 		// scenario 1, has a method choice and breeding method not a Generative
-		final Map<String, Object> output = this.advancingController.postAdvanceStudy(form, null, null);
+		final Map<String, Object> output = this.advancingController.postAdvanceStudy(form);
 
 		Assert.assertEquals("should be successful", "1", output.get("isSuccess"));
 		Assert.assertEquals("should have at least 1 imported germplasm list",3, output.get("listSize"));
@@ -222,7 +216,7 @@ public class AdvancingControllerTest {
 
 		final AdvancingStudyForm form = this.preparePostAdvanceStudy();
 		form.setMethodChoice(null);
-		final Map<String, Object> output = this.advancingController.postAdvanceStudy(form, null, null);
+		final Map<String, Object> output = this.advancingController.postAdvanceStudy(form);
 
 		Assert.assertEquals("should be successful", "1", output.get("isSuccess"));
 		Assert.assertEquals("should have at least 1 imported germplasm list",3, output.get("listSize"));
@@ -296,7 +290,7 @@ public class AdvancingControllerTest {
 
 
 		// scenario 2, has a method throwing exception
-		final Map<String, Object> output = this.advancingController.postAdvanceStudy(form, null, null);
+		final Map<String, Object> output = this.advancingController.postAdvanceStudy(form);
 
 		Assert.assertEquals("should fail", "0", output.get("isSuccess"));
 		Assert.assertEquals("should have at least 0 imported germplasm list", 0, output.get("listSize"));
@@ -309,7 +303,7 @@ public class AdvancingControllerTest {
 		final AdvancingStudyForm form = this.preparePostAdvanceStudy(method);
 
 		// scenario 2, has a method throwing exception
-		final Map<String, Object> output = this.advancingController.postAdvanceStudy(form, null, null);
+		final Map<String, Object> output = this.advancingController.postAdvanceStudy(form);
 
 		Assert.assertEquals("should fail", "0", output.get("isSuccess"));
 		Assert.assertEquals("should have at least 0 imported germplasm list", 0, output.get("listSize"));
@@ -407,6 +401,7 @@ public class AdvancingControllerTest {
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(10, StudyTypeDto.getTrialDto());
 		WorkbookTestDataInitializer.setTrialObservations(workbook);
 		workbook.getStudyDetails().setId(1011);
+		workbook.setMeansDatasetId(1357);
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
 		final Variable variable = this.createSelectionVariable();
 		final MeasurementVariable measurementVariable = new MeasurementVariable();
@@ -426,7 +421,7 @@ public class AdvancingControllerTest {
         final AdvancingStudyForm form = new AdvancingStudyForm();
         final Model model = new ExtendedModelMap();
 
-		final String returnTemplatePage = this.advancingController.show(form, model, this.request, this.session, 212, null, null, null);
+		final String returnTemplatePage = this.advancingController.show(form, model, 212, null, null, null);
 
         Assert.assertEquals("StudyManager/advanceStudyModal",returnTemplatePage);
         final Map<String,Object> modelMap = model.asMap();
@@ -490,7 +485,7 @@ public class AdvancingControllerTest {
         final AdvancingStudyForm form = new AdvancingStudyForm();
         final Model model = new ExtendedModelMap();
 
-        final String templateUrl = this.advancingController.showAdvanceStudy(form,null,model,this.request);
+        final String templateUrl = this.advancingController.showAdvanceStudy(form, model,this.request);
         Assert.assertEquals("StudyManager/saveAdvanceStudy",templateUrl);
         final Map<String,Object> modelMap = model.asMap();
         final List<Map<String, Object>> listOfGermPlasm = (List<Map<String, Object>>)modelMap.get("advanceDataList");
@@ -506,7 +501,7 @@ public class AdvancingControllerTest {
     @Test
     public void testShowAdvanceNurseryThrowNumberFormatException(){
         final AdvancingStudyForm form = new AdvancingStudyForm();
-        final String templateUrl = this.advancingController.showAdvanceStudy(form,null,null,this.request);
+        final String templateUrl = this.advancingController.showAdvanceStudy(form,null, this.request);
 
         Assert.assertEquals(0,form.getEntries());
         Assert.assertEquals(0,form.getGermplasmList().size());
@@ -526,7 +521,7 @@ public class AdvancingControllerTest {
         final AdvancingStudyForm form = new AdvancingStudyForm();
         final Model model = new ExtendedModelMap();
 
-        final String templateUrl = this.advancingController.deleteAdvanceStudyEntries(form,null,model,this.request);
+        final String templateUrl = this.advancingController.deleteAdvanceStudyEntries(form, model,this.request);
 
         Assert.assertEquals("StudyManager/saveAdvanceStudy",templateUrl);
         final Map<String,Object> modelMap = model.asMap();
@@ -541,7 +536,7 @@ public class AdvancingControllerTest {
     @Test
     public void testDeleteAdvanceNurseryEntriesSuccessThrowNumberFormatException(){
         final AdvancingStudyForm form = new AdvancingStudyForm();
-        final String templateUrl = this.advancingController.deleteAdvanceStudyEntries(form,null,null,this.request);
+        final String templateUrl = this.advancingController.deleteAdvanceStudyEntries(form,null,this.request);
 
         Assert.assertEquals(0,form.getEntries());
         Assert.assertEquals(0,form.getGermplasmList().size());
@@ -562,7 +557,10 @@ public class AdvancingControllerTest {
     @Test
     public void testCheckMethodTypeModeLineSuccess(){
         final Workbook workBook = new Workbook();
-        final List<MeasurementRow> observations = this.generateMeasurementRows();
+		final int plotDatasetId = new Random().nextInt();
+		workBook.setMeasurementDatesetId(plotDatasetId);
+
+		final List<MeasurementRow> observations = this.generateMeasurementRows();
         workBook.setObservations(observations);
         Mockito.when(this.userSelection.getWorkbook()).thenReturn(workBook);
 
@@ -570,14 +568,18 @@ public class AdvancingControllerTest {
         final Method nonBulkMethod = new Method();
         nonBulkMethod.setGeneq(1510);
         methods.add(nonBulkMethod);
-        Mockito.when(this.germplasmDataManager.getMethodsByIDs(Mockito.isA(List.class))).thenReturn(methods);
-        final String methodType = this.advancingController.checkMethodTypeMode(12, Collections.singleton("1"));
-        Assert.assertEquals("LINE",methodType);
+		final int methodVariateId = 12;
+		final Set<String> trialInstances = Collections.singleton("1");
+		Mockito.when(this.studyDataManager.getMethodsFromExperiments(plotDatasetId, methodVariateId, new ArrayList<>(trialInstances))).thenReturn(methods);
+		final String methodType = this.advancingController.checkMethodTypeMode(methodVariateId,trialInstances);
+		Assert.assertEquals("LINE",methodType);
     }
 
     @Test
     public void testCheckMethodTypeModeBulkSuccess(){
         final Workbook workBook = new Workbook();
+		final int plotDatasetId = new Random().nextInt();
+		workBook.setMeasurementDatesetId(plotDatasetId);
         final List<MeasurementRow> observations = this.generateMeasurementRows();
         workBook.setObservations(observations);
         Mockito.when(this.userSelection.getWorkbook()).thenReturn(workBook);
@@ -587,14 +589,18 @@ public class AdvancingControllerTest {
         bulkMethod.setGeneq(1490);
         methods.add(bulkMethod);
 
-        Mockito.when(this.germplasmDataManager.getMethodsByIDs(Mockito.isA(List.class))).thenReturn(methods);
-        final String methodType = this.advancingController.checkMethodTypeMode(12, Collections.singleton("1"));
+		final int methodVariateId = 12;
+		final Set<String> trialInstances = Collections.singleton("1");
+		Mockito.when(this.studyDataManager.getMethodsFromExperiments(plotDatasetId, methodVariateId, new ArrayList<>(trialInstances))).thenReturn(methods);
+		final String methodType = this.advancingController.checkMethodTypeMode(methodVariateId,trialInstances);
         Assert.assertEquals("BULK",methodType);
     }
 
     @Test
     public void testCheckMethodTypeModeMixedSuccess(){
         final Workbook workBook = new Workbook();
+		final int plotDatasetId = new Random().nextInt();
+		workBook.setMeasurementDatesetId(plotDatasetId);
         final List<MeasurementRow> observations = this.generateMeasurementRows();
         workBook.setObservations(observations);
         Mockito.when(this.userSelection.getWorkbook()).thenReturn(workBook);
@@ -610,14 +616,18 @@ public class AdvancingControllerTest {
         methods.add(bulkMethod);
 
 
-        Mockito.when(this.germplasmDataManager.getMethodsByIDs(Mockito.isA(List.class))).thenReturn(methods);
-        final String methodType = this.advancingController.checkMethodTypeMode(12, Collections.singleton("1"));
+		final int methodVariateId = 12;
+		final Set<String> trialInstances = Collections.singleton("1");
+		Mockito.when(this.studyDataManager.getMethodsFromExperiments(plotDatasetId, methodVariateId, new ArrayList<>(trialInstances))).thenReturn(methods);
+		final String methodType = this.advancingController.checkMethodTypeMode(methodVariateId, trialInstances);
         Assert.assertEquals("MIXED",methodType);
     }
 
     @Test
     public void testCheckMethodTypeError(){
         final Workbook workBook = new Workbook();
+		final int plotDatasetId = new Random().nextInt();
+		workBook.setMeasurementDatesetId(plotDatasetId);
         final List<MeasurementRow> observations = Lists.newArrayList();
         workBook.setObservations(observations);
 

@@ -36,12 +36,17 @@
 				valuecontainer: '=',
 				onMethodSelect: ' &',
 				hideTypes: '=',
-				hideFavorites: '='
+				hideFavorites: '=',
+				showDerManMethodsRadio: '=',
+				showGenMethodsRadio: '=',
+				disableMethodTypesRadio: '=',
+				enableDropdown: '=',
+				methodType: '='
 			},
 			templateUrl: '/Fieldbook/static/angular-templates/method/methodSelect.html',
 			link: function (scope, element, attrs, paginationCtrl) {
 			},
-			controller: ['$scope', 'methodService', function ($scope, methodService) {
+			controller: ['$scope', 'methodService', '$rootScope', function ($scope, methodService, $rootScope) {
 				var DERIVATIVE_MAINTENANCE = ['DER', 'MAN'];
 				var GENERATIVE = ['GEN'];
 
@@ -51,7 +56,9 @@
 
 				$scope.methodItems = [];
 				$scope.localData = {methodType: ALL_METHODS, useFavorites: false};
-
+				if($scope.methodType) {
+					$scope.localData.methodType = $scope.methodType;
+				}
 				$scope.fetch = function ($select, $event) {
 					// no event means first load!
 					if (!$event) {
@@ -71,7 +78,15 @@
 					methodService.getMethods(methodTypes, $scope.localData.useFavorites).then(function (response) {
 						$scope.methodItems = $scope.methodItems.concat(response.data);
 					});
-				}
+				};
+
+				$rootScope.$on('enableDisableMethodsSelect', function (event, enableDropdown) {
+					$scope.enableDropdown = enableDropdown;
+					if(!enableDropdown) {
+						$scope.valueContainer = null;
+						$scope.targetkey = null;
+					}
+				});
 			}]
 		};
 	}]);

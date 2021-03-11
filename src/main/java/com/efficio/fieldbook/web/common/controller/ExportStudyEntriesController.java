@@ -118,7 +118,7 @@ public class ExportStudyEntriesController extends AbstractBaseFieldbookControlle
 					downloadFileName = FileNameGenerator.generateFileName(EXPORTED_GERMPLASM_LIST, AppConstants.EXPORT_XLS_SUFFIX.getString());;
 					outputFileNamePath =
 						this.installationDirectoryUtil.getTempFileInOutputDirectoryForProjectAndTool(FileNameGenerator
-								.generateFileName(EXPORTED_GERMPLASM_LIST),
+								.generateFileName(EXPORTED_GERMPLASM_LIST, null),
 							AppConstants.EXPORT_XLS_SUFFIX.getString(), this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
 
 					this.exportStudyEntriesService.exportAsExcelFile(studyId, outputFileNamePath, visibleColumnsMap);

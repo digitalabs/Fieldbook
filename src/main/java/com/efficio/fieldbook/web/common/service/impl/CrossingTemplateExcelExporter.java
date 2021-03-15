@@ -296,7 +296,7 @@ public class CrossingTemplateExcelExporter {
 	private FileExportInfo createExcelOutputFile(final String studyName, final Workbook excelWorkbook) throws IOException {
 		String downloadFilename = String.format(CrossingTemplateExcelExporter.EXPORT_FILE_NAME_FORMAT,
 				StringUtil.replaceInvalidChacaracterFileName(studyName, "_"));
-		downloadFilename = FileUtils.sanitizeFileName(FileNameGenerator.generateFileName(downloadFilename, null));
+		downloadFilename = FileUtils.sanitizeFileName(StringUtil.truncate(downloadFilename, FileNameGenerator.MAX_SIZE, true));
 		final String outputFilepath = this.installationDirectoryUtil.getTempFileInOutputDirectoryForProjectAndTool(downloadFilename,
 				AppConstants.EXPORT_XLS_SUFFIX.getString(), this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
 

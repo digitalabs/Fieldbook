@@ -114,11 +114,11 @@ public class ExportStudyEntriesController extends AbstractBaseFieldbookControlle
 
 			try {
 				// TODO Extract export type "1" and "2" to meaningful constants or export type enum
+				final String outputFilename = FileNameGenerator.generateFileName(EXPORTED_GERMPLASM_LIST, null);
 				if (exportType == 1) {
-					downloadFileName = FileNameGenerator.generateFileName(EXPORTED_GERMPLASM_LIST, AppConstants.EXPORT_XLS_SUFFIX.getString());;
+					downloadFileName = FileNameGenerator.generateFileName(EXPORTED_GERMPLASM_LIST, AppConstants.EXPORT_XLS_SUFFIX.getString());
 					outputFileNamePath =
-						this.installationDirectoryUtil.getTempFileInOutputDirectoryForProjectAndTool(FileNameGenerator
-								.generateFileName(EXPORTED_GERMPLASM_LIST, null),
+						this.installationDirectoryUtil.getTempFileInOutputDirectoryForProjectAndTool(outputFilename,
 							AppConstants.EXPORT_XLS_SUFFIX.getString(), this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
 
 					this.exportStudyEntriesService.exportAsExcelFile(studyId, outputFileNamePath, visibleColumnsMap);
@@ -127,7 +127,7 @@ public class ExportStudyEntriesController extends AbstractBaseFieldbookControlle
 				} else if (exportType == 2) {
 					downloadFileName = FileNameGenerator.generateFileName(EXPORTED_GERMPLASM_LIST, AppConstants.EXPORT_CSV_SUFFIX.getString());
 					outputFileNamePath = this.installationDirectoryUtil.getTempFileInOutputDirectoryForProjectAndTool(
-						EXPORTED_GERMPLASM_LIST,
+							outputFilename,
 						AppConstants.EXPORT_CSV_SUFFIX.getString(), this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
 					this.exportStudyEntriesService.exportAsCSVFile(studyId, outputFileNamePath, visibleColumnsMap);
 					response.setContentType(FileUtils.MIME_CSV);

@@ -395,7 +395,7 @@ public class CrossingServiceImpl implements CrossingService {
 			}
 
 			final Name parentageDesignationName = new Name();
-			parentageDesignationName.setGermplasmId(gid);
+			parentageDesignationName.setGermplasm(new Germplasm(gid));
 			parentageDesignationName.setTypeId(CrossingServiceImpl.PEDIGREE_NAME_TYPE);
 			parentageDesignationName.setUserId(currentWorkbenchUserId);
 
@@ -591,7 +591,7 @@ public class CrossingServiceImpl implements CrossingService {
 		name.setUserId(userId);
 		name.setNdate(germplasm.getGdate());
 		name.setLocationId(harvestLocationId);
-
+		name.setGermplasm(germplasm);
 		return name;
 
 	}

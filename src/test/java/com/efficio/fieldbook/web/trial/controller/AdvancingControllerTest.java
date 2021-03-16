@@ -40,10 +40,10 @@ import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
+import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.MethodType;
 import org.generationcp.middleware.pojos.Name;
@@ -68,7 +68,6 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -265,7 +264,7 @@ public class AdvancingControllerTest {
 		germplasm.setPlotNumber(gidString);
 
 		final Name name = new Name();
-		name.setGermplasmId(gid);
+		name.setGermplasm(new Germplasm(gid));
 		name.setNval(desig);
 		name.setNstat(1);
 		germplasm.setNames(Collections.singletonList(name));
@@ -757,7 +756,7 @@ public class AdvancingControllerTest {
 
 		// Names
 		final Name sourceGermplasmName = new Name(133);
-		sourceGermplasmName.setGermplasmId(133);
+		sourceGermplasmName.setGermplasm(new Germplasm(133));
 		sourceGermplasmName.setTypeId(6);
 		sourceGermplasmName.setNstat(1);
 		sourceGermplasmName.setUserId(3);

@@ -333,7 +333,7 @@ public class CrossingServiceImpl implements CrossingService {
 			plotCodeAttribute.setGermplasmId(newGid);
 			plotCodeAttribute.setTypeId(plotCodeFldNo);
 			plotCodeAttribute.setAval(cross.getSource());
-			plotCodeAttribute.setUserId(currentWorkbenchUserId);
+			plotCodeAttribute.setCreatedBy(currentWorkbenchUserId);
 
 			attributeList.add(plotCodeAttribute);
 		}
@@ -397,7 +397,7 @@ public class CrossingServiceImpl implements CrossingService {
 			final Name parentageDesignationName = new Name();
 			parentageDesignationName.setGermplasmId(gid);
 			parentageDesignationName.setTypeId(CrossingServiceImpl.PEDIGREE_NAME_TYPE);
-			parentageDesignationName.setUserId(currentWorkbenchUserId);
+			parentageDesignationName.setCreatedBy(currentWorkbenchUserId);
 
 			parentageDesignationName.setNval(this.truncateName(parentageDesignation));
 			parentageDesignationName.setNstat(nstatValue);
@@ -588,7 +588,7 @@ public class CrossingServiceImpl implements CrossingService {
 		// Common name updates
 		final String designation = cross.getDesig();
 		name.setNval(this.truncateName(designation));
-		name.setUserId(userId);
+		name.setCreatedBy(userId);
 		name.setNdate(germplasm.getGdate());
 		name.setLocationId(harvestLocationId);
 
@@ -620,7 +620,7 @@ public class CrossingServiceImpl implements CrossingService {
 
 			while (iterator.hasNext()) {
 				final ImportedGermplasmParent importedGermplasmParent = iterator.next();
-				progenitors.add(new Progenitor(germplasm, progenitorNumber, importedGermplasmParent.getGid()));
+				progenitors.add(new Progenitor(germplasm, progenitorNumber, importedGermplasmParent.getGid(), null));
 				progenitorNumber++;
 			}
 		}
@@ -643,7 +643,7 @@ public class CrossingServiceImpl implements CrossingService {
 		germplasm.setGrplce(CrossingServiceImpl.GERMPLASM_GRPLCE);
 		germplasm.setLgid(CrossingServiceImpl.GERMPLASM_LGID);
 		germplasm.setMgid(CrossingServiceImpl.GERMPLASM_MGID);
-		germplasm.setUserId(userId);
+		germplasm.setCreatedBy(userId);
 		germplasm.setReferenceId(CrossingServiceImpl.GERMPLASM_REFID);
 	}
 

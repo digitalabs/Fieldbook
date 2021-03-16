@@ -634,7 +634,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 				name.setLocationId(locationId);
 				name.setNdate(gDate);
-				name.setUserId(currentUserID);
+				name.setCreatedBy(currentUserID);
 				name.setReferenceId(nRef);
 
 				// If crop == CIMMYT WHEAT (crop with more than one name saved)
@@ -711,7 +711,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		final Attribute originAttribute = new Attribute();
 		originAttribute.setAval(attributeValue);
 		originAttribute.setTypeId(typeId);
-		originAttribute.setUserId(currentUserID);
+		originAttribute.setCreatedBy(currentUserID);
 		originAttribute.setAdate(gDate);
 		originAttribute.setLocationId(locationId);
 		return originAttribute;

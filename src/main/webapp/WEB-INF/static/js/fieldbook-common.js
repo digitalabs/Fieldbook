@@ -2278,33 +2278,24 @@ function closeModal(modalId) {
 
 function openGermplasmDetailsPopopWithGidAndDesig(gid, desig) {
 	'use strict';
-	$.ajax({
-		url: '/Fieldbook/ListTreeManager/germplasm/detail/url',
-		type: 'GET',
-		data: '',
-		cache: false,
-		success: function(html) {
-			var germplasmDetailsUrl = html;
-			showGermplasmDetailsPopUp(gid, desig, germplasmDetailsUrl);
-		}
-	});
+
+	// TODO: Refactor germplasm details popup to Angular
+	const germplasmDetailsURL = '/ibpworkbench/main/app/#/germplasm-details/' + gid + '?cropName=' + cropName
+		+ '&modal=true&authToken=' + JSON.parse(localStorage["bms.xAuthToken"]).token;
+
+	showGermplasmDetailsPopUp(gid, desig, germplasmDetailsURL);
 }
 
 function showGermplasmDetailsPopUp(gid, desig, germplasmDetailsUrl) {
 	'use strict';
-	var url = '/Fieldbook/ListTreeManager/getPreferredName/' + gid;
-	$.ajax({
-		url: url,
-		type: 'GET',
-		data: '',
-		cache: false,
-		success: function(preferredName) {
-			desig =  preferredName;
-			$('#openGermplasmFrame').attr('src', germplasmDetailsUrl + gid);
-			$('#openGermplasmModal .modal-title').html(headerMsg1 + ' ' + desig + ' (' + headerMsg2 + ' ' + gid + ')');
-			$('#openGermplasmModal').modal({ backdrop: 'static', keyboard: true });
-		}
-	});
+
+	// Programatically create an iframe to prevent germplasm details page from caching.
+	$('#openGermplasmFrame').empty();
+	var iframe = document.createElement('IFRAME');
+	iframe.setAttribute('style', 'width:100%; height:800px; border:none');
+	iframe.src = germplasmDetailsUrl + gid;
+	$('#openGermplasmFrame').append(iframe);
+	$('#openGermplasmModal').modal({ backdrop: 'static', keyboard: true });
 }
 
 function showListTreeToolTip(node, nodeSpan) {

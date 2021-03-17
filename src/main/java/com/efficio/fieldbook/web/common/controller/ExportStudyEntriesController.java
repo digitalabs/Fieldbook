@@ -114,7 +114,7 @@ public class ExportStudyEntriesController extends AbstractBaseFieldbookControlle
 
 			try {
 				// TODO Extract export type "1" and "2" to meaningful constants or export type enum
-				final String outputFilename = FileNameGenerator.generateFileName(EXPORTED_GERMPLASM_LIST, null);
+				final String outputFilename = FileNameGenerator.generateFileName(EXPORTED_GERMPLASM_LIST);
 				if (exportType == 1) {
 					downloadFileName = FileNameGenerator.generateFileName(EXPORTED_GERMPLASM_LIST, AppConstants.EXPORT_XLS_SUFFIX.getString());
 					outputFileNamePath =

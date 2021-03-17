@@ -185,7 +185,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController 
 
 	FileExportInfo makeSafeFileName(final String filename) throws IOException {
 		final String cleanFilename = FileNameGenerator.generateFileName(filename.replace(" ", ""), AppConstants.EXPORT_XLS_SUFFIX
-			.getString(), false);
+			.getString());
 		final String outputFilepath = this.installationDirectoryUtil.getTempFileInOutputDirectoryForProjectAndTool(cleanFilename, AppConstants.EXPORT_XLS_SUFFIX.getString(), this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
 		return new FileExportInfo(outputFilepath, cleanFilename + AppConstants.EXPORT_XLS_SUFFIX.getString());
 	}

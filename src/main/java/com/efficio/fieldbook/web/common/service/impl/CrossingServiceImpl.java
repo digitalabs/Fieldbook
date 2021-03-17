@@ -518,7 +518,7 @@ public class CrossingServiceImpl implements CrossingService {
 				continue;
 			}
 
-			final Germplasm germplasm = this.createGermplasm(cross, userId, harvestLocationId, additionalDetailsSetting.getHarvestDate());
+			final Germplasm germplasm = this.createGermplasm(cross, harvestLocationId, additionalDetailsSetting.getHarvestDate());
 			final Name name = this.createName(germplasm, cross, userId, harvestLocationId);
 			final List<Progenitor> progenitors = this.createProgenitors(cross, germplasm);
 
@@ -534,7 +534,7 @@ public class CrossingServiceImpl implements CrossingService {
 		return new GermplasmListResult(triples, isTrimed);
 	}
 
-	Germplasm createGermplasm(final ImportedCross cross, final Integer userId, final Integer harvestLocationId,
+	Germplasm createGermplasm(final ImportedCross cross, final Integer harvestLocationId,
 		final String harvestDate) {
 
 		final Germplasm germplasm;
@@ -551,7 +551,7 @@ public class CrossingServiceImpl implements CrossingService {
 			// persisted, GID will be null. We populate data from
 			// spreadsheet,
 			// create new Germplasm.
-			this.updateConstantFields(germplasm, userId);
+			this.updateConstantFields(germplasm);
 			germplasm.setGpid1(Integer.valueOf(cross.getFemaleGid()));
 			germplasm.setGpid2(cross.getMaleGids().get(0));
 			germplasm.setMethodId(cross.getBreedingMethodId());
@@ -638,12 +638,11 @@ public class CrossingServiceImpl implements CrossingService {
 		return designation;
 	}
 
-	private void updateConstantFields(final Germplasm germplasm, final Integer userId) {
+	private void updateConstantFields(final Germplasm germplasm) {
 		germplasm.setGnpgs(CrossingServiceImpl.GERMPLASM_GNPGS);
 		germplasm.setGrplce(CrossingServiceImpl.GERMPLASM_GRPLCE);
 		germplasm.setLgid(CrossingServiceImpl.GERMPLASM_LGID);
 		germplasm.setMgid(CrossingServiceImpl.GERMPLASM_MGID);
-		germplasm.setCreatedBy(userId);
 		germplasm.setReferenceId(CrossingServiceImpl.GERMPLASM_REFID);
 	}
 

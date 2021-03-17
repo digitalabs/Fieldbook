@@ -512,7 +512,7 @@ public class CrossingServiceImplTest {
 
 		when(this.germplasmDataManager.getGermplasmByGID(crossGid)).thenReturn(existingGermplasm);
 
-		final Germplasm result = this.crossingService.createGermplasm(cross, userId, harvestLocationId, harvestDate);
+		final Germplasm result = this.crossingService.createGermplasm(cross, harvestLocationId, harvestDate);
 
 		assertSame(existingGermplasm, result);
 		assertEquals(breedingMethodId, result.getMethodId().intValue());
@@ -534,7 +534,7 @@ public class CrossingServiceImplTest {
 		// If cross gid is null, it means the cross is created from Imported Crosses functionality
 		cross.setGid(null);
 
-		final Germplasm result = this.crossingService.createGermplasm(cross, userId, harvestLocationId, harvestDate);
+		final Germplasm result = this.crossingService.createGermplasm(cross, harvestLocationId, harvestDate);
 
 		verify(this.germplasmDataManager, times(0)).getGermplasmByGID(anyInt());
 

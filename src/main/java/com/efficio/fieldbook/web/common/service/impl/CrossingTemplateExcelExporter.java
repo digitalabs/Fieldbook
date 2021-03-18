@@ -17,6 +17,7 @@ import org.generationcp.commons.parsing.GermplasmExportedWorkbook;
 import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.service.FileService;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.commons.util.FileNameGenerator;
 import org.generationcp.commons.util.FileUtils;
 import org.generationcp.commons.util.InstallationDirectoryUtil;
 import org.generationcp.commons.util.StringUtil;
@@ -295,7 +296,7 @@ public class CrossingTemplateExcelExporter {
 	private FileExportInfo createExcelOutputFile(final String studyName, final Workbook excelWorkbook) throws IOException {
 		String downloadFilename = String.format(CrossingTemplateExcelExporter.EXPORT_FILE_NAME_FORMAT,
 				StringUtil.replaceInvalidChacaracterFileName(studyName, "_"));
-		downloadFilename = FileUtils.sanitizeFileName(downloadFilename);
+		downloadFilename = FileUtils.sanitizeFileName(StringUtil.truncate(downloadFilename, FileNameGenerator.MAX_SIZE_WO_EXTENSION, true));
 		final String outputFilepath = this.installationDirectoryUtil.getTempFileInOutputDirectoryForProjectAndTool(downloadFilename,
 				AppConstants.EXPORT_XLS_SUFFIX.getString(), this.contextUtil.getProjectInContext(), ToolName.FIELDBOOK_WEB);
 

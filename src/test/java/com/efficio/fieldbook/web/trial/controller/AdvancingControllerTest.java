@@ -760,7 +760,6 @@ public class AdvancingControllerTest {
 		sourceGermplasmName.setGermplasmId(133);
 		sourceGermplasmName.setTypeId(6);
 		sourceGermplasmName.setNstat(1);
-		sourceGermplasmName.setCreatedBy(3);
 		sourceGermplasmName.setNval("BARRA DE ORO DULCE");
 		sourceGermplasmName.setLocationId(9);
 		sourceGermplasmName.setNdate(19860501);

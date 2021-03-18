@@ -605,7 +605,7 @@ public class CrossingServiceImpl implements CrossingService {
 		// exist as crosses are created in crossing manager and persisted.
 		if (cross.getGid() != null) {
 			final List<Progenitor> existingProgenitors = this.pedigreeDataManager.getProgenitorsByGID(Integer.valueOf(cross.getGid()));
-			if (existingProgenitors != null) {
+			if (!existingProgenitors.isEmpty()) {
 				return existingProgenitors;
 			}
 		} else if (cross.isPolyCross()) {

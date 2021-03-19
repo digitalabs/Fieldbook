@@ -2280,7 +2280,7 @@ function openGermplasmDetailsPopopWithGidAndDesig(gid, desig) {
 	'use strict';
 
 	// TODO: Refactor germplasm details popup to Angular
-	const germplasmDetailsURL = '/ibpworkbench/main/app/#/germplasm-details/' + gid + '?cropName=' + cropName
+	const germplasmDetailsURL = '/ibpworkbench/main/app/#/germplasm-details/' + gid + '?cropName=' + cropName + '&programUUID=' + currentProgramId
 		+ '&modal=true&authToken=' + JSON.parse(localStorage["bms.xAuthToken"]).token;
 
 	showGermplasmDetailsPopUp(gid, desig, germplasmDetailsURL);

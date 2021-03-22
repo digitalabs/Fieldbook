@@ -9,7 +9,7 @@
 			$scope.url = '/ibpworkbench/controller/jhipster#/inventory-details?restartApplication' +
 				'&cropName=' + studyContext.cropName +
 				'&programUUID=' + studyContext.programId +
-				'&gid=' + gid;
+				'&gid=' + gid + '&modal';
 
 			window.closeModal = function() {
 				$uibModalInstance.close(null);

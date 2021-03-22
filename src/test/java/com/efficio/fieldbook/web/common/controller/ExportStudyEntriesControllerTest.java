@@ -13,6 +13,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.commons.util.FileNameGenerator;
 import org.generationcp.commons.util.FileUtils;
 import org.generationcp.commons.util.InstallationDirectoryUtil;
 import org.generationcp.middleware.data.initializer.ProjectTestDataInitializer;
@@ -51,6 +52,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ExportStudyEntriesControllerTest {
 
@@ -81,9 +84,6 @@ public class ExportStudyEntriesControllerTest {
 
 	private static final int EXCEL_TYPE = 1;
 	private static final int CSV_TYPE = 2;
-
-	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
-	private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("hhmmss");
 
 	@Mock
 	private HttpServletResponse response;
@@ -187,23 +187,8 @@ public class ExportStudyEntriesControllerTest {
 			Assert.assertEquals(outputFile.getAbsolutePath(), filenameCaptor.getValue());
 			final Map<String, Object> result = new ObjectMapper().readValue(output, Map.class);
 			final String[] underScore = result.get(ExportStudyEntriesController.FILENAME).toString().split("_");
-			Assert.assertTrue(underScore.length >= 3);
 			Assert.assertEquals(outputFile.getAbsolutePath(), result.get(ExportStudyEntriesController.OUTPUT_FILENAME));
-			final String time = underScore[underScore.length - 1].replaceAll(".csv", "");
-			final String date = underScore[underScore.length - 2];
-
-			try {
-				TIME_FORMAT.parse(time);
-			} catch (final ParseException ex) {
-				Assert.fail("Timestamp should be included in filename");
-			}
-
-			try {
-				DATE_FORMAT.parse(date);
-			} catch (final ParseException ex) {
-				Assert.fail("Date should be included in filename");
-			}
-
+			Assert.assertTrue(this.isValidFileNameFormat(outputFile.getName(), FileNameGenerator.CSV_DATE_TIME_PATTERN));
 			Mockito.verify(this.response).setContentType(FileUtils.MIME_CSV);
 		} catch (final GermplasmListExporterException e) {
 			Assert.fail();
@@ -395,4 +380,9 @@ public class ExportStudyEntriesControllerTest {
 		this.installationDirectoryUtil.recursiveFileDelete(testInstallationDirectory);
 	}
 
+	private boolean isValidFileNameFormat(final String fileName, final String pattern) {
+		final Pattern pattern1 = Pattern.compile(pattern);
+		final Matcher matcher = pattern1.matcher(fileName);
+		return matcher.find();
+	}
 }

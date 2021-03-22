@@ -187,7 +187,7 @@ public class ExportStudyEntriesControllerTest {
 			Assert.assertEquals(outputFile.getAbsolutePath(), filenameCaptor.getValue());
 			final Map<String, Object> result = new ObjectMapper().readValue(output, Map.class);
 			Assert.assertEquals(outputFile.getAbsolutePath(), result.get(ExportStudyEntriesController.OUTPUT_FILENAME));
-			Assert.assertTrue(this.isValidFileNameFormat(result.get(ExportStudyEntriesController.FILENAME).toString(), FileNameGenerator.CSV_DATE_TIME_PATTERN));
+			Assert.assertTrue(FileNameGenerator.isValidFileNameFormat(result.get(ExportStudyEntriesController.FILENAME).toString(), FileNameGenerator.CSV_DATE_TIME_PATTERN));
 			Mockito.verify(this.response).setContentType(FileUtils.MIME_CSV);
 		} catch (final GermplasmListExporterException e) {
 			Assert.fail();

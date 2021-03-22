@@ -22,19 +22,9 @@
 //<![CDATA[
 
 function openGermplasmDetailsPopop(aObject) {
-
 	var desig = $(aObject).data('desig');
 	var gid = $(aObject).data('gid');
-	$.ajax({
-		url: '/Fieldbook/ListTreeManager/germplasm/detail/url',
-		type: 'GET',
-		data: '',
-		cache: false,
-		success: function(html) {
-			var germplasmDetailsUrl = html;
-			showGermplasmDetailsPopUp(gid, desig, germplasmDetailsUrl);
-		}
-	});
+	openGermplasmDetailsPopopWithGidAndDesig(gid, desig);
 }
 
 //]]>

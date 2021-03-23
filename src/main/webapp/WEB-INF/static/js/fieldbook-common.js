@@ -2292,7 +2292,7 @@ function showGermplasmDetailsPopUp(gid, desig, germplasmDetailsUrl) {
 	// Programatically create an iframe to prevent germplasm details page from caching.
 	$('#openGermplasmFrame').empty();
 	var iframe = document.createElement('IFRAME');
-	iframe.setAttribute('style', 'width:100%; height:800px; border:none');
+	iframe.setAttribute('style', 'width:100%; height:850px; border:none');
 	iframe.src = germplasmDetailsUrl + gid;
 	$('#openGermplasmFrame').append(iframe);
 	$('#openGermplasmModal').modal({ backdrop: 'static', keyboard: true });

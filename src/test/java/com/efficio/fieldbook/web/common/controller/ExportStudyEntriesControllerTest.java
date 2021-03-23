@@ -378,10 +378,4 @@ public class ExportStudyEntriesControllerTest {
 		final File testInstallationDirectory = new File(InstallationDirectoryUtil.WORKSPACE_DIR);
 		this.installationDirectoryUtil.recursiveFileDelete(testInstallationDirectory);
 	}
-
-	private boolean isValidFileNameFormat(final String fileName, final String pattern) {
-		final Pattern pattern1 = Pattern.compile(pattern);
-		final Matcher matcher = pattern1.matcher(fileName);
-		return matcher.find();
-	}
 }

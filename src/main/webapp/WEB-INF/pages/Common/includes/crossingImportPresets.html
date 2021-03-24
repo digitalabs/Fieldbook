@@ -1,6 +1,6 @@
 <div class="col-xs-7 col-md-7" xmlns:th="http://www.thymeleaf.org">
     <!-- Modal -->
-    <div class="modal fade import-study-data import-window" id="crossSettingsModal"
+    <div class="modal fade import-study-data import-window" id="crossSettingsModal" ng-controller="CrossingSettingsCtrl"
          role="dialog"
          aria-labelledby="" aria-hidden="true">
         <div class="modal-dialog modal-large">
@@ -51,19 +51,18 @@
 
                     <div class="row form-group add-bottom-padding">
                         <div class="col-xs-4 col-md-4">
-                            <input type="radio" name="manualNamingSettings" value="false" checked="true"/>
-                                <label th:text="#{study.crosses.import.automaticNameGeneration}"></label>
+                            <input type="radio" value="false" ng-model="useManualNaming" ng-click="toggleNamingSection()" />
+                            <label th:text="#{study.crosses.import.automaticNameGeneration}"></label>
 
                         </div>
                         <div class="col-xs-8 col-md-8 text-left">
-                            <input type="radio" name="manualNamingSettings" value="true"/>
-                                <label th:text="#{study.crosses.import.manualNamingSettings}"></label>
-
+                            <input type="radio" value="true" ng-model="useManualNaming" ng-click="toggleNamingSection()"/>
+                            <label th:text="#{study.crosses.import.manualNamingSettings}"></label>
                         </div>
                     </div>
 
-                    <!-- shown only if manualNamingSettings is selected, hidden by default -->
-                    <div id="manualNamingSettingsPanel" class="fbk-hide">
+                    <!-- shown only if manual naming is selected, hidden by default -->
+                    <div id="manualNamingSettingsPanel" ng-show="settingObject.isUseManualSettingsForNaming">
                         <div class="row">
                             <div class="col-xs-12 col-md-12">
                                 <label th:text="#{study.import.crosses.settings.load.settings.text}"></label>
@@ -105,7 +104,7 @@
                                 <span class="fbk-mandatory-field">*</span>
                             </div>
                             <div class="col-xs-6 col-md-6 text-left">
-                                <input class="cross-import-name-setting" type="text" id="crossPrefix" name="crossPrefix"/>
+                                <input type="text" id="crossPrefix" ng-model="settingObject.crossNameSetting.prefix" ng-change="updateDisplayedSequenceNameValue()"/>
                             </div>
                         </div>
                         <div class="row form-group">
@@ -114,11 +113,12 @@
                                   th:text="#{study.import.crosses.sequence.digits.label}"></span>
                             </div>
                             <div class="col-xs-6 col-md-6 text-left">
-                                <select id="sequenceNumberDigits" class="short-dropdown cross-import-name-setting">
-                                    <option value=""></option>
-                                    <option th:each="digit : ${#numbers.sequence(1,9)}" th:value="${digit}" th:text="${digit}"></option>
-                                </select>
-
+                                <ui-select ng-model="settingObject.crossNameSetting.numOfDigits" theme="select2" search-enabled="false" ng-change="updateDisplayedSequenceNameValue()">
+                                    <ui-select-match>{{$select.selected}}</ui-select-match>
+                                    <ui-select-choices repeat="digit in [1,2,3,4,5,6,7,8,9]">
+                                        <div>{{::digit}}</div>
+                                    </ui-select-choices>
+                                </ui-select>
                             </div>
                         </div>
                         <div class="row form-group">
@@ -127,7 +127,7 @@
                                        th:text="#{study.import.crosses.suffix.label}"></label>
                             </div>
                             <div class="col-xs-6 col-md-6 text-left">
-                                <input type="text" id="crossSuffix" name="crossSuffix" class="cross-import-name-setting" />
+                                <input type="text" id="crossSuffix" ng-model="settingObject.crossNameSetting.suffix" ng-change="updateDisplayedSequenceNameValue()"/>
                             </div>
                         </div>
                         <div class="row form-group">
@@ -136,11 +136,11 @@
                                        th:text="#{study.import.crosses.prefix.space.label}"></label>
                             </div>
                             <div class="btn-group col-xs-6 col-md-6 text-left">
-                                <input type="radio" name="hasPrefixSpace" value="true" class="cross-import-name-setting">
+                                <input type="radio" value="true" ng-model="settingObject.crossNameSetting.addSpaceBetweenPrefixAndCode" ng-change="updateDisplayedSequenceNameValue()">
                                 <label class="label-bold" th:text="#{common.form.yes.text}"></label>
                                 </input>
                                 &nbsp;
-                                <input type="radio" name="hasPrefixSpace" value="false" class="cross-import-name-setting" checked="true">
+                                <input type="radio" value="false" ng-model="settingObject.crossNameSetting.addSpaceBetweenPrefixAndCode" ng-change="updateDisplayedSequenceNameValue()">
                                 <label class="label-bold" th:text="#{common.form.no.text}"></label>
                                 </input>
                             </div>
@@ -151,11 +151,11 @@
                                        th:text="#{study.import.crosses.suffix.space.label}"></label>
                             </div>
                             <div class="btn-group col-xs-6 col-md-6 text-left">
-                                <input type="radio" name="hasSuffixSpace" value="true" class="cross-import-name-setting" >
+                                <input type="radio" value="true" ng-model="settingObject.crossNameSetting.addSpaceBetweenSuffixAndCode" ng-change="updateDisplayedSequenceNameValue()">
                                 <label class="label-bold" th:text="#{common.form.yes.text}"></label>
                                 </input>
                                 &nbsp;
-                                <input type="radio" name="hasSuffixSpace" value="false" class="cross-import-name-setting" checked="true">
+                                <input type="radio" value="false" ng-model="settingObject.crossNameSetting.addSpaceBetweenSuffixAndCode" ng-change="updateDisplayedSequenceNameValue()">
                                 <label class="label-bold" th:text="#{common.form.no.text}"></label>
                                 </input>
                             </div>
@@ -166,8 +166,7 @@
                             <div class="col-xs-6 col-md-6 text-left">
                                 <label class="label-italic"
                                        th:text="#{study.import.crosses.next.name}"></label>
-                                &nbsp;
-                                <label class="label-italic" id="importNextSequenceName"/>
+                                <label class="label-italic" ng-bind="nextSequenceName"/>
                             </div>
                         </div>
                         <div class="row form-group">
@@ -176,8 +175,7 @@
                                        th:text="#{study.import.crosses.starting.sequence.number.label}"></label>
                             </div>
                             <div class="col-xs-6 col-md-6 text-left">
-                                <input type="text" id="startingSequenceNumber"
-                                       name="startingSequenceNumber" class="cross-import-name-setting" />
+                                <input type="text" id="startingSequenceNumber" ng-model="settingObject.crossNameSetting.startNumber" ng-change="updateDisplayedSequenceNameValue()"/>
                             </div>
                         </div>
                         <div class="row form-group">
@@ -186,8 +184,7 @@
                                 <span class="fbk-mandatory-field">*</span>
                             </div>
                             <div class="col-xs-6 col-md-6 text-left">
-                                <input type="text" id="parentageDesignationSeparator"
-                                       name="parentageDesignationSeparator" value="/"/>
+                                <input type="text" id="parentageDesignationSeparator" ng-model="settingObject.crossNameSetting.separator" ng-change="updateSampleParentageDesignation()"/>
                             </div>
                         </div>
 
@@ -197,7 +194,7 @@
                             <div class="col-xs-6 col-md-6 text-left">
                                 <label class="label-italic" th:text="#{study.import.crosses.example.parentage.designation.label}"></label>
                                 &nbsp;
-                                <label id="sampleParentageDesignation"/>
+                                <label ng-bind="sampleParentageDesignation"/>
                             </div>
                         </div>
                         <div class="row form-group">
@@ -206,12 +203,12 @@
                                        th:text="#{study.import.crosses.parentage.designation.label}"></label>
                             </div>
                             <div class="btn-group col-xs-6 col-md-6 text-left">
-                                <input type="radio" name="hasParentageDesignationName" value="true" class="cross-import-name-setting" >
-                                    <label class="label-bold" th:text="#{common.form.yes.text}"></label>
+                                <input type="radio" value="true" ng-model="settingObject.crossNameSetting.saveParentageDesignationAsAString">
+                                <label class="label-bold" th:text="#{common.form.yes.text}"></label>
                                 </input>
                                 &nbsp;
-                                <input type="radio" name="hasParentageDesignationName" value="false" class="cross-import-name-setting" checked="true">
-                                    <label class="label-bold" th:text="#{common.form.no.text}"></label>
+                                <input type="radio" value="false" ng-model="settingObject.crossNameSetting.saveParentageDesignationAsAString">
+                                <label class="label-bold" th:text="#{common.form.no.text}"></label>
                                 </input>
                             </div>
                         </div>
@@ -258,10 +255,20 @@
                         <div class="col-xs-8 col-md-8 text-left">
                             <div class="row form-group">
                                 <div class="col-xs-3 col-md-3">
-                                    <input type="hidden" id="harvestYearDropdown"/>
+                                    <ui-select ng-model="settingObject.additionalDetailsSetting.harvestYear" theme="select2" search-enabled="false" ng-change="updateHarvestDate()">
+                                        <ui-select-match>{{$select.selected}}</ui-select-match>
+                                        <ui-select-choices refresh="fetchMonths($select)" refresh-delay="300" repeat="year in harvestYears | filter: $select.search track by $index">
+                                            <div>{{::year}}</div>
+                                        </ui-select-choices>
+                                    </ui-select>
                                 </div>
                                 <div class="col-xs-3 col-md-3">
-                                    <input type="hidden" id="harvestMonthDropdown"/>
+                                    <ui-select ng-model="settingObject.additionalDetailsSetting.harvestMonth" theme="select2" search-enabled="false" ng-change="updateHarvestDate()">
+                                        <ui-select-match>{{$select.selected.text}}</ui-select-match>
+                                        <ui-select-choices refresh="fetchYears($select)" refresh-delay="300" repeat="month.id as month in harvestMonths">
+                                            <div>{{::month.text}}</div>
+                                        </ui-select-choices>
+                                    </ui-select>
                                 </div>
                                 <div class="col-xs-2 col-md-2">
                                 </div>
@@ -277,36 +284,8 @@
                             <span class="fbk-mandatory-field">*</span>
                         </div>
                         <div class="col-xs-8 col-md-8 text-left">
-                            <div class="row">
-                                <div class="col-xs-8 col-md-8">
-                                    <input type="hidden"
-                                           id="locationDropdown"/>
-                                </div>
-                                <div class="col-xs-4 col-md-4 nopadding">
-                                    <span class="bms-fa-question-circle help-tooltip-crosses-flow fbk-help" data-placement="right" data-help-link="MANAGE_LOCATIONS"></span>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-xs-12 col-md-12">
-                                    <label class="radio-inline">
-                                        <input id="showBreedingLocationOnlyRadio" name="filter" value="1" type="radio" checked="checked" /> <span th:text="#{show.breeding.location}">Breeding locations</span>
-                                        &nbsp;&nbsp;
-                                    </label>
-                                    <label class="radio-inline">
-                                        <input id="showAllLocationOnlyRadio" name="filter" value="2" type="radio" /> <span th:text="#{show.all.location}">All locations types</span>
-                                        &nbsp;&nbsp;
-                                    </label>
-                                </div>
-                                <div class="col-xs-12 col-md-12">
-
-                                    <input type="checkbox" id="locationFavoritesOnlyCheckbox"/>
-                                    <label th:text="#{show.favorite.location}"></label>
-                                    &nbsp;
-                                    <a href="javascript: ImportCrosses.openLocationsModal();" th:text="#{study.managesettings.manage.location}"></a>
-                                </div>
-                            </div>
+                            <locations-select valuecontainer="valuecontainer" targetkey="targetkey" on-location-select="locationChanged()"></locations-select>
                         </div>
-
                     </div>
                     <div class="row form-group">
                         <div class="col-xs-11 col-md-11">
@@ -319,7 +298,7 @@
                     </div>
                     <div class="row form-group add-bottom-padding">
                         <div class="col-xs-4 col-md-12">
-                            <input type="checkbox" id="checkExistingCrosses"/>
+                            <input type="checkbox" id="checkExistingCrosses" ng-model="checkExistingCrosses"/>
                             <label th:text="#{crossing.alert.check.existing.crosses}"></label>
                         </div>
                     </div>
@@ -332,7 +311,7 @@
                             aria-hidden="true" th:text="#{common.form.back.text}">Back
                     </button>
                     <button type="button" class="btn btn-primary"
-                            aria-hidden="true" th:text="#{common.form.continue.text}" id="settingsNextButton">Continue
+                            aria-hidden="true" th:text="#{common.form.continue.text}" id="settingsNextButton" ng-click="continue()">Continue
                     </button>
                 </div>
             </div>
@@ -340,15 +319,7 @@
     </div>
 </div>
 
-<div layout:fragment="page-script">
-    <script type="text/javascript" th:src="@{/static/js/breeding-methods.js}"></script>
-    <script type="text/javascript" th:src="@{/static/js/locations.js}"></script>
-    <script type="text/javascript" th:src="@{/static/js/import-crosses.js}"></script>
-    <script type="text/javascript" th:inline="javascript">
-    </script>
-</div>
-
-
+<!-- TODO extract to separate model and angular controller -->
 <!-- modal dialog for delete setting confirmation -->
 <div class="modal fade" id="fbk-delete-import-settings-confirm" tabindex="-1" role="dialog"
      aria-labelledby="fbk-delete-import-settings-confirm" aria-hidden="true">

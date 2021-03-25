@@ -2,7 +2,6 @@
 getJquerySafeId, SaveAdvanceList, BreedingMethodsFunctions */
 var ImportCrosses = {
 	CROSSES_URL: '/Fieldbook/crosses',
-	showFavoriteMethodsOnly: true,
 	showFavoriteLocationsOnly: true,
 	preservePlotDuplicates: false,
 	isFileCrossesImport: true,
@@ -13,7 +12,6 @@ var ImportCrosses = {
 		$('#fileupload-import-crosses').val('');
 		$('.import-crosses-section .modal').modal({ backdrop: 'static', keyboard: true });
 		$('.import-crosses-section .modal .fileupload-exists').click();
-		ImportCrosses.showFavoriteMethodsOnly = true;
 		ImportCrosses.showFavoriteLocationsOnly = true;
 	},
 
@@ -46,7 +44,6 @@ var ImportCrosses = {
 
 			ImportCrosses.hasHybridMethod = resp.hasHybridMethod;
 
-			$('#crossSetBreedingMethodModal').addClass('import-crosses-from-file');
 
 			if (resp.isChoosingListOwnerNeeded) {
 				$('#chooseListOwner').modal({ backdrop: 'static', keyboard: true });
@@ -58,9 +55,6 @@ var ImportCrosses = {
 				});
 
 				$('#chooseListOwnerNextButton').on('click', function() {
-					if (ImportCrosses.isFileCrossesImport) {
-						$('#crossSetBreedingMethodModal').addClass('import-crosses-from-file');
-					}
 					$('#chooseListOwner').modal('hide');
 					setTimeout(ImportCrosses.showPlotDuplicateConfirmation, 500);
 
@@ -77,75 +71,9 @@ var ImportCrosses = {
 	openBreedingModal: function() {
 		'use strict';
 		$('#crossingBreedingMethodModal').modal({ backdrop: 'static', keyboard: true });
-
-		if(!ImportCrosses.hasHybridMethod) $("#applyGroupingOptionDiv").hide();
-
-		$('#breedingMethodDropdown').on('change', ImportCrosses.retrieveHybridMethods);
-		$("#showFavoritesOnlyCheckbox").prop('checked', true);
-		$("#showBreedingMethodOnlyRadio").prop('checked', true);
-
-		if (createdCrossesListId == null) {
-			$('#selectMethodInImportFile').prop('checked',true);
-			$('#selectUseParentalStatus').prop('checked',false);
-
-		} else {
-			$('#selectMethodInImportFile').prop('checked',false);
-			$('#selectUseParentalStatus').prop('checked',true);
-		}
 		var $scope = angular.element('#crossingBreedingMethodModal').scope();
-		$scope.isCrossesImport = createdCrossesListId == null || createdCrossesListId == 0;
+		$scope.init(createdCrossesListId == null || createdCrossesListId == 0);
 		$scope.$apply();
-
-
-		$('#selectMethodForAllCrosses').off('change');
-		$('#selectMethodForAllCrosses').on('change', ImportCrosses.enableDisableBreedingMethodDropdown)
-
-		$('#selectMethodInImportFile').off('change');
-		$('#selectMethodInImportFile').on('change', ImportCrosses.enableDisableBreedingMethodDropdown)
-
-		$('#selectUseParentalStatus').off('change');
-		$('#selectUseParentalStatus').on('change', ImportCrosses.enableDisableBreedingMethodDropdown)
-
-		$('#setNamingNextButton').off('click');
-		$('#setNamingNextButton').click(function () {
-			if (ImportCrosses.isBreedingMethodSelectedValid()) {
-				$('#crossSetBreedingMethodModal').modal('hide');
-				setTimeout(ImportCrosses.showImportSettingsPopup, 500);
-			}
-		});
-
-		$('#crossSettingsModal').one('show.bs.modal', function() {
-			ImportCrosses.resetCrossSettingsModal();
-		});
-
-		$('#goBackToImportCrossesButton').off('click');
-		$('#goBackToImportCrossesButton').on('click', function() {
-			ImportCrosses.goBackToPage('#crossSetBreedingMethodModal', '.import-crosses-section .modal');
-		});
-
-	},
-
-	retrieveHybridMethods : function () {
-		if(ImportCrosses.hybridMethods === null){
-			$.ajax({
-				url: ImportCrosses.CROSSES_URL + '/getHybridMethods',
-				type: 'GET',
-				cache: false,
-				success: function(data) {
-					ImportCrosses.hybridMethods = data;
-				}
-			}).done(ImportCrosses.showOrHideApplyGroupingOptionDiv);
-		} else {
-			ImportCrosses.showOrHideApplyGroupingOptionDiv();
-		}
-	},
-
-	showOrHideApplyGroupingOptionDiv : function () {
-		if(!ImportCrosses.hybridMethods.includes(parseInt($('#breedingMethodDropdown').select2('val')))) {
-			$("#applyGroupingOptionDiv").hide();
-		} else {
-			$("#applyGroupingOptionDiv").show();
-		}
 	},
 
 	resetCrossSettingsModal: function () {
@@ -402,11 +330,9 @@ var ImportCrosses = {
 
 		$('#goBackToSelectBreedingMethodModal').off('click');
 		$('#goBackToSelectBreedingMethodModal').on('click', function() {
-			ImportCrosses.showFavoriteMethodsOnly = $('#showFavoritesOnlyCheckbox').is(':checked');
 			ImportCrosses.showFavoriteLoationsOnly = $('#locationFavoritesOnlyCheckbox').is(':checked');
 			ImportCrosses.showAllLocationOnly = $('#showAllLocationOnlyRadio').is(':checked');
-			ImportCrosses.showBreedingLocationOnly = $('#showBreedingLocationOnlyRadio').is(':checked');
-			ImportCrosses.goBackToPage('#crossSettingsModal', '#crossSetBreedingMethodModal');
+			ImportCrosses.goBackToPage('#crossSettingsModal', '#crossingBreedingMethodModal');
 		});
 	},
 
@@ -610,40 +536,6 @@ var ImportCrosses = {
 		});
 	},
 
-	isBreedingMethodSelectedValid: function() {
-		'use strict';
-		var radioValue = $('#selectMethodForAllCrosses').prop('checked');
-		var breedingMethodId = $('#breedingMethodDropdown').select2('val');
-		if (radioValue && (!breedingMethodId || breedingMethodId === '')) {
-			showErrorMessage('', $.fieldbookMessages.errorMethodMissing);
-			return false;
-		} else if($('#selectMethodInImportFile').prop('checked') || $('#selectMethodForAllCrosses').prop('checked')) {
-			var valid = true;
-			var validateBreedingMethodUrl = $('#selectMethodInImportFile').prop('checked') ? '/validateBreedingMethods':
-				'/validateBreedingMethods?breedingMethodId=' + breedingMethodId;
-			$.ajax({
-				url: ImportCrosses.CROSSES_URL +  validateBreedingMethodUrl,
-				type: 'GET',
-				cache: false,
-				async: false,
-				success: function(data) {
-					if (data.error) {
-						showErrorMessage('', data.error);
-						valid = false;
-					}
-
-				},
-				error: function(jqXHR, textStatus, errorThrown) {
-					console.log('The following error occured: ' + textStatus, errorThrown);
-				}
-			});
-			return valid;
-
-		} else {
-			return true;
-		}
-	},
-
 	isCrossImportSettingsValid: function(importSettings) {
 		'use strict';
 		var valid = true;
@@ -680,7 +572,8 @@ var ImportCrosses = {
 		settingObject.name = $('#presetName').val();
 
 		settingObject.breedingMethodSetting = {};
-		settingObject.breedingMethodSetting.methodId = null;
+		var $scope = angular.element('#crossingBreedingMethodModal').scope();
+		settingObject.breedingMethodSetting.methodId = $scope.selectedBreedingMethodId;
 
 		settingObject.breedingMethodSetting.basedOnStatusOfParentalLines = $('#selectUseParentalStatus').prop('checked');
 		settingObject.breedingMethodSetting.basedOnImportFile = $('#selectMethodInImportFile').prop('checked');

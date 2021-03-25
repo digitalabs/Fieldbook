@@ -10,9 +10,12 @@
 
 			var methodService = {};
 
-			methodService.getMethods = function (methodTypes, favoritesOnly) {
+			methodService.getMethods = function (methodTypes, favoritesOnly, methodCodes) {
+				var methodCodesURL = methodCodes ? '&methodCodes=' + methodCodes: '';
+				var methodTypesURL = methodTypes ? '&methodTypes=' + methodTypes: '';
 
-				var request = $http.get(BASE_URL + '/breedingmethods?programUUID=' + studyContext.programId + '&favoritesOnly=' + favoritesOnly + '&methodTypes=' + methodTypes);
+				var request = $http.get(BASE_URL + '/breedingmethods?programUUID=' + studyContext.programId + '&favoritesOnly=' + favoritesOnly +
+					 methodCodesURL + methodTypesURL);
 				return request.then(((response) => {
 					// Concatenate name and code to form displayDescription
 					angular.forEach(response.data, function (method) {
@@ -75,17 +78,13 @@
 						methodTypes = GENERATIVE;
 					}
 
-					methodService.getMethods(methodTypes, $scope.localData.useFavorites).then(function (response) {
+					methodService.getMethods(methodTypes, $scope.localData.useFavorites, null).then(function (response) {
 						$scope.methodItems = $scope.methodItems.concat(response.data);
 					});
 				};
 
 				$rootScope.$on('enableDisableMethodsSelect', function (event, enableDropdown) {
 					$scope.enableDropdown = enableDropdown;
-					if(!enableDropdown) {
-						$scope.valueContainer = null;
-						$scope.targetkey = null;
-					}
 				});
 			}]
 		};

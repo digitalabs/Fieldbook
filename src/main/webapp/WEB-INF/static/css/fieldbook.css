@@ -321,7 +321,7 @@ table.dataTable.table-sorted thead th.sorting_desc {
 
 .nav-tabs > li:not(.active) > a,
 .nav-tabs > li:not(.active) > a:hover,
-.nav-tabs > li:not(.active) > a:focus{    
+.nav-tabs > li:not(.active) > a:focus{
     background-color: #CECECE;
 }
 
@@ -1209,7 +1209,7 @@ div.sectionContainer {
 }
 .list-notes-display{
 	overflow:hidden;
-	text-overflow:ellipsis;	
+	text-overflow:ellipsis;
 	white-space: nowrap;
 	width: 200px;
 	position: absolute;
@@ -1985,7 +1985,7 @@ table.dataTable th, table.dataTable td {
 }
 
 .label-error-bold{
-	color:#e08989; 
+	color:#e08989;
 	font-weight:bold;
 }
 .fbk-center{
@@ -2016,16 +2016,16 @@ div.variable-details-popup {
 	text-align: center;
 }
 #chooseSettingsDiv .remove-indv-btn{
-	left: 9px; 
-	top: 2px; 
+	left: 9px;
+	top: 2px;
 	position:relative;
-} 
+}
 #chooseSettingsDiv table .remove-indv-btn{
-	left: 0px; 	
-} 
+	left: 0px;
+}
 .remove-all-section .remove-btn{
-	left: -5px; 
-	top: 2px; 
+	left: -5px;
+	top: 2px;
 	position:relative;
 }
 .fb-delete-settings{
@@ -2222,17 +2222,12 @@ input.select-all-margin{
     opacity: 1 !important;
 }
 
-.import-crosses-from-file .go-back-to-import {
-    display: inline-block;
-}
-
 .import-crosses-from-file #crossingBreedingMethodText,
 .import-crosses-from-file #crossesSelectBreedingMethod,
 #crossesPreSelectedBreedingMethod {
     display: block;
 }
 
-.go-back-to-import,
 #crossingBreedingMethodText,
 #crossesSelectBreedingMethod,
 .import-crosses-from-file #crossesPreSelectedBreedingMethod{

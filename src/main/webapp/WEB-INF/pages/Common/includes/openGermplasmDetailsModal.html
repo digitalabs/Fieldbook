@@ -1,11 +1,16 @@
 <div class="col-xs-7 col-md-7" xmlns:th="http://www.thymeleaf.org">
 	<div class="modal fade" id="openGermplasmModal" role="dialog" aria-labelledby="openGermplasmModal" aria-hidden="true">
 		<div class="modal-dialog modal-extra-large">
-			<div class="modal-content" >
+			<div class="modal-content">
 				<div class="modal-body" id="openGermplasmBody">
 					<div class="row form-group">
-						<div class="pull-right">
-							<button  type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
+						<div class="col-xs-11 col-md-11">
+							<label class="modal-title fbk-modal-title"></label>
+						</div>
+						<div class="col-xs-1 col-md-1">
+							<div class="pull-right">
+								<button type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
+							</div>
 						</div>
 					</div>
 					<div id="openGermplasmFrame">
@@ -18,15 +23,15 @@
 </div>
 
 <div layout:fragment="page-script">
-<script type='text/javascript' th:inline="javascript">
-//<![CDATA[
+	<script type='text/javascript' th:inline="javascript">
+		//<![CDATA[
 
-function openGermplasmDetailsPopop(aObject) {
-	var desig = $(aObject).data('desig');
-	var gid = $(aObject).data('gid');
-	openGermplasmDetailsPopopWithGidAndDesig(gid, desig);
-}
+		function openGermplasmDetailsPopop(aObject) {
+			var desig = $(aObject).data('desig');
+			var gid = $(aObject).data('gid');
+			openGermplasmDetailsPopopWithGidAndDesig(gid, desig);
+		}
 
-//]]>
-</script>
+		//]]>
+	</script>
 </div>

@@ -417,11 +417,6 @@ var ImportCrosses = {
 		$('#locationDropdown').select2('val', setting.locationID);
 	},
 
-	openBreedingMethodsModal: function() {
-		'use strict';
-		$('#crossingBreedingMethodModal').modal({ backdrop: 'static', keyboard: true });
-	},
-
 	openLocationsModal: function() {
 		'use strict';
 		var crossSettingsPopupModal = $('#crossSettingsModal');

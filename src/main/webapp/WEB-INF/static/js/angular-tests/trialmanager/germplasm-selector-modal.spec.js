@@ -11,7 +11,8 @@ describe('GermplasmSelectorCtrl:', function () {
 	var studyContextMock = {
 			studyId: 1,
 			cropName: 'maize',
-			programId : 'abc-123'
+			programId : 'abc-123',
+			selectedProjectId: 1
 		},
 		uibModalInstanceMock = {
 			close: jasmine.createSpy('close'),
@@ -53,6 +54,7 @@ describe('GermplasmSelectorCtrl:', function () {
 			expect(scope.url).toBe('/ibpworkbench/controller/jhipster#/germplasm-selector?restartApplication' +
 				'&cropName=' + studyContextMock.cropName +
 				'&programUUID=' + studyContextMock.programId +
+				'&selectedProjectId=' + studyContextMock.selectedProjectId +
 				'&selectMultiple=false');
 		});
 

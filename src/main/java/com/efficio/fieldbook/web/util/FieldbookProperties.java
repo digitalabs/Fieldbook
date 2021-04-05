@@ -7,7 +7,6 @@ public class FieldbookProperties {
 
 	private String programLocationsUrl;
 	private String programBreedingMethodsUrl;
-	private String germplasmDetailsUrl;
 	
 	private String uploadDirectory;
 	private Integer maxNumOfSubObsSetsPerStudy;
@@ -28,14 +27,6 @@ public class FieldbookProperties {
 
 	public void setProgramBreedingMethodsUrl(final String programBreedingMethodsUrl) {
 		this.programBreedingMethodsUrl = programBreedingMethodsUrl;
-	}
-
-	public String getGermplasmDetailsUrl() {
-		return WorkbenchAppPathResolver.getFullWebAddress(this.germplasmDetailsUrl);
-	}
-
-	public void setGermplasmDetailsUrl(final String germplasmDetailsUrl) {
-		this.germplasmDetailsUrl = germplasmDetailsUrl;
 	}
 
 	public String getUploadDirectory() {

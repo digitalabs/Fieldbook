@@ -715,18 +715,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	}
 
 	/**
-	 * Get the Germplasm URL
-	 *
-	 * @return the string
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/germplasm/detail/url", method = RequestMethod.GET)
-	public String getGermplasmUrl() {
-
-		return this.fieldbookProperties.getGermplasmDetailsUrl();
-	}
-
-	/**
 	 * Load initial germplasm tree.
 	 *
 	 * @return the string

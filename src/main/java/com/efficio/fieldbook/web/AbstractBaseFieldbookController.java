@@ -197,6 +197,17 @@ public abstract class AbstractBaseFieldbookController {
 		return checkEntryTypeIds;
 	}
 
+  protected List<String> getAllNonReplicatedEntryTypeIds() {
+	final List<ValueReference> entryTypes = this.fieldbookService.getAllPossibleValues(TermId.ENTRY_TYPE.getId(), true);
+	final List<String> nonReplicatedEntryTypeIds = new ArrayList<>();
+	for (final ValueReference entryType : entryTypes) {
+	  if (SystemDefinedEntryType.NON_REPLICATED_ENTRY.getEntryTypeCategoricalId() == entryType.getId()) {
+		nonReplicatedEntryTypeIds.add(entryType.getId().toString());
+	  }
+	}
+	return nonReplicatedEntryTypeIds;
+  }
+
 	public void setContextUtil(final ContextUtil contextUtil) {
 		this.contextUtil = contextUtil;
 	}

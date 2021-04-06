@@ -127,8 +127,12 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 			this.addErrorMessageToResult(details, e, id);
 		}
 
+		final long countNonReplicatedEntries = this.studyEntryService.countStudyGermplasmByEntryTypeIds(id, this.getAllNonReplicatedEntryTypeIds());
+		final long numberOfChecks = this.countNumberOfChecks(details, countNonReplicatedEntries);
+
 		model.addAttribute("trialDetails", details);
-		model.addAttribute("numberOfChecks", this.studyEntryService.countStudyGermplasmByEntryTypeIds(id, getAllCheckEntryTypeIds()));
+		model.addAttribute("numberOfChecks", numberOfChecks);
+		model.addAttribute("numberOfNonReplicatedEntries", countNonReplicatedEntries);
 		this.setIsSuperAdminAttribute(model);
 		return this.showAjaxPage(model, this.getContentName());
 	}
@@ -276,5 +280,24 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 
 	public void setStudyEntryService(final StudyEntryService studyEntryService) {
 		this.studyEntryService = studyEntryService;
+	}
+
+	private long countNumberOfChecks(final StudyDetails studyDetails, final long countNonReplicatedEntries) {
+	  final long countCheckEntries = this.studyEntryService.countStudyGermplasmByEntryTypeIds(studyDetails.getId(), this.getAllCheckEntryTypeIds());
+
+	  final int experimentalDesignValue = this.getExperimentalDesignValue(studyDetails);
+	  if (TermId.P_REP.getId() == experimentalDesignValue) {
+		return countCheckEntries - countNonReplicatedEntries;
+	  }
+
+	  return countCheckEntries;
+	}
+
+	private int getExperimentalDesignValue(final StudyDetails studyDetails) {
+	  if (studyDetails.getExperimentalDesignDetails() != null && studyDetails.getExperimentalDesignDetails().getExperimentalDesign() != null) {
+	    return studyDetails.getExperimentalDesignDetails().getExperimentalDesign().getValue() == null ? 0 :
+				Integer.parseInt(studyDetails.getExperimentalDesignDetails().getExperimentalDesign().getValue());
+	  }
+	  return 0;
 	}
 }

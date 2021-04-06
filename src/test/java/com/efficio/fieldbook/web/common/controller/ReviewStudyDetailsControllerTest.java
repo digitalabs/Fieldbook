@@ -15,15 +15,19 @@ import com.efficio.fieldbook.AbstractBaseIntegrationTest;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.StudyDetails;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.security.AuthorizationService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.Term;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.ErrorCode;
@@ -43,6 +47,7 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -137,14 +142,22 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		final int id = new Random().nextInt(100);
 		final CreateTrialForm form = new CreateTrialForm();
 		final Model model = new ExtendedModelMap();
-		Mockito.doReturn(2L).when(this.studyEntryService).countStudyGermplasmByEntryTypeIds(ArgumentMatchers.eq(id), ArgumentMatchers.anyList());
+		final List<ValueReference> allEntries = this.getAllEntries(5, 3, 5);
+		final List<String> checksEntries = this.getAllCheckEntryTypeIds(allEntries);
+		final List<String> nonReplicatedEntries = this.getAllNonReplicatedEntryTypeIds(allEntries);
+
+		Mockito.when(this.fieldbookService.getAllPossibleValues(TermId.ENTRY_TYPE.getId(), true)).thenReturn(allEntries);
+		Mockito.doReturn(5L).when(this.studyEntryService).countStudyGermplasmByEntryTypeIds(id, checksEntries);
+		Mockito.doReturn(3L).when(this.studyEntryService).countStudyGermplasmByEntryTypeIds(id,
+				nonReplicatedEntries);
 		this.reviewStudyDetailsController.show(id, form, model);
 
 		final StudyDetails details = (StudyDetails) model.asMap().get("trialDetails");
 		Assert.assertNotNull(details);
 		final Boolean isSuperAdmin =  (Boolean) model.asMap().get("isSuperAdmin");
 		Assert.assertNotNull(isSuperAdmin);
-		Assert.assertEquals(2L, model.asMap().get("numberOfChecks"));
+		Assert.assertEquals(5L, model.asMap().get("numberOfChecks"));
+		Assert.assertEquals("With Non Replicated Count",3L, model.asMap().get("numberOfNonReplicatedEntries"));
 	}
 
 	@Test
@@ -158,6 +171,28 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 
 		Mockito.verify(this.userService).getPersonNameForUserId(0);
 
+	}
+
+	@Test
+	public void testShowStudySummaryWoNonReplicatedCount() {
+		final int id = new Random().nextInt(100);
+		final CreateTrialForm form = new CreateTrialForm();
+		final Model model = new ExtendedModelMap();
+		final List<ValueReference> allEntries = this.getAllEntries(5, 0, 5);
+		final List<String> checksEntries = this.getAllCheckEntryTypeIds(allEntries);
+
+		Mockito.when(this.fieldbookService.getAllPossibleValues(TermId.ENTRY_TYPE.getId(), true)).thenReturn(allEntries);
+		Mockito.doReturn(5L).when(this.studyEntryService).countStudyGermplasmByEntryTypeIds(id, checksEntries);
+
+		this.reviewStudyDetailsController.show(id, form, model);
+
+		final StudyDetails details = (StudyDetails) model.asMap().get("trialDetails");
+		Assert.assertNotNull(details);
+		final Boolean isSuperAdmin =  (Boolean) model.asMap().get("isSuperAdmin");
+		Assert.assertNotNull(isSuperAdmin);
+		Assert.assertEquals(5L, model.asMap().get("numberOfChecks"));
+		Assert.assertNotNull(model.asMap().get("numberOfNonReplicatedEntries"));
+		Assert.assertEquals("Without Non Replicated Count",0L, model.asMap().get("numberOfNonReplicatedEntries"));
 	}
 
 	@Test
@@ -221,5 +256,61 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		term.setId(1);
 		term.setName(name);
 		return term;
+	}
+
+	private List<ValueReference> getAllEntries(final int checksSize, final int nonReplicatedSize, final int testSize) {
+		final ArrayList<ValueReference> references = new ArrayList<>();
+
+		for (int i=0; i<checksSize; i++) {
+			ValueReference reference = new ValueReference();
+			reference.setId(SystemDefinedEntryType.CHECK_ENTRY.getEntryTypeCategoricalId());
+			reference.setName(RandomStringUtils.randomAlphanumeric(10));
+			reference.setDescription(RandomStringUtils.randomAlphanumeric(20));
+			reference.setKey(String.valueOf(i));
+			reference.setProgramUUID(contextUtil.getCurrentProgramUUID());
+			references.add(reference);
+		}
+
+		for (int i=0; i<nonReplicatedSize; i++) {
+			ValueReference reference = new ValueReference();
+			reference.setId(SystemDefinedEntryType.NON_REPLICATED_ENTRY.getEntryTypeCategoricalId());
+			reference.setName(RandomStringUtils.randomAlphanumeric(10));
+			reference.setDescription(RandomStringUtils.randomAlphanumeric(20));
+			reference.setKey(String.valueOf(i));
+			reference.setProgramUUID(contextUtil.getCurrentProgramUUID());
+			references.add(reference);
+		}
+
+		for (int i=0; i<testSize; i++) {
+			ValueReference reference = new ValueReference();
+			reference.setId(SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId());
+			reference.setName(RandomStringUtils.randomAlphanumeric(10));
+			reference.setDescription(RandomStringUtils.randomAlphanumeric(20));
+			reference.setKey(String.valueOf(i));
+			reference.setProgramUUID(contextUtil.getCurrentProgramUUID());
+			references.add(reference);
+		}
+
+		return references;
+	}
+
+	private List<String> getAllCheckEntryTypeIds(final List<ValueReference> valueReferences) {
+		final ArrayList<String> ids = new ArrayList<>();
+		for (final ValueReference valueReference : valueReferences) {
+			if (SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId() != valueReference.getId()) {
+				ids.add(String.valueOf(valueReference.getId()));
+			}
+		}
+		return ids;
+	}
+
+	private List<String> getAllNonReplicatedEntryTypeIds(final List<ValueReference> valueReferences) {
+		final ArrayList<String> ids = new ArrayList<>();
+		for (final ValueReference valueReference : valueReferences) {
+			if (SystemDefinedEntryType.NON_REPLICATED_ENTRY.getEntryTypeCategoricalId() == valueReference.getId()) {
+				ids.add(String.valueOf(valueReference.getId()));
+			}
+		}
+		return ids;
 	}
 }

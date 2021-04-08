@@ -51,8 +51,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
-
 
 public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTest {
 
@@ -240,10 +238,13 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 
 	@Test
 	public void testShowStudyPrepDesignSummary() {
-
-
 		final Workbook wb = this.workbook;
-		wb.setExperimentalDesignVariables(Collections.singletonList(WorkbookTestDataInitializer.createExperimentalPrepVariable()));
+		final MeasurementVariable prepDesign = WorkbookTestDataInitializer.createMeasurementVariable(WorkbookTestDataInitializer.EXPT_DESIGN_ID, "DESIGN",
+				"EXPERIMENTAL DESIGN", WorkbookTestDataInitializer.TYPE, WorkbookTestDataInitializer.ASSIGNED,
+				WorkbookTestDataInitializer.EXPERIMENT_DESIGN, WorkbookTestDataInitializer.CHAR,
+				String.valueOf(TermId.P_REP.getId()), WorkbookTestDataInitializer.TRIAL,
+				TermId.CHARACTER_VARIABLE.getId(), PhenotypicType.TRIAL_ENVIRONMENT, false);
+		wb.setExperimentalDesignVariables(Collections.singletonList(prepDesign));
 		Mockito.doReturn(wb).when(this.fieldbookMWService).getStudyVariableSettings(ArgumentMatchers.anyInt());
 		this.mockStandardVariables(this.workbook.getAllVariables(), this.fieldbookMWService, this.fieldbookService);
 

@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 
 public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTest {
@@ -157,7 +158,6 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		final Boolean isSuperAdmin =  (Boolean) model.asMap().get("isSuperAdmin");
 		Assert.assertNotNull(isSuperAdmin);
 		Assert.assertEquals(5L, model.asMap().get("numberOfChecks"));
-		Assert.assertEquals("With Non Replicated Count",3L, model.asMap().get("numberOfNonReplicatedEntries"));
 	}
 
 	@Test
@@ -191,8 +191,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		final Boolean isSuperAdmin =  (Boolean) model.asMap().get("isSuperAdmin");
 		Assert.assertNotNull(isSuperAdmin);
 		Assert.assertEquals(5L, model.asMap().get("numberOfChecks"));
-		Assert.assertNotNull(model.asMap().get("numberOfNonReplicatedEntries"));
-		Assert.assertEquals("Without Non Replicated Count",0L, model.asMap().get("numberOfNonReplicatedEntries"));
+		Assert.assertNull(model.asMap().get("nonReplicatedEntriesCount"));
 	}
 
 	@Test
@@ -237,6 +236,36 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 					measurementVariable.getRole());
 			Mockito.when(fieldbookService.getValue(ArgumentMatchers.anyInt(), ArgumentMatchers.anyString(), ArgumentMatchers.anyBoolean())).thenReturn("");
 		}
+	}
+
+	@Test
+	public void testShowStudyPrepDesignSummary() {
+
+
+		final Workbook wb = this.workbook;
+		wb.setExperimentalDesignVariables(Collections.singletonList(WorkbookTestDataInitializer.createExperimentalPrepVariable()));
+		Mockito.doReturn(wb).when(this.fieldbookMWService).getStudyVariableSettings(ArgumentMatchers.anyInt());
+		this.mockStandardVariables(this.workbook.getAllVariables(), this.fieldbookMWService, this.fieldbookService);
+
+		final int id = new Random().nextInt(100);
+		final CreateTrialForm form = new CreateTrialForm();
+		final Model model = new ExtendedModelMap();
+		final List<ValueReference> allEntries = this.getAllEntries(5, 3, 5);
+		final List<String> checksEntries = this.getAllCheckEntryTypeIds(allEntries);
+
+		Mockito.when(this.fieldbookService.getAllPossibleValues(TermId.ENTRY_TYPE.getId(), true)).thenReturn(allEntries);
+		Mockito.doReturn(5L).when(this.studyEntryService).countStudyGermplasmByEntryTypeIds(id, checksEntries);
+		Mockito.doReturn(3L).when(this.studyEntryService).countStudyGermplasmByEntryTypeIds(id,
+				Collections.singletonList(String.valueOf(SystemDefinedEntryType.NON_REPLICATED_ENTRY.getEntryTypeCategoricalId())));
+		this.reviewStudyDetailsController.show(id, form, model);
+
+		final StudyDetails details = (StudyDetails) model.asMap().get("trialDetails");
+		Assert.assertNotNull(details);
+		final Boolean isSuperAdmin =  (Boolean) model.asMap().get("isSuperAdmin");
+		Assert.assertNotNull(isSuperAdmin);
+		Assert.assertEquals("Checks Count - Non Replicated Count", 2L, model.asMap().get("numberOfChecks"));
+		Assert.assertNotNull(model.asMap().get("nonReplicatedEntriesCount"));
+		Assert.assertEquals(3L,model.asMap().get("nonReplicatedEntriesCount"));
 	}
 
 	private StandardVariable createStandardVariable(final Integer id, final String property, final String scale, final String method,

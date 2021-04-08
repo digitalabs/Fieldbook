@@ -288,13 +288,13 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 	}
 
 	private long countNumberOfChecks(final StudyDetails studyDetails, final Optional<Long> nonReplicatedEntriesCount) {
-	  final long countCheckEntries = this.studyEntryService.countStudyGermplasmByEntryTypeIds(studyDetails.getId(), this.getAllCheckEntryTypeIds());
+	  final long checkEntriesCount = this.studyEntryService.countStudyGermplasmByEntryTypeIds(studyDetails.getId(), this.getAllCheckEntryTypeIds());
 
 	  if (TermId.P_REP.getId() == this.getExperimentalDesignValue(studyDetails) && nonReplicatedEntriesCount.isPresent()) {
-		return countCheckEntries - nonReplicatedEntriesCount.get();
+		return checkEntriesCount - nonReplicatedEntriesCount.get();
 	  }
 
-	  return countCheckEntries;
+	  return checkEntriesCount;
 	}
 
 	private int getExperimentalDesignValue(final StudyDetails studyDetails) {

@@ -478,7 +478,7 @@
                         <tr th:if="*{experimentalDesignDetails.experimentalDesign.value == '10164'}">
                             <td>
                                 <strong th:text="#{review.study.number.of.non.replicated.entries}"></strong>
-                                <span id="review-number-of-non-replicated-entries" th:text="${numberOfNonReplicatedEntries}"></span>
+                                <span id="review-number-of-non-replicated-entries" th:text="${nonReplicatedEntriesCount}"></span>
                             </td>
                         </tr>
                         <tr th:if="*{experimentalDesignDetails.experimentalDesign.value != '10164'}" id="row-review-number-of-blocks">

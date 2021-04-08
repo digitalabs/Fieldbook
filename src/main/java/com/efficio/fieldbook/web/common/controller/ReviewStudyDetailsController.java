@@ -136,7 +136,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		model.addAttribute("trialDetails", details);
 		model.addAttribute("numberOfChecks", numberOfChecks);
 		if (nonReplicatedEntriesCount.isPresent()) {
-			model.addAttribute("numberOfNonReplicatedEntries", nonReplicatedEntriesCount.get());
+			model.addAttribute("nonReplicatedEntriesCount", nonReplicatedEntriesCount.get());
 		}
 		this.setIsSuperAdminAttribute(model);
 		return this.showAjaxPage(model, this.getContentName());
@@ -287,11 +287,11 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		this.studyEntryService = studyEntryService;
 	}
 
-	private long countNumberOfChecks(final StudyDetails studyDetails, final Optional<Long> countNonReplicatedEntries) {
+	private long countNumberOfChecks(final StudyDetails studyDetails, final Optional<Long> nonReplicatedEntriesCount) {
 	  final long countCheckEntries = this.studyEntryService.countStudyGermplasmByEntryTypeIds(studyDetails.getId(), this.getAllCheckEntryTypeIds());
 
-	  if (TermId.P_REP.getId() == this.getExperimentalDesignValue(studyDetails) && countNonReplicatedEntries.isPresent()) {
-		return countCheckEntries - countNonReplicatedEntries.get();
+	  if (TermId.P_REP.getId() == this.getExperimentalDesignValue(studyDetails) && nonReplicatedEntriesCount.isPresent()) {
+		return countCheckEntries - nonReplicatedEntriesCount.get();
 	  }
 
 	  return countCheckEntries;

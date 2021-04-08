@@ -258,7 +258,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		return term;
 	}
 
-	private List<ValueReference> getAllEntries(final int checksSize, final int nonReplicatedSize, final int testSize) {
+	private List<ValueReference> getAllEntries(final int checksSize, final int nonReplicatedEntriesCount, final int testSize) {
 		final ArrayList<ValueReference> references = new ArrayList<>();
 
 		for (int i=0; i<checksSize; i++) {
@@ -271,7 +271,7 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 			references.add(reference);
 		}
 
-		for (int i=0; i<nonReplicatedSize; i++) {
+		for (int i=0; i<nonReplicatedEntriesCount; i++) {
 			ValueReference reference = new ValueReference();
 			reference.setId(SystemDefinedEntryType.NON_REPLICATED_ENTRY.getEntryTypeCategoricalId());
 			reference.setName(RandomStringUtils.randomAlphanumeric(10));

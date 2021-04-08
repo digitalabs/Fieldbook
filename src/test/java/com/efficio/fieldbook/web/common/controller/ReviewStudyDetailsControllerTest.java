@@ -48,6 +48,7 @@ import org.springframework.ui.Model;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -144,12 +145,11 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		final Model model = new ExtendedModelMap();
 		final List<ValueReference> allEntries = this.getAllEntries(5, 3, 5);
 		final List<String> checksEntries = this.getAllCheckEntryTypeIds(allEntries);
-		final List<String> nonReplicatedEntries = this.getAllNonReplicatedEntryTypeIds(allEntries);
 
 		Mockito.when(this.fieldbookService.getAllPossibleValues(TermId.ENTRY_TYPE.getId(), true)).thenReturn(allEntries);
 		Mockito.doReturn(5L).when(this.studyEntryService).countStudyGermplasmByEntryTypeIds(id, checksEntries);
 		Mockito.doReturn(3L).when(this.studyEntryService).countStudyGermplasmByEntryTypeIds(id,
-				nonReplicatedEntries);
+				Collections.singletonList(String.valueOf(SystemDefinedEntryType.NON_REPLICATED_ENTRY.getEntryTypeCategoricalId())));
 		this.reviewStudyDetailsController.show(id, form, model);
 
 		final StudyDetails details = (StudyDetails) model.asMap().get("trialDetails");
@@ -298,16 +298,6 @@ public class ReviewStudyDetailsControllerTest extends AbstractBaseIntegrationTes
 		final ArrayList<String> ids = new ArrayList<>();
 		for (final ValueReference valueReference : valueReferences) {
 			if (SystemDefinedEntryType.TEST_ENTRY.getEntryTypeCategoricalId() != valueReference.getId()) {
-				ids.add(String.valueOf(valueReference.getId()));
-			}
-		}
-		return ids;
-	}
-
-	private List<String> getAllNonReplicatedEntryTypeIds(final List<ValueReference> valueReferences) {
-		final ArrayList<String> ids = new ArrayList<>();
-		for (final ValueReference valueReference : valueReferences) {
-			if (SystemDefinedEntryType.NON_REPLICATED_ENTRY.getEntryTypeCategoricalId() == valueReference.getId()) {
 				ids.add(String.valueOf(valueReference.getId()));
 			}
 		}

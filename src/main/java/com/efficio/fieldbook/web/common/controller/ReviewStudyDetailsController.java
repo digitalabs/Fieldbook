@@ -27,6 +27,7 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.gms.SystemDefinedEntryType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareException;
@@ -44,8 +45,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 
 @Controller
@@ -127,12 +130,14 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 			this.addErrorMessageToResult(details, e, id);
 		}
 
-		final long countNonReplicatedEntries = this.studyEntryService.countStudyGermplasmByEntryTypeIds(id, this.getAllNonReplicatedEntryTypeIds());
-		final long numberOfChecks = this.countNumberOfChecks(details, countNonReplicatedEntries);
+		final Optional<Long> nonReplicatedEntriesCount = this.getNonReplicatedEntriesCount(details);
+		final long numberOfChecks = this.countNumberOfChecks(details, nonReplicatedEntriesCount);
 
 		model.addAttribute("trialDetails", details);
 		model.addAttribute("numberOfChecks", numberOfChecks);
-		model.addAttribute("numberOfNonReplicatedEntries", countNonReplicatedEntries);
+		if (nonReplicatedEntriesCount.isPresent()) {
+			model.addAttribute("numberOfNonReplicatedEntries", nonReplicatedEntriesCount.get());
+		}
 		this.setIsSuperAdminAttribute(model);
 		return this.showAjaxPage(model, this.getContentName());
 	}
@@ -282,12 +287,11 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 		this.studyEntryService = studyEntryService;
 	}
 
-	private long countNumberOfChecks(final StudyDetails studyDetails, final long countNonReplicatedEntries) {
+	private long countNumberOfChecks(final StudyDetails studyDetails, final Optional<Long> countNonReplicatedEntries) {
 	  final long countCheckEntries = this.studyEntryService.countStudyGermplasmByEntryTypeIds(studyDetails.getId(), this.getAllCheckEntryTypeIds());
 
-	  final int experimentalDesignValue = this.getExperimentalDesignValue(studyDetails);
-	  if (TermId.P_REP.getId() == experimentalDesignValue) {
-		return countCheckEntries - countNonReplicatedEntries;
+	  if (TermId.P_REP.getId() == this.getExperimentalDesignValue(studyDetails) && countNonReplicatedEntries.isPresent()) {
+		return countCheckEntries - countNonReplicatedEntries.get();
 	  }
 
 	  return countCheckEntries;
@@ -299,5 +303,13 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 				Integer.parseInt(studyDetails.getExperimentalDesignDetails().getExperimentalDesign().getValue());
 	  }
 	  return 0;
+	}
+
+	private Optional<Long> getNonReplicatedEntriesCount(final StudyDetails studyDetails) {
+		if (TermId.P_REP.getId() == this.getExperimentalDesignValue(studyDetails)) {
+			return Optional.of(this.studyEntryService.countStudyGermplasmByEntryTypeIds(studyDetails.getId(),
+					Collections.singletonList(String.valueOf(SystemDefinedEntryType.NON_REPLICATED_ENTRY.getEntryTypeCategoricalId()))));
+		}
+		return Optional.empty();
 	}
 }

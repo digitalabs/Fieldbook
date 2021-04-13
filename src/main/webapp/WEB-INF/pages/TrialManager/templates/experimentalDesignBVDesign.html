@@ -49,6 +49,10 @@
 				<b>Number of Check entries:</b>
 				<span>{{germplasmTotalCheckEntriesCount}}</span>
 			</div>
+			<div class="add-bottom-padding" ng-show="currentDesignType.id == 6">
+				<b th:text="#{study.experimental.design.number.of.non.replicated.entries}"></b>
+				<span>{{germplasmTotalNonReplicatedEntriesCounts}}</span>
+			</div>
 			<div class="add-bottom-padding" ng-show="showOnlyIfNumberOfBlocksIsSpecified()">
 				<b>Number of Test entries per block:</b>
 				<span ng-show="germplasmNumberOfTestEntriesPerBlock % 1 === 0">{{germplasmNumberOfTestEntriesPerBlock}}</span>

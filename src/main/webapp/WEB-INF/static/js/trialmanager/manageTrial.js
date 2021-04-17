@@ -202,12 +202,30 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 
 	// THE parent controller for the manageTrial (create/edit) page
 	manageTrialApp.controller('manageTrialCtrl', ['$scope', '$rootScope', 'studyStateService', 'TrialManagerDataService', '$http',
-		'$timeout', '_', '$localStorage', '$state', '$location', 'HasAnyAuthorityService', 'derivedVariableService', 'exportStudyModalService',
+		'$timeout', '_', '$localStorage', '$state', '$window', '$location', 'HasAnyAuthorityService', 'derivedVariableService', 'exportStudyModalService',
 		'importStudyModalService', 'createSampleModalService', 'derivedVariableModalService', '$uibModal', '$q', 'datasetService', 'InventoryService',
 		'studyContext', 'PERMISSIONS', 'LABEL_PRINTING_TYPE', 'HAS_LISTS_OR_SUB_OBS', 'HAS_GENERATED_DESIGN', 'germplasmStudySourceService', 'studyEntryService', 'HAS_MEANS_DATASET',
-		function ($scope, $rootScope, studyStateService, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $location, HasAnyAuthorityService,
+		function ($scope, $rootScope, studyStateService, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $window, $location, HasAnyAuthorityService,
 				  derivedVariableService, exportStudyModalService, importStudyModalService, createSampleModalService, derivedVariableModalService, $uibModal, $q, datasetService, InventoryService,
 				  studyContext, PERMISSIONS, LABEL_PRINTING_TYPE, HAS_LISTS_OR_SUB_OBS, HAS_GENERATED_DESIGN, germplasmStudySourceService, studyEntryService, HAS_MEANS_DATASET) {
+
+			$scope.germplasmDetailsHasChanges = false;
+			$window.addEventListener("message", (event) => {
+				if (event.data === 'germplasm-details-changed') {
+					// If any germplasm info is changed in germplasm details popup (basic-details, name, attribute, pedigree)
+					// se the germplasmDetailsHasChanges flag to true
+					$scope.germplasmDetailsHasChanges = true;
+				}
+			}, false);
+
+			$scope.reloadViewIfGermplasmDetailsChanged = function () {
+				// If any germplasm info is changed in germplasm details popup (basic-details, name, attribute, pedigree)
+				// then refresh the current view to immediate reflect the changes in germplasm.
+				if ($scope.germplasmDetailsHasChanges) {
+					$state.reload();
+					$scope.germplasmDetailsHasChanges = false;
+				}
+			}
 
 			$scope.trialTabs = [
 				{

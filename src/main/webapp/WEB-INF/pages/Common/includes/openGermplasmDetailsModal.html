@@ -9,7 +9,7 @@
 						</div>
 						<div class="col-xs-1 col-md-1">
 							<div class="pull-right">
-								<button type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
+								<button type="button" class="close  pull-right glyphicon glyphicon-remove" onclick="closeGermplasmDetailsPopup()" data-dismiss="modal" aria-hidden="true"/>
 							</div>
 						</div>
 					</div>
@@ -30,6 +30,15 @@
 			var desig = $(aObject).data('desig');
 			var gid = $(aObject).data('gid');
 			openGermplasmDetailsPopopWithGidAndDesig(gid, desig);
+		}
+
+		function closeGermplasmDetailsPopup() {
+			var controllerElement = document.querySelector('#mainApp');
+			var controllerScope = angular.element(controllerElement).scope();
+			if (controllerScope) {
+				// Reload the current view, so that changes to the germplasm details will be reflected immediately in the view.
+				controllerScope.reloadViewIfGermplasmDetailsChanged();
+			}
 		}
 
 		//]]>

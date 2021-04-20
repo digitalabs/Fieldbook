@@ -13,6 +13,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
 import org.generationcp.commons.spring.util.ContextUtil;
+import org.generationcp.commons.util.FileNameGenerator;
 import org.generationcp.commons.util.FileUtils;
 import org.generationcp.commons.util.InstallationDirectoryUtil;
 import org.generationcp.middleware.data.initializer.ProjectTestDataInitializer;
@@ -43,8 +44,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -81,9 +80,6 @@ public class ExportStudyEntriesControllerTest {
 
 	private static final int EXCEL_TYPE = 1;
 	private static final int CSV_TYPE = 2;
-
-	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
-	private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("hhmmss");
 
 	@Mock
 	private HttpServletResponse response;
@@ -186,24 +182,8 @@ public class ExportStudyEntriesControllerTest {
 			Assert.assertNotNull(outputFile);
 			Assert.assertEquals(outputFile.getAbsolutePath(), filenameCaptor.getValue());
 			final Map<String, Object> result = new ObjectMapper().readValue(output, Map.class);
-			final String[] underScore = result.get(ExportStudyEntriesController.FILENAME).toString().split("_");
-			Assert.assertTrue(underScore.length >= 3);
 			Assert.assertEquals(outputFile.getAbsolutePath(), result.get(ExportStudyEntriesController.OUTPUT_FILENAME));
-			final String time = underScore[underScore.length - 1].replaceAll(".csv", "");
-			final String date = underScore[underScore.length - 2];
-
-			try {
-				TIME_FORMAT.parse(time);
-			} catch (final ParseException ex) {
-				Assert.fail("Timestamp should be included in filename");
-			}
-
-			try {
-				DATE_FORMAT.parse(date);
-			} catch (final ParseException ex) {
-				Assert.fail("Date should be included in filename");
-			}
-
+			Assert.assertTrue(FileNameGenerator.isValidFileNameFormat(result.get(ExportStudyEntriesController.FILENAME).toString(), FileNameGenerator.CSV_DATE_TIME_PATTERN));
 			Mockito.verify(this.response).setContentType(FileUtils.MIME_CSV);
 		} catch (final GermplasmListExporterException e) {
 			Assert.fail();
@@ -394,5 +374,4 @@ public class ExportStudyEntriesControllerTest {
 		final File testInstallationDirectory = new File(InstallationDirectoryUtil.WORKSPACE_DIR);
 		this.installationDirectoryUtil.recursiveFileDelete(testInstallationDirectory);
 	}
-
 }

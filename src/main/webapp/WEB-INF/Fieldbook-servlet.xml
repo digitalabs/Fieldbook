@@ -110,7 +110,6 @@
 	<bean id="fieldbookProperties" class="com.efficio.fieldbook.web.util.FieldbookProperties">
 		<property name="programLocationsUrl" value="${url.program.locations}" />
 		<property name="programBreedingMethodsUrl" value="${url.program.breeding.methods}" />
-		<property name="germplasmDetailsUrl" value="${url.germplasm.details}" />
 		<property name="uploadDirectory" value="${upload.directory}" />
 		<property name="maxNumOfSubObsSetsPerStudy" value="${maximum.number.of.sub.observation.sets}" />
 		<property name="maxNumOfSubObsPerParentUnit" value="${maximum.number.of.sub.observation.parent.unit}" />
@@ -562,6 +561,21 @@
 		<aop:scoped-proxy proxy-target-class="false" />
 	</bean>
 
+	<bean id="germplasmListService" factory-bean="managerFactory"
+		  factory-method="getGermplasmListService" scope="request">
+		<aop:scoped-proxy />
+    </bean>
+
+	<bean id="germplasmService" factory-bean="managerFactory"
+		  factory-method="getGermplasmService" scope="request">
+		<aop:scoped-proxy />
+    </bean>
+
+	<bean id="germplasmSearchService" factory-bean="managerFactory"
+		  factory-method="getGermplasmSearchService" scope="request">
+		<aop:scoped-proxy />
+    </bean>
+	
 	<bean id="studyEntryTransformer" class="com.efficio.fieldbook.web.study.germplasm.StudyEntryTransformer" scope="request">
 		<aop:scoped-proxy/>
 	</bean>

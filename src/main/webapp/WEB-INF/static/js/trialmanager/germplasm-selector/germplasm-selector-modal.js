@@ -9,6 +9,7 @@
 			$scope.url = '/ibpworkbench/controller/jhipster#/germplasm-selector?restartApplication' +
 				'&cropName=' + studyContext.cropName +
 				'&programUUID=' + studyContext.programId +
+				'&selectedProjectId=' + studyContext.selectedProjectId +
 				'&selectMultiple=' + selectMultiple;
 
 			window.closeModal = function() {

@@ -104,8 +104,6 @@ var SaveAdvanceList = {};
 			type: 'GET',
 			cache: false,
 			success: function(html) {
-				$('#advanceStudyModal').modal('hide');
-
 				$('#review-advance-study-modal-div').html(html);
 				$('.btn-cancel-review').off('click');
 				$('.btn-cancel-review').on('click', function() {

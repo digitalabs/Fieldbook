@@ -205,9 +205,10 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 		'$timeout', '_', '$localStorage', '$state', '$location', 'HasAnyAuthorityService', 'derivedVariableService', 'exportStudyModalService',
 		'importStudyModalService', 'createSampleModalService', 'derivedVariableModalService', '$uibModal', '$q', 'datasetService', 'InventoryService',
 		'studyContext', 'PERMISSIONS', 'LABEL_PRINTING_TYPE', 'HAS_LISTS_OR_SUB_OBS', 'HAS_GENERATED_DESIGN', 'germplasmStudySourceService', 'studyEntryService', 'HAS_MEANS_DATASET',
+		'advanceStudyModalService',
 		function ($scope, $rootScope, studyStateService, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $location, HasAnyAuthorityService,
 				  derivedVariableService, exportStudyModalService, importStudyModalService, createSampleModalService, derivedVariableModalService, $uibModal, $q, datasetService, InventoryService,
-				  studyContext, PERMISSIONS, LABEL_PRINTING_TYPE, HAS_LISTS_OR_SUB_OBS, HAS_GENERATED_DESIGN, germplasmStudySourceService, studyEntryService, HAS_MEANS_DATASET) {
+				  studyContext, PERMISSIONS, LABEL_PRINTING_TYPE, HAS_LISTS_OR_SUB_OBS, HAS_GENERATED_DESIGN, germplasmStudySourceService, studyEntryService, HAS_MEANS_DATASET, advanceStudyModalService) {
 
 			$scope.trialTabs = [
 				{
@@ -958,6 +959,10 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 
 			$scope.showCalculatedVariableModal = function () {
 				derivedVariableModalService.openDatasetOptionModal();
+			}
+
+			$scope.startAdvance = function (advanceType) {
+				advanceStudyModalService.openSelectEnvironmentModal(advanceType);
 			}
 
 			$scope.init = function () {

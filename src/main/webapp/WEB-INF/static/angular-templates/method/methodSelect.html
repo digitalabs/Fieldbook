@@ -1,5 +1,5 @@
 <ui-select ng-model="valuecontainer[targetkey]"
-		   on-select="onMethodSelect()"
+		   on-select="onSelect($item, $model)"
 		   uis-open-close="valuecontainer.onOpenClose(isOpen)"
 		   tagging-label="false"
 		   append-to-body="true" ng-disabled="!enableDropdown"

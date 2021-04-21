@@ -11,18 +11,18 @@
 			var methodService = {};
 
 			methodService.getMethods = function (methodTypes, favoritesOnly, methodCodes) {
-				var methodCodesURL = methodCodes ? '&methodCodes=' + methodCodes: '';
-				var methodTypesURL = methodTypes ? '&methodTypes=' + methodTypes: '';
+				var methodCodesURL = methodCodes ? '&methodCodes=' + methodCodes : '';
+				var methodTypesURL = methodTypes ? '&methodTypes=' + methodTypes : '';
 
 				var request = $http.get(BASE_URL + '/breedingmethods?programUUID=' + studyContext.programId + '&favoritesOnly=' + favoritesOnly +
-					 methodCodesURL + methodTypesURL);
+					methodCodesURL + methodTypesURL);
 				return request.then(((response) => {
 					// Concatenate name and code to form displayDescription
 					angular.forEach(response.data, function (method) {
 						method.displayDescription = method.name + ' - ' + method.code;
 					});
 					// Add a "Please Choose" option for resetting value to empty
-					response.data.unshift({"code":"", "name":"", "displayDescription":"Please Choose"});
+					response.data.unshift({"code": "", "name": "", "displayDescription": "Please Choose"});
 					return response;
 				}), failureHandler);
 			};
@@ -59,7 +59,7 @@
 
 				$scope.methodItems = [];
 				$scope.localData = {methodType: ALL_METHODS, useFavorites: false};
-				if($scope.methodType) {
+				if ($scope.methodType) {
 					$scope.localData.methodType = $scope.methodType;
 				}
 				$scope.fetch = function ($select, $event) {
@@ -74,7 +74,7 @@
 					var methodTypes = [];
 					if ($scope.localData.methodType === DER_MAN_ONLY) {
 						methodTypes = DERIVATIVE_MAINTENANCE;
-					} else if ($scope.localData.methodType === GENERATIVE_ONLY ) {
+					} else if ($scope.localData.methodType === GENERATIVE_ONLY) {
 						methodTypes = GENERATIVE;
 					}
 
@@ -82,6 +82,10 @@
 						$scope.methodItems = $scope.methodItems.concat(response.data);
 					});
 				};
+
+				$scope.onSelect = function (item, model) {
+					$scope.onMethodSelect()(item, model);
+				}
 
 				$rootScope.$on('enableDisableMethodsSelect', function (event, enableDropdown) {
 					$scope.enableDropdown = enableDropdown;

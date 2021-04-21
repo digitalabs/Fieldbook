@@ -872,6 +872,7 @@ function openSampleSummary(obsUnitId, plotNumber, programUUID) {
 	$('#samples-summary-table').wrap('<div style="overflow-x: auto" />');
 }
 
+// TODO: Delete
 function generateLocationDetailTable(selectedLocations) {
 	//TODO Why do we generate an html code here in js?
 	//FIXME The caption is not localised
@@ -1103,6 +1104,7 @@ function initializeHarvestLocationFavSelect2(locationSuggestionsFav, locationSug
 	});
 }
 
+// TODO: Delete
 function initializeMethodSelect2(methodSuggestions, methodSuggestionsObj, methodId) {
 
 	$.each(methodSuggestions, function (index, value) {
@@ -1294,6 +1296,7 @@ function doTreeHighlight(treeName, nodeKey) {
 	}
 }
 
+// TODO: Delete
 function validatePlantsSelected() {
 	var ids = '',
 		isMixed = false,
@@ -1724,6 +1727,7 @@ function generateGenericLocationSuggestions(genericLocationJson) {
 	return genericLocationSuggestion;
 }
 
+// TODO: Delete
 function recreateLocationCombo(possibleFavorite) {
 	var selectedLocationAll = $('#harvestLocationIdAll').val();
 	var selectedLocationBreeding = $('#harvestLocationIdBreeding').val();

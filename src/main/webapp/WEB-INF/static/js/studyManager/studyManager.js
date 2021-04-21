@@ -103,6 +103,7 @@ function validateAdvanceStudy() {
 	return true;
 }
 
+// TODO: Delete
 function showCorrectLocationCombo() { //TODO ADVANCE AND FIELDBOOK-COMMONS
 	var isChecked = $('#showFavoriteLocation').is(':checked');
 	// if show favorite location is checked, hide all field locations, else,
@@ -158,6 +159,7 @@ function showCorrectLocationCombo() { //TODO ADVANCE AND FIELDBOOK-COMMONS
 	}
 }
 
+// TODO: Delete
 function setFavoriteMethodCheckbox(){//TODO ADVANCE
 	if (methodSuggestionsDerivativeAndMaintenanceFavorite.length > 0) {
 		$('#showFavoriteMethod').prop('checked', true);
@@ -167,6 +169,7 @@ function setFavoriteMethodCheckbox(){//TODO ADVANCE
 	}
 }
 
+// TODO: Delete
 function showCorrectMethodCombo() {//TODO ADVANCE AND OTHERS
 	var isChecked = $('#showFavoriteMethod').is(':checked');
 	// if show favorite Method is checked, hide all field locations, else, show

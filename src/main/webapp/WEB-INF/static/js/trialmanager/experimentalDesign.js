@@ -713,8 +713,9 @@
 
 					$scope.refreshDesignDetailsForPRepDesign = function() {
 						studyEntryService.getStudyEntriesMetadata().then(function (metadata) {
-							$scope.germplasmTotalCheckEntriesCount = metadata.nonTestEntriesCount;
-							$scope.germplasmTotalTestEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalCheckEntriesCount;
+							$scope.germplasmTotalNonReplicatedEntriesCounts = metadata.nonReplicatedEntriesCount;
+							$scope.germplasmTotalCheckEntriesCount = metadata.nonTestEntriesCount - $scope.germplasmTotalNonReplicatedEntriesCounts;
+							$scope.germplasmTotalTestEntriesCount = $scope.totalGermplasmEntryListCount - $scope.germplasmTotalCheckEntriesCount - $scope.germplasmTotalNonReplicatedEntriesCounts;
 							var noOfTestEntriesToReplicate = Math.round($scope.germplasmTotalTestEntriesCount * ($scope.data.replicationPercentage / 100));
 							$scope.germplasmTotalNumberOfPlots = ($scope.germplasmTotalTestEntriesCount - noOfTestEntriesToReplicate) +
 								(noOfTestEntriesToReplicate * $scope.data.replicationsCount) +

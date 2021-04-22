@@ -24,6 +24,7 @@ import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.trial.bean.AdvanceType;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
 import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
+import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +42,7 @@ import org.generationcp.middleware.constant.ColumnLabels;
 import org.generationcp.middleware.domain.dms.DatasetDTO;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
@@ -70,7 +72,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -91,6 +92,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -216,22 +218,27 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 
 		model.addAttribute("yearChoices", this.generateYearChoices(Integer.parseInt(currentYear)));
 		model.addAttribute("monthChoices", this.generateMonthChoices());
-        model.addAttribute("replicationsChoices",this.generateReplicationChoice(noOfReplications));
 		model.addAttribute("advanceType", advanceType);
-
+		final Optional<List<String>> optionalReplicationChoices = this.getOptionalReplicationChoices(noOfReplications, this.userSelection.getWorkbook().getExperimentalDesignVariables());
+		if (optionalReplicationChoices.isPresent()) {
+			model.addAttribute("replicationsChoices", optionalReplicationChoices.get());
+		}
 		return super.showAjaxPage(model, AdvancingController.MODAL_URL);
 	}
 
-    private List<String> generateReplicationChoice(final String noOfReplications){
-        final List<String> replicationChoices = new ArrayList<>();
-        if(noOfReplications != null){
-            final int replicationCount = Integer.parseInt(noOfReplications);
-            for(int i=1; i<=replicationCount; i++){
-                replicationChoices.add(i+"");
-            }
-        }
+    private Optional<List<String>> getOptionalReplicationChoices(final String noOfReplications, final ExperimentalDesignVariable experimentalDesignVariable){
 
-        return replicationChoices;
+		if (TermId.P_REP.getId() != ExpDesignUtil.getExperimentalDesignValueFromExperimentalDesignDetails(experimentalDesignVariable)) {
+			final List<String> replicationChoices = new ArrayList<>();
+			if(noOfReplications != null){
+				final int replicationCount = Integer.parseInt(noOfReplications);
+				for(int i=1; i<=replicationCount; i++){
+					replicationChoices.add(i+"");
+				}
+				return Optional.of(replicationChoices);
+			}
+		}
+		return Optional.empty();
     }
 	public List<ChoiceKeyVal> generateYearChoices(int currentYear) {
 		final List<ChoiceKeyVal> yearList = new ArrayList<>();

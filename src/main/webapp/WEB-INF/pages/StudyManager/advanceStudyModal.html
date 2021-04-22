@@ -8,7 +8,8 @@
 		<input type="hidden" th:field="*{harvestDate}"/>
 		<input type="hidden" th:field="*{selectedTrialInstances}"/>
 		<input type="hidden" th:field="*{advanceType}"/>
-		<input type="hidden" th:field="*{advanceBreedingMethodId}" ng-model="valueContainer.selectedBreedingMethod.mid"/>
+		<!-- Instead of type="hidden", make it text input so that ng-model will work. -->
+		<input type="text" style="display:none;" th:field="*{advanceBreedingMethodId}" ng-model="valueContainer.selectedBreedingMethod.mid"/>
 
 		<div class="row form-group">
 			<div class="col-xs-11 col-md-11" id="advanceTrialModalHeader">

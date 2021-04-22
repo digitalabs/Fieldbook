@@ -786,6 +786,7 @@ function subObservationUnitDatasetSelector() {
 
 /* ADVANCING SPECIFIC FUNCTIONS */
 
+// TODO: Delete
 function startAdvance(advanceType) {
 	var $scope = angular.element('#selectEnvironmentModal').scope();
 	$scope.applicationData.advanceType = advanceType;
@@ -796,6 +797,7 @@ function startAdvance(advanceType) {
 	}
 }
 
+// TODO: Delete
 function initSelectEnvironment() {
 	'use strict';
 	$('#advanceStudyModal').modal('hide');
@@ -813,6 +815,7 @@ function initSelectEnvironment() {
 	$scope.$apply();
 }
 
+// TODO: Delete
 function advanceSample() {
 	'use strict';
 	var idVal = $('#studyId').val();
@@ -843,6 +846,7 @@ function advanceSample() {
 
 }
 
+// TODO: Delete
 function backAdvanceStudy() {
 	'use strict';
 	$('#advanceStudyModal').modal('hide');
@@ -857,6 +861,7 @@ function createSample() {
 	}
 }
 
+// TODO: Delete
 function selectInstanceContinueAdvancing(trialInstances, noOfReplications, selectedLocations, advanceType) {
 	'use strict';
 	var studyId = $('#studyId').val();
@@ -895,6 +900,8 @@ function generateLocationDetailTable(selectedLocations) {
  * @param studyId
  * @param locationIds Location will be passed for Advance study
  */
+
+// TODO: Delete
 function advanceStudy(studyId, trialInstances, noOfReplications, locationDetailHtml, advanceType) {
 	'use strict';
 	var count = 0,
@@ -969,6 +976,7 @@ function showAlertMessage(messageDivId, message, duration) {
 	createWarningNotification(warningMsgHeader, message, duration);
 }
 
+// TODO: Delete
 function initializeHarvestLocationSelect2(locationSuggestions, locationSuggestionsObj) {
 
 	$.each(locationSuggestions, function (index, value) {
@@ -1894,6 +1902,7 @@ function refreshLocationComboInSettings(data) {
 	}
 }
 
+// TODO: Delete?
 function recreateLocationComboAfterClose(comboName, data) {
 	if (comboName == 'harvestLocationIdAll') {
 		//clear all locations dropdown

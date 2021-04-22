@@ -166,10 +166,10 @@
 			<div class="row form-group">
 
 				<div id="replications" class="col-xs-2" th:each="repIndex: ${replicationsChoices}">
-					<input type="checkbox" class="replication" th:field="*{selectedReplications}" th:value="${repIndex}"/>
+					<input type="checkbox" class="replication" th:field="*{selectedReplications}" th:value="${repIndex}" ng-checked="checkall"/>
 					<span class="label-bold" th:text="${repIndex}"></span>
 				</div>
-				<input type="checkbox" id="selectAllReps"/>
+				<input type="checkbox" ng-model="checkall" ng-click="checkUncheckAll()" id="selectAllReps"/>
 				<span class="label-bold" th:text="#{advancing.study.select.all}">Select All</span>
 
 			</div>

@@ -244,8 +244,8 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 
 			if ($scope.isOpenStudy()) {
 				$scope.trialTabs.push({
-						name: 'Germplasm & Checks',
-						state: 'germplasm'
+					name: 'Germplasm & Checks',
+					state: 'germplasm'
 
 				});
 				$scope.trialTabs.push({
@@ -270,15 +270,17 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 				studyStateService.updateGeneratedDesign(HAS_GENERATED_DESIGN);
 				studyStateService.updateHasMeansDataset(HAS_MEANS_DATASET);
 
-				if(HAS_GENERATED_DESIGN) {
+				if (HAS_GENERATED_DESIGN) {
 					studyEntryService.getStudyEntriesMetadata().then(function (metadata) {
-						if(metadata.hasUnassignedEntries) {
+						if (metadata.hasUnassignedEntries) {
 							showAlertMessage('', $.fieldbookMessages.studyEntryUnassignedWarning);
 						}
 					});
-				};
+				}
+				;
 
-			};
+			}
+			;
 
 			inventoryChangedDeRegister();
 			inventoryChangedDeRegister = $rootScope.$on("inventoryChanged", function () {
@@ -939,7 +941,7 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 				});
 			}
 
-			$rootScope.openInventoryDetailsModal = function(gid) {
+			$rootScope.openInventoryDetailsModal = function (gid) {
 
 				$uibModal.open({
 					templateUrl: '/Fieldbook/static/js/trialmanager/inventory/details/inventory-details-modal.html',
@@ -962,7 +964,7 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 			}
 
 			$scope.startAdvance = function (advanceType) {
-				advanceStudyModalService.openSelectEnvironmentModal(advanceType);
+				advanceStudyModalService.startAdvance(advanceType);
 			}
 
 			$scope.init = function () {
@@ -970,6 +972,26 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 			}
 
 			$scope.init();
+
+		}]);
+
+	manageTrialApp.factory('studyService', ['$http', '$q', 'studyContext', 'serviceUtilities',
+		function ($http, $q, studyContext, serviceUtilities) {
+
+			var BASE_URL = '/bmsapi/crops/' + studyContext.cropName;
+
+			var failureHandler = serviceUtilities.restFailureHandler;
+
+			var studyService = {};
+
+			studyService.studyHasSamples = function () {
+				var request = $http.get(BASE_URL + '/programs/' + studyContext.programId + '/studies/' + studyContext.studyId + '/sampled');
+				return request.then(((response) => {
+					return response;
+				}), failureHandler);
+			};
+
+			return studyService;
 
 		}]);
 

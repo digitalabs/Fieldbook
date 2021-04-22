@@ -3,10 +3,24 @@
 
 	const manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.factory('advanceStudyModalService', ['$uibModal',
-		function ($uibModal) {
+	manageTrialApp.factory('advanceStudyModalService', ['$uibModal', 'studyService',
+		function ($uibModal, studyService) {
 
 			var advanceStudyModalService = {};
+
+			advanceStudyModalService.startAdvance = function (advanceType) {
+				if (advanceType === 'sample') {
+					studyService.studyHasSamples().then(function (response) {
+						if (response && response.data) {
+							advanceStudyModalService.openSelectEnvironmentModal(advanceType);
+						} else {
+							showErrorMessage('page-advance-modal-message', advanceSamplesError);
+						}
+					});
+				} else {
+					advanceStudyModalService.openSelectEnvironmentModal(advanceType);
+				}
+			};
 
 			advanceStudyModalService.openSelectEnvironmentModal = function (advanceType) {
 				$uibModal.open({
@@ -69,6 +83,7 @@
 				lineVariateId: 0
 			};
 
+			$scope.checkall = false;
 			$scope.locationsSelected = locationsSelected;
 			$scope.advanceType = advanceType;
 
@@ -235,11 +250,15 @@
 				}
 			};
 
+			$scope.checkUncheckAll = function () {
+				if ($scope.checkall) {
+					$scope.checkall = true;
+				} else {
+					$scope.checkall = false;
+				}
+			};
+
 			$scope.init = function () {
-				checkMethod();
-				lineMethod();
-				plotMethod();
-				changeSuffix();
 			};
 		}
 	]);

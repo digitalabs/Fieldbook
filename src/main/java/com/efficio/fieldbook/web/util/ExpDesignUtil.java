@@ -2,6 +2,7 @@ package com.efficio.fieldbook.web.util;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.etl.ExperimentalDesignVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.manager.Operation;
@@ -39,6 +40,14 @@ public class ExpDesignUtil {
 			ExpDesignUtil.LOG.error(e.getMessage(), e);
 		}
 		return mvar;
+	}
+
+	public static int getExperimentalDesignValueFromExperimentalDesignDetails(final ExperimentalDesignVariable experimentalDesignVariable) {
+		if (experimentalDesignVariable != null && experimentalDesignVariable.getExperimentalDesign() != null) {
+			return experimentalDesignVariable.getExperimentalDesign().getValue() == null ? 0 :
+					Integer.parseInt(experimentalDesignVariable.getExperimentalDesign().getValue());
+		}
+		return 0;
 	}
 
 }

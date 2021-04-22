@@ -18,6 +18,7 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.StudyDetails;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
+import com.efficio.fieldbook.web.util.ExpDesignUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -290,23 +291,15 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 	private long countNumberOfChecks(final StudyDetails studyDetails, final Optional<Long> nonReplicatedEntriesCount) {
 	  final long checkEntriesCount = this.studyEntryService.countStudyGermplasmByEntryTypeIds(studyDetails.getId(), this.getAllCheckEntryTypeIds());
 
-	  if (TermId.P_REP.getId() == this.getExperimentalDesignValue(studyDetails) && nonReplicatedEntriesCount.isPresent()) {
+	  if (TermId.P_REP.getId() == ExpDesignUtil.getExperimentalDesignValueFromExperimentalDesignDetails(studyDetails.getExperimentalDesignDetails()) && nonReplicatedEntriesCount.isPresent()) {
 		return checkEntriesCount - nonReplicatedEntriesCount.get();
 	  }
 
 	  return checkEntriesCount;
 	}
 
-	private int getExperimentalDesignValue(final StudyDetails studyDetails) {
-	  if (studyDetails.getExperimentalDesignDetails() != null && studyDetails.getExperimentalDesignDetails().getExperimentalDesign() != null) {
-	    return studyDetails.getExperimentalDesignDetails().getExperimentalDesign().getValue() == null ? 0 :
-				Integer.parseInt(studyDetails.getExperimentalDesignDetails().getExperimentalDesign().getValue());
-	  }
-	  return 0;
-	}
-
 	private Optional<Long> getNonReplicatedEntriesCount(final StudyDetails studyDetails) {
-		if (TermId.P_REP.getId() == this.getExperimentalDesignValue(studyDetails)) {
+		if (TermId.P_REP.getId() == ExpDesignUtil.getExperimentalDesignValueFromExperimentalDesignDetails(studyDetails.getExperimentalDesignDetails())) {
 			return Optional.of(this.studyEntryService.countStudyGermplasmByEntryTypeIds(studyDetails.getId(),
 					Collections.singletonList(String.valueOf(SystemDefinedEntryType.NON_REPLICATED_ENTRY.getEntryTypeCategoricalId()))));
 		}

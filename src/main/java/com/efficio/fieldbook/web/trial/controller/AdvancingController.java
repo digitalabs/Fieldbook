@@ -228,7 +228,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 
     private Optional<List<String>> getOptionalReplicationChoices(final String noOfReplications, final ExperimentalDesignVariable experimentalDesignVariable){
 
-		if (TermId.P_REP.getId() != ExpDesignUtil.getExperimentalDesignValueFromExperimentalDesignDetails(experimentalDesignVariable)) {
+		if (TermId.P_REP.getId() != ExpDesignUtil.getExperimentalDesignValueFromExperimentalDesignVariable(experimentalDesignVariable)) {
 			final List<String> replicationChoices = new ArrayList<>();
 			if(noOfReplications != null){
 				final int replicationCount = Integer.parseInt(noOfReplications);

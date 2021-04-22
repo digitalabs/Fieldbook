@@ -42,7 +42,7 @@ public class ExpDesignUtil {
 		return mvar;
 	}
 
-	public static int getExperimentalDesignValueFromExperimentalDesignDetails(final ExperimentalDesignVariable experimentalDesignVariable) {
+	public static int getExperimentalDesignValueFromExperimentalDesignVariable(final ExperimentalDesignVariable experimentalDesignVariable) {
 		if (experimentalDesignVariable != null && experimentalDesignVariable.getExperimentalDesign() != null) {
 			return experimentalDesignVariable.getExperimentalDesign().getValue() == null ? 0 :
 					Integer.parseInt(experimentalDesignVariable.getExperimentalDesign().getValue());

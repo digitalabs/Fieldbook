@@ -291,7 +291,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 	private long countNumberOfChecks(final StudyDetails studyDetails, final Optional<Long> nonReplicatedEntriesCount) {
 	  final long checkEntriesCount = this.studyEntryService.countStudyGermplasmByEntryTypeIds(studyDetails.getId(), this.getAllCheckEntryTypeIds());
 
-	  if (TermId.P_REP.getId() == ExpDesignUtil.getExperimentalDesignValueFromExperimentalDesignDetails(studyDetails.getExperimentalDesignDetails()) && nonReplicatedEntriesCount.isPresent()) {
+	  if (TermId.P_REP.getId() == ExpDesignUtil.getExperimentalDesignValueFromExperimentalDesignVariable(studyDetails.getExperimentalDesignDetails()) && nonReplicatedEntriesCount.isPresent()) {
 		return checkEntriesCount - nonReplicatedEntriesCount.get();
 	  }
 
@@ -299,7 +299,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
 	}
 
 	private Optional<Long> getNonReplicatedEntriesCount(final StudyDetails studyDetails) {
-		if (TermId.P_REP.getId() == ExpDesignUtil.getExperimentalDesignValueFromExperimentalDesignDetails(studyDetails.getExperimentalDesignDetails())) {
+		if (TermId.P_REP.getId() == ExpDesignUtil.getExperimentalDesignValueFromExperimentalDesignVariable(studyDetails.getExperimentalDesignDetails())) {
 			return Optional.of(this.studyEntryService.countStudyGermplasmByEntryTypeIds(studyDetails.getId(),
 					Collections.singletonList(String.valueOf(SystemDefinedEntryType.NON_REPLICATED_ENTRY.getEntryTypeCategoricalId()))));
 		}

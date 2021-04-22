@@ -3,8 +3,8 @@
 
 	const manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.factory('advanceStudyModalService', ['$uibModal', 'studyService',
-		function ($uibModal, studyService) {
+	manageTrialApp.factory('advanceStudyModalService', ['$uibModal', 'studyService', 'studyContext',
+		function ($uibModal, studyService, studyContext) {
 
 			var advanceStudyModalService = {};
 
@@ -36,10 +36,10 @@
 				});
 			};
 
-			advanceStudyModalService.openAdvanceStudyModal = function (studyId, trialInstances, noOfReplications, locationsSelected, advanceType) {
+			advanceStudyModalService.openAdvanceStudyModal = function (trialInstances, noOfReplications, locationsSelected, advanceType) {
 
 				var advanceStudyURL = '/Fieldbook/StudyManager/advance/study';
-				advanceStudyURL = advanceStudyURL + '/' + encodeURIComponent(studyId);
+				advanceStudyURL = advanceStudyURL + '/' + encodeURIComponent(studyContext.studyId);
 				advanceStudyURL = advanceStudyURL + '?selectedInstances=' + encodeURIComponent(trialInstances.join(","));
 				if (noOfReplications) {
 					advanceStudyURL = advanceStudyURL + '&noOfReplications=' + encodeURIComponent(noOfReplications);
@@ -58,6 +58,12 @@
 						},
 						locationsSelected: function () {
 							return locationsSelected;
+						},
+						trialInstances: function () {
+							return trialInstances;
+						},
+						noOfReplications: function () {
+							return noOfReplications;
 						}
 					}
 				});
@@ -69,8 +75,8 @@
 	]);
 
 	manageTrialApp.controller('advanceStudyModalController', ['$scope', '$uibModalInstance', 'studyContext', 'advanceType', 'advanceStudyModalService', 'locationsSelected',
-		'datasetService',
-		function ($scope, $uibModalInstance, studyContext, advanceType, advanceStudyModalService, locationsSelected, datasetService) {
+		'datasetService', 'trialInstances', 'noOfReplications',
+		function ($scope, $uibModalInstance, studyContext, advanceType, advanceStudyModalService, locationsSelected, datasetService, trialInstances, noOfReplications) {
 
 
 			$scope.valueContainer = {
@@ -121,7 +127,7 @@
 					showErrorMessage('page-advance-modal-message', linesNotWholeNumberError);
 					return false;
 				} else if ($scope.validatePlantsSelected()) {
-					SaveAdvanceList.doAdvanceStudy()
+					SaveAdvanceList.doAdvanceStudy(trialInstances, noOfReplications, locationsSelected, advanceType);
 					$scope.close();
 				}
 			};
@@ -362,7 +368,7 @@
 						}
 					});
 
-					advanceStudyModalService.openAdvanceStudyModal(studyContext.studyId, selectedTrialInstances, $scope.noOfReplications, selectedLocationDetails,
+					advanceStudyModalService.openAdvanceStudyModal(selectedTrialInstances, $scope.noOfReplications, selectedLocationDetails,
 						$scope.applicationData.advanceType);
 					$uibModalInstance.close();
 				}

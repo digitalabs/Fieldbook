@@ -2867,3 +2867,8 @@ function validateLocationMatch() {
 	});
 	return isMatched;
 }
+
+function showAdvanceStudyModal(trialInstances, noOfReplications, locationsSelected, advanceType) {
+	'use strict';
+	return angular.element('#mainApp').injector().get('advanceStudyModalService').openAdvanceStudyModal(trialInstances, noOfReplications, locationsSelected, advanceType);
+}

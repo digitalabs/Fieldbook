@@ -279,8 +279,7 @@ var ImportCrosses = {
 		'use strict';
 		var crossSettingsPopupModal = $('#crossSettingsModal');
 		crossSettingsPopupModal.modal({ backdrop: 'static', keyboard: true });
-		// ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
-
+		
 		$('#presetSettingsDelete').off('click');
 		$('#presetSettingsDelete').on('click', function () {
 
@@ -338,7 +337,7 @@ var ImportCrosses = {
 		ImportCrosses.deleteImportSettings(data.programPresetId)
 			.done(function () {
 				showSuccessfulMessage('', crossingSettingsDeleted);
-				ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
+				//ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
 			})
 			.fail(function () {
 				showErrorMessage('', crossingSettingsDeleteFailed);
@@ -351,60 +350,6 @@ var ImportCrosses = {
 		$('#sampleParentageDesignation').text('FEMALE-123' + value + 'MALE-456');
 	},
 
-	processImportSettingsDropdown: function(dropdownID, useSettingsCheckboxID) {
-		'use strict';
-		ImportCrosses.retrieveAvailableImportSettings().done(function(settingList) {
-			ImportCrosses.createAvailableImportSettingsDropdown(dropdownID, settingList);
-
-			$('#' + getJquerySafeId(dropdownID)).on('change', function() {
-				ImportCrosses.triggerImportSettingUpdate(settingList, dropdownID, useSettingsCheckboxID);
-				// update the displayed sequence name value so that it makes use of the possibly new settings
-				ImportCrosses.updateDisplayedSequenceNameValue();
-				ImportCrosses.updateSampleParentageDesignation();
-			});
-
-			$('#' + getJquerySafeId(useSettingsCheckboxID)).on('change', function() {
-				ImportCrosses.triggerImportSettingUpdate(settingList, dropdownID, useSettingsCheckboxID);
-
-				// update the displayed sequence name value so that it makes use of the possibly new settings
-				ImportCrosses.updateDisplayedSequenceNameValue();
-				ImportCrosses.updateSampleParentageDesignation();
-			});
-		}).fail(function() {
-			//TODO Process errors
-		});
-	},
-
-	triggerImportSettingUpdate: function(settingList, dropdownID, useSettingsCheckboxID) {
-		'use strict';
-		if ($('#' + getJquerySafeId(useSettingsCheckboxID)).is(':checked')) {
-			var currentSelectedItem = $('#' + dropdownID).select2('val');
-
-			$.each(settingList, function(index, setting) {
-				if (setting.name === currentSelectedItem) {
-					ImportCrosses.updateImportSettingsFromSavedSetting(setting);
-				}
-			});
-		}
-	},
-
-	updateImportSettingsFromSavedSetting: function(setting) {
-		'use strict';
-		$('#presetName').val(setting.name);
-		$('#breedingMethodDropdown').select2('val', setting.breedingMethodID);
-		$('#useSelectedMethodCheckbox').prop('checked', !setting.basedOnStatusOfParentalLines);
-
-		$('#crossPrefix').val(setting.crossPrefix);
-		$('#crossSuffix').val(setting.crossSuffix);
-		$('input:radio[name=hasPrefixSpace][value=' + setting.hasPrefixSpace + ']').prop('checked', true);
-		$('input:radio[name=hasSuffixSpace][value=' + setting.hasSuffixSpace + ']').prop('checked', true);
-		$('input:radio[name=hasParentageDesignationName][value=' + setting.hasParentageDesignationName + ']').prop('checked', true);
-		$('#sequenceNumberDigits').select2('val', setting.sequenceNumberDigits);
-		$('#parentageDesignationSeparator').val(setting.parentageDesignationSeparator);
-		$('#startingSequenceNumber').val(setting.startingSequenceNumber);
-		$('#locationDropdown').select2('val', setting.locationID);
-	},
-
 	openLocationsModal: function() {
 		'use strict';
 		var crossSettingsPopupModal = $('#crossSettingsModal');
@@ -412,56 +357,6 @@ var ImportCrosses = {
 		crossSettingsPopupModal.data('open', '1');
 
 		LocationsFunctions.openLocationsModal();
-	},
-
-	createAvailableImportSettingsDropdown: function(dropdownID, settingList) {
-		'use strict';
-		var possibleValues = [];
-		$.each(settingList, function(index, setting) {
-			possibleValues.push(ImportCrosses.convertSettingToSelect2Item(setting));
-		});
-
-		$('#' + getJquerySafeId(dropdownID)).select2({
-			initSelection: function(element, callback) {
-				$.each(possibleValues, function(index, value) {
-					if (value.id === element.val()) {
-						callback(value);
-					}
-				});
-			},
-			query: function(query) {
-				var data = {
-					results: possibleValues
-				};
-				// return the array that matches
-				data.results = $.grep(data.results, function(item) {
-					return ($.fn.select2.defaults.matcher(query.term,
-						item.text));
-
-				});
-				query.callback(data);
-			}
-		});
-	},
-
-	convertSettingToSelect2Item: function(setting) {
-		'use strict';
-		return {
-			id: setting.name,
-			text: setting.name,
-			description: setting.name,
-			programPresetId: setting.programPresetId
-		};
-	},
-
-	retrieveAvailableImportSettings: function() {
-		'use strict';
-		//TODO Handle errors for ajax request
-		return $.ajax({
-			url: ImportCrosses.CROSSES_URL + '/retrieveSettings',
-			type: 'GET',
-			cache: false
-		});
 	},
 
 	deleteImportSettings: function(programPresetId) {

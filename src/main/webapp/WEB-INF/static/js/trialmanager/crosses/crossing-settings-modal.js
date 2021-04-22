@@ -8,8 +8,10 @@
 		$scope.sampleParentageDesignation = '';
 		$scope.harvestYears = [];
 		$scope.harvestMonths = [];
+		$scope.settingPresets = [];
 		$scope.useManualNaming = 'false';
 		$scope.checkExistingCrosses = false;
+		$scope.selectedPresetId = '';
 		$scope.settingObject = {
 			name : '',
 			breedingMethodSetting : {
@@ -27,7 +29,7 @@
 				startNumber : 1,
 				saveParentageDesignationAsAString : false
 			},
-			preservePlotDuplicate : false,
+			preservePlotDuplicate : true,
 			applyNewGroupToPreviousCrosses : false,
 			isUseManualSettingsForNaming : false,
 			additionalDetailsSetting : {
@@ -42,10 +44,11 @@
 		$scope.valuecontainer = {selectedLocation : 1};
 
 		function init() {
+			$scope.settingObject.crossNameSetting.addSpaceBetweenSuffixAndCode = false;
+			$scope.settingObject.crossNameSetting.addSpaceBetweenPrefixAndCode = false;
 			retrieveLocationIdFromFirstEnviroment().done(function (locationId) {
 				$scope.valuecontainer.selectedLocation = locationId;
 				$scope.settingObject.additionalDetailsSetting.harvestLocationId = locationId;
-				console.log('default location ' + $scope.settingObject.additionalDetailsSetting.harvestLocationId);
 			});
 		}
 
@@ -57,7 +60,6 @@
 
 		$scope.locationChanged = function () {
 			$scope.settingObject.additionalDetailsSetting.harvestLocationId = $scope.valuecontainer.selectedLocation;
-			console.log('selected location ' + $scope.settingObject.additionalDetailsSetting.harvestLocationId);
 		}
 
 		$scope.continue = function () {
@@ -90,7 +92,7 @@
 			var targetURL = ImportCrosses.CROSSES_URL + '/submit';
 			var settingsForSaving = false;
 
-			if ($('#presetName').val().trim() !== '') {
+			if ($scope.settingObject.name && $scope.settingObject.name.trim() !== '') {
 				targetURL = ImportCrosses.CROSSES_URL + '/submitAndSaveSetting';
 				settingsForSaving = true;
 			}
@@ -140,6 +142,19 @@
 			$scope.sampleParentageDesignation = 'FEMALE-123' + $scope.settingObject.crossNameSetting.separator + 'MALE-456';
 		}
 
+		$scope.fetchPresets = function($select, $event) {
+			// no event means first load!
+			if (!$event) {
+				$scope.settingPresets = [];
+			} else {
+				$event.stopPropagation();
+				$event.preventDefault();
+			}
+			retrieveAvailableImportSettings().done(function(presets) {
+				$scope.settingPresets = $scope.settingPresets.concat(presets);
+			});
+		}
+
 		$scope.fetchMonths = function ($select, $event) {
 			// no event means first load!
 			if (!$event) {
@@ -172,6 +187,37 @@
 		$scope.updateHarvestDate = function () {
 			$scope.settingObject.additionalDetailsSetting.harvestDate =
 				$scope.settingObject.additionalDetailsSetting.harvestYear + '-' + $scope.settingObject.additionalDetailsSetting.harvestMonth + '-01';
+		}
+
+		$scope.applySettingsPreset = function (selected) {
+			$scope.settingObject.name = selected.name;
+			$scope.settingObject.crossNameSetting.prefix = selected.crossPrefix;
+			$scope.settingObject.crossNameSetting.suffix = selected.crossSuffix;
+			$scope.settingObject.crossNameSetting.addSpaceBetweenPrefixAndCode = selected.hasPrefixSpace;
+			$scope.settingObject.crossNameSetting.addSpaceBetweenSuffixAndCode = selected.hasSuffixSpace;
+			$scope.settingObject.crossNameSetting.numOfDigits = selected.sequenceNumberDigits;
+			$scope.settingObject.crossNameSetting.separator = selected.parentageDesignationSeparator;
+			$scope.settingObject.crossNameSetting.startNumber = selected.startingSequenceNumber;
+			$scope.settingObject.crossNameSetting.saveParentageDesignationAsAString = selected.hasParentageDesignationName;
+			$scope.settingObject.additionalDetailsSetting.harvestLocationId = $scope.valuecontainer.selectedLocation = selected.locationId;
+			this.updateDisplayedSequenceNameValue();
+			this.updateSampleParentageDesignation();
+
+		}
+
+		function retrieveAvailableImportSettings() {
+			'use strict';
+			return $.ajax({
+				url: ImportCrosses.CROSSES_URL + '/retrieveSettings',
+				type: 'GET',
+				cache: false,success: function (data) {
+				},
+				error: function (jqXHR, textStatus, errorThrown) {
+					console.log('The following error occurred: ' + textStatus, errorThrown);
+				},
+				complete: function () {
+				}
+			});
 		}
 
 		function retrieveLocationIdFromFirstEnviroment() {

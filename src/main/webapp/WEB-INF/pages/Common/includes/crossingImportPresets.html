@@ -78,7 +78,12 @@
                                 </div>
 
                                 <div class="col-xs-4 col-md-4">
-                                    <input type="hidden" name="presetSettings" id="presetSettingsDropdown"/>
+                                    <ui-select theme="select2" ng-model="selectedPresetId" search-enabled="false" ng-change="applySettingsPreset($select.selected)">
+                                        <ui-select-match >{{$select.selected.name}}</ui-select-match>
+                                        <ui-select-choices refresh="fetchPresets($select)" refresh-delay="300" repeat="preset.programPresetId as preset in settingPresets">
+                                            <div>{{::preset.name}}</div>
+                                        </ui-select-choices>
+                                    </ui-select>
                                 </div>
 
                                 <div class="col-xs-2 col-md-2 nopadding">
@@ -222,7 +227,7 @@
                             </div>
 
                             <div class="col-xs-5 col-md-5 add-bottom-padding">
-                                <input type="text" id="presetName"/>
+                                <input type="text" ng-model="settingObject.name"/>
                             </div>
                             <div class="col-xs-1 col-md-1">
                                 &nbsp;

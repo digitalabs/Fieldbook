@@ -68,8 +68,9 @@
 		}
 	]);
 
-	manageTrialApp.controller('advanceStudyModalController', ['$scope', '$uibModalInstance', 'advanceType', 'advanceStudyModalService', 'locationsSelected',
-		function ($scope, $uibModalInstance, advanceType, advanceStudyModalService, locationsSelected) {
+	manageTrialApp.controller('advanceStudyModalController', ['$scope', '$uibModalInstance', 'studyContext', 'advanceType', 'advanceStudyModalService', 'locationsSelected',
+		'datasetService',
+		function ($scope, $uibModalInstance, studyContext, advanceType, advanceStudyModalService, locationsSelected, datasetService) {
 
 
 			$scope.valueContainer = {
@@ -78,11 +79,13 @@
 				lineChoice: true,
 				allPlotsChoice: true,
 				linesValue: 1,
-				methodVariateId: 0,
-				plotVariateId: 0,
-				lineVariateId: 0
+				methodVariateId: '',
+				plotVariateId: '',
+				lineVariateId: ''
 			};
 
+			$scope.selectionMethodVariables = [];
+			$scope.selectionPlantVariables = [];
 			$scope.checkall = false;
 			$scope.locationsSelected = locationsSelected;
 			$scope.advanceType = advanceType;
@@ -111,7 +114,7 @@
 					}
 				}
 
-				if (!$scope.valueContainer.selectedBreedingMethod) {
+				if ($scope.valueContainer.methodChoice && !$scope.valueContainer.selectedBreedingMethod) {
 					showErrorMessage('page-advance-modal-message', msgMethodError);
 					return false;
 				} else if (lines && !lines.match(/^\s*(\+|-)?\d+\s*$/)) {
@@ -124,20 +127,24 @@
 			};
 
 			$scope.validatePlantsSelected = function () {
-				var ids = '', isMixed = false,
+				var ids = '', isMixed = false, hasBulk = false,
 					valid;
 
-				if ($scope.isBulkingMethod()) {
+				if (!$scope.valueContainer.methodChoice || $scope.isBulkingMethod()) {
 					if (!$scope.valueContainer.allPlotsChoice) {
 						ids = ids + $scope.valueContainer.plotVariateId;
 					}
+					hasBulk = true;
 				}
-				if (!$scope.isBulkingMethod()) {
+				if (!$scope.valueContainer.methodChoice || !$scope.isBulkingMethod()) {
 					if (!$scope.valueContainer.lineChoice) {
 						if (ids !== '') {
 							ids = ids + ',';
 						}
 						ids = ids + $scope.valueContainer.lineVariateId;
+					}
+					if (hasBulk) {
+						isMixed = true;
 					}
 				}
 
@@ -205,7 +212,7 @@
 
 								valid = false;
 							} else {
-								valid = validateBreedingMethodValues(id);
+								valid = validateBreedingMethodValues($scope.valueContainer.methodVariateId);
 							}
 
 						}.bind(this),
@@ -227,24 +234,21 @@
 			};
 
 			$scope.validateMethodChoice = function () {
-				// FIXME: Find a way to check to detect if there are available nethod variates that do not use jquery.
-				if ($('#hasMethodVariates').val() === 'false') {
+				if ($scope.selectionMethodVariables.length === 0) {
 					$scope.valueContainer.methodChoice = true;
 					showErrorMessage('', noMethodVariatesErrorTrial);
 				}
 			};
 
 			$scope.validateLineChoice = function () {
-				// FIXME: Find a way to check to detect if there are available line variates that do not use jquery.
-				if ($('#hasLineVariates').val() === 'false') {
+				if ($scope.selectionPlantVariables.length === 0) {
 					$scope.valueContainer.lineChoice = true;
 					showErrorMessage('', noLineVariatesErrorTrial);
 				}
 			};
 
 			$scope.validatePlotChoice = function () {
-				// FIXME: Find a way to check to detect if there are available plot variates that do not use jquery.
-				if ($('#hasLineVariates').val() === 'false') {
+				if ($scope.selectionPlantVariables.length === 0) {
 					$scope.valueContainer.allPlotsChoice = true;
 					showErrorMessage('', noLineVariatesErrorTrial);
 				}
@@ -259,7 +263,17 @@
 			};
 
 			$scope.init = function () {
+				const SELECTION_VARIABLE_TYPE = 1807;
+				datasetService.getColumns(studyContext.measurementDatasetId, false).then(function (data) {
+					$scope.selectionMethodVariables = data.filter(item => item.variableType === 'SELECTION_METHOD' && item.property === 'Breeding method');
+					$scope.selectionPlantVariables = data.filter(item => item.variableType === 'SELECTION_METHOD' && item.property === 'Selections');
+					$scope.valueContainer.methodVariateId = String($scope.selectionMethodVariables.length !== 0 ? $scope.selectionMethodVariables[0].termId : 0);
+					$scope.valueContainer.lineVariateId = String($scope.selectionPlantVariables.length !== 0 ? $scope.selectionPlantVariables[0].termId : 0);
+					$scope.valueContainer.plotVariateId = String($scope.selectionPlantVariables.length !== 0 ? $scope.selectionPlantVariables[0].termId : 0);
+				});
 			};
+
+			$scope.init();
 		}
 	]);
 

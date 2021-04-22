@@ -83,6 +83,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -205,11 +206,6 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 				detailList.add(detail);
 			}
 		}
-		form.setMethodVariates(this.filterVariablesByProperty(detailList,
-			AppConstants.PROPERTY_BREEDING_METHOD.getString())); //TODO FIX THIS.
-		form.setLineVariates(this.filterVariablesByProperty(detailList,
-			AppConstants.PROPERTY_PLANTS_SELECTED.getString())); //TODO FIX THIS.
-		form.setPlotVariates(form.getLineVariates());
 
 		final Date currentDate = DateUtil.getCurrentDate();
 		final SimpleDateFormat sdf = DateUtil.getSimpleDateFormat("yyyy");
@@ -224,9 +220,6 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		model.addAttribute("monthChoices", this.generateMonthChoices());
 		model.addAttribute("replicationsChoices", this.generateReplicationChoice(noOfReplications));
 		model.addAttribute("advanceType", advanceType);
-
-		model.addAttribute("hasMethodVariates", !CollectionUtils.isEmpty(form.getMethodVariates()));
-		model.addAttribute("hasLineVariates", !CollectionUtils.isEmpty(form.getLineVariates()));
 
 		return super.showAjaxPage(model, AdvancingController.MODAL_URL);
 	}

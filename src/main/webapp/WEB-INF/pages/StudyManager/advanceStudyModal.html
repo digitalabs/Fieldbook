@@ -1,18 +1,14 @@
+<!-- // FIXME: Refactor this page NOT to use thymeleaf and make this an AngularJS html template-->
 <div class="modal-body" id="advanceStudyModal">
 	<form onsubmit="javascript: return validateAdvanceStudy();" id="advanceStudyModalForm" role="form-horizontal" action="#" th:action="@{/StudyManager/advance/study}" method="post" th:object="${advancingStudyForm}" enctype="multipart/form-data">
 
-		<div style="display: none;">
-			<input type="text" th:field="*{breedingMethodUrl}"/>
-			<input type="text" th:field="*{defaultMethodId}"/>
-			<input type="text" th:field="*{studyId}"/>
-			<input type="text" th:field="*{harvestDate}"/>
-			<input type="text" th:field="*{selectedTrialInstances}"/>
-			<input type="text" th:field="*{advanceType}"/>
-			<input type="text" th:field="*{advanceBreedingMethodId}" ng-model="valueContainer.selectedBreedingMethod.mid"/>
-			<input id="hasMethodVariates" type="text" th:value="${hasMethodVariates}"/>
-			<input id="hasLineVariates" type="text" th:value="${hasLineVariates}"/>
-		</div>
-
+		<input type="hidden" th:field="*{breedingMethodUrl}"/>
+		<input type="hidden" th:field="*{defaultMethodId}"/>
+		<input type="hidden" th:field="*{studyId}"/>
+		<input type="hidden" th:field="*{harvestDate}"/>
+		<input type="hidden" th:field="*{selectedTrialInstances}"/>
+		<input type="hidden" th:field="*{advanceType}"/>
+		<input type="hidden" th:field="*{advanceBreedingMethodId}" ng-model="valueContainer.selectedBreedingMethod.mid"/>
 
 		<div class="row form-group">
 			<div class="col-xs-11 col-md-11" id="advanceTrialModalHeader">
@@ -81,15 +77,14 @@
 					<label class="control-label label-bold" th:text="#{advancing.study.method.variate} + ':'">Choose a variate that defines the breeding method for each advance:</label>
 				</div>
 				<div class="col-xs-6">
-					<select id="methodVariateId" name="methodVariateId"  ng-model="valueContainer.methodVariateId">
-						<option th:each="methodVariate,iterStat : *{methodVariates}" th:value="${methodVariate.id}" th:text="${methodVariate.name}" th:selected="${iterStat.last}">
-						</option>
+					<select id="methodVariateId" name="methodVariateId" ng-model="valueContainer.methodVariateId" style="width: 90%">
+						<option ng-repeat="option in selectionMethodVariables" value="{{option.termId}}">{{option.name}}</option>
 					</select>
 				</div>
 			</div>
 		</div>
 
-		<div class="lines-section" th:if="${advanceType} != 'sample'" ng-show="!isBulkingMethod()">
+		<div class="lines-section" th:if="${advanceType} != 'sample'" ng-show="!valueContainer.methodChoice || !isBulkingMethod()">
 			<div class="row form-group">
 				<label class="control-label col-xs-12 add_top_padding"><strong class="sub-content-heading" th:text="#{advancing.study.lines}">LINES</strong> </label>
 			</div>
@@ -112,13 +107,12 @@
 				<label class="control-label label-bold col-xs-6" th:text="#{advancing.study.lines.variate}"></label>
 				<div class="col-xs-6">
 					<select id="lineVariateId" name="lineVariateId" class="ps-variate-selection" style="width: 90%" ng-model="valueContainer.lineVariateId">
-						<option th:each="lineVariate,iterStat : *{lineVariates}" th:value="${lineVariate.id}" th:text="${lineVariate.name}" th:selected="${iterStat.last}">
-						</option>
+						<option ng-repeat="option in selectionPlantVariables" value="{{option.termId}}" ng-selected="$first">{{option.name}}</option>
 					</select>
 				</div>
 			</div>
 		</div>
-		<div class="bulk-section" th:if="${advanceType} != 'sample'" ng-show="isBulkingMethod()">
+		<div class="bulk-section" th:if="${advanceType} != 'sample'" ng-show="!valueContainer.methodChoice || isBulkingMethod()">
 			<div class="row form-group">
 				<label class="control-label col-xs-12 add_top_padding"><strong class="sub-content-heading" th:text="#{advancing.study.bulks}">BULKS</strong> </label>
 			</div>
@@ -135,8 +129,7 @@
 				</div>
 				<div class="col-xs-6">
 					<select id="plotVariateId" name="plotVariateId" ng-model="valueContainer.plotVariateId" style="width: 90%">
-						<option th:each="plotVariate,iterStat : *{plotVariates}" th:value="${plotVariate.id}" th:text="${plotVariate.name}" th:selected="${iterStat.last}">
-						</option>
+						<option ng-repeat="option in selectionPlantVariables" value="{{option.termId}}" ng-selected="$first">{{option.name}}</option>
 					</select>
 				</div>
 			</div>

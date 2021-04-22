@@ -1388,6 +1388,7 @@ function validatePlantsSelected() {
 	return valid;
 }
 
+// TODO: Delete
 function callAdvanceStudy() {
 
 	var lines = $('#lineSelected').val();
@@ -1437,6 +1438,7 @@ function displaySampleList(id, listName, isPageLoading) {
 	});
 }
 
+// TODO: Delete
 function validateBreedingMethod() {
 	var id = $('#methodVariateId').val(),
 		valid = true;

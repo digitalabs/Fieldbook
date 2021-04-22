@@ -264,7 +264,7 @@
                                 </div>
                                 <div class="col-xs-3 col-md-3">
                                     <ui-select ng-model="settingObject.additionalDetailsSetting.harvestMonth" theme="select2" search-enabled="false" ng-change="updateHarvestDate()">
-                                        <ui-select-match>{{$select.selected.text}}</ui-select-match>
+                                        <ui-select-match th:placeholder="Month">{{$select.selected.text}}</ui-select-match>
                                         <ui-select-choices refresh="fetchYears($select)" refresh-delay="300" repeat="month.id as month in harvestMonths">
                                             <div>{{::month.text}}</div>
                                         </ui-select-choices>
@@ -311,7 +311,7 @@
                             aria-hidden="true" th:text="#{common.form.back.text}">Back
                     </button>
                     <button type="button" class="btn btn-primary"
-                            aria-hidden="true" th:text="#{common.form.continue.text}" id="settingsNextButton" ng-click="continue()">Continue
+                            aria-hidden="true" th:text="#{common.form.continue.text}" ng-click="continue()">Continue
                     </button>
                 </div>
             </div>

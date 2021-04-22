@@ -3,7 +3,7 @@
 	'use strict';
 	var manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.controller('CrossingSettingsCtrl', ['$scope', function ($scope) {
+	manageTrialApp.controller('CrossingSettingsCtrl', ['$scope', '$rootScope', function ($scope, $rootScope) {
 		$scope.nextSequenceName = '';
 		$scope.sampleParentageDesignation = '';
 		$scope.harvestYears = [];
@@ -47,7 +47,6 @@
 				$scope.settingObject.additionalDetailsSetting.harvestLocationId = locationId;
 				console.log('default location ' + $scope.settingObject.additionalDetailsSetting.harvestLocationId);
 			});
-
 		}
 
 		init();
@@ -57,25 +56,72 @@
 		}
 
 		$scope.locationChanged = function () {
-			$scope.settingObject.additionalDetailsSetting.harvestLocationId = $scope.valuecontainer.selectedLocation
+			$scope.settingObject.additionalDetailsSetting.harvestLocationId = $scope.valuecontainer.selectedLocation;
 			console.log('selected location ' + $scope.settingObject.additionalDetailsSetting.harvestLocationId);
 		}
 
 		$scope.continue = function () {
-			var valid = true;
-			if (!isCrossImportSettingsValid($scope.settingObject)) {
-				valid = false;
-			}
-			if (valid) {
+			if (isCrossImportSettingsValid($scope.settingObject)) {
+				$scope.settingObject.breedingMethodSetting = $rootScope.breedingMethodSetting;
+				$scope.settingObject.applyNewGroupToPreviousCrosses = !$rootScope.applyGroupingToNewCrossesOnly;
 				retrieveNextNameInSequence(function(data){
 					if (data.success === '1') {
-						console.log('validation succeeds');
-						// ImportCrosses.showCrossListPopup(crossSettingsPopupModal);
+						$scope.showCrossListPopup();
 					} else {
 						showErrorMessage('', data.error);
 					}
 				}, function(){ showErrorMessage('', $.fieldbookMessages.errorNoNextNameInSequence)} );
 			}
+		}
+
+		$scope.showCrossListPopup = function() {
+			$('#crossSettingsModal').modal('hide');
+			setTimeout(function () {
+				$scope.submitCrossImportSettings().then(function () {
+					// createdCrossesListId (global) will be null for import
+					return ImportCrosses.openCrossesList(createdCrossesListId);
+				});
+			}, 500);
+		}
+
+		$scope.submitCrossImportSettings = function() {
+			'use strict';
+
+			var targetURL = ImportCrosses.CROSSES_URL + '/submit';
+			var settingsForSaving = false;
+
+			if ($('#presetName').val().trim() !== '') {
+				targetURL = ImportCrosses.CROSSES_URL + '/submitAndSaveSetting';
+				settingsForSaving = true;
+			}
+
+			return $.ajax({
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json'
+				},
+				url: targetURL,
+				type: 'POST',
+				cache: false,
+				data: JSON.stringify($scope.settingObject),
+				success: function(data) {
+					if (data.success === '0') {
+						showErrorMessage('', $.fieldbookMessages.errorImportFailed);
+					} else {
+						$('#crossSettingsModal').modal('hide');
+
+						if (settingsForSaving) {
+							// as per UI requirements, we also display a success message regarding the saving of the settings
+							// if an error in the settings saving has occurred, program flow would have continued in the data.success === '0' branch
+							// hence, we can safely assume that settings have been properly saved at this point
+							showSuccessfulMessage('', crossingSettingsSaved);
+						}
+					}
+				},
+				error: function() {
+					showErrorMessage('', $.fieldbookMessages.errorImportCrossesSettingsFailed);
+				}
+			});
 		}
 
 		$scope.toggleNamingSection = function () {
@@ -199,31 +245,29 @@
 		}
 
 		function isCrossImportSettingsValid() {
-
-			var valid = true;
-			if($scope.settingObject.additionalDetailsSetting.harvestMonth === '') {
-				valid = false;
+			'use strict';
+			if(!$scope.settingObject.additionalDetailsSetting.harvestMonth || $scope.settingObject.additionalDetailsSetting.harvestMonth === '') {
 				showErrorMessage('', $.fieldbookMessages.errorNoHarvestMonth);
+				return false;
 			}
-			if (!$scope.settingObject.additionalDetailsSetting.harvestLocationId) {
-				valid = false;
+
+			if (!$scope.settingObject.additionalDetailsSetting.harvestLocationId || $scope.settingObject.additionalDetailsSetting.harvestLocationId === '') {
 				showErrorMessage('', $.fieldbookMessages.errorNoHarvestLocation);
+				return false;
 			}
 			if ($scope.settingObject.isUseManualSettingsForNaming) {
 				if (!$scope.settingObject.crossNameSetting.prefix || $scope.settingObject.crossNameSetting.prefix === '') {
-					valid = false;
 					showErrorMessage('', $.fieldbookMessages.errorNoNamePrefix);
+					return false;
 				} else if (!$scope.settingObject.crossNameSetting.separator || $scope.settingObject.crossNameSetting.separator === '') {
-					valid = false;
 					showErrorMessage('', $.fieldbookMessages.errorNoParentageDesignationSeparator);
+					return false;
 				}
-
 				if (!validateStartingSequenceNumber($scope.settingObject.crossNameSetting.startNumber)) {
 					return false;
 				}
 			}
-
-			return valid;
+			return true;
 		}
 	}]);
 })();

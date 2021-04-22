@@ -60,13 +60,13 @@
 						</div>
 
 						<div class="col-xs-12 col-md-12 add-left-padding add-bottom-padding" id="breedingMethodSelectionDiv">
-							<methods-select on-method-select="methodChanged()"	enable-dropdown="selectMethodForAllCrosses" show-gen-methods-radio="true" method-type="2"
+							<methods-select on-method-select="methodChanged"	enable-dropdown="selectMethodForAllCrosses" show-gen-methods-radio="true" method-type="2"
 											disable-method-types-radio="true" valuecontainer="valuecontainer" targetkey="targetkey"></methods-select>
 						</div>
 						<div class="col-xs-12 col-md-12" ng-show="hasHybridMethod" id="applyGroupingOptionDiv">
 							<div class="col-xs-5 col-md-11">
 
-								<input type="checkbox" id="applyGroupingCheckBox"/>
+								<input type="checkbox" id="applyGroupingCheckBox"  ng-model="applyGroupingToNewCrossesOnly"/>
 								&nbsp;
 								<label th:text="#{apply.grouping.to.new.crosses.only}"></label>
 								&nbsp;

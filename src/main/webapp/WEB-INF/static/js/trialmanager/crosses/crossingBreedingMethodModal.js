@@ -13,8 +13,9 @@
 			$scope.hybridMethods = null;
 			$scope.selectedBreedingMethodId = null;
 			$scope.hasHybridMethod = false;
+			$scope.applyGroupingToNewCrossesOnly = false;
 
-			$scope.methodChanged = function () {
+			$scope.methodChanged = function (item, model) {
 				var methodCodes = [$scope.valuecontainer.methodCode];
 				methodService.getMethods(null, false, methodCodes).then(function (response) {
 					//get the value from index = 1 since the get methods adds a place holder in the zeroth index
@@ -106,7 +107,8 @@
 
 				$scope.isCrossesImport = isCrossesImport;
 				$scope.hasHybridMethod = ImportCrosses.hasHybridMethod;
-
+				$scope.valuecontainer = {methodCode : null};
+				$scope.selectedBreedingMethodId = null;
 				$('#crossSettingsModal').one('show.bs.modal', function() {
 					ImportCrosses.resetCrossSettingsModal();
 				});
@@ -114,11 +116,18 @@
 
 			$scope.goBackToImportCrosses = function () {
 				ImportCrosses.goBackToPage('#crossingBreedingMethodModal', '.import-crosses-section .modal');
+
 			};
 
 			$scope.goToNamingModal = function () {
 				if ($scope.isBreedingMethodSelectedValid()) {
 					$('#crossingBreedingMethodModal').modal('hide');
+					$rootScope.breedingMethodSetting = {
+						methodId : $scope.selectedBreedingMethodId,
+						basedOnStatusOfParentalLines : $('#selectUseParentalStatus').prop('checked'),
+						basedOnImportFile : $('#selectMethodInImportFile').prop('checked')
+					};
+					$rootScope.applyGroupingToNewCrossesOnly = $scope.applyGroupingToNewCrossesOnly;
 					setTimeout(ImportCrosses.showImportSettingsPopup, 500);
 				}
 			};

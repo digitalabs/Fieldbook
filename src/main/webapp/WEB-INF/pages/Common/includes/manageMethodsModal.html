@@ -37,10 +37,8 @@ $(function() {
 	$('#manageMethodModal').on('hidden.bs.modal', function() {
 		if (BreedingMethodsFunctions.isModalAvailableAndForOpening('advanceStudyModal')) {
 			BreedingMethodsFunctions.openModal('advanceStudyModal');
-			recreateMethodCombo(null, getAdvanceBreedingMethodURL());
 		} else if (BreedingMethodsFunctions.isModalAvailableAndForOpening('importStudyDesigConfirmationModal')) {
 			BreedingMethodsFunctions.openModal('importStudyDesigConfirmationModal');
-			recreateMethodCombo();
 		} else if (BreedingMethodsFunctions.isModalAvailableAndForOpening('crossSettingsModal')) {
 			$.event.trigger({
 				type: 'breeding-method-update'
@@ -55,7 +53,6 @@ $(function() {
 });
 
 function closeMethodFrame() {
-	recreateMethodCombo();
 	$('#manageMethodModal').modal('hide');
 }
 
@@ -65,13 +62,6 @@ function openManageMethods() {
 		methodIframeOpened = true;
 		$('#methodFrame').attr('src', document.programMethodUrl + document.projectID);
 	}
-}
-
-function propagateMethodUpdateEvent() {
-	'use strict'
-	$.event.trigger({
-		type: 'method-update'
-	});
 }
 //]]>
 </script>

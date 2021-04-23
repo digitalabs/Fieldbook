@@ -268,6 +268,10 @@
 				}
 			};
 
+			$scope.openManageMethods = function () {
+				openManageMethods();
+			}
+
 			$scope.init = function () {
 				const SELECTION_VARIABLE_TYPE = 1807;
 				datasetService.getColumns(studyContext.measurementDatasetId, false).then(function (data) {

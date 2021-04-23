@@ -198,7 +198,7 @@ public class AdvancingControllerTest {
 		Assert.assertNotNull("should have generated unique id", output.get("uniqueId"));
 
 
-		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1)).getMethodById(Integer.valueOf(form.getAdvanceBreedingMethodId()));
+		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1)).getMethodById(Integer.parseInt(form.getAdvanceBreedingMethodId()));
 		Mockito.verify(this.fieldbookMiddlewareService, Mockito.times(1)).loadObservations(Mockito.any(), ArgumentMatchers.eq(Arrays.asList(1,2,3)), ArgumentMatchers.eq(Collections.singletonList(1)));
 		final ArgumentCaptor<AdvancingStudy> advanceInfoCaptor = ArgumentCaptor.forClass(AdvancingStudy.class);
 		Mockito.verify(this.advancingSourceListFactory).createAdvancingSourceList(ArgumentMatchers.any(), advanceInfoCaptor.capture(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any());
@@ -347,7 +347,7 @@ public class AdvancingControllerTest {
 
 	@Test
 	public void testDeleteImportedGermplasmEntriesIfDeleted() {
-		List<ImportedGermplasm> importedGermplasms = new ArrayList<ImportedGermplasm>();
+		List<ImportedGermplasm> importedGermplasms = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
 			final ImportedGermplasm germplasm = new ImportedGermplasm();
 			germplasm.setEntryNumber(i);
@@ -359,7 +359,7 @@ public class AdvancingControllerTest {
 	}
 
 	private List<ImportedGermplasm> generateGermplasm() {
-		final List<ImportedGermplasm> importedGermplasms = new ArrayList<ImportedGermplasm>();
+		final List<ImportedGermplasm> importedGermplasms = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
 			final ImportedGermplasm germplasm = new ImportedGermplasm();
 			germplasm.setEntryNumber(i);
@@ -465,7 +465,7 @@ public class AdvancingControllerTest {
 
         advanceGermplasmChangeDetailList.add(advanceGermplasmChangeDetailUpdated);
 
-        return advanceGermplasmChangeDetailList.toArray(new AdvanceGermplasmChangeDetail[advanceGermplasmChangeDetailList.size()]);
+        return advanceGermplasmChangeDetailList.toArray(new AdvanceGermplasmChangeDetail[0]);
     }
 
     @Test
@@ -494,7 +494,7 @@ public class AdvancingControllerTest {
         this.assertGermPlasmList(listOfGermPlasm,0);
 
         Assert.assertEquals(10,form.getEntries());
-        Assert.assertEquals(123l,form.getUniqueId().longValue());
+        Assert.assertEquals(123L,form.getUniqueId().longValue());
 
     }
 
@@ -502,7 +502,7 @@ public class AdvancingControllerTest {
     public void testShowAdvanceNurseryThrowNumberFormatException(){
         final AdvancingStudyForm form = new AdvancingStudyForm();
         final String templateUrl = this.advancingController.showAdvanceStudy(form,null, this.request);
-
+		Assert.assertNotNull(templateUrl);
         Assert.assertEquals(0,form.getEntries());
         Assert.assertEquals(0,form.getGermplasmList().size());
 
@@ -529,7 +529,7 @@ public class AdvancingControllerTest {
         Assert.assertEquals(7,listOfGermPlasm.size());
         this.assertGermPlasmList(listOfGermPlasm,3);
         Assert.assertEquals(7,form.getEntries());
-        Assert.assertEquals(123l,form.getUniqueId().longValue());
+        Assert.assertEquals(123L,form.getUniqueId().longValue());
 
     }
 
@@ -537,7 +537,7 @@ public class AdvancingControllerTest {
     public void testDeleteAdvanceNurseryEntriesSuccessThrowNumberFormatException(){
         final AdvancingStudyForm form = new AdvancingStudyForm();
         final String templateUrl = this.advancingController.deleteAdvanceStudyEntries(form,null,this.request);
-
+        Assert.assertNotNull(templateUrl);
         Assert.assertEquals(0,form.getEntries());
         Assert.assertEquals(0,form.getGermplasmList().size());
 
@@ -548,7 +548,7 @@ public class AdvancingControllerTest {
         final Workbook workBook = new Workbook();
         workBook.setMeasurementDatesetId(2);
         Mockito.when(this.userSelection.getWorkbook()).thenReturn(workBook);
-        Mockito.when(this.fieldbookMiddlewareService.countPlotsWithRecordedVariatesInDataset(Mockito.anyInt(),Mockito.isA(List.class))).thenReturn(new Integer(2));
+        Mockito.when(this.fieldbookMiddlewareService.countPlotsWithRecordedVariatesInDataset(Mockito.anyInt(),Mockito.isA(List.class))).thenReturn(2);
         final int plotCount = this.advancingController.countPlots("1,2");
         Assert.assertEquals(2,plotCount);
 

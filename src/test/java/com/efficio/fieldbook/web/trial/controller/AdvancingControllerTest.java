@@ -14,6 +14,7 @@ import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang.math.RandomUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
 import org.generationcp.commons.pojo.AdvanceGermplasmChangeDetail;
@@ -40,7 +41,6 @@ import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
@@ -68,7 +68,6 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -421,12 +420,13 @@ public class AdvancingControllerTest {
         final AdvancingStudyForm form = new AdvancingStudyForm();
         final Model model = new ExtendedModelMap();
 
-		final String returnTemplatePage = this.advancingController.show(form, model, 212, null, null, null);
+		final String returnTemplatePage = this.advancingController.show(form, model, 212, null, "1", null);
 
         Assert.assertEquals("StudyManager/advanceStudyModal",returnTemplatePage);
         final Map<String,Object> modelMap = model.asMap();
         Assert.assertEquals(21,((List<ChoiceKeyVal>)modelMap.get("yearChoices")).size());
         Assert.assertEquals(12,((List<ChoiceKeyVal>)modelMap.get("monthChoices")).size());
+		Assert.assertEquals(1,((List<ChoiceKeyVal>)modelMap.get("replicationsChoices")).size());
 
         Assert.assertEquals("1",form.getMethodChoice());
         Assert.assertEquals("1",form.getLineChoice());
@@ -637,6 +637,65 @@ public class AdvancingControllerTest {
         final String methodType = this.advancingController.checkMethodTypeMode(12, Collections.singleton("1"));
         Assert.assertTrue(methodType.contains("The nursery has no methods defined under"));
     }
+
+	@Test
+	public void testShowAdvancePrepDesign(){
+		Mockito.doReturn("ASDFDSAGFDGHSFDJ").when(this.contextUtil).getCurrentProgramUUID();
+		final Project project = new Project();
+		final CropType cropType = new CropType();
+		cropType.setCropName("maize");
+		project.setCropType(cropType);
+		project.setUniqueID(RandomStringUtils.randomAlphanumeric(10));
+
+		Mockito.doReturn(project).when(this.contextUtil).getProjectInContext();
+
+		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(10, StudyTypeDto.getTrialDto());
+		WorkbookTestDataInitializer.setTrialObservations(workbook);
+		workbook.getStudyDetails().setId(1011);
+		workbook.setMeansDatasetId(1357);
+
+		// Set Experiment Design
+		final MeasurementVariable experimentalVariable = new MeasurementVariable();
+		experimentalVariable.setTermId(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
+		experimentalVariable.setValue(String.valueOf(TermId.P_REP.getId()));
+		workbook.setExperimentalDesignVariables(Collections.singletonList(experimentalVariable));
+
+		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
+
+		final Variable variable = this.createSelectionVariable();
+		final MeasurementVariable measurementVariable = new MeasurementVariable();
+		measurementVariable.setTermId(205);
+		measurementVariable.setVariableType(VariableType.SELECTION_METHOD);
+		measurementVariable.setName("SinglePlant");
+
+		Mockito.when(this.variableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), measurementVariable.getTermId(), false)).thenReturn(variable);
+
+		final DatasetDTO datasetDTO = new DatasetDTO();
+		datasetDTO.setVariables(Lists.newArrayList(measurementVariable));
+		Mockito.when(this.datasetService.getDataset(Mockito.anyInt())).thenReturn(datasetDTO);
+		Mockito.when(this.fieldbookProperties.getProgramBreedingMethodsUrl()).thenReturn("programBreedingMethodUrl");
+		final Project testProject = new Project();
+		testProject.setProjectId(1L);
+
+		final AdvancingStudyForm form = new AdvancingStudyForm();
+		final Model model = new ExtendedModelMap();
+
+		final String returnTemplatePage = this.advancingController.show(form, model, 212, null, "1", null);
+		Assert.assertEquals("StudyManager/advanceStudyModal",returnTemplatePage);
+		final Map<String,Object> modelMap = model.asMap();
+		Assert.assertEquals(21,((List<ChoiceKeyVal>)modelMap.get("yearChoices")).size());
+		Assert.assertEquals(12,((List<ChoiceKeyVal>)modelMap.get("monthChoices")).size());
+		Assert.assertFalse(modelMap.containsKey("replicationsChoices"));
+
+		Assert.assertEquals("1",form.getMethodChoice());
+		Assert.assertEquals("1",form.getLineChoice());
+		Assert.assertEquals("1",form.getLineSelected());
+		Assert.assertEquals("1",form.getAllPlotsChoice());
+		Assert.assertEquals("205",form.getDefaultMethodId());
+		Assert.assertEquals(1,form.getMethodVariates().size());
+		Assert.assertEquals(205,form.getMethodVariates().get(0).getId().intValue());
+		Assert.assertEquals("SinglePlant",form.getMethodVariates().get(0).getName());
+	}
 
     private void assertGermPlasmList( final List<Map<String, Object>> listOfGermPlasm ,int position){
         for(final Map<String,Object> entryMap : listOfGermPlasm){

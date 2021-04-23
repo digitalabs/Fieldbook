@@ -213,7 +213,7 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 			$window.addEventListener("message", (event) => {
 				if (event.data === 'germplasm-details-changed') {
 					// If any germplasm info is changed in germplasm details popup (basic-details, name, attribute, pedigree)
-					// se the germplasmDetailsHasChanges flag to true
+					// set the germplasmDetailsHasChanges flag to true
 					$scope.germplasmDetailsHasChanges = true;
 				}
 			}, false);

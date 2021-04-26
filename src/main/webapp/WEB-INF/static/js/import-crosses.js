@@ -279,7 +279,7 @@ var ImportCrosses = {
 		'use strict';
 		var crossSettingsPopupModal = $('#crossSettingsModal');
 		crossSettingsPopupModal.modal({ backdrop: 'static', keyboard: true });
-		
+
 		$('#presetSettingsDelete').off('click');
 		$('#presetSettingsDelete').on('click', function () {
 
@@ -312,19 +312,6 @@ var ImportCrosses = {
 		});
 
 
-
-		// ImportCrosses.updateSampleParentageDesignation();
-		//
-		// $('.cross-import-name-setting').off('change');
-		// $('.cross-import-name-setting').on('change', ImportCrosses.updateDisplayedSequenceNameValue);
-		//
-		// $('#parentageDesignationSeparator').off('change');
-		// $('#parentageDesignationSeparator').on('change', ImportCrosses.updateSampleParentageDesignation);
-		//
-		// ImportCrosses.populateHarvestMonthDropdown('harvestMonthDropdown');
-		// ImportCrosses.populateHarvestYearDropdown('harvestYearDropdown');
-
-
 		$('#goBackToSelectBreedingMethodModal').off('click');
 		$('#goBackToSelectBreedingMethodModal').on('click', function() {
 			ImportCrosses.showFavoriteLoationsOnly = $('#locationFavoritesOnlyCheckbox').is(':checked');
@@ -334,14 +321,7 @@ var ImportCrosses = {
 	},
 
 	onDeleteSettingOk: function(data) {
-		ImportCrosses.deleteImportSettings(data.programPresetId)
-			.done(function () {
-				showSuccessfulMessage('', crossingSettingsDeleted);
-				//ImportCrosses.processImportSettingsDropdown('presetSettingsDropdown', 'loadSettingsCheckbox');
-			})
-			.fail(function () {
-				showErrorMessage('', crossingSettingsDeleteFailed);
-			});
+
 	},
 
 	updateSampleParentageDesignation: function() {
@@ -365,7 +345,11 @@ var ImportCrosses = {
 			url: ImportCrosses.CROSSES_URL + '/deleteSetting/' + programPresetId,
 			type: 'DELETE',
 			cache: false,
-			global: false
+			error: function (jqXHR, textStatus, errorThrown) {
+				console.log('The following error occurred: ' + textStatus, errorThrown);
+			},
+			complete: function () {
+			}
 		});
 	},
 

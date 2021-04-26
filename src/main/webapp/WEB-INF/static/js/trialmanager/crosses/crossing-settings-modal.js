@@ -189,7 +189,20 @@
 				$scope.settingObject.additionalDetailsSetting.harvestYear + '-' + $scope.settingObject.additionalDetailsSetting.harvestMonth + '-01';
 		}
 
+		$scope.deletePreset = function() {
+			if($scope.selectedPresetId && $scope.selectedPresetId !== '') {
+				this.deleteImportSettings().done(function () {
+					showSuccessfulMessage('', crossingSettingsDeleted);
+					$scope.fetchYears();
+				})
+				.fail(function () {
+					showErrorMessage('', crossingSettingsDeleteFailed);
+				});
+			}
+		}
+
 		$scope.applySettingsPreset = function (selected) {
+			$scope.selectedPresetId = selected.programPresetId;
 			$scope.settingObject.name = selected.name;
 			$scope.settingObject.crossNameSetting.prefix = selected.crossPrefix;
 			$scope.settingObject.crossNameSetting.suffix = selected.crossSuffix;
@@ -287,6 +300,16 @@
 				url: '/Fieldbook/crosses/getHarvestYears',
 				type: 'GET',
 				cache: false
+			});
+		}
+
+		function deleteImportSettings() {
+			'use strict';
+			return $.ajax({
+				url: ImportCrosses.CROSSES_URL + '/deleteSetting/' + $scope.selectedPresetId,
+				type: 'DELETE',
+				cache: false,
+				global: false
 			});
 		}
 

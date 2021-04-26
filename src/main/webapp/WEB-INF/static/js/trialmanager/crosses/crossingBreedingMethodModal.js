@@ -131,5 +131,9 @@
 					setTimeout(ImportCrosses.showImportSettingsPopup, 500);
 				}
 			};
+
+			$scope.openManageMethods = function () {
+				openManageMethods();
+			}
 		}]);
 })();

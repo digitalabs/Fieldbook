@@ -61,7 +61,14 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		final TimerWatch timer = new TimerWatch("advance");
 
 		Map<String, Integer> keySequenceMap = new HashMap<>();
-		final Iterator<ImportedGermplasm> germplasmIterator = germplasmList.iterator();
+
+		final Map<String, List<ImportedGermplasm>> parentIdGermplasmMap = new HashMap<>();
+		for(final ImportedGermplasm importedGermplasm: germplasmList) {
+			final String parentId = importedGermplasm.getGpid2().toString();
+			parentIdGermplasmMap.putIfAbsent(parentId, new ArrayList<>());
+			parentIdGermplasmMap.get(parentId).add(importedGermplasm);
+		}
+
 		for (final AdvancingSource row : advancingSourceItems) {
 			if (row.getGermplasm() != null && !row.isCheck() && row.getPlantsSelected() != null && row.getBreedingMethod() != null
 				&& row.getPlantsSelected() > 0 && row.getBreedingMethod().isBulkingMethod() != null) {
@@ -71,12 +78,13 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 				final RuleExecutionContext namingExecutionContext =
 					this.setupNamingRuleExecutionContext(row, checkForDuplicateName);
 				names = (List<String>) this.rulesService.runRules(namingExecutionContext);
-
-
+				final Iterator<ImportedGermplasm> germplasmIterator = parentIdGermplasmMap.get(row.getGermplasm().getGid()).iterator();
 				for (final String name : names) {
-					final ImportedGermplasm germplasm = germplasmIterator.next();
-					germplasm.setDesig(name);
-					this.assignNames(germplasm);
+					if (germplasmIterator.hasNext()) {
+						final ImportedGermplasm germplasm = germplasmIterator.next();
+						germplasm.setDesig(name);
+						this.assignNames(germplasm);
+					}
 				}
 
 				// Pass the key sequence map to the next entry to process

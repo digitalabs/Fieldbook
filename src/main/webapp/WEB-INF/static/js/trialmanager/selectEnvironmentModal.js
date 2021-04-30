@@ -4,8 +4,8 @@
 
 	var manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.controller('SelectEnvironmentModalCtrl', ['$scope', 'TrialManagerDataService', 'studyInstanceService', '$timeout', 'studyContext', 'datasetService',
-		function ($scope, TrialManagerDataService, studyInstanceService, $timeout, studyContext, datasetService) {
+	manageTrialApp.controller('SelectEnvironmentModalCtrl', ['$scope', 'TrialManagerDataService', 'studyInstanceService', '$timeout', 'studyContext', 'datasetService', 'DESIGN_TYPE',
+		function ($scope, TrialManagerDataService, studyInstanceService, $timeout, studyContext, datasetService, DESIGN_TYPE) {
 
 		$scope.settings = TrialManagerDataService.settings.environments;
 		if (Object.keys($scope.settings).length === 0) {
@@ -60,6 +60,8 @@
 			var selectedTrialInstances = [];
 			var selectedLocationDetails = [];
 			var locationAbbr = false;
+			var noOfReplications = TrialManagerDataService.currentData.experimentalDesign.designType === DESIGN_TYPE.P_REP ? 0
+				: $scope.noOfReplications;
 
 			if ($scope.isEmptySelection) {
 				showErrorMessage('', $.fieldbookMessages.errorNotSelectedInstance);
@@ -85,7 +87,7 @@
 					}
 				});
 
-				selectInstanceContinueAdvancing(selectedTrialInstances, $scope.noOfReplications, selectedLocationDetails,
+				selectInstanceContinueAdvancing(selectedTrialInstances, noOfReplications, selectedLocationDetails,
 					$scope.applicationData.advanceType);
 			}
 

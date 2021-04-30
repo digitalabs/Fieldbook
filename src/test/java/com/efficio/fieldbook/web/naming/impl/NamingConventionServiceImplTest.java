@@ -103,9 +103,10 @@ public class NamingConventionServiceImplTest {
         Mockito.when(this.rulesService.runRules(ArgumentMatchers.any(RuleExecutionContext.class))).thenReturn(
                 Lists.newArrayList(ruleGeneratedName));
 
+		as1.setGermplasm(this.createImportedGermplasm(101));
 		final List<ImportedGermplasm> germplasmList = new ArrayList<>();
 		germplasmList.add(this.createImportedGermplasm(100));
-		as1.setGermplasm(germplasmList.get(0));
+		germplasmList.get(0).setGpid2(Integer.valueOf(as1.getGermplasm().getGid()));
         this.namingConventionService.generateAdvanceListNames(rows, new Random().nextBoolean(), germplasmList);
 
         Mockito.verify(this.rulesService).runRules(ArgumentMatchers.any());

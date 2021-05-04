@@ -27,6 +27,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -62,11 +63,11 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
 		Map<String, Integer> keySequenceMap = new HashMap<>();
 
-		final Map<String, List<ImportedGermplasm>> parentIdGermplasmMap = new HashMap<>();
+		final Map<String, List<ImportedGermplasm>> parentIdDescendantsMap = new HashMap<>();
 		for(final ImportedGermplasm importedGermplasm: germplasmList) {
 			final String parentId = importedGermplasm.getGpid2().toString();
-			parentIdGermplasmMap.putIfAbsent(parentId, new ArrayList<>());
-			parentIdGermplasmMap.get(parentId).add(importedGermplasm);
+			parentIdDescendantsMap.putIfAbsent(parentId, new ArrayList<>());
+			parentIdDescendantsMap.get(parentId).add(importedGermplasm);
 		}
 
 		for (final AdvancingSource row : advancingSourceItems) {
@@ -74,16 +75,21 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 				&& row.getPlantsSelected() > 0 && row.getBreedingMethod().isBulkingMethod() != null) {
 				row.setKeySequenceMap(keySequenceMap);
 
-				final List<String> names;
-				final RuleExecutionContext namingExecutionContext =
-					this.setupNamingRuleExecutionContext(row, checkForDuplicateName);
-				names = (List<String>) this.rulesService.runRules(namingExecutionContext);
-				final Iterator<ImportedGermplasm> germplasmIterator = parentIdGermplasmMap.get(row.getGermplasm().getGid()).iterator();
-				for (final String name : names) {
-					if (germplasmIterator.hasNext()) {
-						final ImportedGermplasm germplasm = germplasmIterator.next();
-						germplasm.setDesig(name);
-						this.assignNames(germplasm);
+				//Generate names if there are descendants
+				if(!CollectionUtils.isEmpty(parentIdDescendantsMap.get(row.getGermplasm().getGid()))) {
+					final List<String> names;
+					final RuleExecutionContext namingExecutionContext =
+						this.setupNamingRuleExecutionContext(row, checkForDuplicateName);
+					names = (List<String>) this.rulesService.runRules(namingExecutionContext);
+
+
+					final Iterator<ImportedGermplasm> germplasmIterator = parentIdDescendantsMap.get(row.getGermplasm().getGid()).iterator();
+					for (final String name : names) {
+						if (germplasmIterator.hasNext()) {
+							final ImportedGermplasm germplasm = germplasmIterator.next();
+							germplasm.setDesig(name);
+							this.assignNames(germplasm);
+						}
 					}
 				}
 

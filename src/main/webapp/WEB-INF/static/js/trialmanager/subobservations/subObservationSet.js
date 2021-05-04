@@ -1433,7 +1433,8 @@
 						title: columnData.alias,
 						name: columnData.alias,
 						data: function (row) {
-							return row.variables[columnData.name];
+							const key = columnData.name in row.variables ? columnData.name : columnData.alias;
+							return row.variables[key];
 						},
 						visible: isColumnVisible(),
 						defaultContent: '',

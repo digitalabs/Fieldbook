@@ -82,44 +82,43 @@ public class NamingConventionServiceImplTest {
 
 	}
 
-    @Test
-    public void testGenerateAdvanceListNames() throws MiddlewareQueryException, RuleException  {
+	@Test
+	public void testGenerateAdvanceListNames() throws MiddlewareQueryException, RuleException  {
 		final List<AdvancingSource> rows = new ArrayList<>();
-        final AdvancingSource as1 = new AdvancingSource();
-        as1.setNames(new ArrayList<>());
-        as1.setBreedingMethod(breedingMethod);
-        as1.setPlantsSelected(1);
-        as1.setBulk(false);
-        as1.setCheck(false);
-        as1.setStudyName("Test One");
-        as1.setSeason("201412");
-        as1.setCurrentMaxSequence(0);
-        as1.setTrialInstanceNumber("1");
-       	rows.add(as1);
+		final AdvancingSource as1 = new AdvancingSource();
+		as1.setNames(new ArrayList<>());
+		as1.setBreedingMethod(breedingMethod);
+		as1.setPlantsSelected(1);
+		as1.setBulk(false);
+		as1.setCheck(false);
+		as1.setStudyName("Test One");
+		as1.setSeason("201412");
+		as1.setCurrentMaxSequence(0);
+		as1.setTrialInstanceNumber("1");
+		rows.add(as1);
 
 		Mockito.when(this.rulesService.runRules(ArgumentMatchers.any(RuleExecutionContext.class))).thenReturn(Collections.singletonList("name"));
 		Mockito.when(this.ruleFactory.getRuleSequenceForNamespace("naming")).thenReturn(new String[] {"[COUNT]"});
-        final String ruleGeneratedName = RandomStringUtils.randomAlphabetic(20);
-        Mockito.when(this.rulesService.runRules(ArgumentMatchers.any(RuleExecutionContext.class))).thenReturn(
-                Lists.newArrayList(ruleGeneratedName));
+		final String ruleGeneratedName = RandomStringUtils.randomAlphabetic(20);
+		Mockito.when(this.rulesService.runRules(ArgumentMatchers.any(RuleExecutionContext.class))).thenReturn(
+			Lists.newArrayList(ruleGeneratedName));
 
-		as1.setGermplasm(this.createImportedGermplasm(101));
 		final List<ImportedGermplasm> germplasmList = new ArrayList<>();
 		germplasmList.add(this.createImportedGermplasm(100));
-		germplasmList.get(0).setGpid2(Integer.valueOf(as1.getGermplasm().getGid()));
-        this.namingConventionService.generateAdvanceListNames(rows, new Random().nextBoolean(), germplasmList);
+		as1.setGermplasm(germplasmList.get(0));
+		this.namingConventionService.generateAdvanceListNames(rows, new Random().nextBoolean(), germplasmList);
 
-        Mockito.verify(this.rulesService).runRules(ArgumentMatchers.any());
-        final ImportedGermplasm resultIG = germplasmList.get(0);
-        Assert.assertEquals(ruleGeneratedName, resultIG.getDesig());
-        final Name resultName = resultIG.getNames().get(0);
-        Assert.assertNull(resultName.getNid());
-        Assert.assertNull(resultName.getGermplasmId());
-        Assert.assertEquals(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID(), resultName.getTypeId().intValue());
-        Assert.assertEquals(new Integer(1), resultName.getNstat());
-        Assert.assertEquals(ruleGeneratedName, resultName.getNval());
+		Mockito.verify(this.rulesService).runRules(ArgumentMatchers.any());
+		final ImportedGermplasm resultIG = germplasmList.get(0);
+		Assert.assertEquals(ruleGeneratedName, resultIG.getDesig());
+		final Name resultName = resultIG.getNames().get(0);
+		Assert.assertNull(resultName.getNid());
+		Assert.assertNull(resultName.getGermplasmId());
+		Assert.assertEquals(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID(), resultName.getTypeId().intValue());
+		Assert.assertEquals(new Integer(1), resultName.getNstat());
+		Assert.assertEquals(ruleGeneratedName, resultName.getNval());
 
-    }
+	}
 	@Test
 	public void testGenerateCrossesList() throws RuleException{
 		final List<ImportedCross> importedCrosses = new ArrayList<>();

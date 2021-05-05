@@ -27,7 +27,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -54,43 +53,30 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	@Resource
 	private ResourceBundleMessageSource messageSource;
 
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public void generateAdvanceListNames(final List<AdvancingSource> advancingSourceItems, final boolean checkForDuplicateName,
-		final List<ImportedGermplasm> germplasmList) throws RuleException {
+	public void generateAdvanceListNames(final List<AdvancingSource> advancingSourceItems, final boolean checkForDuplicateName, final List<ImportedGermplasm> germplasmList) throws RuleException {
 
 		final TimerWatch timer = new TimerWatch("advance");
 
 		Map<String, Integer> keySequenceMap = new HashMap<>();
-
-		final Map<String, List<ImportedGermplasm>> parentIdDescendantsMap = new HashMap<>();
-		for (final ImportedGermplasm importedGermplasm : germplasmList) {
-			final String parentId = importedGermplasm.getGpid2().toString();
-			parentIdDescendantsMap.putIfAbsent(parentId, new ArrayList<>());
-			parentIdDescendantsMap.get(parentId).add(importedGermplasm);
-		}
-
+		final Iterator<ImportedGermplasm> germplasmIterator = germplasmList.iterator();
 		for (final AdvancingSource row : advancingSourceItems) {
 			if (row.getGermplasm() != null && !row.isCheck() && row.getPlantsSelected() != null && row.getBreedingMethod() != null
 				&& row.getPlantsSelected() > 0 && row.getBreedingMethod().isBulkingMethod() != null) {
 				row.setKeySequenceMap(keySequenceMap);
 
-				//Generate names if there are descendants(users can remove advanced germplasm in advancing preview)
-				if (!CollectionUtils.isEmpty(parentIdDescendantsMap.get(row.getGermplasm().getGid()))) {
-					final List<String> names;
-					final RuleExecutionContext namingExecutionContext =
-						this.setupNamingRuleExecutionContext(row, checkForDuplicateName);
-					names = (List<String>) this.rulesService.runRules(namingExecutionContext);
+				final List<String> names;
+				final RuleExecutionContext namingExecutionContext =
+					this.setupNamingRuleExecutionContext(row, checkForDuplicateName);
+				names = (List<String>) this.rulesService.runRules(namingExecutionContext);
 
-					final Iterator<ImportedGermplasm> germplasmIterator =
-						parentIdDescendantsMap.get(row.getGermplasm().getGid()).iterator();
-					for (final String name : names) {
-						if (germplasmIterator.hasNext()) {
-							final ImportedGermplasm germplasm = germplasmIterator.next();
-							germplasm.setDesig(name);
-							this.assignNames(germplasm);
-						}
-					}
+
+				for (final String name : names) {
+					final ImportedGermplasm germplasm = germplasmIterator.next();
+					germplasm.setDesig(name);
+					this.assignNames(germplasm);
 				}
 
 				// Pass the key sequence map to the next entry to process

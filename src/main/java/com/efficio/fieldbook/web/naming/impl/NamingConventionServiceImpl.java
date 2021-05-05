@@ -54,17 +54,17 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 	@Resource
 	private ResourceBundleMessageSource messageSource;
 
-
 	@SuppressWarnings("unchecked")
 	@Override
-	public void generateAdvanceListNames(final List<AdvancingSource> advancingSourceItems, final boolean checkForDuplicateName, final List<ImportedGermplasm> germplasmList) throws RuleException {
+	public void generateAdvanceListNames(final List<AdvancingSource> advancingSourceItems, final boolean checkForDuplicateName,
+		final List<ImportedGermplasm> germplasmList) throws RuleException {
 
 		final TimerWatch timer = new TimerWatch("advance");
 
 		Map<String, Integer> keySequenceMap = new HashMap<>();
 
 		final Map<String, List<ImportedGermplasm>> parentIdDescendantsMap = new HashMap<>();
-		for(final ImportedGermplasm importedGermplasm: germplasmList) {
+		for (final ImportedGermplasm importedGermplasm : germplasmList) {
 			final String parentId = importedGermplasm.getGpid2().toString();
 			parentIdDescendantsMap.putIfAbsent(parentId, new ArrayList<>());
 			parentIdDescendantsMap.get(parentId).add(importedGermplasm);
@@ -76,14 +76,14 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 				row.setKeySequenceMap(keySequenceMap);
 
 				//Generate names if there are descendants(users can remove advanced germplasm in advancing preview)
-				if(!CollectionUtils.isEmpty(parentIdDescendantsMap.get(row.getGermplasm().getGid()))) {
+				if (!CollectionUtils.isEmpty(parentIdDescendantsMap.get(row.getGermplasm().getGid()))) {
 					final List<String> names;
 					final RuleExecutionContext namingExecutionContext =
 						this.setupNamingRuleExecutionContext(row, checkForDuplicateName);
 					names = (List<String>) this.rulesService.runRules(namingExecutionContext);
 
-
-					final Iterator<ImportedGermplasm> germplasmIterator = parentIdDescendantsMap.get(row.getGermplasm().getGid()).iterator();
+					final Iterator<ImportedGermplasm> germplasmIterator =
+						parentIdDescendantsMap.get(row.getGermplasm().getGid()).iterator();
 					for (final String name : names) {
 						if (germplasmIterator.hasNext()) {
 							final ImportedGermplasm germplasm = germplasmIterator.next();

@@ -10,6 +10,7 @@
 				'&cropName=' + studyContext.cropName +
 				'&programUUID=' + studyContext.programId +
 				'&selectedProjectId=' + studyContext.selectedProjectId +
+				'&loggedInUserId=' + studyContext.loggedInUserId +
 				'&selectMultiple=' + selectMultiple;
 
 			window.closeModal = function() {

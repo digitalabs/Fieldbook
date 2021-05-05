@@ -12,7 +12,8 @@ describe('GermplasmSelectorCtrl:', function () {
 			studyId: 1,
 			cropName: 'maize',
 			programId : 'abc-123',
-			selectedProjectId: 1
+			selectedProjectId: 1,
+			loggedInUserId: 1
 		},
 		uibModalInstanceMock = {
 			close: jasmine.createSpy('close'),
@@ -55,6 +56,7 @@ describe('GermplasmSelectorCtrl:', function () {
 				'&cropName=' + studyContextMock.cropName +
 				'&programUUID=' + studyContextMock.programId +
 				'&selectedProjectId=' + studyContextMock.selectedProjectId +
+				'&loggedInUserId=' + studyContextMock.loggedInUserId +
 				'&selectMultiple=false');
 		});
 

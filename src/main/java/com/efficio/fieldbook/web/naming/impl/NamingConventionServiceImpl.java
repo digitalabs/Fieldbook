@@ -75,7 +75,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 				&& row.getPlantsSelected() > 0 && row.getBreedingMethod().isBulkingMethod() != null) {
 				row.setKeySequenceMap(keySequenceMap);
 
-				//Generate names if there are descendants
+				//Generate names if there are descendants(users can remove advanced germplasm in advancing preview)
 				if(!CollectionUtils.isEmpty(parentIdDescendantsMap.get(row.getGermplasm().getGid()))) {
 					final List<String> names;
 					final RuleExecutionContext namingExecutionContext =

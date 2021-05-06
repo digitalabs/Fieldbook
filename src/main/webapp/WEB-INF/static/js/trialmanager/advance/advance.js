@@ -329,7 +329,8 @@
 				});
 			});
 
-			$scope.noOfReplications = TrialManagerDataService.currentData.experimentalDesign.replicationsCount;
+			$scope.noOfReplications = TrialManagerDataService.currentData.experimentalDesign.designType === DESIGN_TYPE.P_REP ? 0
+				: $scope.noOfReplications;
 
 			$scope.instances = [];
 			$scope.selectedInstances = {};

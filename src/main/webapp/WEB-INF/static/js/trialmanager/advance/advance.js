@@ -78,7 +78,8 @@
 				methodVariateId: '',
 				plotVariateId: '',
 				lineVariateId: '',
-				studyId: studyContext.studyId
+				studyId: studyContext.studyId,
+				checkall: false
 			};
 
 			$scope.currentYear = new Date().getFullYear() + '';
@@ -89,7 +90,6 @@
 			$scope.noOfReplications = noOfReplications;
 			$scope.selectionMethodVariables = [];
 			$scope.selectionPlantVariables = [];
-			$scope.checkall = false;
 			$scope.locationsSelected = locationsSelected;
 			$scope.advanceType = advanceType;
 			$scope.selectedTrialsString = trialInstances.join(",")
@@ -259,16 +259,9 @@
 			};
 
 			$scope.checkUncheckAll = function () {
-				if ($scope.checkall) {
-					$scope.replicationsOptions.forEach((repOption) => {
-						repOption.selected = $scope.checkall;
-					});
-				} else {
-					$scope.checkall = false;
-					$scope.replicationsOptions.forEach((repOption) => {
-						repOption.selected = $scope.checkall;
-					});
-				}
+				$scope.replicationsOptions.forEach((repOption) => {
+					repOption.selected = $scope.valueContainer.checkall;
+				});
 			};
 
 			$scope.openManageMethods = function () {

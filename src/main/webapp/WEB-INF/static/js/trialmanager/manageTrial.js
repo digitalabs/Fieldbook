@@ -9,7 +9,7 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 	var manageTrialApp = angular.module('manageTrialApp', ['designImportApp', 'leafnode-utils', 'fieldbook-utils', 'subObservation',
 		'ui.router', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables', 'datatables.buttons', 'datatables.colreorder',
 		'ngSanitize', 'ui.select', 'ngMessages', 'blockUI', 'datasets-api', 'auth', 'bmsAuth', 'studyState',
-		'export-study', 'import-study', 'create-sample', 'derived-variable', 'importObservationsApp', 'germplasm-study-source']);
+		'export-study', 'import-study', 'create-sample', 'derived-variable', 'importObservationsApp', 'germplasm-study-source', 'pascalprecht.translate']);
 
 	manageTrialApp.config(['$httpProvider', function ($httpProvider) {
 		$httpProvider.interceptors.push('authInterceptor');
@@ -28,6 +28,36 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 	 It is used by ng-bind-html ***/
 	manageTrialApp.config(function ($sceProvider) {
 		$sceProvider.enabled(false);
+	});
+
+	manageTrialApp.config(function ($translateProvider) {
+		$translateProvider.translations('en', {
+			'study.studydetails.action.advance.sample': 'Advance sampled plants from plots',
+			'study.studydetails.action.advance.study': 'Advance study',
+			'advancing.study.mandatory.fields': 'indicates a mandatory field',
+			'advancing.study.method': 'METHODS',
+			'advancing.study.breeding.method.the.same': 'Breeding Method is the same for each advance',
+			'study.advance.sample.breeding.method.label': 'Breeding method',
+			'advancing.study.manage.method': 'Manage Methods',
+			'advancing.study.method.variate': 'Choose a variate that defines the breeding method for each advance',
+			'advancing.study.lines': 'LINES',
+			'advancing.study.line.the.same': 'Same number of lines is selected for each plot',
+			'advancing.study.number.of.samples.plot': 'Lines Selected per Plot',
+			'advancing.study.lines.variate': 'Choose a variate that defines the number of lines selected from each plot',
+			'advancing.study.bulks': 'BULKS',
+			'advancing.study.all.plots.selected': 'All plots are selected',
+			'advancing.study.bulks.variate': 'Choose a variate that defines which plots were selected',
+			'study.advance.plants.label': 'PLANTS',
+			'study.advance.plants.all.radio': 'All plants are selected',
+			'advancing.study.reps': 'REPS',
+			'advancing.study.select.all': 'Select All',
+			'advancing.study.harvest.information': 'HARVEST DETAILS',
+			'advancing.study.harvest.date': 'Harvest Date:',
+			'advancing.study.location.information': 'LOCATION DETAILS',
+			'common.form.back.text': 'Back',
+			'common.form.finish.text': 'Finish'
+		});
+		$translateProvider.preferredLanguage('en');
 	});
 
 	// routing configuration

@@ -38,18 +38,8 @@
 
 			advanceStudyModalService.openAdvanceStudyModal = function (trialInstances, noOfReplications, locationsSelected, advanceType) {
 
-				var advanceStudyURL = '/Fieldbook/StudyManager/advance/study';
-				advanceStudyURL = advanceStudyURL + '/' + encodeURIComponent(studyContext.studyId);
-				advanceStudyURL = advanceStudyURL + '?selectedInstances=' + encodeURIComponent(trialInstances.join(","));
-				if (noOfReplications) {
-					advanceStudyURL = advanceStudyURL + '&noOfReplications=' + encodeURIComponent(noOfReplications);
-				}
-				if (advanceType) {
-					advanceStudyURL = advanceStudyURL + '&advanceType=' + encodeURIComponent(advanceType);
-				}
-
 				$uibModal.open({
-					templateUrl: advanceStudyURL,
+					templateUrl: '/Fieldbook/static/angular-templates/advance/advanceStudyModal.html',
 					controller: "advanceStudyModalController",
 					size: 'lg',
 					resolve: {
@@ -87,14 +77,22 @@
 				linesValue: 1,
 				methodVariateId: '',
 				plotVariateId: '',
-				lineVariateId: ''
+				lineVariateId: '',
+				studyId: studyContext.studyId
 			};
 
+			$scope.currentYear = new Date().getFullYear() + '';
+			$scope.currentMonth = pad(new Date().getMonth());
+			$scope.harvestYearOptions = [];
+			$scope.harvestMonthOptions = [];
+			$scope.replicationsOptions = [];
+			$scope.noOfReplications = noOfReplications;
 			$scope.selectionMethodVariables = [];
 			$scope.selectionPlantVariables = [];
 			$scope.checkall = false;
 			$scope.locationsSelected = locationsSelected;
 			$scope.advanceType = advanceType;
+			$scope.selectedTrialsString = trialInstances.join(",")
 
 			$scope.isBulkingMethod = function () {
 				return $scope.valueContainer.selectedBreedingMethod && $scope.valueContainer.selectedBreedingMethod.bulkingMethod;
@@ -262,9 +260,14 @@
 
 			$scope.checkUncheckAll = function () {
 				if ($scope.checkall) {
-					$scope.checkall = true;
+					$scope.replicationsOptions.forEach((repOption) => {
+						repOption.selected = $scope.checkall;
+					});
 				} else {
 					$scope.checkall = false;
+					$scope.replicationsOptions.forEach((repOption) => {
+						repOption.selected = $scope.checkall;
+					});
 				}
 			};
 
@@ -281,16 +284,43 @@
 					$scope.valueContainer.lineVariateId = String($scope.selectionPlantVariables.length !== 0 ? $scope.selectionPlantVariables[0].termId : 0);
 					$scope.valueContainer.plotVariateId = String($scope.selectionPlantVariables.length !== 0 ? $scope.selectionPlantVariables[0].termId : 0);
 				});
+				$scope.initializeHarvestYearOptions();
+				$scope.initializeHarvestMonthOptions();
+				$scope.initializeReplicationsOptions();
 			};
+
+			$scope.initializeHarvestYearOptions = function () {
+				var year = new Date().getFullYear() - 10;
+				var endYear = year + 20;
+				for (year; year <= endYear; year++) {
+					$scope.harvestYearOptions.push(year + '');
+				}
+			};
+
+			$scope.initializeHarvestMonthOptions = function () {
+				for (var month = 1; month <= 12; month++) {
+					$scope.harvestMonthOptions.push(pad(month));
+				}
+			};
+
+			$scope.initializeReplicationsOptions = function () {
+				for (var rep = 1; rep <= $scope.noOfReplications; rep++) {
+					$scope.replicationsOptions.push({repIndex: rep, selected: rep == 1});
+				}
+			};
+
+			function pad(n) {
+				return n < 10 ? '0' + n : n
+			}
 
 			$scope.init();
 		}
 	]);
 
 	manageTrialApp.controller('selectEnvironmentModalCtrl', ['$scope', '$uibModalInstance', 'TrialManagerDataService', 'studyInstanceService',
-		'$timeout', 'studyContext', 'datasetService', 'advanceStudyModalService', 'advanceType',
+		'$timeout', 'studyContext', 'datasetService', 'advanceStudyModalService', 'advanceType', 'DESIGN_TYPE',
 		function ($scope, $uibModalInstance, TrialManagerDataService, studyInstanceService, $timeout, studyContext, datasetService,
-				  advanceStudyModalService, advanceType) {
+				  advanceStudyModalService, advanceType, DESIGN_TYPE) {
 
 			$scope.settings = TrialManagerDataService.settings.environments;
 			if (Object.keys($scope.settings).length === 0) {
@@ -330,7 +360,7 @@
 			});
 
 			$scope.noOfReplications = TrialManagerDataService.currentData.experimentalDesign.designType === DESIGN_TYPE.P_REP ? 0
-				: $scope.noOfReplications;
+				: TrialManagerDataService.currentData.experimentalDesign.replicationsCount;
 
 			$scope.instances = [];
 			$scope.selectedInstances = {};

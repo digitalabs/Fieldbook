@@ -37,7 +37,7 @@
 
 			<div class="row form-group">
 				<label ng-if="advanceType != 'sample'" class="control-label col-xs-6">
-					<input type="checkbox" name="methodChoice" id="methodChoice" ng-model="valueContainer.methodChoice" ng-change="validateMethodChoice()"/>
+					<input type="checkbox" name="methodChoice" value="1" id="methodChoice" ng-model="valueContainer.methodChoice" ng-change="validateMethodChoice()"/>
 					<span class="label-bold">{{'advancing.study.breeding.method.the.same' | translate}}</span>
 				</label>
 				<label ng-if="advanceType == 'sample'" class="control-label col-xs-6">
@@ -82,7 +82,7 @@
 			</div>
 			<div class="row form-group ">
 				<label class="control-label col-xs-6">
-					<input type="checkbox" id="lineChoice" name="lineChoice" ng-model="valueContainer.lineChoice" ng-change="validateLineChoice()"/>
+					<input type="checkbox" id="lineChoice" name="lineChoice" value="1" ng-model="valueContainer.lineChoice" ng-change="validateLineChoice()"/>
 					<span class="label-bold">{{'advancing.study.line.the.same' | translate}}</span>
 				</label>
 			</div>
@@ -91,7 +91,7 @@
 				<label class="control-label label-bold col-xs-6">{{'advancing.study.number.of.samples.plot' | translate}}:</label>
 
 				<div class="col-xs-3">
-					<input class="form-control" type="text" name="lineSelected" id="lineSelected" maxlength="3" style="width: 100%"/>
+					<input class="form-control" type="text" name="lineSelected" id="lineSelected" maxlength="3" style="width: 100%" ng-model="valueContainer.linesValue"/>
 				</div>
 
 			</div>
@@ -110,7 +110,7 @@
 			</div>
 			<div class="row form-group">
 				<label class="control-label col-xs-6">
-					<input type="checkbox" name="allPlotsChoice" id="allPlotsChoice" ng-model="valueContainer.allPlotsChoice" ng-change="validatePlotChoice()"/>
+					<input type="checkbox" name="allPlotsChoice" id="allPlotsChoice" value="1" ng-model="valueContainer.allPlotsChoice" ng-change="validatePlotChoice()"/>
 					<span class="label-bold">{{'advancing.study.all.plots.selected' | translate}}</span>
 				</label>
 			</div>

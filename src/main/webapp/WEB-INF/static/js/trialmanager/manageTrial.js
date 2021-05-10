@@ -854,6 +854,7 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 				var modalInstance = $uibModal.open({
 					animation: true,
 					templateUrl: '/Fieldbook/static/angular-templates/confirmModal.html',
+					windowClass: 'force-zindex', // make sure that the modal is always in front of all modals
 					controller: function ($scope, $uibModalInstance) {
 						$scope.text = message;
 						$scope.confirmButtonLabel = confirmButtonLabel || okLabel;

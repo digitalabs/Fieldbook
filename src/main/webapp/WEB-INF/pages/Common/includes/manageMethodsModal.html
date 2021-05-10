@@ -8,7 +8,7 @@
 							&nbsp;
 						</div>
 						<div class="col-xs-1 col-md-1">
-							<button  id="closeManageMethodModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" onClick="propagateMethodUpdateEvent();" aria-hidden="true"/>
+							<button  id="closeManageMethodModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
 						</div>
 					</div>
 
@@ -35,9 +35,7 @@
 $(function() {
 	'use strict';
 	$('#manageMethodModal').on('hidden.bs.modal', function() {
-		if (BreedingMethodsFunctions.isModalAvailableAndForOpening('advanceStudyModal')) {
-			BreedingMethodsFunctions.openModal('advanceStudyModal');
-		} else if (BreedingMethodsFunctions.isModalAvailableAndForOpening('importStudyDesigConfirmationModal')) {
+		if (BreedingMethodsFunctions.isModalAvailableAndForOpening('importStudyDesigConfirmationModal')) {
 			BreedingMethodsFunctions.openModal('importStudyDesigConfirmationModal');
 		} else if (BreedingMethodsFunctions.isModalAvailableAndForOpening('crossSettingsModal')) {
 			$.event.trigger({
@@ -51,10 +49,6 @@ $(function() {
 		}
 	});
 });
-
-function closeMethodFrame() {
-	$('#manageMethodModal').modal('hide');
-}
 
 function openManageMethods() {
 	$('#manageMethodModal').modal({ backdrop: 'static', keyboard: true });

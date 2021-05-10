@@ -2535,3 +2535,7 @@ th.dt-head-nowrap {
 div.dt-button-collection {
     width: 180px !important;
 }
+
+.force-zindex {
+    z-index: 99000 !important;
+}

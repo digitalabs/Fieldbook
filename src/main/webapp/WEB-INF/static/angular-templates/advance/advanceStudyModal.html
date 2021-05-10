@@ -142,14 +142,14 @@
 			</div>
 		</div>
 
-		<div id="reps-section" ng-if="replicationsOptions.length > 0">
+		<div id="reps-section" ng-if="valueContainer.replicationsOptions.length > 0">
 			<div class="row form-group">
 				<label class="control-label col-xs-12 add_top_padding"><strong class="sub-content-heading">{{'advancing.study.reps' | translate}}</strong> </label>
 			</div>
 			<div class="row form-group">
 
-				<div id="replications" class="col-xs-2" ng-repeat="rep in replicationsOptions">
-					<input type="checkbox" class="replication" name="selectedReplications" value="{{rep.repIndex}}" ng-checked="rep.selected"/>
+				<div id="replications" class="col-xs-2" ng-repeat="rep in valueContainer.replicationsOptions">
+					<input type="checkbox" class="replication" name="selectedReplications" value="{{rep.repIndex}}" ng-model="rep.selected" ng-checked="rep.selected"/>
 					<span class="label-bold">{{rep.repIndex}}</span>
 				</div>
 				<input type="checkbox" ng-model="valueContainer.checkall" ng-click="checkUncheckAll()" id="selectAllReps"/>

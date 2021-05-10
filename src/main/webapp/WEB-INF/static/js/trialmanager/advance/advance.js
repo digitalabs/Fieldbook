@@ -36,7 +36,7 @@
 				});
 			};
 
-			advanceStudyModalService.openAdvanceStudyModal = function (trialInstances, noOfReplications, locationsSelected, advanceType) {
+			advanceStudyModalService.openAdvanceStudyModal = function (trialInstances, noOfReplications, locationsSelected, advanceType, values) {
 
 				$uibModal.open({
 					templateUrl: '/Fieldbook/static/angular-templates/advance/advanceStudyModal.html',
@@ -54,7 +54,10 @@
 						},
 						noOfReplications: function () {
 							return noOfReplications;
-						}
+						},
+						values: function () {
+							return values;
+						},
 					}
 				});
 			};
@@ -65,28 +68,34 @@
 	]);
 
 	manageTrialApp.controller('advanceStudyModalController', ['$scope', '$uibModalInstance', 'studyContext', 'advanceType', 'advanceStudyModalService', 'locationsSelected',
-		'datasetService', 'trialInstances', 'noOfReplications',
-		function ($scope, $uibModalInstance, studyContext, advanceType, advanceStudyModalService, locationsSelected, datasetService, trialInstances, noOfReplications) {
+		'datasetService', 'trialInstances', 'noOfReplications', 'values',
+		function ($scope, $uibModalInstance, studyContext, advanceType, advanceStudyModalService, locationsSelected, datasetService, trialInstances, noOfReplications, values) {
 
 
-			$scope.valueContainer = {
-				selectedBreedingMethod: null,
-				methodChoice: true,
-				lineChoice: true,
-				allPlotsChoice: true,
-				linesValue: 1,
-				methodVariateId: '',
-				plotVariateId: '',
-				lineVariateId: '',
-				studyId: studyContext.studyId,
-				checkall: false
-			};
+			if (values) {
+				// Persist the state of the values
+				$scope.valueContainer = values;
+			} else {
+				$scope.valueContainer = {
+					selectedBreedingMethod: null,
+					methodChoice: true,
+					lineChoice: true,
+					allPlotsChoice: true,
+					linesValue: 1,
+					methodVariateId: '',
+					plotVariateId: '',
+					lineVariateId: '',
+					studyId: studyContext.studyId,
+					checkall: false,
+					replicationsOptions: []
+				};
+			}
+
 
 			$scope.currentYear = new Date().getFullYear() + '';
 			$scope.currentMonth = pad(new Date().getMonth());
 			$scope.harvestYearOptions = [];
 			$scope.harvestMonthOptions = [];
-			$scope.replicationsOptions = [];
 			$scope.noOfReplications = noOfReplications;
 			$scope.selectionMethodVariables = [];
 			$scope.selectionPlantVariables = [];
@@ -125,7 +134,7 @@
 					showErrorMessage('page-advance-modal-message', linesNotWholeNumberError);
 					return false;
 				} else if ($scope.validatePlantsSelected()) {
-					SaveAdvanceList.doAdvanceStudy(trialInstances, noOfReplications, locationsSelected, advanceType);
+					SaveAdvanceList.doAdvanceStudy(trialInstances, noOfReplications, locationsSelected, advanceType, $scope.valueContainer);
 					$scope.close();
 				}
 			};
@@ -259,7 +268,7 @@
 			};
 
 			$scope.checkUncheckAll = function () {
-				$scope.replicationsOptions.forEach((repOption) => {
+				$scope.valueContainer.replicationsOptions.forEach((repOption) => {
 					repOption.selected = $scope.valueContainer.checkall;
 				});
 			};
@@ -297,8 +306,10 @@
 			};
 
 			$scope.initializeReplicationsOptions = function () {
-				for (var rep = 1; rep <= $scope.noOfReplications; rep++) {
-					$scope.replicationsOptions.push({repIndex: rep, selected: rep == 1});
+				if ($scope.valueContainer.replicationsOptions.length === 0) {
+					for (var rep = 1; rep <= $scope.noOfReplications; rep++) {
+						$scope.valueContainer.replicationsOptions.push({repIndex: rep, selected: rep == 1});
+					}
 				}
 			};
 
@@ -397,7 +408,7 @@
 					});
 
 					advanceStudyModalService.openAdvanceStudyModal(selectedTrialInstances, $scope.noOfReplications, selectedLocationDetails,
-						$scope.applicationData.advanceType);
+						$scope.applicationData.advanceType, null);
 					$uibModalInstance.close();
 				}
 

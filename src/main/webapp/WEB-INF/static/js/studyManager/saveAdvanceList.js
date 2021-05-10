@@ -61,7 +61,7 @@ var SaveAdvanceList = {};
 		);
 	};
 
-	SaveAdvanceList.doAdvanceStudy = function(trialInstances, noOfReplications, locationsSelected, advanceType) {
+	SaveAdvanceList.doAdvanceStudy = function(trialInstances, noOfReplications, locationsSelected, advanceType, values) {
 
 		var serializedData;
 
@@ -84,7 +84,7 @@ var SaveAdvanceList = {};
 						advanceGermplasmChangeDetail = (data.advanceGermplasmChangeDetails);
 						$('#advanceStudyModal').modal('hide');
 						if (advanceGermplasmChangeDetail.length === 0) {
-							SaveAdvanceList.reviewAdvanceList(data.uniqueId, trialInstances, noOfReplications, locationsSelected, advanceType);
+							SaveAdvanceList.reviewAdvanceList(data.uniqueId, trialInstances, noOfReplications, locationsSelected, advanceType, values);
 						} else {
 							showAdvanceGermplasmChangeConfirmationPopup(advanceGermplasmChangeDetail, data.uniqueId);
 						}
@@ -98,7 +98,7 @@ var SaveAdvanceList = {};
 		});
 	};
 
-	SaveAdvanceList.reviewAdvanceList = function(uniqueId, trialInstances, noOfReplications, locationsSelected, advanceType) {
+	SaveAdvanceList.reviewAdvanceList = function(uniqueId, trialInstances, noOfReplications, locationsSelected, advanceType, values) {
 		$.ajax({
 			url: '/Fieldbook/StudyManager/advance/study/info?uniqueId=' + uniqueId,
 			type: 'GET',
@@ -108,7 +108,7 @@ var SaveAdvanceList = {};
 				$('.btn-cancel-review').off('click');
 				$('.btn-cancel-review').on('click', function() {
 						$('#reviewAdvanceStudyModal').modal('hide');
-						setTimeout(function() { showAdvanceStudyModal(trialInstances, noOfReplications, locationsSelected, advanceType); }, 300);
+						setTimeout(function() { showAdvanceStudyModal(trialInstances, noOfReplications, locationsSelected, advanceType, values); }, 300);
 					});
 				setTimeout(function() {
 					$('#reviewAdvanceStudyModal').off('shown.bs.modal');

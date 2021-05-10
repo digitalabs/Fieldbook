@@ -22,10 +22,11 @@
 	var hiddenColumns = [OBS_UNIT_ID, TRIAL_INSTANCE];
 
 	subObservationModule.controller('SubObservationSetCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$stateParams',
-		'DTOptionsBuilder', 'DTColumnBuilder', '$http', '$q', '$compile', 'studyInstanceService', 'datasetService', 'derivedVariableService', '$timeout', '$uibModal',
-		'visualizationModalService', 'studyContext',
+		'DTOptionsBuilder', 'DTColumnBuilder', '$http', '$q', '$compile', 'studyInstanceService', 'datasetService',
+		'derivedVariableService', 'fileService', '$timeout', '$uibModal', 'visualizationModalService', 'studyContext',
 		function ($scope, $rootScope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile,
-				  studyInstanceService, datasetService, derivedVariableService, $timeout, $uibModal, visualizationModalService, studyContext
+				  studyInstanceService, datasetService, derivedVariableService, fileService, $timeout, $uibModal, visualizationModalService,
+				  studyContext
 		) {
 
 			// used also in tests - to call $rootScope.$apply()
@@ -1036,12 +1037,20 @@
 							change: function () {
 								updateInline();
 							},
+							cancel: function () {
+								this.value = $scope.isPendingView ? cellData.draftValue : cellData.value;
+								updateInline();
+							},
 							// FIXME altenative to blur bug https://github.com/angular-ui/ui-select/issues/499
 							onOpenClose: function (isOpen) {
 								if (!isOpen) updateInline();
 							},
 							newInlineValue: function (newValue) {
 								return {name: newValue};
+							},
+							showFile: function () {
+								fileService.showFile(this.value);
+								return false;
 							}
 						};
 
@@ -1119,7 +1128,18 @@
 								return $q.resolve(cellData);
 							} // doAjaxUpdate
 
-							var promise = doAjaxUpdate();
+							function doFileUploadIfNeeded() {
+								if (columnData.dataTypeCode === 'F' && $inlineScope.observation.file) {
+									return fileService.upload($inlineScope.observation.file).then((response) => {
+										$inlineScope.observation.value = response.fileName;
+									});
+								}
+								return $q.resolve();
+							} // doFileUploadIfNeeded
+
+							var promise = doFileUploadIfNeeded().then(function (fileName) {
+								return doAjaxUpdate();
+							});
 
 							promise.then(function (data) {
 								var valueChanged = false;

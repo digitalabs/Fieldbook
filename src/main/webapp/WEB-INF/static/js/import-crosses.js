@@ -330,15 +330,6 @@ var ImportCrosses = {
 		$('#sampleParentageDesignation').text('FEMALE-123' + value + 'MALE-456');
 	},
 
-	openLocationsModal: function() {
-		'use strict';
-		var crossSettingsPopupModal = $('#crossSettingsModal');
-		crossSettingsPopupModal.modal('hide');
-		crossSettingsPopupModal.data('open', '1');
-
-		LocationsFunctions.openLocationsModal();
-	},
-
 	deleteImportSettings: function(programPresetId) {
 		'use strict';
 		return $.ajax({

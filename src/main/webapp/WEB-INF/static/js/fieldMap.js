@@ -562,23 +562,6 @@ function recreatePopupFieldCombo() {
  );
 }
 
-function setComboValues(suggestions_obj, id, name) {
-	'use strict';
-	var dataVal = {id:'', text:'', description:''}; //default value
-	if (id != '') {
-		var count = 0;
-		//find the matching value in the array given
-		for (count = 0 ; count < suggestions_obj.length ; count++) {
-			if (suggestions_obj[count].id == id) {
-				dataVal = suggestions_obj[count];
-				break;
-			}
-		}
-	}
-	//set the selected value of the combo
-	$('#' + name).select2('data', dataVal);
-}
-
 function initializeFieldSelect2(suggestions, suggestions_obj, addOnChange, currentFieldId) {
 	'use strict';
 	var defaultData = null;
@@ -807,22 +790,17 @@ function doEnterFieldDetailsPageLoad() {
 
 	$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val(defaultLocationId);
 
-	programLocationUrl = $('#programLocationUrl').val();
 	setSelectedTrialsAsDraggable();
 	calculateTotalPlots();
-
-	recreateLocationCombo();
 
 	initializeFieldSelect2({}, [], true);
 	initializeBlockSelect2({}, [], true);
 
 	showBlockDetails(true, null);
 
-	showCorrectFieldLocationCombo();
-
-	// remove any other listeners for the location update
-	$(document).off('location-update');
-	$(document).on('location-update', recreateLocationCombo);
+	$('#fieldLocationId').val(defaultLocationId);
+	$('#fieldLocationName').val(defaultLocationName);
+	loadFieldsDropdown(defaultLocationId, '');
 
 	var numRowPerPlot = $('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val();
 	$('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val(defaultRowsPerPlot);
@@ -857,19 +835,6 @@ function setCorrectValueToFieldCombo (ls_obj, locId, fieldInputId) {
 		}
 	}
 }
-
-
-function showCorrectFieldLocationCombo() {
-	// Default Location
-
-	$('#fieldLocationId').val(defaultLocationId);
-	$('#fieldLocationName').val(defaultLocationName);
-	setComboValues(locationSuggestions_obj, defaultLocationId, 'fieldLocationIdAll');
-	loadFieldsDropdown(defaultLocationId, '');
-	$('#s2id_fieldLocationIdAll').select2('disable');
-	$('#s2id_fieldLocationIdAll').show();
-}
-
 
 function doPreselectValues(locationId, fieldId, blockId) {
 	'use strict';

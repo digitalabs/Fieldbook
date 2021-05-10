@@ -8,7 +8,7 @@
 							&nbsp;
 						</div>
 						<div class="col-xs-1 col-md-1">
-							<button id="closeManageLocationModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" onClick="propagateLocationUpdateEvent();" aria-hidden="true"/>
+							<button id="closeManageLocationModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
 						</div>
 					</div>
 					<div>
@@ -30,30 +30,8 @@
 	document.projectID = /*[[${projectID}]]*/ '';
 })();
 
-$(function() {
-	'use strict';
-	$('#manageLocationModal').on('hidden.bs.modal', function() {
-		if (LocationsFunctions.isModalAvailableAndForOpening('advanceStudyModal')) {
-			//we show the advance study modal
-			LocationsFunctions.openModal('advanceStudyModal');
-		} else if (LocationsFunctions.isModalAvailableAndForOpening('importStudyDesigConfirmationModal')) {
-			LocationsFunctions.openModal('importStudyDesigConfirmationModal');
-		} else if (LocationsFunctions.isModalAvailableAndForOpening('crossSettingsModal')) {
-			LocationsFunctions.openModal('crossSettingsModal');
-		}
-	});
-});
-
 function closeLocationFrame() {
-	propagateLocationUpdateEvent();
 	$('#manageLocationModal').modal('hide');
-}
-
-function propagateLocationUpdateEvent() {
-	'use strict'
-	$.event.trigger({
-		type: 'location-update'
-	});
 }
 
 function openManageLocations() {

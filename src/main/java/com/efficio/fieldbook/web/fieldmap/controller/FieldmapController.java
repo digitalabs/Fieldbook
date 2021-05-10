@@ -84,46 +84,6 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	private CrossExpansionProperties crossExpansionProperties;
 
 	/**
-	 * Gets the data types.
-	 *
-	 * @return the data types
-	 */
-	@ModelAttribute("locationList")
-	public List<Location> getLocationList() {
-		try {
-			final List<Location> dataTypesOrig = this.fieldbookMiddlewareService.getAllBreedingLocations();
-			final List<Location> dataTypes = dataTypesOrig;
-
-			return dataTypes;
-		} catch (final MiddlewareQueryException e) {
-			FieldmapController.LOG.error(e.getMessage(), e);
-		}
-
-		return null;
-	}
-
-	/**
-	 * Gets the favorite location list.
-	 *
-	 * @return the favorite location list
-	 */
-	@ModelAttribute("favoriteLocationList")
-	public List<Location> getFavoriteLocationList() {
-		try {
-
-			final List<Integer> locationsIds =
-					this.fieldbookMiddlewareService.getFavoriteProjectLocationIds(this.getCurrentProject().getUniqueID());
-			final List<Location> dataTypes = this.fieldbookMiddlewareService.getFavoriteLocationByLocationIDs(locationsIds);
-
-			return dataTypes;
-		} catch (final MiddlewareQueryException e) {
-			FieldmapController.LOG.error(e.getMessage(), e);
-		}
-
-		return null;
-	}
-
-	/**
 	 * Determine field map navigation.
 	 *
 	 * @param ids the ids

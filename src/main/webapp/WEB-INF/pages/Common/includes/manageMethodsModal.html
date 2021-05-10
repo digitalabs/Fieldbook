@@ -32,24 +32,6 @@
 	document.projectID = /*[[${projectID}]]*/ '';
 })();
 
-$(function() {
-	'use strict';
-	$('#manageMethodModal').on('hidden.bs.modal', function() {
-		if (BreedingMethodsFunctions.isModalAvailableAndForOpening('importStudyDesigConfirmationModal')) {
-			BreedingMethodsFunctions.openModal('importStudyDesigConfirmationModal');
-		} else if (BreedingMethodsFunctions.isModalAvailableAndForOpening('crossSettingsModal')) {
-			$.event.trigger({
-				type: 'breeding-method-update'
-			});
-
-			BreedingMethodsFunctions.openModal('crossSettingsModal');
-			// Manage modal only available from import crosses
-			// and this class is needed to display the combo
-			$('#crossSettingsModal').addClass('import-crosses-from-file')
-		}
-	});
-});
-
 function openManageMethods() {
 	$('#manageMethodModal').modal({ backdrop: 'static', keyboard: true });
 	if (methodIframeOpened == false) {

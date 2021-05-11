@@ -55,6 +55,7 @@ describe('Location', function () {
         angular.module('datasetOptionModal');
         angular.module('leafnode-utils');
         angular.module('derived-variable');
+        module('pascalprecht.translate');
         module('manageTrialApp');
 
     });

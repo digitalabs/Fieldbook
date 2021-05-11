@@ -37,6 +37,7 @@ module.exports = function (config) {
 			'WEB-INF/static/js/lib/angular/select.js',
 			'WEB-INF/static/js/lib/angular/sortable.js',
 			'WEB-INF/static/js/lib/angular/ui-bootstrap-tpls-2.5.0.min.js',
+			'WEB-INF/static/js/lib/angular/angular-translate.min.js',
 			'WEB-INF/static/js/lib/datatable/jquery.dataTables.js',
 			'WEB-INF/static/js/lib/datatable/angular-datatables.js',
 			'WEB-INF/static/js/lib/datatable/angular-datatables.buttons.js',

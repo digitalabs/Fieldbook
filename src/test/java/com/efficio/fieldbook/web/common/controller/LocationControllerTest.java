@@ -50,13 +50,7 @@ public class LocationControllerTest {
 
 	@Before
 	public void setUp() throws Exception {
-		Mockito.doReturn(LocationControllerTest.DUMMY_URL).when(this.fieldbookProperties).getProgramLocationsUrl();
 		this.mole = Mockito.spy(this.controller);
-	}
-
-	@Test
-	public void testGetProgramLocationsURL() {
-		Assert.assertEquals(LocationControllerTest.DUMMY_URL, this.mole.getProgramLocationsURL());
 	}
 
 	@Test

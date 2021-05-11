@@ -13,7 +13,7 @@
 
 			var fileService = {};
 
-			fileService.upload = function (file) {
+			fileService.upload = function (file, key) {
 				var request = $http({
 					method: 'POST',
 					url: BASE_URL,
@@ -21,7 +21,8 @@
 						'Content-Type': undefined
 					},
 					data: {
-						file: file
+						file: file,
+						key: key
 					},
 					transformRequest: function (data, headersGetter) {
 						var formData = new FormData();
@@ -29,20 +30,19 @@
 							formData.append(key, value);
 						});
 
-						var headers = headersGetter();
 						return formData;
 					}
 				});
 				return request.then(successHandler, failureHandler);
 			};
 
-			fileService.showFile = function (fileName) {
+			fileService.showFile = function (fileKey) {
 				$uibModal.open({
 					template: '<iframe ng-src="{{url}}"' +
 						' style="width:100%; height: 560px; border: 0" />',
 					size: 'lg',
 					controller: function ($scope, $uibModalInstance) {
-						$scope.url = '/ibpworkbench/controller/jhipster#file-manager/' + fileName;
+						$scope.url = '/ibpworkbench/controller/jhipster#file-manager/' + fileKey;
 					},
 				});
 			};

@@ -992,6 +992,10 @@
 				}
 			}
 
+			function getFileKey(rowData, fileName) {
+				return rowData.variables['OBS_UNIT_ID'].value + '-' + fileName;
+			}
+
 			/* WARNING Complexity up ahead.
 			 * The following logic is probably one the most complex in the BMS system
 			 * The previous version was even more complex, spanning several files and thousand of lines.
@@ -1049,7 +1053,7 @@
 								return {name: newValue};
 							},
 							showFile: function () {
-								fileService.showFile(this.value);
+								fileService.showFile(getFileKey(rowData, this.value));
 								return false;
 							}
 						};
@@ -1129,9 +1133,11 @@
 							} // doAjaxUpdate
 
 							function doFileUploadIfNeeded() {
-								if (columnData.dataTypeCode === 'F' && $inlineScope.observation.file) {
-									return fileService.upload($inlineScope.observation.file).then((response) => {
-										$inlineScope.observation.value = response.fileName;
+								const file = $inlineScope.observation.file;
+								if (columnData.dataTypeCode === 'F' && file) {
+									const key = getFileKey(rowData, file.name);
+									return fileService.upload(file, key).then((response) => {
+										$inlineScope.observation.value = file.name;
 									});
 								}
 								return $q.resolve();

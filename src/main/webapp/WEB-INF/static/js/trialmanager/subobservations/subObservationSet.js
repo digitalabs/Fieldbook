@@ -1053,7 +1053,8 @@
 								return {name: newValue};
 							},
 							showFile: function () {
-								fileService.showFile(getFileKey(rowData, this.value));
+								const fileKey = getFileKey(rowData, this.value);
+								fileService.showFile(fileKey, this.value);
 								return false;
 							}
 						};
@@ -1236,7 +1237,7 @@
 							 * This also avoids temporary click handler on body
 							 * FIXME is there a better way?
 							 */
-							$(cell).find('a.ui-select-match, input').click().focus();
+							$(cell).find('a.ui-select-match, input:not([type="file"])').click().focus();
 						}, 100);
 					});
 				} // clickHandler

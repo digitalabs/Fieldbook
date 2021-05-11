@@ -36,13 +36,17 @@
 				return request.then(successHandler, failureHandler);
 			};
 
-			fileService.showFile = function (fileKey) {
+			fileService.showFile = function (fileKey, fileName) {
 				$uibModal.open({
 					template: '<iframe ng-src="{{url}}"' +
 						' style="width:100%; height: 560px; border: 0" />',
 					size: 'lg',
 					controller: function ($scope, $uibModalInstance) {
-						$scope.url = '/ibpworkbench/controller/jhipster#file-manager/' + fileKey;
+						$scope.url = '/ibpworkbench/controller/jhipster#file-manager/' + fileKey + '?fileName=' + fileName;
+
+						window.closeModal = function() {
+							$uibModalInstance.close();
+						}
 					},
 				});
 			};

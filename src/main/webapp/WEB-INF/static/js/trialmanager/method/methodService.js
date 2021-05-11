@@ -108,7 +108,9 @@
 				};
 
 				$scope.onSelect = function (item, model) {
-					$scope.onMethodSelect()(item, model);
+					if ($scope.onMethodSelect) {
+						$scope.onMethodSelect()(item, model);
+					}
 				}
 
 				$rootScope.$on('enableDisableMethodsSelect', function (event, enableDropdown) {

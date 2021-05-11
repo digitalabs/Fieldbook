@@ -1710,6 +1710,10 @@
 						$scope.observation.onOpenClose(isOpen);
 					}
 
+					$scope.methodChanged = function (item, model) {
+
+					}
+
 				}
 			};
 		})

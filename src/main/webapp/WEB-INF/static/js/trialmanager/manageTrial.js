@@ -31,6 +31,7 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 	});
 
 	manageTrialApp.config(function ($translateProvider) {
+		$translateProvider.useSanitizeValueStrategy('sanitize');
 		$translateProvider.translations('en', {
 			'study.studydetails.action.advance.sample': 'Advance sampled plants from plots',
 			'study.studydetails.action.advance.study': 'Advance study',

@@ -152,8 +152,10 @@
 					<input type="checkbox" class="replication" name="selectedReplications" value="{{rep.repIndex}}" ng-model="rep.selected" ng-checked="rep.selected"/>
 					<span class="label-bold">{{rep.repIndex}}</span>
 				</div>
-				<input type="checkbox" ng-model="valueContainer.checkall" ng-click="checkUncheckAll()" id="selectAllReps"/>
-				<span class="label-bold">{{'advancing.study.select.all' | translate}}</span>
+				<div class="col-xs-2">
+					<input type="checkbox" ng-model="valueContainer.checkall" ng-click="checkUncheckAll()" id="selectAllReps"/>
+					<span class="label-bold">{{'advancing.study.select.all' | translate}}</span>
+				</div>
 
 			</div>
 		</div>

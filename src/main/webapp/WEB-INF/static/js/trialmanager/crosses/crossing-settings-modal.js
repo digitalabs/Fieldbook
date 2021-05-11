@@ -115,6 +115,8 @@
 					if (data.success === '0') {
 						showErrorMessage('', $.fieldbookMessages.errorImportFailed);
 					} else {
+
+						$scope.resetSettings();
 						$('#crossSettingsModal').modal('hide');
 
 						if (settingsForSaving) {
@@ -122,13 +124,31 @@
 							// if an error in the settings saving has occurred, program flow would have continued in the data.success === '0' branch
 							// hence, we can safely assume that settings have been properly saved at this point
 							showSuccessfulMessage('', crossingSettingsSaved);
+							$scope.fetchPresets();
 						}
 					}
-				},
+				}.bind(this),
 				error: function () {
 					showErrorMessage('', $.fieldbookMessages.errorImportCrossesSettingsFailed);
 				}
 			});
+		}
+
+		$scope.resetSettings = function() {
+			// Reset cross name settings
+			$scope.settingObject.crossNameSetting = {
+				prefix: '',
+				suffix: '',
+				addSpaceBetweenPrefixAndCode: false,
+				addSpaceBetweenSuffixAndCode: false,
+				numOfDigits: null,
+				separator: '/',
+				startNumber: null,
+				saveParentageDesignationAsAString: false
+			};
+			$scope.settingObject.name = '';
+			$scope.nested.nextSequenceName = '';
+			$scope.nested.selectedPresetId = null;
 		}
 
 		$scope.toggleNamingSection = function () {
@@ -234,7 +254,7 @@
 
 		}
 
-		$scope.openManageLocations = function() {
+		$scope.openManageLocations = function () {
 			locationModalService.openManageLocations();
 		}
 

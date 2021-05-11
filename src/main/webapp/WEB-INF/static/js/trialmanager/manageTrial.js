@@ -194,6 +194,13 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 		};
 	});
 
+	//Create a filter for trust url
+	manageTrialApp.filter('trustAsResourceUrl', ['$sce', function($sce) {
+		return function(val) {
+			return $sce.trustAsResourceUrl(val);
+		};
+	}]);
+
 	// do not switch tab if we have newly imported measurements
 	function isTabChangeDisabled() {
 		return $('.import-study-data').data('data-import') === '1';

@@ -68,8 +68,8 @@
 	]);
 
 	manageTrialApp.controller('advanceStudyModalController', ['$scope', '$uibModalInstance', 'studyContext', 'advanceType', 'advanceStudyModalService', 'locationsSelected',
-		'datasetService', 'trialInstances', 'noOfReplications', 'values',
-		function ($scope, $uibModalInstance, studyContext, advanceType, advanceStudyModalService, locationsSelected, datasetService, trialInstances, noOfReplications, values) {
+		'datasetService', 'trialInstances', 'noOfReplications', 'values', 'methodModalService',
+		function ($scope, $uibModalInstance, studyContext, advanceType, advanceStudyModalService, locationsSelected, datasetService, trialInstances, noOfReplications, values, methodModalService) {
 
 
 			if (values) {
@@ -274,7 +274,7 @@
 			};
 
 			$scope.openManageMethods = function () {
-				openManageMethods();
+				methodModalService.openManageMethods();
 			}
 
 			$scope.init = function () {

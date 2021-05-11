@@ -2539,3 +2539,7 @@ div.dt-button-collection {
 .force-zindex {
     z-index: 99000 !important;
 }
+
+.modal-window-width{
+    width:98%;
+}

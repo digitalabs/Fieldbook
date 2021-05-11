@@ -3,7 +3,7 @@
 	'use strict';
 	var manageTrialApp = angular.module('manageTrialApp');
 
-	manageTrialApp.controller('CrossingSettingsCtrl', ['$scope', '$rootScope', function ($scope, $rootScope) {
+	manageTrialApp.controller('CrossingSettingsCtrl', ['$scope', '$rootScope', 'locationModalService', function ($scope, $rootScope, locationModalService) {
 
 		$scope.nested = {
 			nextSequenceName: '',
@@ -232,6 +232,10 @@
 			this.updateDisplayedSequenceNameValue();
 			this.updateSampleParentageDesignation();
 
+		}
+
+		$scope.openManageLocations = function() {
+			locationModalService.openManageLocations();
 		}
 
 		function retrieveAvailableImportSettings() {

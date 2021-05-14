@@ -992,8 +992,12 @@
 				}
 			}
 
-			function getFileKey(rowData, fileName) {
-				return rowData.variables['OBS_UNIT_ID'].value + '-' + fileName;
+			function getFileKey(rowData, columnData, fileName) {
+				return 'programuuid-' + studyContext.programId
+					+ '/studyid-' + studyContext.studyId
+					+ '/obsunituuid-' + rowData.variables['OBS_UNIT_ID'].value
+					+ '/termid-' + columnData.termId
+					+ '/' + fileName;
 			}
 
 			/* WARNING Complexity up ahead.
@@ -1053,7 +1057,7 @@
 								return {name: newValue};
 							},
 							showFile: function () {
-								const fileKey = getFileKey(rowData, this.value);
+								const fileKey = getFileKey(rowData, columnData, this.value);
 								fileService.showFile(fileKey, this.value);
 								return false;
 							}
@@ -1136,7 +1140,7 @@
 							function doFileUploadIfNeeded() {
 								const file = $inlineScope.observation.file;
 								if (columnData.dataTypeCode === 'F' && file) {
-									const key = getFileKey(rowData, file.name);
+									const key = getFileKey(rowData, columnData, file.name);
 									return fileService.upload(file, key).then((response) => {
 										$inlineScope.observation.value = file.name;
 									});

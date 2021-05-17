@@ -1140,9 +1140,21 @@
 							function doFileUploadIfNeeded() {
 								const file = $inlineScope.observation.file;
 								if (columnData.dataTypeCode === 'F' && file) {
-									const key = getFileKey(rowData, columnData, file.name);
-									return fileService.upload(file, key).then((response) => {
-										$inlineScope.observation.value = file.name;
+									let validateFile;
+									if ($inlineScope.observation.value) {
+										var confirmModal = $scope.openConfirmModal("A file already exists. Overwrite?");
+										validateFile = confirmModal.result;
+									} else {
+										validateFile = $q.resolve(true);
+									}
+									return validateFile.then((doContinue) => {
+										if (!doContinue) {
+											return $q.reject();
+										}
+										const key = getFileKey(rowData, columnData, file.name);
+										return fileService.upload(file, key).then((response) => {
+											$inlineScope.observation.value = file.name;
+										});
 									});
 								}
 								return $q.resolve();
@@ -1199,6 +1211,11 @@
 								// Restore handler
 								addClickHandler();
 							}, function (response) {
+								if (!response) {
+									// no ajax, local reject / cancel (e.g overwrite file? -> no)
+									// keeps inline editor open
+									return;
+								}
 								if (response.errors) {
 									showErrorMessage('', response.errors[0].message);
 								} else {

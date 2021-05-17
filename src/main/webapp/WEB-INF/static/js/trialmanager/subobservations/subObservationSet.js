@@ -1046,8 +1046,7 @@
 								updateInline();
 							},
 							cancel: function () {
-								this.value = $scope.isPendingView ? cellData.draftValue : cellData.value;
-								updateInline();
+								cancelUpdateInline();
 							},
 							// FIXME altenative to blur bug https://github.com/angular-ui/ui-select/issues/499
 							onOpenClose: function (isOpen) {
@@ -1224,6 +1223,15 @@
 							});
 
 						} // updateInline
+
+						function cancelUpdateInline() {
+							$inlineScope.$destroy();
+							editor.remove();
+							dtCell.data(cellData);
+							processCell(cell, cellData, rowData, columnData);
+							// Restore handler
+							addClickHandler();
+						}
 
 						if (columnData.dataTypeCode === 'D') {
 							$(cell).one('click', 'input', function () {

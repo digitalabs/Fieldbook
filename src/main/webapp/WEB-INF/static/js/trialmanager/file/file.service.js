@@ -4,7 +4,8 @@
 	const module = angular.module('manageTrialApp');
 
 	angular.module('manageTrialApp').factory('fileService', ['$http', '$q', 'studyContext', 'serviceUtilities', '$uibModal',
-		function ($http, $q, studyContext, serviceUtilities, $uibModal) {
+		'fileDownloadHelper',
+		function ($http, $q, studyContext, serviceUtilities, $uibModal, fileDownloadHelper) {
 
 			var BASE_URL = '/bmsapi/files/';
 
@@ -37,6 +38,12 @@
 			};
 
 			fileService.showFile = function (fileKey, fileName) {
+				if (!fileName.match(/\.(gif|jpe?g|tiff?|png|webp|bmp)$/i)) {
+					$http.get('/bmsapi/files/' + fileKey, {responseType: 'blob'}).then((response) => {
+						fileDownloadHelper.save(response.data, fileName);
+					});
+					return;
+				}
 				$uibModal.open({
 					template: '<iframe ng-src="{{url}}"' +
 						' style="width:100%; height: 560px; border: 0" />',

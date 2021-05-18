@@ -68,7 +68,8 @@
 				showGenMethodsRadio: '=',
 				disableMethodTypesRadio: '=',
 				enableDropdown: '=',
-				methodType: '='
+				methodType: '=',
+				nonBulkingOnly: '='
 			},
 			templateUrl: '/Fieldbook/static/angular-templates/method/methodSelect.html',
 			link: function (scope, element, attrs, paginationCtrl) {
@@ -103,7 +104,14 @@
 					}
 
 					methodService.getMethods(methodTypes, $scope.localData.useFavorites, null).then(function (response) {
-						$scope.methodItems = $scope.methodItems.concat(response.data);
+						$scope.methodItems = $scope.methodItems.concat(response.data.filter((methodItem) => {
+							if ($scope.nonBulkingOnly) {
+								return methodItem.bulkingMethod === false;
+							} else {
+								return true;
+							}
+						}
+						));
 					});
 				};
 

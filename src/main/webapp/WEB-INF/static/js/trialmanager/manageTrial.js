@@ -9,7 +9,7 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 	var manageTrialApp = angular.module('manageTrialApp', ['designImportApp', 'leafnode-utils', 'fieldbook-utils', 'subObservation',
 		'ui.router', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables', 'datatables.buttons', 'datatables.colreorder',
 		'ngSanitize', 'ui.select', 'ngMessages', 'blockUI', 'datasets-api', 'auth', 'bmsAuth', 'studyState',
-		'export-study', 'import-study', 'create-sample', 'derived-variable', 'importObservationsApp', 'germplasm-study-source']);
+		'export-study', 'import-study', 'create-sample', 'derived-variable', 'importObservationsApp', 'germplasm-study-source', 'germplasmDetailsModule']);
 
 	manageTrialApp.config(['$httpProvider', function ($httpProvider) {
 		$httpProvider.interceptors.push('authInterceptor');
@@ -164,6 +164,13 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 		};
 	});
 
+	//Create a filter for trust url
+	manageTrialApp.filter('trustAsResourceUrl', ['$sce', function($sce) {
+		return function(val) {
+			return $sce.trustAsResourceUrl(val);
+		};
+	}]);
+
 	// do not switch tab if we have newly imported measurements
 	function isTabChangeDisabled() {
 		return $('.import-study-data').data('data-import') === '1';
@@ -215,6 +222,10 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 					// If any germplasm info is changed in germplasm details popup (basic-details, name, attribute, pedigree)
 					// set the germplasmDetailsHasChanges flag to true
 					$scope.germplasmDetailsHasChanges = true;
+
+					// Reload Germplasm Details Modal
+					const germplasmDetailsModalService = angular.element('#mainApp').injector().get('germplasmDetailsModalService');
+					germplasmDetailsModalService.updateGermplasmDetailsModal();
 				}
 			}, false);
 

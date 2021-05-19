@@ -92,6 +92,7 @@ module.exports = function (config) {
 			'WEB-INF/static/js/trialmanager/observations/change-plot-entry-service.js',
 			'WEB-INF/static/js/trialmanager/location/locationService.js',
 			'WEB-INF/static/js/trialmanager/method/methodService.js',
+			'WEB-INF/static/js/trialmanager/germplasm/germplasm-details-modal/germplasm-details-module.js',
 
 			// unit test files
 			'WEB-INF/static/js/angular-tests/lib/angular-mocks.js',

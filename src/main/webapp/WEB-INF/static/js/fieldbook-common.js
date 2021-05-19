@@ -2278,25 +2278,13 @@ function closeModal(modalId) {
 }
 
 function openGermplasmDetailsPopopWithGidAndDesig(gid, desig) {
-	'use strict';
-
-	// TODO: Refactor germplasm details popup to Angular
-	const germplasmDetailsURL = '/ibpworkbench/main/app/#/germplasm-details/' + gid + '?cropName=' + cropName + '&programUUID=' + currentProgramId
-		+ '&modal=true&authToken=' + JSON.parse(localStorage["bms.xAuthToken"]).token;
-	$('#openGermplasmModal .modal-title').html(germplasmDetailsTitle + ' ' + desig + ' (' + germplasmDetailsGid + ' ' + gid + ')');
-	showGermplasmDetailsPopUp(gid, desig, germplasmDetailsURL);
+	const germplasmDetailsModalService = angular.element('#mainApp').injector().get('germplasmDetailsModalService');
+	germplasmDetailsModalService.openGermplasmDetailsModal(gid, desig, null);
 }
 
-function showGermplasmDetailsPopUp(gid, desig, germplasmDetailsUrl) {
-	'use strict';
-
-	// Programatically create an iframe to prevent germplasm details page from caching.
-	$('#openGermplasmFrame').empty();
-	var iframe = document.createElement('IFRAME');
-	iframe.setAttribute('style', 'width:100%; height:850px; border:none');
-	iframe.src = germplasmDetailsUrl + gid;
-	$('#openGermplasmFrame').append(iframe);
-	$('#openGermplasmModal').modal({backdrop: 'static', keyboard: true});
+function openGermplasmDetailsPopopWithGidAndDesigWithCallBack(gid, desig, callBackFunction) {
+	const germplasmDetailsModalService = angular.element('#mainApp').injector().get('germplasmDetailsModalService');
+	germplasmDetailsModalService.openGermplasmDetailsModal(gid, desig, callBackFunction);
 }
 
 function showListTreeToolTip(node, nodeSpan) {

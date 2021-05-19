@@ -62,5 +62,15 @@ public class ManageTrialController extends AbstractBaseFieldbookController {
 		return this.contextUtil.getCurrentWorkbenchUserId();
 	}
 
+	@ModelAttribute("cropName")
+	public String getCropName() {
+		return this.contextUtil.getProjectInContext().getCropType().getCropName();
+	}
+
+	@ModelAttribute("currentProgramId")
+	public String getProgramId() {
+		return this.contextUtil.getProjectInContext().getUniqueID();
+	}
+
 
 }

@@ -288,9 +288,13 @@
                                    th:text="#{study.import.crosses.harvest.details.location.label}"></label>
                             <span class="fbk-mandatory-field">*</span>
                         </div>
-                        <div class="col-xs-8 col-md-8 text-left">
+                        <div class="col-xs-7 col-md-7 text-left">
                             <locations-select valuecontainer="valuecontainer" targetkey="targetkey" on-location-select="locationChanged()"></locations-select>
                         </div>
+                        <div class="col-xs-1 col-md-1">
+                            <a class="bms-fa-question-circle help-tooltip-study fbk-help" data-help-link="MANAGE_LOCATIONS"></a>
+                        </div>
+
                     </div>
                     <div class="row form-group add-bottom-padding">
                         <div class="col-xs-4 col-md-4 text-right">

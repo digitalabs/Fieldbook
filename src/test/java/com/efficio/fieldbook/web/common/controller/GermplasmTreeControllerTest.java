@@ -28,6 +28,7 @@ import org.generationcp.commons.settings.CrossNameSetting;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.middleware.ContextHolder;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareException;
@@ -101,6 +102,7 @@ public class GermplasmTreeControllerTest {
 
 	@Mock
 	private CrossingServiceImpl crossingService;
+
 	@Mock
 	private UserTreeStateService userTreeStateService;
 
@@ -156,6 +158,8 @@ public class GermplasmTreeControllerTest {
 		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(project);
 		Mockito.when(this.fieldbookMiddlewareService.getOwnerListName(GermplasmTreeControllerTest.TEST_USER_ID))
 				.thenReturn(GermplasmTreeControllerTest.TEST_USER_NAME);
+
+		ContextHolder.setLoggedInUserId(TEST_USER_ID);
 	}
 
 	@Test
@@ -224,7 +228,7 @@ public class GermplasmTreeControllerTest {
 		Assert.assertEquals("Unique ID should be LIST IDENTIFIER", form.getListIdentifier(), result.get("uniqueId"));
 		Assert.assertEquals("List Name should be LIST 1", form.getListName(), result.get("listName"));
 		Assert.assertEquals("isNamesChanged should be 0", 0, result.get("isNamesChanged"));
-		Mockito.verify(this.crossingService).applyCrossSetting(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any());
+		Mockito.verify(this.crossingService).applyCrossSetting(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any());
 		Mockito.verify(this.germplasmStudySourceService).saveGermplasmStudySources(ArgumentMatchers.anyList());
 	}
 
@@ -411,7 +415,7 @@ public class GermplasmTreeControllerTest {
 			Assert.assertEquals("Expecting Attribute Location ID is same as germplasm's Location ID", advancingForm.getHarvestLocationId(),
 					originAttribute.getLocationId().toString());
 			Assert.assertEquals("Expecting Attribute User ID is same as germplasm's User ID", GermplasmTreeControllerTest.TEST_USER_ID,
-					originAttribute.getUserId());
+					originAttribute.getCreatedBy());
 			Assert.assertEquals("Expecting Attribute Date is current date", currentDate, originAttribute.getAdate());
 			Assert.assertEquals("Expecting Attribute Type ID is PLOT_CODE id",
 					Integer.valueOf(GermplasmTreeControllerTest.PLOT_CODE_FIELD_NO), originAttribute.getTypeId());
@@ -423,7 +427,7 @@ public class GermplasmTreeControllerTest {
 			Assert.assertEquals("Expecting Attribute Location ID is same as germplasm's Location ID", advancingForm.getHarvestLocationId(),
 					plotAttribute.getLocationId().toString());
 			Assert.assertEquals("Expecting Attribute User ID is same as germplasm's User ID", GermplasmTreeControllerTest.TEST_USER_ID,
-					plotAttribute.getUserId());
+					plotAttribute.getCreatedBy());
 			Assert.assertEquals("Expecting Attribute Date is current date", currentDate, plotAttribute.getAdate());
 			Assert.assertEquals("Expecting Attribute Type ID is PLOT_CODE id", Integer.valueOf(GermplasmTreeControllerTest.PLOT_FIELD_NO),
 					plotAttribute.getTypeId());
@@ -435,7 +439,7 @@ public class GermplasmTreeControllerTest {
 			Assert.assertEquals("Expecting Attribute Location ID is same as germplasm's Location ID", advancingForm.getHarvestLocationId(),
 					repAttribute.getLocationId().toString());
 			Assert.assertEquals("Expecting Attribute User ID is same as germplasm's User ID", GermplasmTreeControllerTest.TEST_USER_ID,
-					repAttribute.getUserId());
+					repAttribute.getCreatedBy());
 			Assert.assertEquals("Expecting Attribute Date is current date", currentDate, repAttribute.getAdate());
 			Assert.assertEquals("Expecting Attribute Type ID is PLOT_CODE id", Integer.valueOf(GermplasmTreeControllerTest.REP_FIELD_NO),
 					repAttribute.getTypeId());
@@ -447,7 +451,7 @@ public class GermplasmTreeControllerTest {
 			Assert.assertEquals("Expecting Attribute Location ID is same as germplasm's Location ID", advancingForm.getHarvestLocationId(),
 					instanceAttribute.getLocationId().toString());
 			Assert.assertEquals("Expecting Attribute User ID is same as germplasm's User ID", GermplasmTreeControllerTest.TEST_USER_ID,
-					instanceAttribute.getUserId());
+					instanceAttribute.getCreatedBy());
 			Assert.assertEquals("Expecting Attribute Date is current date", currentDate, instanceAttribute.getAdate());
 			Assert.assertEquals("Expecting Attribute Type ID is PLOT_CODE id",
 					Integer.valueOf(GermplasmTreeControllerTest.TRIAL_INSTANCE_FIELD_NO), instanceAttribute.getTypeId());
@@ -493,7 +497,7 @@ public class GermplasmTreeControllerTest {
 			Assert.assertEquals("Expecting Attribute Location ID is same as germplasm's Location ID", advancingForm.getHarvestLocationId(),
 					originAttribute.getLocationId().toString());
 			Assert.assertEquals("Expecting Attribute User ID is same as germplasm's User ID", GermplasmTreeControllerTest.TEST_USER_ID,
-					originAttribute.getUserId());
+					originAttribute.getCreatedBy());
 			Assert.assertEquals("Expecting Attribute Date is current date", currentDate, originAttribute.getAdate());
 			Assert.assertEquals("Expecting Attribute Type ID is PLOT_CODE id",
 					Integer.valueOf(GermplasmTreeControllerTest.PLOT_CODE_FIELD_NO), originAttribute.getTypeId());
@@ -505,7 +509,7 @@ public class GermplasmTreeControllerTest {
 			Assert.assertEquals("Expecting Attribute Location ID is same as germplasm's Location ID", advancingForm.getHarvestLocationId(),
 					plotAttribute.getLocationId().toString());
 			Assert.assertEquals("Expecting Attribute User ID is same as germplasm's User ID", GermplasmTreeControllerTest.TEST_USER_ID,
-					plotAttribute.getUserId());
+					plotAttribute.getCreatedBy());
 			Assert.assertEquals("Expecting Attribute Date is current date", currentDate, plotAttribute.getAdate());
 			Assert.assertEquals("Expecting Attribute Type ID is PLOT_CODE id", Integer.valueOf(GermplasmTreeControllerTest.PLOT_FIELD_NO),
 					plotAttribute.getTypeId());
@@ -517,7 +521,7 @@ public class GermplasmTreeControllerTest {
 			Assert.assertEquals("Expecting Attribute Location ID is same as germplasm's Location ID", advancingForm.getHarvestLocationId(),
 					instanceAttribute.getLocationId().toString());
 			Assert.assertEquals("Expecting Attribute User ID is same as germplasm's User ID", GermplasmTreeControllerTest.TEST_USER_ID,
-					instanceAttribute.getUserId());
+					instanceAttribute.getCreatedBy());
 			Assert.assertEquals("Expecting Attribute Date is current date", currentDate, instanceAttribute.getAdate());
 			Assert.assertEquals("Expecting Attribute Type ID is PLOT_CODE id",
 					Integer.valueOf(GermplasmTreeControllerTest.TRIAL_INSTANCE_FIELD_NO), instanceAttribute.getTypeId());

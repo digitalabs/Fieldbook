@@ -940,7 +940,7 @@ var ImportCrosses = {
 		});
 	},
 
-	openGermplasmModalFromExistingCrossesView : function (gid, desig) {
+	openGermplasmModalFromExistingCrossesView : function (gid) {
 		'use strict';
 		$('#existingCrossesModal').off('hidden.bs.modal');
 		$('#existingCrossesModal').off('shown.bs.modal');
@@ -959,10 +959,10 @@ var ImportCrosses = {
 				$('#existing-crosses-table').resize();
 			}).modal({ backdrop: 'static', keyboard: true });
 		}
-		openGermplasmDetailsPopopWithGidAndDesigWithCallBack(gid, desig, callback);
+		openGermplasmDetailsPopopWithGidAndDesigWithCallBack(gid, callback);
 	},
 
-	openGermplasmModal : function (gid, desig) {
+	openGermplasmModal : function (gid) {
 		'use strict';
 		$('#openCrossesListModal').off('hidden.bs.modal');
 		$('#openCrossesListModal').off('shown.bs.modal');
@@ -975,7 +975,7 @@ var ImportCrosses = {
 			}).modal({ backdrop: 'static', keyboard: true });
 		}
 
-		openGermplasmDetailsPopopWithGidAndDesigWithCallBack(gid, desig, callback);
+		openGermplasmDetailsPopopWithGidAndDesigWithCallBack(gid, callback);
 	}
 };
 

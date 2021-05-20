@@ -1458,7 +1458,7 @@
 							render: function (data, type, full, meta) {
 								return '<a class="gid-link" href="javascript: void(0)" ' +
 									'onclick="openGermplasmDetailsPopopWithGidAndDesig(\'' +
-									full.gid + '\',\'' + full.designation + '\')">' + EscapeHTML.escape(data.value) + '</a>';
+									full.gid + '\')">' + EscapeHTML.escape(data.value) + '</a>';
 							}
 						});
 					} else if (columnData.termId === STOCK_ID) {

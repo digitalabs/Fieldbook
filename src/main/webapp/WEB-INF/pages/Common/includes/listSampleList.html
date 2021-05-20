@@ -55,8 +55,7 @@
 		const gidLinkId = '#sample-list-[[*{listId}]] .gid-link';
 		$(gidLinkId).click(function () {
 			const gid = $(this).attr('data-gid');
-			const designation = $(this).text();
-			openGermplasmDetailsPopopWithGidAndDesig(gid, designation);
+			openGermplasmDetailsPopopWithGidAndDesig(gid);
 		});
 	});
 	//]]>

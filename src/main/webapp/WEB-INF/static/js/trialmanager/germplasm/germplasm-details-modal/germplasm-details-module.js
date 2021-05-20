@@ -3,7 +3,7 @@
     const germplasmDetailsModule = angular.module('germplasmDetailsModule', ['ui.bootstrap']);
     germplasmDetailsModule.factory('germplasmDetailsModalService', ['$uibModal', '$rootScope', function ($uibModal, $rootScope) {
         const germplasmDetailsModalService = {};
-        germplasmDetailsModalService.openGermplasmDetailsModal = function (gid, designation, callBackFunction) {
+        germplasmDetailsModalService.openGermplasmDetailsModal = function (gid, callBackFunction) {
             germplasmDetailsModalService.modal = $uibModal.open({
                 templateUrl: '/Fieldbook/static/js/trialmanager/germplasm/germplasm-details-modal/germplasm-details-modal.html',
                 controller: function ($scope, $uibModalInstance, germplasmDetailsService, studyContext) {
@@ -11,8 +11,9 @@
                     const germplasmDetailsURL = '/ibpworkbench/main/app/#/germplasm-details/' + gid + '?cropName=' + studyContext.cropName + '&programUUID=' + studyContext.programId
                         + '&modal=true&authToken=' + JSON.parse(localStorage["bms.xAuthToken"]).token;
                     $scope.url = germplasmDetailsURL;
-                    $scope.designation = designation;
                     $scope.gid = gid;
+
+                    setPreferredName(gid);
 
                     $scope.close = function () {
                         $uibModalInstance.close(null);
@@ -23,9 +24,12 @@
                     });
 
                     $scope.updateModal = function () {
-                        germplasmDetailsService.getGermplasmByGid($scope.gid).then(function (response) {
-                            const germplasm = response.data;
-                            $scope.designation = germplasm.preferredName;
+                       setPreferredName();
+                    }
+
+                    function setPreferredName () {
+                        germplasmDetailsService.getGermplasmByGid(gid).then(function (response) {
+                            $scope.preferredName = response.data.preferredName;
                         });
                     }
                 },

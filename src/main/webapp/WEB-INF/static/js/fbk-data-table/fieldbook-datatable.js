@@ -230,8 +230,8 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 					width: '100px',
 					render: function(data, type, row) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
-							'onclick="ImportCrosses.openGermplasmModal(&quot;' +
-							row.FGID + '&quot;,&quot;' + row['FEMALE_PARENT'] + '&quot;)">' + row['FEMALE_PARENT'] + '</a>';
+							'onclick="ImportCrosses.openGermplasmModal(&quot;' + row.FGID + '&quot;)">' +
+							row['FEMALE_PARENT'] + '</a>';
 					}
 				});
 
@@ -249,8 +249,8 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 						var str = size > 1 ? '[':'';
 						$.each(row.MGID, function( index, value ) {
 							str += '<a class="gid-link" href="javascript: void(0)" ' +
-								'onclick="ImportCrosses.openGermplasmModal(&quot;' +
-								row.MGID[index] + '&quot;,&quot;' + row['MALE_PARENT'][index] + '&quot;)">' + row['MALE_PARENT'][index] + '</a>'
+								'onclick="ImportCrosses.openGermplasmModal(&quot;' + row.MGID[index] + '&quot;)">' +
+								row['MALE_PARENT'][index] + '</a>'
 							if (index < (size-1)) {
 								str += ", ";
 							}
@@ -370,7 +370,7 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 					render: function(data, type, full, meta) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
 							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
+							full.gid + '&quot;)">' + data + '</a>';
 					}
 				});
 			} else if ($(this).data('col-name') == 'desig') {
@@ -381,7 +381,7 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 					render: function(data, type, full, meta) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
 							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
+							full.gid + '&quot;)">' + data + '</a>';
 					}
 				});
 			}
@@ -451,7 +451,7 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 					render: function(data, type, full, meta) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
 							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
+							full.gid + '&quot;)">' + data + '</a>';
 					}
 				});
 			} else if ($(this).data('col-name') == '8250-key') {
@@ -462,7 +462,7 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 					render: function(data, type, full, meta) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
 							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
+							full.gid + '&quot;)">' + data + '</a>';
 					}
 				});
 			}else if ($(this).data('col-name') == '8255-key') {
@@ -718,7 +718,7 @@ BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
 					render: function(data, type, full, meta) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
 							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
+							full.GID + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
 					}
 				});
 			} else if ($(this).data('term-id') == '8250') {
@@ -729,7 +729,7 @@ BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
 					render: function(data, type, full, meta) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
 							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
+							full.GID + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
 					}
 				});
 			} else if ($(this).data('term-id') == '8255' ) {
@@ -976,8 +976,8 @@ BMS.Fieldbook.ExistingCrossesDataTable = (function($) {
 					width: '100px',
 					render: function(data, type, row) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
-							'onclick="ImportCrosses.openGermplasmModalFromExistingCrossesView(&quot;' +
-							row.GID + '&quot;,&quot;' + row.DESIGNATION + '&quot;)">' + row['GID'] + '</a>';
+							'onclick="ImportCrosses.openGermplasmModalFromExistingCrossesView(&quot;' + row.GID + '&quot;)">' +
+							row['GID'] + '</a>';
 					}
 				});
 

@@ -2277,14 +2277,14 @@ function closeModal(modalId) {
 	$('#' + modalId).modal('hide');
 }
 
-function openGermplasmDetailsPopopWithGidAndDesig(gid, desig) {
+function openGermplasmDetailsPopopWithGidAndDesig(gid) {
 	const germplasmDetailsModalService = angular.element('#mainApp').injector().get('germplasmDetailsModalService');
-	germplasmDetailsModalService.openGermplasmDetailsModal(gid, desig, null);
+	germplasmDetailsModalService.openGermplasmDetailsModal(gid, null);
 }
 
-function openGermplasmDetailsPopopWithGidAndDesigWithCallBack(gid, desig, callBackFunction) {
+function openGermplasmDetailsPopopWithGidAndDesigWithCallBack(gid, callBackFunction) {
 	const germplasmDetailsModalService = angular.element('#mainApp').injector().get('germplasmDetailsModalService');
-	germplasmDetailsModalService.openGermplasmDetailsModal(gid, desig, callBackFunction);
+	germplasmDetailsModalService.openGermplasmDetailsModal(gid, callBackFunction);
 }
 
 function showListTreeToolTip(node, nodeSpan) {

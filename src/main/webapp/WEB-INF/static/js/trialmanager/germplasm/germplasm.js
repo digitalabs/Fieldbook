@@ -198,8 +198,7 @@
 									$(td).val("");
 									var value = columnData.termId === 8240 ? rowData.properties['8240'].value : rowData.properties['8250'].value;
 									$(td).append($compile('<a class="gid-link" href="javascript: void(0)" ' +
-										'ng-click="openGermplasmDetailsModal(\'' +
-										rowData.gid + '\',\'' + rowData.designation + '\')">' + value + '</a>')($scope));
+										'ng-click="openGermplasmDetailsModal(\'' + rowData.gid + '\')">' + value + '</a>')($scope));
 								},
 								render: function (data, type, full, meta) {
 									return '';
@@ -590,7 +589,7 @@
 				};
 
 				$scope.openGermplasmDetailsModal = function (gid, designation) {
-					germplasmDetailsModalService.openGermplasmDetailsModal(gid, designation, null);
+					germplasmDetailsModalService.openGermplasmDetailsModal(gid, null);
 				}
 			}]);
 

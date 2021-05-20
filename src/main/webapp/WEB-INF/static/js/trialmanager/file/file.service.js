@@ -41,6 +41,8 @@
 				if (!fileName.match(/\.(gif|jpe?g|tiff?|png|webp|bmp)$/i)) {
 					$http.get('/bmsapi/files/' + fileKey, {responseType: 'blob'}).then((response) => {
 						fileDownloadHelper.save(response.data, fileName);
+					}, (response) => {
+						showErrorMessage('', "Something went wrong (possibly file storage configuration not available)");
 					});
 					return;
 				}

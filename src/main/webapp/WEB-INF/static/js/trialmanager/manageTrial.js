@@ -225,7 +225,15 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 
 					// Reload Germplasm Details Modal
 					const germplasmDetailsModalService = angular.element('#mainApp').injector().get('germplasmDetailsModalService');
-					germplasmDetailsModalService.updateGermplasmDetailsModal();
+					if (germplasmDetailsModalService.modal) {
+						germplasmDetailsModalService.updateGermplasmDetailsModal();
+					}
+
+					if ($scope.tabSelected == $scope.crossesAndSelectionsTab.state) {
+						// Reload Crosses and Selection if selected
+						$rootScope.navigateToTab('germplasmStudySource', {reload: true});
+					}
+
 				}
 			}, false);
 

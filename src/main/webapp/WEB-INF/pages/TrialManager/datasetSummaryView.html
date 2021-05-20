@@ -67,10 +67,9 @@
 		'use strict';
 		$('#div-study-tab-'+getCurrentStudyIdInTab()+' .desig-link').click(function() {
 			const gidValue = $(this).parent().parent().find('.gid-link').text();
-			const desigValue = $(this).text();
 			$(this).data('gid', gidValue);
 			$(this).data('desig', $(this).text());
-			openGermplasmDetailsModal(gidValue, desigValue)
+			openGermplasmDetailsModal(gidValue);
 
 		});
 
@@ -79,10 +78,10 @@
 			const gidValue = $(this).text();
 			$(this).data('gid', $(this).text());
 			$(this).data('desig', desigValue);
-			openGermplasmDetailsModal(gidValue, desigValue)
+			openGermplasmDetailsModal(gidValue);
 		});
 	});
-	function openGermplasmDetailsModal(gid, designation) {
+	function openGermplasmDetailsModal(gid) {
 		const germplasmDetailsModalService = angular.element('#study-details').injector().get('germplasmDetailsModalService');
 		germplasmDetailsModalService.openGermplasmDetailsModal(gid, null);
 	}

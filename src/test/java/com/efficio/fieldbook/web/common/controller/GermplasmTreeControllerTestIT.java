@@ -119,37 +119,6 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseIntegrationTest {
 	}
 
 	/**
-	 * Test expand germplasm tree local.
-	 *
-	 * @throws Exception the exception
-	 */
-	@Test
-	public void testExpandGermplasmTreeProgramLists() throws Exception {
-		String jsonResponse = this.controller.expandGermplasmTree(GermplasmTreeController.PROGRAM_LISTS, "0");
-		Assert.assertNotNull(jsonResponse);
-		TreeNode[] treeNodes = this.objectMapper.readValue(jsonResponse, TreeNode[].class);
-
-		Assert.assertEquals(3, treeNodes.length);
-		for (int i = 0; i < PROGRAM_LISTS.size()-1; i++) {
-			Assert.assertEquals(String.valueOf(i + 1), treeNodes[i].getKey());
-			Assert.assertEquals("List " + (i + 1), treeNodes[i].getTitle());
-		}
-	}
-
-	@Test
-	public void testExpandGermplasmTreeCropLists() throws Exception {
-		String jsonResponse = this.controller.expandGermplasmTree(GermplasmTreeController.CROP_LISTS, "0");
-		Assert.assertNotNull(jsonResponse);
-		TreeNode[] treeNodes = this.objectMapper.readValue(jsonResponse, TreeNode[].class);
-
-		Assert.assertEquals(1, treeNodes.length);
-		for (int i = 0; i < CROP_LISTS.size()-1; i++) {
-			Assert.assertEquals(String.valueOf(i + 1), treeNodes[i].getKey());
-			Assert.assertEquals("List " + (i + 1), treeNodes[i].getTitle());
-		}
-	}
-
-	/**
 	 * Test expand germplasm node.
 	 *
 	 * @throws Exception the exception
@@ -225,58 +194,6 @@ public class GermplasmTreeControllerTestIT extends AbstractBaseIntegrationTest {
 		germplasmListChildren = this.controller.getGermplasmListChildren(localRootNode.getId(), PROGRAM_UUID);
 		Assert.assertTrue(AppConstants.PROGRAM_LISTS.getString() + " should have " + germplasmListChildren.size() + " number of children",
 				germplasmListChildren.size() == GermplasmTreeControllerTestIT.PROGRAM_LISTS.size());
-	}
-
-	@Test
-	public void testGetGermplasmListFolderChildNodes() {
-		TreeTableNode localRootNode =
-				new TreeTableNode(GermplasmTreeController.PROGRAM_LISTS, AppConstants.PROGRAM_LISTS.getString(), null, null, null, null, "1");
-		List<TreeTableNode> childNodes = this.controller.getGermplasmListFolderChildNodes(localRootNode, PROGRAM_UUID);
-		Assert.assertTrue(
-				AppConstants.PROGRAM_LISTS.getString() + " should have " + GermplasmTreeControllerTestIT.PROGRAM_LISTS.size()
-						+ " children",
-				localRootNode.getNumOfChildren().equals(Integer.toString(GermplasmTreeControllerTestIT.PROGRAM_LISTS.size())));
-		Assert.assertTrue(AppConstants.PROGRAM_LISTS.getString() + " should have " + childNodes.size() + " children", !childNodes.isEmpty());
-
-		TreeTableNode anyChildNode = new TreeTableNode(Integer.toString(EasyMock.anyInt()),
-				GermplasmTreeControllerTestIT.TEST_GERMPLASM_LIST, null, null, null, null, "1");
-		childNodes = this.controller.getGermplasmListFolderChildNodes(anyChildNode, PROGRAM_UUID);
-		Assert.assertTrue(GermplasmTreeControllerTestIT.TEST_GERMPLASM_LIST + " should have children",
-				anyChildNode.getNumOfChildren().equals("0"));
-		Assert.assertTrue(GermplasmTreeControllerTestIT.TEST_GERMPLASM_LIST + " should have no children", childNodes.isEmpty());
-	}
-
-	@Test
-	public void testGetGermplasmListFolderChildNodesById() {
-		List<TreeTableNode> childNodes = this.controller.getGermplasmListFolderChildNodes(GermplasmTreeController.PROGRAM_LISTS, PROGRAM_UUID);
-		Assert.assertTrue(AppConstants.PROGRAM_LISTS.getString() + " should have " + childNodes.size() + " children", !childNodes.isEmpty());
-
-		childNodes = this.controller.getGermplasmListFolderChildNodes(Integer.toString(EasyMock.anyInt()), PROGRAM_UUID);
-		Assert.assertTrue(GermplasmTreeControllerTestIT.TEST_GERMPLASM_LIST + " should have no children", childNodes.isEmpty());
-	}
-
-	@Test
-	public void testExpandGermplasmListFolderProgramLists() {
-		ExtendedModelMap model = new ExtendedModelMap();
-		this.controller.expandGermplasmListFolder(GermplasmTreeController.PROGRAM_LISTS, model);
-		List<TreeTableNode> treeNodes = (List<TreeTableNode>) model.get(GermplasmTreeController.GERMPLASM_LIST_CHILD_NODES);
-		Assert.assertEquals("The number of children under the node with id PROGRAM_LISTS should be 3", 3, treeNodes.size());
-		for (TreeTableNode treeTableNode : treeNodes) {
-			Assert.assertEquals("The parent id of " + treeTableNode.getName() + " should be " +GermplasmTreeController.PROGRAM_LISTS,
-					GermplasmTreeController.PROGRAM_LISTS, treeTableNode.getParentId());
-		}
-	}
-
-	@Test
-	public void testExpandGermplasmListFolderCropLists() {
-		ExtendedModelMap model = new ExtendedModelMap();
-		this.controller.expandGermplasmListFolder(GermplasmTreeController.CROP_LISTS, model);
-		List<TreeTableNode> treeNodes = (List<TreeTableNode>) model.get(GermplasmTreeController.GERMPLASM_LIST_CHILD_NODES);
-		Assert.assertEquals("The number of children under the node with id CROP_LISTS should be 1", 1, treeNodes.size());
-		for (TreeTableNode treeTableNode : treeNodes) {
-			Assert.assertEquals("The parent id of " + treeTableNode.getName() + " should be " +GermplasmTreeController.CROP_LISTS,
-					GermplasmTreeController.CROP_LISTS, treeTableNode.getParentId());
-		}
 	}
 
 	@Test

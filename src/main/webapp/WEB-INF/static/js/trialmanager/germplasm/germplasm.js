@@ -588,7 +588,7 @@
 					}
 				};
 
-				$scope.openGermplasmDetailsModal = function (gid, designation) {
+				$scope.openGermplasmDetailsModal = function (gid) {
 					germplasmDetailsModalService.openGermplasmDetailsModal(gid, null);
 				}
 			}]);

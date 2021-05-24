@@ -26,8 +26,6 @@
 	angular.module('manageTrialApp').factory('locationModalService', ['$http', 'studyContext', '$uibModal',
 		function ($http, studyContext, $uibModal) {
 
-			//url.program.breeding.methods=ibpworkbench/content/ProgramMethods?programId=
-
 			var locationModalService = {};
 
 			locationModalService.openManageLocations = function () {

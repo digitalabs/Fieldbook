@@ -61,7 +61,7 @@
 			scope: {
 				targetkey: '=',
 				valuecontainer: '=',
-				onMethodSelect: ' &',
+				onMethodSelect: ' &?',
 				hideTypes: '=',
 				hideFavorites: '=',
 				showDerManMethodsRadio: '=',

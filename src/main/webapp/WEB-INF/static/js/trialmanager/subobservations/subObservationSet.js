@@ -1709,11 +1709,6 @@
 						$scope.observation.value = $scope.valuecontainer.observationValue;
 						$scope.observation.onOpenClose(isOpen);
 					}
-
-					$scope.methodChanged = function (item, model) {
-
-					}
-
 				}
 			};
 		})

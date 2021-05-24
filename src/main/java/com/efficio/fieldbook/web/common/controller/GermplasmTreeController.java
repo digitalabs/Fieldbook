@@ -352,7 +352,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		if (crossSetting.isUseManualSettingsForNaming()) {
 			// this line of code is where the creation of new germplasm takes place
 			isTrimed = this.crossingService
-					.applyCrossSetting(crossSetting, importedCrossesList, this.getCurrentIbdbUserId(), this.userSelection.getWorkbook());
+					.applyCrossSetting(crossSetting, importedCrossesList, this.userSelection.getWorkbook());
 			isTrimed = isTrimed || this.createGermplasmListDataAndGermplasmStudySource(germplasmList, listDataItems, importedCrossesList.getImportedCrosses(), germplasmStudySourceList);
 		} else {
 			final ImportedCrossesList importedCrossesListWithNamingSettings = this.applyNamingRules(importedCrossesList);
@@ -584,7 +584,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final List<Pair<Germplasm, List<Attribute>>> germplasmAttributes) throws RuleException {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 		final String harvestDate = LocalDate.now().format(formatter);
-		final Integer currentUserID = this.getCurrentIbdbUserId();
 
 		// Common germplasm fields
 		final Integer lgid = 0;
@@ -634,7 +633,6 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 				name.setLocationId(locationId);
 				name.setNdate(gDate);
-				name.setUserId(currentUserID);
 				name.setReferenceId(nRef);
 
 				// If crop == CIMMYT WHEAT (crop with more than one name saved)
@@ -648,7 +646,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			final Integer trueGdate = !"".equals(harvestDate.trim()) ? Integer.valueOf(harvestDate) : gDate;
 			final Germplasm germplasm;
 			germplasm = new Germplasm(gid, importedGermplasm.getBreedingMethodId(), importedGermplasm.getGnpgs(), importedGermplasm.getGpid1(),
-					importedGermplasm.getGpid2(), currentUserID, lgid, locationId, trueGdate, preferredName);
+					importedGermplasm.getGpid2(), lgid, locationId, trueGdate, preferredName);
 			final Integer mgid = importedGermplasm.getMgid() == null ? 0 : importedGermplasm.getMgid();
 			germplasm.setMgid(mgid);
 			germplasms.add(new ImmutablePair<>(germplasm, names));
@@ -667,30 +665,30 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			// format strings configured in crossing.properties) to the
 			// originAttribute gid will be set when saving once gid is known
 			final Attribute originAttribute =
-				this.createAttributeObject(currentUserID, importedGermplasm.getSource(), plotCodeFldNo, locationId, gDate);
+				this.createAttributeObject(importedGermplasm.getSource(), plotCodeFldNo, locationId, gDate);
 			attributesPerGermplasm.add(originAttribute);
 
 			final String plotNumberString = importedGermplasm.getPlotNumber();
 			final Attribute plotNumberAttribute =
-				this.createAttributeObject(currentUserID, plotNumberString, plotFldNo, locationId, gDate);
+				this.createAttributeObject(plotNumberString, plotFldNo, locationId, gDate);
 			attributesPerGermplasm.add(plotNumberAttribute);
 
 			// Adding Instance number and replication number as
 			// attributes of germplasm for trial advancing
 			final String replicationNumber = importedGermplasm.getReplicationNumber();
 			if (StringUtils.isNotBlank(replicationNumber)) {
-				final Attribute repNoAttribute = this.createAttributeObject(currentUserID, replicationNumber, repFldNo, locationId, gDate);
+				final Attribute repNoAttribute = this.createAttributeObject(replicationNumber, repFldNo, locationId, gDate);
 				attributesPerGermplasm.add(repNoAttribute);
 			}
 
 			final Attribute instanceNoAttribute =
-				this.createAttributeObject(currentUserID, importedGermplasm.getTrialInstanceNumber(), trialInstanceFldNo, locationId,
+				this.createAttributeObject(importedGermplasm.getTrialInstanceNumber(), trialInstanceFldNo, locationId,
 					gDate);
 			attributesPerGermplasm.add(instanceNoAttribute);
 
 			if (importedGermplasm.getPlantNumber() != null) {
 				final Attribute plantNoAttribute =
-					this.createAttributeObject(currentUserID, importedGermplasm.getPlantNumber(), plantNumberFldNo, locationId, gDate);
+					this.createAttributeObject(importedGermplasm.getPlantNumber(), plantNumberFldNo, locationId, gDate);
 				attributesPerGermplasm.add(plantNoAttribute);
 			}
 
@@ -706,12 +704,11 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		return this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS", "PASSPORT", code).getFldno();
 	}
 
-	private Attribute createAttributeObject(final Integer currentUserID, final String attributeValue, final Integer typeId,
-			final Integer locationId, final Integer gDate) {
+	private Attribute createAttributeObject(final String attributeValue, final Integer typeId,
+		final Integer locationId, final Integer gDate) {
 		final Attribute originAttribute = new Attribute();
 		originAttribute.setAval(attributeValue);
 		originAttribute.setTypeId(typeId);
-		originAttribute.setUserId(currentUserID);
 		originAttribute.setAdate(gDate);
 		originAttribute.setLocationId(locationId);
 		return originAttribute;

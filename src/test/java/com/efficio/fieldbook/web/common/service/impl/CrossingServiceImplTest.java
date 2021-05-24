@@ -16,6 +16,7 @@ import org.generationcp.commons.settings.CrossNameSetting;
 import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
+import org.generationcp.middleware.ContextHolder;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.InvalidGermplasmNameSettingException;
@@ -83,7 +84,7 @@ public class CrossingServiceImplTest {
 	private static final int BREEDING_METHOD_ID = 1;
 	private static final String SAVED_CROSSES_GID1 = "-9999";
 	private static final String SAVED_CROSSES_GID2 = "-8888";
-	private static final Integer USER_ID = 123;
+	private static final Integer USER_ID = new Random().nextInt(Integer.MAX_VALUE);
 	private static final String TEST_BREEDING_METHOD_CODE = "GEN";
 	private static final Integer TEST_BREEDING_METHOD_ID = 5;
 	private static final Integer TEST_FEMALE_GID_1 = 12345;
@@ -145,8 +146,6 @@ public class CrossingServiceImplTest {
 
 	private CrossSetting crossSetting;
 
-	private Integer localUserId;
-
 	private CropType cropType;
 
 	@Before
@@ -179,8 +178,7 @@ public class CrossingServiceImplTest {
 		Mockito.doReturn(this.getExpectedName(CrossingServiceImplTest.NEXT_NUMBER)).when(this.germplasmNamingService)
 			.getNextNameInSequence(ArgumentMatchers.<GermplasmNameSetting>any());
 
-		this.localUserId = new Random().nextInt(Integer.MAX_VALUE);
-		Mockito.doReturn(this.localUserId).when(this.contextUtil).getCurrentWorkbenchUserId();
+		ContextHolder.setLoggedInUserId(USER_ID);
 	}
 
 	@Test
@@ -285,7 +283,7 @@ public class CrossingServiceImplTest {
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
 		workbook.getStudyDetails().setId(new Random().nextInt());
 		this.crossingService.processCrossBreedingMethod(this.crossSetting, this.importedCrossesList);
-		this.crossingService.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID, workbook);
+		this.crossingService.applyCrossSetting(this.crossSetting, this.importedCrossesList, workbook);
 
 		final ImportedCross cross1 = this.importedCrossesList.getImportedCrosses().get(0);
 
@@ -295,7 +293,7 @@ public class CrossingServiceImplTest {
 		assertEquals("1", cross1.getEntryCode());
 		assertNull(cross1.getNames().get(0).getGermplasmId());
 		assertEquals((Integer) 0, cross1.getNames().get(0).getLocationId());
-		assertEquals(CrossingServiceImplTest.USER_ID, cross1.getNames().get(0).getUserId());
+		assertEquals(CrossingServiceImplTest.USER_ID, cross1.getNames().get(0).getCreatedBy());
 
 		final ImportedCross cross2 = this.importedCrossesList.getImportedCrosses().get(1);
 
@@ -305,7 +303,7 @@ public class CrossingServiceImplTest {
 		assertEquals("2", cross2.getEntryCode());
 		assertNull(cross2.getNames().get(0).getGermplasmId());
 		assertEquals((Integer) 0, cross2.getNames().get(0).getLocationId());
-		assertEquals(CrossingServiceImplTest.USER_ID, cross2.getNames().get(0).getUserId());
+		assertEquals(CrossingServiceImplTest.USER_ID, cross2.getNames().get(0).getCreatedBy());
 
 	}
 
@@ -347,7 +345,7 @@ public class CrossingServiceImplTest {
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
 		workbook.getStudyDetails().setId(new Random().nextInt());
 		this.crossingService
-			.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID, workbook);
+			.applyCrossSetting(this.crossSetting, this.importedCrossesList, workbook);
 
 		// TODO prepare descriptive messages for verification failure once
 		// Mockito has stable 2.0 version
@@ -369,7 +367,7 @@ public class CrossingServiceImplTest {
 		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook();
 		workbook.getStudyDetails().setId(new Random().nextInt());
 		this.crossingService
-			.applyCrossSetting(this.crossSetting, this.importedCrossesList, CrossingServiceImplTest.USER_ID, workbook);
+			.applyCrossSetting(this.crossSetting, this.importedCrossesList, workbook);
 
 		Mockito.verify(this.germplasmDataManager, Mockito.never()).addGermplasmName(ArgumentMatchers.<List<Name>>any());
 
@@ -420,7 +418,7 @@ public class CrossingServiceImplTest {
 		crossSetting.setAdditionalDetailsSetting(additionalDetailsSetting);
 
 		final CrossingServiceImpl.GermplasmListResult result = this.crossingService
-			.generateGermplasmNameTriples(crossSetting, this.importedCrossesList.getImportedCrosses(), CrossingServiceImplTest.USER_ID,
+			.generateGermplasmNameTriples(crossSetting, this.importedCrossesList.getImportedCrosses(),
 				false);
 
 		Triple<Germplasm, Name, List<Progenitor>> germplasmTriple = result.getGermplasmTriples().get(0);
@@ -445,7 +443,7 @@ public class CrossingServiceImplTest {
 		Assert.assertNull(germplasm1.getPreferredAbbreviation());
 		Assert.assertNull(germplasm1.getPreferredName());
 		assertEquals(0, germplasm1.getReferenceId().intValue());
-		assertEquals(CrossingServiceImplTest.USER_ID, germplasm1.getUserId());
+		assertEquals(CrossingServiceImplTest.USER_ID, germplasm1.getCreatedBy());
 		assertSame(germplasm1, progenitorList1.get(0).getGermplasm());
 		assertEquals(TEST_MALE_GID_3, progenitorList1.get(0).getProgenitorGid());
 
@@ -457,7 +455,7 @@ public class CrossingServiceImplTest {
 		assertFalse(name1.getNval().contains("(truncated)"));
 		assertEquals(0, name1.getReferenceId().intValue());
 		Assert.assertNull(name1.getTypeId());
-		assertEquals(CrossingServiceImplTest.USER_ID, name1.getUserId());
+		assertEquals(CrossingServiceImplTest.USER_ID, name1.getCreatedBy());
 
 		germplasmTriple = result.getGermplasmTriples().get(1);
 		final Germplasm germplasm2 = germplasmTriple.getLeft();
@@ -479,7 +477,7 @@ public class CrossingServiceImplTest {
 		Assert.assertNull(null, germplasm2.getPreferredAbbreviation());
 		Assert.assertNull(null, germplasm2.getPreferredName());
 		assertEquals(0, germplasm2.getReferenceId().intValue());
-		assertEquals(CrossingServiceImplTest.USER_ID, germplasm2.getUserId());
+		assertEquals(CrossingServiceImplTest.USER_ID, germplasm2.getCreatedBy());
 		assertTrue(progenitorList2.isEmpty());
 
 		Assert.assertNull(name2.getGermplasmId());
@@ -490,7 +488,7 @@ public class CrossingServiceImplTest {
 		assertTrue(name2.getNval().contains("(truncated)"));
 		assertEquals(0, name2.getReferenceId().intValue());
 		Assert.assertNull(name2.getTypeId());
-		assertEquals(CrossingServiceImplTest.USER_ID, name2.getUserId());
+		assertEquals(CrossingServiceImplTest.USER_ID, name2.getCreatedBy());
 	}
 
 	@Test
@@ -512,7 +510,7 @@ public class CrossingServiceImplTest {
 
 		when(this.germplasmDataManager.getGermplasmByGID(crossGid)).thenReturn(existingGermplasm);
 
-		final Germplasm result = this.crossingService.createGermplasm(cross, userId, harvestLocationId, harvestDate);
+		final Germplasm result = this.crossingService.createGermplasm(cross, harvestLocationId, harvestDate);
 
 		assertSame(existingGermplasm, result);
 		assertEquals(breedingMethodId, result.getMethodId().intValue());
@@ -526,7 +524,6 @@ public class CrossingServiceImplTest {
 	@Test
 	public void testCreateGermplasm_ImportedCrossNotYetSavedInDatabase() {
 
-		final int userId = 1;
 		final int harvestLocationId = 2;
 		final String harvestDate = "2019-01-01";
 
@@ -534,14 +531,14 @@ public class CrossingServiceImplTest {
 		// If cross gid is null, it means the cross is created from Imported Crosses functionality
 		cross.setGid(null);
 
-		final Germplasm result = this.crossingService.createGermplasm(cross, userId, harvestLocationId, harvestDate);
+		final Germplasm result = this.crossingService.createGermplasm(cross, harvestLocationId, harvestDate);
 
 		verify(this.germplasmDataManager, times(0)).getGermplasmByGID(anyInt());
 
 		assertEquals(cross.getBreedingMethodId(), result.getMethodId());
 		assertEquals(20190101, result.getGdate().intValue());
 		assertEquals(harvestLocationId, result.getLocationId().intValue());
-		assertEquals(userId, result.getUserId().intValue());
+		assertEquals(USER_ID, result.getCreatedBy());
 		assertEquals(TEST_FEMALE_GID_1, result.getGpid1());
 		assertEquals(TEST_MALE_GID_1, result.getGpid2());
 
@@ -557,7 +554,6 @@ public class CrossingServiceImplTest {
 	public void testCreateName_CrossAlreadyExistsInDatabase() {
 
 		final int crossGid = 1;
-		final int userId = 1;
 		final int harvestLocationId = 2;
 		final Germplasm germplasm = new Germplasm();
 		final Name existingPreferredName = new Name();
@@ -569,11 +565,11 @@ public class CrossingServiceImplTest {
 		final ImportedCross cross = this.createCross();
 		cross.setGid(String.valueOf(crossGid));
 
-		final Name result = this.crossingService.createName(germplasm, cross, userId, harvestLocationId);
+		final Name result = this.crossingService.createName(germplasm, cross, harvestLocationId);
 
 		assertSame(existingPreferredName, result);
 		assertEquals("Cros12345", result.getNval());
-		assertEquals(userId, result.getUserId().intValue());
+		assertEquals(USER_ID, result.getCreatedBy());
 		assertEquals(20190101, result.getNdate().intValue());
 		assertEquals(harvestLocationId, result.getLocationId().intValue());
 
@@ -582,7 +578,6 @@ public class CrossingServiceImplTest {
 	@Test
 	public void testCreateName_ImportedCrossNotYetSavedInDatabase() {
 
-		final int userId = 1;
 		final int harvestLocationId = 2;
 		final Germplasm germplasm = new Germplasm();
 		final Name existingPreferredName = new Name();
@@ -594,11 +589,11 @@ public class CrossingServiceImplTest {
 		final ImportedCross cross = this.createCross();
 		cross.setGid(null);
 
-		final Name result = this.crossingService.createName(germplasm, cross, userId, harvestLocationId);
+		final Name result = this.crossingService.createName(germplasm, cross, harvestLocationId);
 
 		assertNotSame(existingPreferredName, result);
 		assertEquals("Cros12345", result.getNval());
-		assertEquals(userId, result.getUserId().intValue());
+		assertEquals(USER_ID, result.getCreatedBy());
 		assertEquals(20190101, result.getNdate().intValue());
 		assertEquals(harvestLocationId, result.getLocationId().intValue());
 		assertEquals(CrossingServiceImpl.NAME_REFID, result.getReferenceId());
@@ -865,7 +860,7 @@ public class CrossingServiceImplTest {
 			final Integer gid = gidsIterator.next();
 			final Name name = namesIterator.next();
 			assertEquals(gid, name.getGermplasmId());
-			assertEquals(this.localUserId, name.getUserId());
+			assertEquals(USER_ID, name.getCreatedBy());
 			assertEquals(CrossingServiceImpl.PEDIGREE_NAME_TYPE, name.getTypeId());
 			assertEquals(cross.getFemaleDesignation() + CrossingServiceImpl.DEFAULT_SEPARATOR + cross.getMaleDesignationsAsString(), name.getNval());
 			assertEquals(CrossingServiceImpl.PREFERRED_NAME, name.getNstat());
@@ -881,7 +876,7 @@ public class CrossingServiceImplTest {
 		assertEquals(gid.toString(), cross.getGid());
 		assertEquals(cross.getSource(), attribute.getAval());
 		assertEquals(PLOT_CODE_FLD_NO, attribute.getTypeId().intValue());
-		assertEquals(this.localUserId, attribute.getUserId());
+		assertEquals(USER_ID, attribute.getCreatedBy());
 	}
 
 	private ImportedCrossesList createImportedCrossesList() {

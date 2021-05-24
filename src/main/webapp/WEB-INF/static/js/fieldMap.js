@@ -402,40 +402,39 @@ function isDeletedPlotAtStartCoord(id) {
 	return false;
 }
 
+function beforeSend(xhr) {
+	var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
+	xhr.setRequestHeader('Authorization', "Bearer " + xAuthToken);
+}
+
 function recreatePopupLocationCombo() {
 	'use strict';
 	$.ajax(
-	{ url: '/Fieldbook/locations/getLocations',
+	{ // Get ALL Locations
+		url: '/bmsapi/crops/'+ cropName +'/locations?programUUID=' + currentProgramId + '&favoritesOnly=false&page=0&size=10000',
 		type: 'GET',
 		cache: false,
 		data: '',
+		beforeSend: beforeSend,
 		success: function(data) {
-			if (data.success == '1') {
+			if (data && data.length > 0) {
 				//recreate the select2 combos to get updated list of locations
 				//we check if the favorite is check then we use favorite locations
-
-				var popuplocationSuggestions;
-				if ($('#showFavoriteLocation').is(':checked')) {
-					popuplocationSuggestions = data.favoriteLocations;
-				} else if ($("#showBreedingLocationOnlyRadio").is(':checked')) {
-					popuplocationSuggestions = data.allBreedingLocations;
-				} else {
-					popuplocationSuggestions = data.allLocations;
-				}
+				var popuplocationSuggestions = data
 
 				var popuplocationSuggestions_obj = [];
 				var defaultData = null;
 				var currentLocId = $('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val();
-				$.each(popuplocationSuggestions, function(index, value) {
-					var locNameDisplay = value.lname;
-					if (value.labbr != null && value.labbr != '') {
-						locNameDisplay  += ' - (' + value.labbr + ')';
+				$.each(data, function(index, value) {
+					var locNameDisplay = value.name;
+					if (value.abbreviation != null && value.abbreviation != '') {
+						locNameDisplay  += ' - (' + value.abbreviation + ')';
 					}
 					var tempData = {
-						'id': value.locid,
+						'id': value.id,
 						'text': locNameDisplay
 					};
-					if (currentLocId != '' && currentLocId == value.locid) {
+					if (currentLocId != '' && currentLocId == value.id) {
 						defaultData = tempData;
 					}
 

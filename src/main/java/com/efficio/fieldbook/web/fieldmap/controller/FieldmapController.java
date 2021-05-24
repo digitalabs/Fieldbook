@@ -83,6 +83,16 @@ public class FieldmapController extends AbstractBaseFieldbookController {
 	@Resource
 	private CrossExpansionProperties crossExpansionProperties;
 
+	@ModelAttribute("cropName")
+	public String getCropName() {
+		return this.contextUtil.getProjectInContext().getCropType().getCropName();
+	}
+
+	@ModelAttribute("currentProgramId")
+	public String getCurrentProgramId() {
+		return this.contextUtil.getProjectInContext().getUniqueID();
+	}
+
 	/**
 	 * Determine field map navigation.
 	 *

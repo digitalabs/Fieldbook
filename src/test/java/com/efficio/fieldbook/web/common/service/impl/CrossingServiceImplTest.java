@@ -17,8 +17,10 @@ import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.ContextHolder;
+import org.generationcp.middleware.api.germplasm.GermplasmService;
 import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.exceptions.InvalidGermplasmNameSettingException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
@@ -139,6 +141,9 @@ public class CrossingServiceImplTest {
 	private DatasetService datasetService;
 
 	@Mock
+	private GermplasmService germplasmService;
+
+	@Mock
 	private StudyInstanceService studyInstanceService;
 
 	@InjectMocks
@@ -163,7 +168,11 @@ public class CrossingServiceImplTest {
 		Mockito.doReturn(this.createGermplasmIds()).when(this.germplasmDataManager).addGermplasm(
 			ArgumentMatchers.<List<Triple<Germplasm, Name, List<Progenitor>>>>any(), ArgumentMatchers.eq(this.cropType));
 		Mockito.doReturn(new Method()).when(this.germplasmDataManager).getMethodByID(CrossingServiceImplTest.BREEDING_METHOD_ID);
-		Mockito.doReturn(new UserDefinedField(PLOT_CODE_FLD_NO)).when(this.germplasmDataManager).getPlotCodeField();
+
+		final Term plotCodeTerm = new Term();
+		plotCodeTerm.setId(PLOT_CODE_FLD_NO);
+
+		Mockito.doReturn(plotCodeTerm).when(this.germplasmService).getPlotCodeField();
 
 		this.crossSetting = new CrossSetting();
 		this.crossSetting.setCrossNameSetting(this.createCrossNameSetting());

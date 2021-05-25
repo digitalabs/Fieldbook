@@ -106,7 +106,7 @@
 					methodService.getMethods(methodTypes, $scope.localData.useFavorites, null).then(function (response) {
 						$scope.methodItems = $scope.methodItems.concat(response.data.filter((methodItem) => {
 							if ($scope.nonBulkingOnly) {
-								return methodItem.bulkingMethod === false;
+								return methodItem.isBulkingMethod === false;
 							} else {
 								return true;
 							}

@@ -104,7 +104,7 @@
 			$scope.selectedTrialsString = trialInstances.join(",")
 
 			$scope.isBulkingMethod = function () {
-				return $scope.valueContainer.selectedBreedingMethod && $scope.valueContainer.selectedBreedingMethod.bulkingMethod;
+				return $scope.valueContainer.selectedBreedingMethod && $scope.valueContainer.selectedBreedingMethod.isBulkingMethod;
 			};
 
 			$scope.methodChanged = function (item, model) {

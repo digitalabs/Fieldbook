@@ -107,8 +107,6 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	 */
 	protected static final String URL = "/StudyManager/advance/study";
 
-	private static final String MODAL_URL = "StudyManager/advanceStudyModal";
-
 	private static final String SAVE_ADVANCE_STUDY_PAGE_TEMPLATE = "StudyManager/saveAdvanceStudy";
 
 	private static final String TABLE_HEADER_LIST = "tableHeaderList";

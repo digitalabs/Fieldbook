@@ -179,11 +179,11 @@
 								<a tabindex="-1" href="#">Advance study options</a>
 								<ul class="dropdown-menu" style="margin-left: -68px; width: 235px;">
 									<li>
-										<a href="javascript: startAdvance('trial');" id="advance-trial-link"
+										<a ng-click="startAdvance('trial')" id="advance-trial-link"
 										   th:text="#{study.studydetails.action.advance.study}">Advance Study</a>
 									</li>
 									<li>
-										<a href="javascript: startAdvance('sample');" id="advance-sample-link"
+										<a ng-click="startAdvance('sample')" id="advance-sample-link"
 										   th:text="#{study.studydetails.action.advance.sample}">Advance sampled plants</a>
 									</li>
 								</ul>
@@ -436,17 +436,6 @@
 	</div>
 
 	<div class="row">
-		<div class="col-xs-12 col-md-12">
-			<div th:include="/Common/includes/manageLocationsModal"></div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-xs-12 col-md-12">
-			<div th:include="/Common/includes/manageMethodsModal"></div>
-		</div>
-	</div>
-
-	<div class="row">
 		<div th:include="/StudyManager/includes/deleteStudyConfirmation"></div>
 	</div>
 
@@ -457,9 +446,7 @@
 	</div>
 
 	<div class="row">
-		<div class="col-xs-12 col-md-12">
-			<div id="select-enviornments" th:include="/TrialManager/templates/selectEnvironmentModal"></div>
-		</div>
+		<div th:include="/Common/includes/advanceGermplasmChangeConfirmation"></div>
 	</div>
 
 	<div class="row">
@@ -502,7 +489,7 @@
 	</div>
 
 	<div class="row">
-		<div id="crossSetBreedingMethod" th:include="/Common/includes/crosses/setBreedingMethod"></div>
+		<div th:include="/TrialManager/templates/crossingBreedingMethodModal"></div>
 	</div>
 
 	<div class="row">
@@ -536,7 +523,8 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/trial-settings-manager.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/manageTrial.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/trial-data-manager.js}"></script>
-	<script type="text/javascript" th:src="@{/static/js/trialmanager/selectEnvironmentModal.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/crosses/crossingBreedingMethodModal.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/crosses/crossing-settings-modal.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/fbk-data-table/samples-summary.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/import-crosses.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/studyStateService.js}"></script>
@@ -627,6 +615,23 @@
 		var noLayoutError =/*[[#{error.no.layout}]]*/ '',
 			geoReferenceCreateNotAvailableError =/*[[#{error.geojson.create.not.available}]]*/ '',
 			geoReferenceViewNotAvailableError =/*[[#{error.geojson.view.not.available}]]*/ '';
+
+		var msgSamplePlotError = /*[[#{advancing.study.number.of.plot.error}]]*/ '',
+			msgHarvestDateError = /*[[#{advancing.study.harvest.date.error}]]*/ '',
+			msgMethodError = /*[[#{advancing.study.method.error}]]*/ '',
+
+			oldLineSelected = '',
+			oldMethodSelected = '',
+
+			linesNotWholeNumberError = /*[[#{error.advancing.study.whole.numeric.lines}]]*/ '',
+			msgEmptyListErrorTrial = /*[[#{study.advance.study.empty.list.error}]]*/ '',
+			noMethodVariatesErrorTrial = /*[[#{error.advancing.study.no.method.variates}]]*/ '',
+			noLineVariatesErrorTrial = /*[[#{error.advancing.study.no.line.variates}]]*/ '',
+
+			noMethodValueErrorTrial = /*[[#{error.advancing.study.empty.method}]]*/ '',
+			listShouldNotBeEmptyError = /*[[#{study.save.advance.error.row.list.empty}]]*/ '',
+			locationTooltipMessage = /*[[#{advance.study.location.tooltip.message} + ' ']]*/ '',
+			noReplicationSelectedError = /*[[#{error.advancing.study.one.selected.reps}]]*/ '';
 
 		var translations = {
 			/*TRIAL SETTINGS*/
@@ -788,6 +793,7 @@
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/studyInstanceService.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/environments.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/experimentalDesign.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/trialmanager/advance/advance.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/saveList.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/r-package/r-package.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/trialmanager/visualization/visualization.js}"></script>

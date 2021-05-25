@@ -402,40 +402,39 @@ function isDeletedPlotAtStartCoord(id) {
 	return false;
 }
 
+function beforeSend(xhr) {
+	var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
+	xhr.setRequestHeader('Authorization', "Bearer " + xAuthToken);
+}
+
 function recreatePopupLocationCombo() {
 	'use strict';
 	$.ajax(
-	{ url: '/Fieldbook/locations/getLocations',
+	{ // Get ALL Locations
+		url: '/bmsapi/crops/'+ cropName +'/locations?programUUID=' + currentProgramId + '&favoritesOnly=false&page=0&size=10000',
 		type: 'GET',
 		cache: false,
 		data: '',
+		beforeSend: beforeSend,
 		success: function(data) {
-			if (data.success == '1') {
+			if (data && data.length > 0) {
 				//recreate the select2 combos to get updated list of locations
 				//we check if the favorite is check then we use favorite locations
-
-				var popuplocationSuggestions;
-				if ($('#showFavoriteLocation').is(':checked')) {
-					popuplocationSuggestions = data.favoriteLocations;
-				} else if ($("#showBreedingLocationOnlyRadio").is(':checked')) {
-					popuplocationSuggestions = data.allBreedingLocations;
-				} else {
-					popuplocationSuggestions = data.allLocations;
-				}
+				var popuplocationSuggestions = data
 
 				var popuplocationSuggestions_obj = [];
 				var defaultData = null;
 				var currentLocId = $('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val();
-				$.each(popuplocationSuggestions, function(index, value) {
-					var locNameDisplay = value.lname;
-					if (value.labbr != null && value.labbr != '') {
-						locNameDisplay  += ' - (' + value.labbr + ')';
+				$.each(data, function(index, value) {
+					var locNameDisplay = value.name;
+					if (value.abbreviation != null && value.abbreviation != '') {
+						locNameDisplay  += ' - (' + value.abbreviation + ')';
 					}
 					var tempData = {
-						'id': value.locid,
+						'id': value.id,
 						'text': locNameDisplay
 					};
-					if (currentLocId != '' && currentLocId == value.locid) {
+					if (currentLocId != '' && currentLocId == value.id) {
 						defaultData = tempData;
 					}
 
@@ -560,23 +559,6 @@ function recreatePopupFieldCombo() {
 		}
 	}
  );
-}
-
-function setComboValues(suggestions_obj, id, name) {
-	'use strict';
-	var dataVal = {id:'', text:'', description:''}; //default value
-	if (id != '') {
-		var count = 0;
-		//find the matching value in the array given
-		for (count = 0 ; count < suggestions_obj.length ; count++) {
-			if (suggestions_obj[count].id == id) {
-				dataVal = suggestions_obj[count];
-				break;
-			}
-		}
-	}
-	//set the selected value of the combo
-	$('#' + name).select2('data', dataVal);
 }
 
 function initializeFieldSelect2(suggestions, suggestions_obj, addOnChange, currentFieldId) {
@@ -807,22 +789,17 @@ function doEnterFieldDetailsPageLoad() {
 
 	$('#' + getJquerySafeId('userFieldmap.fieldLocationId')).val(defaultLocationId);
 
-	programLocationUrl = $('#programLocationUrl').val();
 	setSelectedTrialsAsDraggable();
 	calculateTotalPlots();
-
-	recreateLocationCombo();
 
 	initializeFieldSelect2({}, [], true);
 	initializeBlockSelect2({}, [], true);
 
 	showBlockDetails(true, null);
 
-	showCorrectFieldLocationCombo();
-
-	// remove any other listeners for the location update
-	$(document).off('location-update');
-	$(document).on('location-update', recreateLocationCombo);
+	$('#fieldLocationId').val(defaultLocationId);
+	$('#fieldLocationName').val(defaultLocationName);
+	loadFieldsDropdown(defaultLocationId, '');
 
 	var numRowPerPlot = $('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val();
 	$('#' + getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val(defaultRowsPerPlot);
@@ -857,19 +834,6 @@ function setCorrectValueToFieldCombo (ls_obj, locId, fieldInputId) {
 		}
 	}
 }
-
-
-function showCorrectFieldLocationCombo() {
-	// Default Location
-
-	$('#fieldLocationId').val(defaultLocationId);
-	$('#fieldLocationName').val(defaultLocationName);
-	setComboValues(locationSuggestions_obj, defaultLocationId, 'fieldLocationIdAll');
-	loadFieldsDropdown(defaultLocationId, '');
-	$('#s2id_fieldLocationIdAll').select2('disable');
-	$('#s2id_fieldLocationIdAll').show();
-}
-
 
 function doPreselectValues(locationId, fieldId, blockId) {
 	'use strict';

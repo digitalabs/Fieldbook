@@ -48,6 +48,10 @@
 <div layout:fragment="page-script">
 <script type='text/javascript' th:inline="javascript">
 //<![CDATA[
+
+var  cropName = /*[[${cropName}]]*/ '';
+var  currentProgramId = /*[[${currentProgramId}]]*/ '';
+
 function showAddFieldPopup() {
 	'use strict';
 	$('#page-message-modal').html('');

@@ -102,7 +102,7 @@
 						<label class="control-label col-xs-4" style="text-align: left;"><b th:text="#{fieldmap.study.field.location}">Field Location:</b><span class="required">*</span></label>
 
 						<div class="col-xs-8">
-
+							<input type="text" id="fieldLocationName" name="fieldLocationName" disabled="disabled" style="width: 100%"/>
 							<input type="hidden" th:field="*{fieldLocationIdAll}" class="form-control select2" placeholder=""/>
 							<input type="hidden" th:field="*{userFieldmap.fieldLocationId}"/>
 							<input type="hidden" th:field="*{userFieldmap.locationName}" />
@@ -199,9 +199,6 @@
 	</div></div>
 </div>
 <div class="row">
-	<div id="manage-location" th:include="/Common/includes/manageLocationsModal"></div>
-</div>
-<div class="row">
 	<div id="add-fields" th:include="/Fieldmap/addFieldsModal"></div>
 </div>
 
@@ -227,17 +224,6 @@ var defaultLocationId = /*[[${fieldmapForm.userFieldmap.selectedFieldMaps[0].dat
 var defaultLocationName = /*[[${fieldmapForm.userFieldmap.selectedFieldMaps[0].datasets[0].trialInstances[0].locationName}]]*/;
 var msgColError = /*[[#{fieldmap.column.plot.error}]]*/;
 var msgNoSelectedTrial = /*[[#{fieldmap.no.selected.study.instance}]]*/;
-var locationSuggestions = /*[[${locationList}]]*/ null;
-var locationSuggestions_obj = [];
-
-var locationSuggestionsFav = /*[[${favoriteLocationList}]]*/ null;
-var locationSuggestionsFav_obj = [];
-
-var locationSuggestionsBreeding = /*[[${favoriteLocationList}]]*/ null;
-var locationSuggestionsBreeding_obj = [];
-
-var locationSuggestionsBreedingFav = /*[[${favoriteLocationList}]]*/ null;
-var locationSuggestionsBreedingFav_obj = [];
 
 var msgBlockSizeError;
 var isViewFieldmap = false;
@@ -249,7 +235,6 @@ var entryPlotLabel = /*[[#{fieldmap.study.number.of.entries.and.plots}]]*/;
 var totalNumberOfSelectedPlots = /*[[${fieldmapForm.userFieldmap.totalNumberOfSelectedPlots}]]*/;
 
 var noOfRowsLimitError = /*[[#{fieldmap.no.of.blocks.exceeds.limit}]]*/;
-
 
 var parentLocationRequired = /*[[#{fieldmap.add.field.parent.location.required}]]*/;
 var fieldNameRequired = /*[[#{fieldmap.add.field.name.required}]]*/;
@@ -263,20 +248,14 @@ var blockAddedSuccessfully = /*[[#{fieldmap.block.added.successfully}]]*/;
 var fieldNameDuplicateError = /*[[#{fieldmap.field.name.duplicate.error}]]*/;
 var blockNameDuplicateError = /*[[#{fieldmap.block.name.duplicate.error}]]*/;
 
-
-var programLocationUrl = '';
-var locationIframeOpened = false;
-
 var isNewBlock = false;
 
-
-	msgBlockSizeError = /*[[#{fieldmap.plots.exceed.blocks.study}]]*/;
+var msgBlockSizeError = /*[[#{fieldmap.plots.exceed.blocks.study}]]*/;
 
 $( document ).ready(function() {
 	'use strict';
 	doEnterFieldDetailsPageLoad();
 	$('select.calculate-plot').select2({minimumResultsForSearch: 20});
-
 });
 
   //]]>

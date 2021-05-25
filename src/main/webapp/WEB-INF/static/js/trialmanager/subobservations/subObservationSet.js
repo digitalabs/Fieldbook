@@ -1709,7 +1709,6 @@
 						$scope.observation.value = $scope.valuecontainer.observationValue;
 						$scope.observation.onOpenClose(isOpen);
 					}
-
 				}
 			};
 		})

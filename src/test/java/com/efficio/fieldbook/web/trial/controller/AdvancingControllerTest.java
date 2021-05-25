@@ -388,55 +388,6 @@ public class AdvancingControllerTest {
 		Assert.assertEquals("Should have the same number of records", importedGermplasms.size(), mapInfos.size());
 	}
 
-    @Test
-    public void testShowAdvanceNurseryGetSuccess(){
-		Mockito.doReturn("ASDFDSAGFDGHSFDJ").when(this.contextUtil).getCurrentProgramUUID();
-		final Project project = new Project();
-		final CropType cropType = new CropType();
-		cropType.setCropName("maize");
-		project.setCropType(cropType);
-		project.setUniqueID("ASDASFGSDSDSDSDSDSDSD");
-
-		Mockito.doReturn(project).when(this.contextUtil).getProjectInContext();
-		final Workbook workbook = WorkbookTestDataInitializer.getTestWorkbook(10, StudyTypeDto.getTrialDto());
-		WorkbookTestDataInitializer.setTrialObservations(workbook);
-		workbook.getStudyDetails().setId(1011);
-		workbook.setMeansDatasetId(1357);
-		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
-		final Variable variable = this.createSelectionVariable();
-		final MeasurementVariable measurementVariable = new MeasurementVariable();
-		measurementVariable.setTermId(205);
-		measurementVariable.setVariableType(VariableType.SELECTION_METHOD);
-		measurementVariable.setName("SinglePlant");
-
-		Mockito.when(this.variableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), measurementVariable.getTermId(), false)).thenReturn(variable);
-
-		final DatasetDTO datasetDTO = new DatasetDTO();
-		datasetDTO.setVariables(Lists.newArrayList(measurementVariable));
-		Mockito.when(this.datasetService.getDataset(Mockito.anyInt())).thenReturn(datasetDTO);
-		Mockito.when(this.fieldbookProperties.getProgramBreedingMethodsUrl()).thenReturn("programBreedingMethodUrl");
-        final Project testProject = new Project();
-        testProject.setProjectId(1L);
-
-        final AdvancingStudyForm form = new AdvancingStudyForm();
-        final Model model = new ExtendedModelMap();
-
-		final String returnTemplatePage = this.advancingController.show(form, model, 212, null, null, null);
-
-        Assert.assertEquals("StudyManager/advanceStudyModal",returnTemplatePage);
-        final Map<String,Object> modelMap = model.asMap();
-        Assert.assertEquals(21,((List<ChoiceKeyVal>)modelMap.get("yearChoices")).size());
-        Assert.assertEquals(12,((List<ChoiceKeyVal>)modelMap.get("monthChoices")).size());
-
-        Assert.assertEquals("1",form.getMethodChoice());
-        Assert.assertEquals("1",form.getLineChoice());
-        Assert.assertEquals("1",form.getLineSelected());
-        Assert.assertEquals("1",form.getAllPlotsChoice());
-        Assert.assertEquals("205",form.getDefaultMethodId());
-        Assert.assertEquals(1,form.getMethodVariates().size());
-        Assert.assertEquals(205,form.getMethodVariates().get(0).getId().intValue());
-        Assert.assertEquals("SinglePlant",form.getMethodVariates().get(0).getName());
-    }
 
 	@Test
     public void testApplyChangeDetailsSuccess() throws IOException {

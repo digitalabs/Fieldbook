@@ -6,9 +6,9 @@
 	const module = angular.module('manageTrialApp');
 
 	module.controller('InventoryTabCtrl', ['$rootScope', '$scope', '$q', 'DTOptionsBuilder', 'DTColumnBuilder', 'InventoryService', '$compile', '$timeout',
-		'$uibModal', 'studyInstanceService', 'HasAnyAuthorityService', 'PERMISSIONS',
+		'$uibModal', 'studyInstanceService', 'HasAnyAuthorityService', 'PERMISSIONS', 'germplasmDetailsModalService',
 		function (
-			$rootScope, $scope, $q, DTOptionsBuilder, DTColumnBuilder, InventoryService, $compile, $timeout, $uibModal, studyInstanceService, HasAnyAuthorityService, PERMISSIONS
+			$rootScope, $scope, $q, DTOptionsBuilder, DTColumnBuilder, InventoryService, $compile, $timeout, $uibModal, studyInstanceService, HasAnyAuthorityService, PERMISSIONS, germplasmDetailsModalService
 		) {
 			$scope.nested = {};
 			$scope.nested.dtInstance = {};
@@ -423,10 +423,10 @@
 				},
 				{
 					targets: "germplasm-link-column",
-					render: function (data, type, rowData, meta) {
-						return '<a class="gid-link" href="javascript: void(0)"'
-							+ ` onclick="openGermplasmDetailsPopopWithGidAndDesig('${rowData.lot.gid}')">`
-							+ EscapeHTML.escape(data) + '</a>';
+					createdCell: function (td, cellData, rowData) {
+						$(td).html($compile('<a class="gid-link" href="javascript: void(0)"'
+							+ ` ng-click="openGermplasmDetailsModal('${rowData.lot.gid}')">`
+							+ EscapeHTML.escape(cellData) + '</a>')($scope));
 					}
 				},
 				{
@@ -435,6 +435,10 @@
 					defaultContent: ''
 				}
 			];
+
+			$scope.openGermplasmDetailsModal = function (gid) {
+				germplasmDetailsModalService.openGermplasmDetailsModal(gid, null);
+			}
 
 			$scope.openInfoModal = function (rowIndex) {
 				$uibModal.open({

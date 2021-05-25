@@ -23,9 +23,9 @@
 
 	subObservationModule.controller('SubObservationSetCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$stateParams',
 		'DTOptionsBuilder', 'DTColumnBuilder', '$http', '$q', '$compile', 'studyInstanceService', 'datasetService', 'derivedVariableService', '$timeout', '$uibModal',
-		'visualizationModalService', 'studyContext',
+		'visualizationModalService', 'studyContext', 'germplasmDetailsModalService',
 		function ($scope, $rootScope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile,
-				  studyInstanceService, datasetService, derivedVariableService, $timeout, $uibModal, visualizationModalService, studyContext
+				  studyInstanceService, datasetService, derivedVariableService, $timeout, $uibModal, visualizationModalService, studyContext, germplasmDetailsModalService
 		) {
 
 			// used also in tests - to call $rootScope.$apply()
@@ -1455,10 +1455,13 @@
 						columnsDef.push({
 							targets: columns.length - 1,
 							orderable: false,
-							render: function (data, type, full, meta) {
-								return '<a class="gid-link" href="javascript: void(0)" ' +
-									'onclick="openGermplasmDetailsPopopWithGidAndDesig(\'' +
-									full.gid + '\')">' + EscapeHTML.escape(data.value) + '</a>';
+							createdCell: function (td, data, full) {
+								$(td).html(
+									$compile(
+										'<a class="gid-link" href="javascript: void(0)" ng-click="openGermplasmDetailsModal(\'' +
+										full.gid + '\')">' + EscapeHTML.escape(data.value) + '</a>'
+									)($scope)
+								);
 							}
 						});
 					} else if (columnData.termId === STOCK_ID) {
@@ -1545,6 +1548,10 @@
 					columns: columns,
 					columnsDef: columnsDef
 				};
+			}
+
+			$scope.openGermplasmDetailsModal = function (gid) {
+				germplasmDetailsModalService.openGermplasmDetailsModal(gid, null);
 			}
 
 			function renderCategoricalValue(value, columnData) {

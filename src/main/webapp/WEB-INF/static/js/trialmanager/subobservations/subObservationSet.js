@@ -10,7 +10,7 @@
 	var changingPlotEntryDeRegister = () => {
 	};
 
-	var subObservationModule = angular.module('subObservation', ['visualization']);
+	var subObservationModule = angular.module('subObservation', ['visualization', 'germplasmDetailsModule']);
 	var TRIAL_INSTANCE = 8170,
 		GID = 8240,
 		GROUPGID = 8330,

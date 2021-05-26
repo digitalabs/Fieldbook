@@ -10,11 +10,29 @@
 	</div>
 </div>
 <div class="row">
-	<div id="study-details" class="col-xs-12 col-md-12 review-study-details fbk-hide" style="padding-bottom: 20px;">
+	<div id="study-details" class="col-xs-12 col-md-12 review-study-details fbk-hide" style="padding-bottom: 20px;" ng-app="studyInfoApp" ng-controller="StudyInfoCtrl">
 		<ul id="study-tab-headers" class="nav nav-tabs" role="tablist"></ul>
 		<div id="study-tabs" class="tab-content"></div>
 	</div>
 </div>
+<script type="text/javascript" th:src="@{/static/js/studyManager/studyInfo.js}"></script>
+
+<script type="text/javascript" th:inline="javascript">
+	//<![CDATA[
+	(function (){
+		angular.module('studyInfoApp').value('studyContext', {
+			cropName: /*[[${cropName}]]*/ '',
+			programId: /*[[${currentProgramId}]]*/ ''
+		});
+	})();
+	//]]>
+</script>
+<script type="text/javascript" th:src="@{/static/js/trialmanager/germplasm/germplasm-details-modal/germplasm-details-module.js}"></script>
+
+<!--Auth Controller-->
+<script type="text/javascript" th:src="@{/static/js/auth/auth.module.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/angular/angular-local-storage.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/angular/bmsAuth.js}"></script>
 
 <script type='text/javascript' th:inline="javascript">
 //<![CDATA[

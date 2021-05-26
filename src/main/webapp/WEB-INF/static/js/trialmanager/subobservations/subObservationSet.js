@@ -1209,6 +1209,7 @@
 
 								// Restore handler
 								addClickHandler();
+								adjustColumns();
 							}, function (response) {
 								if (!response) {
 									// no ajax, local reject / cancel (e.g overwrite file? -> no)
@@ -1231,6 +1232,7 @@
 							processCell(cell, cellData, rowData, columnData);
 							// Restore handler
 							addClickHandler();
+							adjustColumns();
 						}
 
 						if (columnData.dataTypeCode === 'D') {

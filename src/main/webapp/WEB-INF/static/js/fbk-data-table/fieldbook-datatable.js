@@ -230,8 +230,8 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 					width: '100px',
 					render: function(data, type, row) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
-							'onclick="ImportCrosses.openGermplasmModal(&quot;' +
-							row.FGID + '&quot;,&quot;' + row['FEMALE_PARENT'] + '&quot;)">' + row['FEMALE_PARENT'] + '</a>';
+							'onclick="ImportCrosses.openGermplasmModal(&quot;' + row.FGID + '&quot;)">' +
+							row['FEMALE_PARENT'] + '</a>';
 					}
 				});
 
@@ -249,8 +249,8 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 						var str = size > 1 ? '[':'';
 						$.each(row.MGID, function( index, value ) {
 							str += '<a class="gid-link" href="javascript: void(0)" ' +
-								'onclick="ImportCrosses.openGermplasmModal(&quot;' +
-								row.MGID[index] + '&quot;,&quot;' + row['MALE_PARENT'][index] + '&quot;)">' + row['MALE_PARENT'][index] + '</a>'
+								'onclick="ImportCrosses.openGermplasmModal(&quot;' + row.MGID[index] + '&quot;)">' +
+								row['MALE_PARENT'][index] + '</a>'
 							if (index < (size-1)) {
 								str += ", ";
 							}
@@ -340,96 +340,6 @@ BMS.Fieldbook.PreviewCrossesDataTable = (function($) {
 
 })(jQuery);
 
-BMS.Fieldbook.GermplasmListDataTable = (function($) {
-
-
-	/**
-	 * Creates a new GermplasmListDataTable.
-	 *
-	 * @constructor
-	 * @alias module:fieldbook-datatable
-	 * @param {string} tableIdentifier the id of the table container
-	 * @param {string} parentDiv parentdiv of that contains the table
-	 * @param {dataList} json representation of the data to be displayed
-	 */
-	var dataTableConstructor = function GermplasmListDataTable(tableIdentifier, parentDiv, dataList) {
-		'use strict';
-
-		var columns = [],
-			columnsDef = [],
-			germplasmDataTable;
-
-		$(tableIdentifier + ' thead tr th').each(function() {
-			columns.push({data: $(this).data('col-name')});
-			if ($(this).data('col-name') == 'gid') {
-				// For GID
-				columnsDef.push({
-					targets: columns.length - 1,
-					data: $(this).html(),
-					width: '100px',
-					render: function(data, type, full, meta) {
-						return '<a class="gid-link" href="javascript: void(0)" ' +
-							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
-					}
-				});
-			} else if ($(this).data('col-name') == 'desig') {
-				// For designation
-				columnsDef.push({
-					targets: columns.length - 1,
-					data: $(this).html(),
-					render: function(data, type, full, meta) {
-						return '<a class="desig-link" href="javascript: void(0)" ' +
-							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
-					}
-				});
-			}
-		});
-
-		this.germplasmDataTable = $(tableIdentifier).dataTable({
-			data: dataList,
-			columns: columns,
-			columnDefs: columnsDef,
-			scrollY: '500px',
-			scrollX: '100%',
-			scrollCollapse: true,
-			dom: 'R<t><"fbk-page-div"p>',
-			iDisplayLength: 100,
-			fnDrawCallback: function(oSettings) {
-				makeGermplasmListDraggable(true);
-			},
-			fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-				$(nRow).data('entry', aData.entry);
-				$(nRow).data('gid', aData.gid);
-				$(nRow).data('index', aData.position);
-
-				$(nRow).addClass('draggable primaryRow');
-				$('td', nRow).attr('nowrap', 'nowrap');
-				return nRow;
-			},
-			fnInitComplete: function(oSettings, json) {
-
-				var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength);
-				if (totalPages === 1) {
-					$(parentDiv + ' .fbk-page-div').addClass('fbk-hide');
-				}
-				$(parentDiv).removeClass('fbk-hide-opacity');
-				oSettings.oInstance.fnAdjustColumnSizing();
-				oSettings.oInstance.api().colResize.init(oSettings.oInit.colResize);
-				oSettings.oInstance.fnAdjustColumnSizing();
-			}
-		});
-
-		GermplasmListDataTable.prototype.getDataTable = function() {
-			return this.germplasmDataTable;
-		};
-	};
-
-	return dataTableConstructor;
-
-})(jQuery);
-
 BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 
 	var dataTableConstructor = function TrialGermplasmListDataTable(tableIdentifier, parentDiv, dataList) {
@@ -450,8 +360,8 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 					data: $(this).data('col-name'),
 					render: function(data, type, full, meta) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
-							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
+							'onclick="openGermplasmDetailsPopup(&quot;' +
+							full.gid + '&quot;)">' + data + '</a>';
 					}
 				});
 			} else if ($(this).data('col-name') == '8250-key') {
@@ -461,8 +371,8 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 					data: $(this).data('col-name'),
 					render: function(data, type, full, meta) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
-							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
+							'onclick="openGermplasmDetailsPopup(&quot;' +
+							full.gid + '&quot;)">' + data + '</a>';
 					}
 				});
 			}else if ($(this).data('col-name') == '8255-key') {
@@ -717,8 +627,8 @@ BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
 					width: '100px',
 					render: function(data, type, full, meta) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
-							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
+							'onclick="openGermplasmDetailsPopup(&quot;' +
+							full.GID + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
 					}
 				});
 			} else if ($(this).data('term-id') == '8250') {
@@ -728,8 +638,8 @@ BMS.Fieldbook.PreviewDesignMeasurementsDataTable = (function($) {
 					data: $(this).html(),
 					render: function(data, type, full, meta) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
-							'onclick="openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
-							full.GID + '&quot;,&quot;' + full.DESIGNATION + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
+							'onclick="openGermplasmDetailsPopup(&quot;' +
+							full.GID + '&quot;)">' + EscapeHTML.escape(data) + '</a>';
 					}
 				});
 			} else if ($(this).data('term-id') == '8255' ) {
@@ -976,8 +886,8 @@ BMS.Fieldbook.ExistingCrossesDataTable = (function($) {
 					width: '100px',
 					render: function(data, type, row) {
 						return '<a class="gid-link" href="javascript: void(0)" ' +
-							'onclick="ImportCrosses.openGermplasmModalFromExistingCrossesView(&quot;' +
-							row.GID + '&quot;,&quot;' + row.DESIGNATION + '&quot;)">' + row['GID'] + '</a>';
+							'onclick="ImportCrosses.openGermplasmModalFromExistingCrossesView(&quot;' + row.GID + '&quot;)">' +
+							row['GID'] + '</a>';
 					}
 				});
 

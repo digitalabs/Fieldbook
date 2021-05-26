@@ -7,9 +7,9 @@
 
 	manageTrialAppModule.controller('GermplasmCtrl',
 		['$scope', '$rootScope', '$q', '$compile', 'TrialManagerDataService', 'DTOptionsBuilder', 'studyStateService', 'studyEntryService', 'germplasmStudySourceService',
-			'datasetService', '$timeout', '$uibModal',
+			'datasetService', '$timeout', '$uibModal', 'germplasmDetailsModalService',
 			function ($scope, $rootScope, $q, $compile, TrialManagerDataService, DTOptionsBuilder, studyStateService, studyEntryService, germplasmStudySourceService,
-					  datasetService, $timeout, $uibModal) {
+					  datasetService, $timeout, $uibModal, germplasmDetailsModalService) {
 
 				$scope.settings = TrialManagerDataService.settings.germplasm;
 				$scope.trialMeasurement = {hasMeasurement: studyStateService.hasGeneratedDesign()};
@@ -198,8 +198,7 @@
 									$(td).val("");
 									var value = columnData.termId === 8240 ? rowData.properties['8240'].value : rowData.properties['8250'].value;
 									$(td).append($compile('<a class="gid-link" href="javascript: void(0)" ' +
-										'onclick="openGermplasmDetailsPopopWithGidAndDesig(\'' +
-										rowData.gid + '\',\'' + rowData.designation + '\')">' + value + '</a>')($scope));
+										'ng-click="openGermplasmDetailsModal(\'' + rowData.gid + '\')">' + value + '</a>')($scope));
 								},
 								render: function (data, type, full, meta) {
 									return '';
@@ -587,6 +586,10 @@
 						$scope.showClearList = !studyStateService.hasGeneratedDesign();
 						$scope.showUpdateImportListButton = !studyStateService.hasGeneratedDesign();
 					}
+				};
+
+				$scope.openGermplasmDetailsModal = function (gid) {
+					germplasmDetailsModalService.openGermplasmDetailsModal(gid, null);
 				}
 			}]);
 

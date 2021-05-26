@@ -70,7 +70,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -84,6 +83,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -102,16 +102,18 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 
 	private static final String UNIQUE_ID = "uniqueId";
 
-	/** The Constant URL. */
+	/**
+	 * The Constant URL.
+	 */
 	protected static final String URL = "/StudyManager/advance/study";
-
-	private static final String MODAL_URL = "StudyManager/advanceStudyModal";
 
 	private static final String SAVE_ADVANCE_STUDY_PAGE_TEMPLATE = "StudyManager/saveAdvanceStudy";
 
 	private static final String TABLE_HEADER_LIST = "tableHeaderList";
 
-	/** The Constant LOG. */
+	/**
+	 * The Constant LOG.
+	 */
 	private static final Logger LOG = LoggerFactory.getLogger(AdvancingController.class);
 
 	private static final String IS_SUCCESS = "isSuccess";
@@ -120,7 +122,9 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 
 	private static final String MESSAGE = "message";
 
-	/** The fieldbook middleware service. */
+	/**
+	 * The fieldbook middleware service.
+	 */
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
 
@@ -159,99 +163,6 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		return "StudyManager/advanceStudyModal";
 	}
 
-	/**
-	 * Shows the screen.
-	 *
-	 * @param form the form
-	 * @param model the model
-	 * @param studyId the study id
-     * @param selectedInstances Set of Trial Instances(Optional)
-	 * @return the string
-	 * @throws MiddlewareQueryException the middleware query exception
-	 */
-	@RequestMapping(value = "/{studyId}", method = RequestMethod.GET)
-	@Transactional
-	public String show(@ModelAttribute("advancingStudyForm") final AdvancingStudyForm form, final Model model,
-		@PathVariable final int studyId, @RequestParam(required = false) final Set<String> selectedInstances,
-		@RequestParam(required = false) final String noOfReplications, @RequestParam(required = false) final String advanceType)
-		throws MiddlewareException {
-
-    	form.setMethodChoice("1");
-		form.setLineChoice("1");
-		form.setLineSelected("1");
-		form.setAllPlotsChoice("1");
-        form.setDefaultMethodId(Integer.toString(AppConstants.SINGLE_PLANT_SELECTION_SF.getInt()));
-        form.setBreedingMethodUrl(this.fieldbookProperties.getProgramBreedingMethodsUrl());
-        form.setSelectedReplications(Sets.newHashSet("1"));
-        form.setStudyId(Integer.toString(studyId));
-
-		final DatasetDTO datasetDTO = this.datasetService.getDataset(this.userSelection.getWorkbook().getMeasurementDatesetId());
-
-		// FIXME The Observation, Traits, and selections aren't loaded dynamically on the workbook is for that I reload the observation and the variables.
-		final List<SettingDetail> detailList = new ArrayList<>();
-
-		for (final MeasurementVariable var : datasetDTO.getVariables()) {
-			if (var.getVariableType() == VariableType.SELECTION_METHOD) {
-
-				final SettingDetail detail = this.createSettingDetailWithVariableType(var.getTermId(), var.getName(), VariableType.SELECTION_METHOD);
-				detail.getVariable().setOperation(Operation.UPDATE);
-				detail.setDeletable(true);
-				detailList.add(detail);
-			}
-		}
-		form.setMethodVariates(this.filterVariablesByProperty(detailList,
-				AppConstants.PROPERTY_BREEDING_METHOD.getString())); //TODO FIX THIS.
-		form.setLineVariates(this.filterVariablesByProperty(detailList,
-				AppConstants.PROPERTY_PLANTS_SELECTED.getString())); //TODO FIX THIS.
-		form.setPlotVariates(form.getLineVariates());
-
-		final Date currentDate = DateUtil.getCurrentDate();
-		final SimpleDateFormat sdf = DateUtil.getSimpleDateFormat("yyyy");
-		final SimpleDateFormat sdfMonth = DateUtil.getSimpleDateFormat("MM");
-		final String currentYear = sdf.format(currentDate);
-		form.setHarvestYear(currentYear);
-		form.setHarvestMonth(sdfMonth.format(currentDate));
-
-        form.setSelectedTrialInstances(selectedInstances);
-
-		model.addAttribute("yearChoices", this.generateYearChoices(Integer.parseInt(currentYear)));
-		model.addAttribute("monthChoices", this.generateMonthChoices());
-        model.addAttribute("replicationsChoices",this.generateReplicationChoice(noOfReplications));
-		model.addAttribute("advanceType", advanceType);
-
-		return super.showAjaxPage(model, AdvancingController.MODAL_URL);
-	}
-
-    private List<String> generateReplicationChoice(final String noOfReplications){
-        final List<String> replicationChoices = new ArrayList<>();
-        if(noOfReplications != null){
-            final int replicationCount = Integer.parseInt(noOfReplications);
-            for(int i=1; i<=replicationCount; i++){
-                replicationChoices.add(i+"");
-            }
-        }
-
-        return replicationChoices;
-    }
-	public List<ChoiceKeyVal> generateYearChoices(int currentYear) {
-		final List<ChoiceKeyVal> yearList = new ArrayList<>();
-		final int startYear = currentYear - AppConstants.ADVANCING_YEAR_RANGE.getInt();
-		currentYear = currentYear + AppConstants.ADVANCING_YEAR_RANGE.getInt();
-		for (int i = startYear; i <= currentYear; i++) {
-			yearList.add(new ChoiceKeyVal(Integer.toString(i), Integer.toString(i)));
-		}
-		return yearList;
-	}
-
-	public List<ChoiceKeyVal> generateMonthChoices() {
-		final List<ChoiceKeyVal> monthList = new ArrayList<>();
-		final DecimalFormat df2 = new DecimalFormat("00");
-		for (double i = 1; i <= 12; i++) {
-			monthList.add(new ChoiceKeyVal(df2.format(i), df2.format(i)));
-		}
-		return monthList;
-	}
-
 	@ModelAttribute("programLocationURL")
 	public String getProgramLocation() {
 		return this.fieldbookProperties.getProgramLocationsUrl();
@@ -275,13 +186,20 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		final Map<String, Object> results = new HashMap<>();
 		final Study study = this.fieldbookMiddlewareService.getStudy(Integer.parseInt(form.getStudyId()));
 		final String lineSelected = form.getLineSelected() != null ? form.getLineSelected().trim() : null;
-		final String harvestLocationAbbreviation = form.getHarvestLocationAbbreviation() != null ? form.getHarvestLocationAbbreviation() : "";
+		final String harvestLocationAbbreviation =
+			form.getHarvestLocationAbbreviation() != null ? form.getHarvestLocationAbbreviation() : "";
 
-		final AdvancingStudy advancingStudy = new AdvancingStudy(study, form.getMethodChoice(), form.getLineChoice(), lineSelected, form.getHarvestDate(), form.getHarvestLocationId(),
-				harvestLocationAbbreviation, form.getAdvanceBreedingMethodId(), form.getAllPlotsChoice(), form.getLineVariateId(), form.getMethodVariateId(), form.getPlotVariateId(),
-				false, form.getSelectedTrialInstances(), form.getSelectedReplications(), AdvanceType.fromLowerCaseName(form.getAdvanceType()));
-		final boolean observationsLoaded = this.fieldbookMiddlewareService.loadObservations(this.userSelection.getWorkbook(), advancingStudy.getSelectedTrialInstances().stream().map(i -> Integer.valueOf(i)).collect(Collectors.toList()),
-			advancingStudy.getSelectedReplications() != null ? advancingStudy.getSelectedReplications().stream().map(i -> Integer.parseInt(i)).collect(Collectors.toList()) : null);
+		final AdvancingStudy advancingStudy =
+			new AdvancingStudy(study, form.getMethodChoice(), form.getLineChoice(), lineSelected, form.getHarvestDate(),
+				form.getHarvestLocationId(),
+				harvestLocationAbbreviation, form.getAdvanceBreedingMethodId(), form.getAllPlotsChoice(), form.getLineVariateId(),
+				form.getMethodVariateId(), form.getPlotVariateId(),
+				false, form.getSelectedTrialInstances(), form.getSelectedReplications(),
+				AdvanceType.fromLowerCaseName(form.getAdvanceType()));
+		final boolean observationsLoaded = this.fieldbookMiddlewareService.loadObservations(this.userSelection.getWorkbook(),
+			advancingStudy.getSelectedTrialInstances().stream().map(i -> Integer.valueOf(i)).collect(Collectors.toList()),
+			advancingStudy.getSelectedReplications() != null ?
+				advancingStudy.getSelectedReplications().stream().map(i -> Integer.parseInt(i)).collect(Collectors.toList()) : null);
 
 		try {
 
@@ -289,7 +207,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 				final Method method = this.fieldbookMiddlewareService.getMethodById(Integer.parseInt(advancingStudy.getBreedingMethodId()));
 				if ("GEN".equals(method.getMtype())) {
 					form.setErrorInAdvance(this.messageSource.getMessage("study.save.advance.error.generative.method",
-							new String[] {}, LocaleContextHolder.getLocale()));
+						new String[] {}, LocaleContextHolder.getLocale()));
 					form.setGermplasmList(new ArrayList<>());
 					form.setEntries(0);
 					results.put(AdvancingController.IS_SUCCESS, "0");
@@ -299,7 +217,6 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 					return results;
 				}
 			}
-
 
 			final List<AdvanceGermplasmChangeDetail> changeDetails = new ArrayList<>();
 			final AdvancingSourceList list = this.getAdvancingSourceList(advancingStudy);
@@ -321,7 +238,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		} catch (final MiddlewareException | RuleException | FieldbookException e) {
 			AdvancingController.LOG.error(e.getMessage(), e);
 			form.setErrorInAdvance(this.messageSource.getMessage(e.getMessage(),
-					new String[] {}, LocaleContextHolder.getLocale()));
+				new String[] {}, LocaleContextHolder.getLocale()));
 			form.setGermplasmList(new ArrayList<>());
 			form.setEntries(0);
 			results.put(AdvancingController.IS_SUCCESS, "0");
@@ -337,10 +254,10 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		return results;
 	}
 
-	private List<ImportedGermplasm> createAdvanceList(final AdvancingStudy advanceInfo, final List<AdvanceGermplasmChangeDetail> changeDetails, final AdvancingSourceList list)
-			throws RuleException {
+	private List<ImportedGermplasm> createAdvanceList(final AdvancingStudy advanceInfo,
+		final List<AdvanceGermplasmChangeDetail> changeDetails, final AdvancingSourceList list)
+		throws RuleException {
 		this.updatePlantsSelectedIfNecessary(list, advanceInfo);
-
 
 		for (final AdvancingSource source : list.getRows()) {
 			if (source.getChangeDetail() != null) {
@@ -372,18 +289,19 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		final List<ImportedGermplasm> list = new ArrayList<>();
 		int index = 1;
 		final TimerWatch timer = new TimerWatch("advance");
-		final Map<String, String> locationIdNameMap = this.studyDataManager.createInstanceLocationIdToNameMapFromStudy(this.userSelection.getWorkbook().getStudyDetails().getId());
+		final Map<String, String> locationIdNameMap =
+			this.studyDataManager.createInstanceLocationIdToNameMapFromStudy(this.userSelection.getWorkbook().getStudyDetails().getId());
 		final Map<Integer, StudyInstance> studyInstanceMap =
 			this.studyInstanceService.getStudyInstances(advancingParameters.getStudy().getId()).stream()
 				.collect(Collectors.toMap(StudyInstance::getInstanceNumber, i -> i));
 
 		final List<MeasurementVariable> environmentVariables =
-				this.datasetService.getObservationSetVariables(this.userSelection.getWorkbook().getTrialDatasetId(), Collections.singletonList(
-						VariableType.ENVIRONMENT_DETAIL.getId()));
+			this.datasetService.getObservationSetVariables(this.userSelection.getWorkbook().getTrialDatasetId(), Collections.singletonList(
+				VariableType.ENVIRONMENT_DETAIL.getId()));
 		final Map<String, Integer> keySequenceMap = new HashMap<>();
 		for (final AdvancingSource row : rows.getRows()) {
 			if (row.getGermplasm() != null && !row.isCheck() && row.getPlantsSelected() != null && row.getBreedingMethod() != null
-					&& row.getPlantsSelected() > 0 && row.getBreedingMethod().isBulkingMethod() != null) {
+				&& row.getPlantsSelected() > 0 && row.getBreedingMethod().isBulkingMethod() != null) {
 				row.setKeySequenceMap(keySequenceMap);
 
 				// if change detail object is created due to a duplicate being encountered somewhere during processing, provide a
@@ -415,10 +333,10 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	}
 
 	protected void addImportedGermplasmToList(final List<ImportedGermplasm> list, final AdvancingSource source,
-											  final Method breedingMethod, final int index, final int selectionNumber,
-											  final AdvancingStudy advancingParameters, final String plantNo, final Map<String, String> locationIdNameMap,
+		final Method breedingMethod, final int index, final int selectionNumber,
+		final AdvancingStudy advancingParameters, final String plantNo, final Map<String, String> locationIdNameMap,
 		final Map<Integer, StudyInstance> studyInstanceMap,
-											  final List<MeasurementVariable> environmentVariables) {
+		final List<MeasurementVariable> environmentVariables) {
 
 		String selectionNumberToApply = null;
 		final boolean allPlotsSelected = "1".equals(advancingParameters.getAllPlotsChoice());
@@ -436,22 +354,23 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 
 		// set the seed source string for the new Germplasm
 		final String seedSource = this.seedSourceGenerator
-				.generateSeedSource(fromMeasurementRow(this.userSelection.getWorkbook().getTrialObservationByTrialInstanceNo(Integer.valueOf(source.getTrialInstanceNumber()))),
-					this.userSelection.getWorkbook().getConditions(), selectionNumberToApply, source.getPlotNumber(),
-					this.userSelection.getWorkbook().getStudyName(), plantNo, locationIdNameMap, studyInstanceMap, environmentVariables);
+			.generateSeedSource(fromMeasurementRow(
+				this.userSelection.getWorkbook().getTrialObservationByTrialInstanceNo(Integer.valueOf(source.getTrialInstanceNumber()))),
+				this.userSelection.getWorkbook().getConditions(), selectionNumberToApply, source.getPlotNumber(),
+				this.userSelection.getWorkbook().getStudyName(), plantNo, locationIdNameMap, studyInstanceMap, environmentVariables);
 
 		// Use index as germplasm name for now
 		final ImportedGermplasm germplasm =
-				new ImportedGermplasm(index, String.valueOf(index), null /* gid */
-						, source.getGermplasm().getCross(), seedSource,
-						FieldbookUtil.generateEntryCode(index), null /* check */
-						, breedingMethod.getMid());
+			new ImportedGermplasm(index, String.valueOf(index), null /* gid */
+				, source.getGermplasm().getCross(), seedSource,
+				FieldbookUtil.generateEntryCode(index), null /* check */
+				, breedingMethod.getMid());
 
 		// assign parentage etc for the new Germplasm
 		final Integer sourceGid = source.getGermplasm().getGid() != null ? Integer.parseInt(source.getGermplasm().getGid()) : -1;
 		final Integer gnpgs = source.getGermplasm().getGnpgs() != null ? source.getGermplasm().getGnpgs() : -1;
 		this.assignGermplasmAttributes(germplasm, sourceGid, gnpgs, source.getGermplasm().getGpid1(), source.getGermplasm().getGpid2(),
-				source.getSourceMethod(), breedingMethod);
+			source.getSourceMethod(), breedingMethod);
 
 		// assign grouping based on parentage
 
@@ -473,11 +392,11 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	}
 
 	private void assignGermplasmAttributes(final ImportedGermplasm germplasm, final Integer sourceGid, final Integer sourceGnpgs,
-										   final Integer sourceGpid1, final Integer sourceGpid2, final Method sourceMethod, final Method breedingMethod) {
+		final Integer sourceGpid1, final Integer sourceGpid2, final Method sourceMethod, final Method breedingMethod) {
 
 		if ((sourceMethod != null && sourceMethod.getMtype() != null
-				&& AppConstants.METHOD_TYPE_GEN.getString().equals(sourceMethod.getMtype())) || sourceGnpgs < 0 &&
-				(sourceGpid1 != null && sourceGpid1.equals(0)) && (sourceGpid2 != null && sourceGpid2.equals(0))) {
+			&& AppConstants.METHOD_TYPE_GEN.getString().equals(sourceMethod.getMtype())) || sourceGnpgs < 0 &&
+			(sourceGpid1 != null && sourceGpid1.equals(0)) && (sourceGpid2 != null && sourceGpid2.equals(0))) {
 
 			germplasm.setGpid1(sourceGid);
 		} else {
@@ -492,7 +411,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	}
 
 	private AdvancingSourceList createAdvancingSourceList(final AdvancingStudy advanceInfo,
-														  final Map<Integer, Method> breedingMethodMap, final Map<String, Method> breedingMethodCodeMap) throws FieldbookException {
+		final Map<Integer, Method> breedingMethodMap, final Map<String, Method> breedingMethodCodeMap) throws FieldbookException {
 
 		final Study study = advanceInfo.getStudy();
 		Workbook workbook = this.userSelection.getWorkbook();
@@ -500,7 +419,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			workbook = this.fieldbookMiddlewareService.getStudyDataSet(study.getId());
 		}
 		return this.advancingSourceListFactory
-				.createAdvancingSourceList(workbook, advanceInfo, study, breedingMethodMap, breedingMethodCodeMap);
+			.createAdvancingSourceList(workbook, advanceInfo, study, breedingMethodMap, breedingMethodCodeMap);
 	}
 
 	private void updatePlantsSelectedIfNecessary(final AdvancingSourceList list, final AdvancingStudy info) {
@@ -513,7 +432,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			lineChoiceSame = false;
 		}
 		if (list != null && list.getRows() != null && !list.getRows().isEmpty() && (lineChoiceSame && plantsSelected > 0
-				|| allPlotsChoice)) {
+			|| allPlotsChoice)) {
 			for (final AdvancingSource row : list.getRows()) {
 				if (!row.isBulk() && lineChoiceSame) {
 					row.setPlantsSelected(plantsSelected);
@@ -554,7 +473,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		}
 		// now we need to delete all marked deleted
 		int index = 1;
-		for (final Iterator<ImportedGermplasm> iterator = importedGermplasmListTemp.iterator(); iterator.hasNext();) {
+		for (final Iterator<ImportedGermplasm> iterator = importedGermplasmListTemp.iterator(); iterator.hasNext(); ) {
 			final ImportedGermplasm germplasm = iterator.next();
 			if (deletedEntryNumbers.contains(germplasm.getEntryNumber())) {
 				iterator.remove();
@@ -570,7 +489,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
 	public String showAdvanceStudy(@ModelAttribute("advancingStudyForm") final AdvancingStudyForm form, final Model model,
-			final HttpServletRequest req) throws MiddlewareQueryException {
+		final HttpServletRequest req) throws MiddlewareQueryException {
 
 		try {
 			/* The imported germplasm list. */
@@ -597,7 +516,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 
 	@RequestMapping(value = "/delete/entries", method = RequestMethod.POST)
 	public String deleteAdvanceStudyEntries(@ModelAttribute("advancingStudyForm") final AdvancingStudyForm form,
-			final Model model, final HttpServletRequest req) throws MiddlewareQueryException {
+		final Model model, final HttpServletRequest req) throws MiddlewareQueryException {
 
 		try {
 			/* The imported germplasm list. */
@@ -629,7 +548,8 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		return super.showAjaxPage(model, AdvancingController.SAVE_ADVANCE_STUDY_PAGE_TEMPLATE);
 	}
 
-	protected List<ImportedGermplasm> deleteImportedGermplasmEntries(final List<ImportedGermplasm> importedGermplasmList, final String[] entries) {
+	protected List<ImportedGermplasm> deleteImportedGermplasmEntries(final List<ImportedGermplasm> importedGermplasmList,
+		final String[] entries) {
 		for (final String entryNumber : entries) {
 			boolean isFound = false;
 			int i = 0;
@@ -665,7 +585,6 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			dataMap.put("source", germplasm.getSource());
 			dataMap.put("parentage", germplasm.getCross());
 
-
 			dataMap.put("trialInstanceNumber", germplasm.getTrialInstanceNumber());
 			dataMap.put("replicationNumber", germplasm.getReplicationNumber());
 
@@ -684,7 +603,7 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		tableHeaderList.add(new TableHeader(ColumnLabels.SEED_SOURCE.getTermNameFromOntology(this.ontologyDataManager), "source"));
 
 		tableHeaderList.add(new TableHeader(ColumnLabels.TRIAL_INSTANCE.getTermNameFromOntology(this.ontologyDataManager),
-				"trialInstanceNumber"));
+			"trialInstanceNumber"));
 		tableHeaderList.add(new TableHeader(ColumnLabels.REP_NO.getTermNameFromOntology(this.ontologyDataManager), "replicationNumber"));
 
 		return tableHeaderList;
@@ -695,9 +614,9 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		if (variables != null && !variables.isEmpty()) {
 			for (final SettingDetail detail : variables) {
 				if (detail.getVariable() != null && detail.getVariable().getProperty() != null
-						&& propertyName.equalsIgnoreCase(detail.getVariable().getProperty())) {
+					&& propertyName.equalsIgnoreCase(detail.getVariable().getProperty())) {
 					list.add(new StandardVariableReference(detail.getVariable().getCvTermId(), detail.getVariable().getName(), detail
-							.getVariable().getDescription()));
+						.getVariable().getDescription()));
 				}
 			}
 		}
@@ -715,18 +634,19 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			}
 		}
 		return this.fieldbookMiddlewareService.countPlotsWithRecordedVariatesInDataset(this.userSelection.getWorkbook()
-				.getMeasurementDatesetId(), idParams);
+			.getMeasurementDatesetId(), idParams);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/checkForNonMaintenanceAndDerivativeMethods/{id}", method = RequestMethod.GET)
-	public Map<String, String> checkForNonMaintenanceAndDerivativeMethods(@PathVariable final Integer id, @RequestParam final Set<String> trialInstances) throws MiddlewareQueryException {
+	public Map<String, String> checkForNonMaintenanceAndDerivativeMethods(@PathVariable final Integer id,
+		@RequestParam final Set<String> trialInstances) throws MiddlewareQueryException {
 		final Map<String, String> result = new HashMap<>();
 		final List<Method> methods = this.studyDataManager.getMethodsFromExperiments(this.userSelection.getWorkbook()
 			.getMeasurementDatesetId(), id, new ArrayList<>(trialInstances));
 		final Set<String> nonAdvancingMethods = methods.stream().filter(method ->
 			!MethodType.getAdvancingMethodTypes().contains(method.getMtype())).map(Method::getMcode).collect(Collectors.toSet());
-		if(!CollectionUtils.isEmpty(nonAdvancingMethods)) {
+		if (!CollectionUtils.isEmpty(nonAdvancingMethods)) {
 			result.put("errors", this.messageSource.getMessage("error.advancing.study.non.maintenance.derivative.method",
 				new String[] {StringUtils.join(nonAdvancingMethods, ", ")}, LocaleContextHolder.getLocale()));
 		}
@@ -735,7 +655,8 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 
 	@ResponseBody
 	@RequestMapping(value = "/checkMethodTypeMode/{methodVariateId}", method = RequestMethod.GET)
-	public String checkMethodTypeMode(@PathVariable final int methodVariateId, @RequestParam final Set<String> trialInstances) throws MiddlewareQueryException {
+	public String checkMethodTypeMode(@PathVariable final int methodVariateId, @RequestParam final Set<String> trialInstances)
+		throws MiddlewareQueryException {
 		final List<Method> methods = this.studyDataManager.getMethodsFromExperiments(this.userSelection.getWorkbook()
 			.getMeasurementDatesetId(), methodVariateId, new ArrayList<>(trialInstances));
 
@@ -819,4 +740,10 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
 		return settingDetail;
 	}
+
+	@RequestMapping(value = "/selectEnvironmentModal", method = RequestMethod.GET)
+	public String selectEnvironmentModal(final Model model) {
+		return super.showAjaxPage(model, "StudyManager/selectEnvironmentModal");
+	}
+
 }

@@ -1312,14 +1312,9 @@ function closeModal(modalId) {
 	$('#' + modalId).modal('hide');
 }
 
-function openGermplasmDetailsPopopWithGidAndDesig(gid) {
+function openGermplasmDetailsPopup(gid, callback) {
 	const germplasmDetailsModalService = angular.element('#mainApp').injector().get('germplasmDetailsModalService');
-	germplasmDetailsModalService.openGermplasmDetailsModal(gid, null);
-}
-
-function openGermplasmDetailsPopopWithGidAndDesigWithCallBack(gid, callBackFunction) {
-	const germplasmDetailsModalService = angular.element('#mainApp').injector().get('germplasmDetailsModalService');
-	germplasmDetailsModalService.openGermplasmDetailsModal(gid, callBackFunction);
+	germplasmDetailsModalService.openGermplasmDetailsModal(gid, callback);
 }
 
 function showListTreeToolTip(node, nodeSpan) {

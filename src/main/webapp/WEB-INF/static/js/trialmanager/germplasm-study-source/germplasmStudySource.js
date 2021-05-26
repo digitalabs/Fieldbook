@@ -321,7 +321,7 @@
 						targets: "germplasm-link-column",
 						render: function (data, type, rowData, meta) {
 							return '<a class="gid-link" href="javascript: void(0)"'
-								+ ` onclick="openGermplasmDetailsPopopWithGidAndDesig('${rowData.gid}')">`
+								+ ` onclick="openGermplasmDetailsPopup('${rowData.gid}')">`
 								+ EscapeHTML.escape(data) + '</a>';
 						}
 					},

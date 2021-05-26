@@ -418,7 +418,7 @@ var ImportCrosses = {
 				$('#existing-crosses-table').resize();
 			}).modal({ backdrop: 'static', keyboard: true });
 		}
-		openGermplasmDetailsPopopWithGidAndDesigWithCallBack(gid, callback);
+		openGermplasmDetailsPopup(gid, callback);
 	},
 
 	openGermplasmModal : function (gid) {
@@ -434,7 +434,7 @@ var ImportCrosses = {
 			}).modal({ backdrop: 'static', keyboard: true });
 		}
 
-		openGermplasmDetailsPopopWithGidAndDesigWithCallBack(gid, callback);
+		openGermplasmDetailsPopup(gid, callback);
 	}
 };
 

@@ -40,7 +40,6 @@ import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.ontology.Property;
 import org.generationcp.middleware.domain.ontology.Scale;
@@ -602,20 +601,6 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		tableHeaderList.add(new TableHeader(ColumnLabels.REP_NO.getTermNameFromOntology(this.ontologyDataManager), "replicationNumber"));
 
 		return tableHeaderList;
-	}
-
-	private List<StandardVariableReference> filterVariablesByProperty(final List<SettingDetail> variables, final String propertyName) {
-		final List<StandardVariableReference> list = new ArrayList<>();
-		if (variables != null && !variables.isEmpty()) {
-			for (final SettingDetail detail : variables) {
-				if (detail.getVariable() != null && detail.getVariable().getProperty() != null
-					&& propertyName.equalsIgnoreCase(detail.getVariable().getProperty())) {
-					list.add(new StandardVariableReference(detail.getVariable().getCvTermId(), detail.getVariable().getName(), detail
-						.getVariable().getDescription()));
-				}
-			}
-		}
-		return list;
 	}
 
 	@ResponseBody

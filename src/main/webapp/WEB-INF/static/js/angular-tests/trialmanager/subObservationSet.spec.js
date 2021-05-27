@@ -875,7 +875,9 @@ describe('SubObservationSetCtrl', function () {
 			'checkOutOfBoundDraftData',
 			'getObservationTableUrl'
 		]),
-		derivedVariableServiceMock = jasmine.createSpyObj('derivedVariableService', ['displayExecuteCalculateVariableMenu', 'showWarningIfDependenciesAreMissing']);
+		derivedVariableServiceMock = jasmine.createSpyObj('derivedVariableService', ['displayExecuteCalculateVariableMenu', 'showWarningIfDependenciesAreMissing']),
+		fileServiceMock = jasmine.createSpyObj('fileService', ['upload', 'showFile'])
+	;
 
 	// Mock the dependency module
 	angular.module('visualization', []);
@@ -892,6 +894,7 @@ describe('SubObservationSetCtrl', function () {
 		module(function ($provide) {
 			$provide.value("datasetService", datasetServiceMock);
 			$provide.value("derivedVariableService", derivedVariableServiceMock);
+			$provide.value("fileService", fileServiceMock);
 			$provide.value("TrialManagerDataService", TrialManagerDataServiceMock);
 			$provide.value("$uibModal", $uibModal);
 			$provide.value("studyContext", studyContext);

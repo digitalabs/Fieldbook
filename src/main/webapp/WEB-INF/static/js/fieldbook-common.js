@@ -470,7 +470,8 @@ function createLabelPrinting(tableName) {
 			'?datasetId=' + $('#plotDataset').val() +
 			'&studyId=' + $('#studyId').val() +
 			'&programId=' + $('#currentProgramId').val() +
-			'&printingLabelType=ObservationDataset';
+			'&printingLabelType=ObservationDataset' +
+			'&cropName=' + $('#cropName').val();
 
 	} else {
 		type = 'Trial';

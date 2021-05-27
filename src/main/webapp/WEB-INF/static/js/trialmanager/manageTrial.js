@@ -930,13 +930,15 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 									'?datasetId=' + scope.selected.datasetId +
 									'&studyId=' + studyContext.studyId +
 									'&programId=' + studyContext.programId +
-									'&printingLabelType=' + LABEL_PRINTING_TYPE.OBSERVATION_DATASET;
+									'&printingLabelType=' + LABEL_PRINTING_TYPE.OBSERVATION_DATASET +
+									'&cropName=' + studyContext.cropName;
 							} else {
 								window.location.href = '/ibpworkbench/controller/jhipster#label-printing' +
 									'?datasetId=' + scope.selected.datasetId +
 									'&studyId=' + studyContext.studyId +
 									'&programId=' + studyContext.programId +
-									'&printingLabelType=' + LABEL_PRINTING_TYPE.SUBOBSERVATION_DATASET;
+									'&printingLabelType=' + LABEL_PRINTING_TYPE.SUBOBSERVATION_DATASET +
+									'&cropName=' + studyContext.cropName;
 							}
 						};
 					}]

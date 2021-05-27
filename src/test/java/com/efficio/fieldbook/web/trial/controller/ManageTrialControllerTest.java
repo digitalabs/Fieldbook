@@ -14,6 +14,8 @@ package com.efficio.fieldbook.web.trial.controller;
 import org.generationcp.commons.security.AuthorizationService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.manager.api.StudyDataManager;
+import org.generationcp.middleware.pojos.workbench.CropType;
+import org.generationcp.middleware.pojos.workbench.Project;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -44,6 +46,10 @@ public class ManageTrialControllerTest {
 
 	private MockMvc mockMvc;
 
+	private static final String CROP_NAME = "maize";
+
+	private static final String PROGRAM_UUID = "programUUID123";
+
 	@Before
 	public void setup() {
         MockitoAnnotations.initMocks(this);
@@ -51,6 +57,12 @@ public class ManageTrialControllerTest {
         // in CI server when creating bean StudyDataManager since there's no program in DB)
         this.mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
 		Mockito.when(authorizationService.isSuperAdminUser()).thenReturn(Boolean.TRUE);
+
+		final Project project = new Project();
+		project.setCropType(new CropType(CROP_NAME));
+		project.setUniqueID(PROGRAM_UUID);
+		Mockito.when(this.contextUtil.getProjectInContext()).thenReturn(project);
+
 	}
 
 	@Test

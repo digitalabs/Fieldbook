@@ -399,15 +399,13 @@ var ImportCrosses = {
 		});
 	},
 
-	openGermplasmModalFromExistingCrossesView : function (gid, desig) {
+	openGermplasmModalFromExistingCrossesView : function (gid) {
 		'use strict';
-		$('#openGermplasmModal').off('hidden.bs.modal');
 		$('#existingCrossesModal').off('hidden.bs.modal');
 		$('#existingCrossesModal').off('shown.bs.modal');
 		$('#existingCrossesModal').modal('hide');
-		openGermplasmDetailsPopopWithGidAndDesig(gid, desig);
-		$('#openGermplasmModal').one('hidden.bs.modal', function () {
-			$('#openGermplasmModal').modal('hide');
+
+		const callback = function () {
 			$('#existingCrossesModal').on('hidden.bs.modal', function () {
 				$('#existingCrossesModal').modal ('hide');
 				$('#openCrossesListModal').one('shown.bs.modal', function() {
@@ -419,23 +417,24 @@ var ImportCrosses = {
 				// After the modal window is shown, make sure that the table header is properly adjusted.
 				$('#existing-crosses-table').resize();
 			}).modal({ backdrop: 'static', keyboard: true });
-		});
+		}
+		openGermplasmDetailsPopup(gid, callback);
 	},
 
-	openGermplasmModal : function (gid, desig) {
+	openGermplasmModal : function (gid) {
 		'use strict';
-		$('#openGermplasmModal').off('hidden.bs.modal');
 		$('#openCrossesListModal').off('hidden.bs.modal');
 		$('#openCrossesListModal').off('shown.bs.modal');
 		$('#openCrossesListModal').modal('hide');
-		openGermplasmDetailsPopopWithGidAndDesig(gid, desig);
-		$('#openGermplasmModal').one('hidden.bs.modal', function () {
-			$('#openGermplasmModal').modal ('hide');
+
+		const callback = function() {
 			$('#openCrossesListModal').one('shown.bs.modal', function() {
 				// After the modal window is shown, make sure that the table header is properly adjusted.
 				$('#preview-crosses-table').resize();
 			}).modal({ backdrop: 'static', keyboard: true });
-		});
+		}
+
+		openGermplasmDetailsPopup(gid, callback);
 	}
 };
 

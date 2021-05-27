@@ -467,11 +467,11 @@ function createLabelPrinting(tableName) {
 
 	if (idVal !== null) {
 		window.location.href = '/ibpworkbench/controller/jhipster#label-printing' +
-			'?datasetId=' + $('#plotDataset').val() +
+			'?cropName=' + $('#cropName').val() +
+			'&programUUID=' + $('#currentProgramId').val() +
+			'&datasetId=' + $('#plotDataset').val() +
 			'&studyId=' + $('#studyId').val() +
-			'&programId=' + $('#currentProgramId').val() +
-			'&printingLabelType=ObservationDataset' +
-			'&cropName=' + $('#cropName').val();
+			'&printingLabelType=ObservationDataset';
 
 	} else {
 		type = 'Trial';

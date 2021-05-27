@@ -927,18 +927,18 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 						scope.forkPrintLabelFlows = function () {
 							if (studyContext.measurementDatasetId === scope.selected.datasetId) {
 								window.location.href = '/ibpworkbench/controller/jhipster#label-printing' +
-									'?datasetId=' + scope.selected.datasetId +
+									'?cropName=' + studyContext.cropName +
+									'&programUUID=' + studyContext.programId +
+									'&datasetId=' + scope.selected.datasetId +
 									'&studyId=' + studyContext.studyId +
-									'&programId=' + studyContext.programId +
-									'&printingLabelType=' + LABEL_PRINTING_TYPE.OBSERVATION_DATASET +
-									'&cropName=' + studyContext.cropName;
+									'&printingLabelType=' + LABEL_PRINTING_TYPE.OBSERVATION_DATASET;
 							} else {
 								window.location.href = '/ibpworkbench/controller/jhipster#label-printing' +
-									'?datasetId=' + scope.selected.datasetId +
+									'?cropName=' + studyContext.cropName +
+									'&programUUID=' + studyContext.programId +
+									'&datasetId=' + scope.selected.datasetId +
 									'&studyId=' + studyContext.studyId +
-									'&programId=' + studyContext.programId +
-									'&printingLabelType=' + LABEL_PRINTING_TYPE.SUBOBSERVATION_DATASET +
-									'&cropName=' + studyContext.cropName;
+									'&printingLabelType=' + LABEL_PRINTING_TYPE.SUBOBSERVATION_DATASET;
 							}
 						};
 					}]

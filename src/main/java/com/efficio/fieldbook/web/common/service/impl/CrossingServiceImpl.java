@@ -135,10 +135,10 @@ public class CrossingServiceImpl implements CrossingService {
 		This is used for MANUAL naming of crosses
 	 */
 	@Override
-	public boolean applyCrossSetting(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList, final Integer userId,
+	public boolean applyCrossSetting(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
 		final Workbook workbook) {
 		this.applyCrossNameSettingToImportedCrosses(crossSetting.getCrossNameSetting(), importedCrossesList.getImportedCrosses());
-		final GermplasmListResult pairsResult = this.getTriples(crossSetting, importedCrossesList, userId, workbook);
+		final GermplasmListResult pairsResult = this.getTriples(crossSetting, importedCrossesList, workbook);
 		this.save(crossSetting, importedCrossesList, pairsResult.germplasmTriples);
 		return pairsResult.isTrimed;
 	}
@@ -212,7 +212,7 @@ public class CrossingServiceImpl implements CrossingService {
 		}
 
 		final GermplasmListResult pairsResult =
-			this.generateGermplasmNameTriples(crossSetting, importedCrossesList.getImportedCrosses(), userId,
+			this.generateGermplasmNameTriples(crossSetting, importedCrossesList.getImportedCrosses(),
 				importedCrossesList.hasPlotDuplicate());
 
 		final List<Germplasm> germplasmList = this.extractGermplasmList(pairsResult.germplasmTriples);
@@ -313,7 +313,6 @@ public class CrossingServiceImpl implements CrossingService {
 		final Iterator<Integer> germplasmIdIterator = savedGermplasmIds.iterator();
 		final Integer today = Integer.valueOf(DateUtil.getCurrentDateAsStringValue());
 		final Integer plotCodeFldNo = this.germplasmDataManager.getPlotCodeField().getFldno();
-		final int currentWorkbenchUserId = this.contextUtil.getCurrentWorkbenchUserId();
 		for (final ImportedCross cross : importedCrossesList.getImportedCrosses()) {
 
 			// this will do the merging and using the gid and cross from the
@@ -333,7 +332,6 @@ public class CrossingServiceImpl implements CrossingService {
 			plotCodeAttribute.setGermplasmId(newGid);
 			plotCodeAttribute.setTypeId(plotCodeFldNo);
 			plotCodeAttribute.setAval(cross.getSource());
-			plotCodeAttribute.setCreatedBy(currentWorkbenchUserId);
 
 			attributeList.add(plotCodeAttribute);
 		}
@@ -348,11 +346,11 @@ public class CrossingServiceImpl implements CrossingService {
 	// FIXME the methods getTriples() and generateGermplasmNameTriples() should be
 	// combined into one
 	private GermplasmListResult getTriples(final CrossSetting crossSetting, final ImportedCrossesList importedCrossesList,
-		final Integer userId, final Workbook workbook) {
+		final Workbook workbook) {
 		this.populateSeedSource(importedCrossesList, workbook);
 
 		final GermplasmListResult pairsResult =
-			this.generateGermplasmNameTriples(crossSetting, importedCrossesList.getImportedCrosses(), userId,
+			this.generateGermplasmNameTriples(crossSetting, importedCrossesList.getImportedCrosses(),
 				importedCrossesList.hasPlotDuplicate());
 
 		final List<Germplasm> germplasmList = this.extractGermplasmList(pairsResult.germplasmTriples);
@@ -382,7 +380,6 @@ public class CrossingServiceImpl implements CrossingService {
 		final Integer nstatValue =
 			crossSetting.getCrossNameSetting().isSaveParentageDesignationAsAString() ? 0 : CrossingServiceImpl.PREFERRED_NAME;
 
-		final int currentWorkbenchUserId = this.contextUtil.getCurrentWorkbenchUserId();
 		for (final ImportedCross entry : importedCrossesList.getImportedCrosses()) {
 
 			final Integer gid = germplasmIdIterator.next();
@@ -397,7 +394,6 @@ public class CrossingServiceImpl implements CrossingService {
 			final Name parentageDesignationName = new Name();
 			parentageDesignationName.setGermplasm(new Germplasm(gid));
 			parentageDesignationName.setTypeId(CrossingServiceImpl.PEDIGREE_NAME_TYPE);
-			parentageDesignationName.setCreatedBy(currentWorkbenchUserId);
 
 			parentageDesignationName.setNval(this.truncateName(parentageDesignation));
 			parentageDesignationName.setNstat(nstatValue);
@@ -499,7 +495,7 @@ public class CrossingServiceImpl implements CrossingService {
 
 	// FIXME the methods getTriples() and generateGermplasmNameTriples() should be combined into one
 	GermplasmListResult generateGermplasmNameTriples(final CrossSetting crossSetting, final List<ImportedCross> importedCrosses,
-		final Integer userId, final boolean hasPlotDuplicate) {
+		final boolean hasPlotDuplicate) {
 
 		boolean isTrimed = false;
 		final List<Triple<Germplasm, Name, List<Progenitor>>> triples = new ArrayList<>();
@@ -518,8 +514,8 @@ public class CrossingServiceImpl implements CrossingService {
 				continue;
 			}
 
-			final Germplasm germplasm = this.createGermplasm(cross, userId, harvestLocationId, additionalDetailsSetting.getHarvestDate());
-			final Name name = this.createName(germplasm, cross, userId, harvestLocationId);
+			final Germplasm germplasm = this.createGermplasm(cross, harvestLocationId, additionalDetailsSetting.getHarvestDate());
+			final Name name = this.createName(germplasm, cross, harvestLocationId);
 			final List<Progenitor> progenitors = this.createProgenitors(cross, germplasm);
 
 			final List<Name> names = new ArrayList<>();
@@ -534,7 +530,7 @@ public class CrossingServiceImpl implements CrossingService {
 		return new GermplasmListResult(triples, isTrimed);
 	}
 
-	Germplasm createGermplasm(final ImportedCross cross, final Integer userId, final Integer harvestLocationId,
+	Germplasm createGermplasm(final ImportedCross cross, final Integer harvestLocationId,
 		final String harvestDate) {
 
 		final Germplasm germplasm;
@@ -551,7 +547,7 @@ public class CrossingServiceImpl implements CrossingService {
 			// persisted, GID will be null. We populate data from
 			// spreadsheet,
 			// create new Germplasm.
-			this.updateConstantFields(germplasm, userId);
+			this.updateConstantFields(germplasm);
 			germplasm.setGpid1(Integer.valueOf(cross.getFemaleGid()));
 			germplasm.setGpid2(cross.getMaleGids().get(0));
 			germplasm.setMethodId(cross.getBreedingMethodId());
@@ -568,7 +564,7 @@ public class CrossingServiceImpl implements CrossingService {
 		return germplasm;
 	}
 
-	Name createName(final Germplasm germplasm, final ImportedCross cross, final Integer userId, final Integer harvestLocationId) {
+	Name createName(final Germplasm germplasm, final ImportedCross cross, final Integer harvestLocationId) {
 
 		final Name name;
 
@@ -588,7 +584,6 @@ public class CrossingServiceImpl implements CrossingService {
 		// Common name updates
 		final String designation = cross.getDesig();
 		name.setNval(this.truncateName(designation));
-		name.setCreatedBy(userId);
 		name.setNdate(germplasm.getGdate());
 		name.setLocationId(harvestLocationId);
 		name.setGermplasm(germplasm);
@@ -605,7 +600,7 @@ public class CrossingServiceImpl implements CrossingService {
 		// exist as crosses are created in crossing manager and persisted.
 		if (cross.getGid() != null) {
 			final List<Progenitor> existingProgenitors = this.pedigreeDataManager.getProgenitorsByGID(Integer.valueOf(cross.getGid()));
-			if (existingProgenitors != null) {
+			if (!existingProgenitors.isEmpty()) {
 				return existingProgenitors;
 			}
 		} else if (cross.isPolyCross()) {
@@ -620,7 +615,7 @@ public class CrossingServiceImpl implements CrossingService {
 
 			while (iterator.hasNext()) {
 				final ImportedGermplasmParent importedGermplasmParent = iterator.next();
-				progenitors.add(new Progenitor(germplasm, progenitorNumber, importedGermplasmParent.getGid(), null));
+				progenitors.add(new Progenitor(germplasm, progenitorNumber, importedGermplasmParent.getGid()));
 				progenitorNumber++;
 			}
 		}
@@ -638,12 +633,11 @@ public class CrossingServiceImpl implements CrossingService {
 		return designation;
 	}
 
-	private void updateConstantFields(final Germplasm germplasm, final Integer userId) {
+	private void updateConstantFields(final Germplasm germplasm) {
 		germplasm.setGnpgs(CrossingServiceImpl.GERMPLASM_GNPGS);
 		germplasm.setGrplce(CrossingServiceImpl.GERMPLASM_GRPLCE);
 		germplasm.setLgid(CrossingServiceImpl.GERMPLASM_LGID);
 		germplasm.setMgid(CrossingServiceImpl.GERMPLASM_MGID);
-		germplasm.setCreatedBy(userId);
 		germplasm.setReferenceId(CrossingServiceImpl.GERMPLASM_REFID);
 	}
 

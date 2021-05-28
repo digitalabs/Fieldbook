@@ -1,16 +1,17 @@
-$(function() {
+$(function () {
 	'use strict';
 
 	// attach spinner operations to ajax events
 	jQuery.ajaxSetup({
-		beforeSend: function() {
+		beforeSend: function () {
 			SpinnerManager.addActive();
 		},
-		complete: function() {
+		complete: function () {
 			SpinnerManager.resolveActive();
 		},
-		success: function() {},
-		error: function(jqXHR, textStatus, errorThrown) {
+		success: function () {
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
 			if (jqXHR.status === 500) {
 				showErrorMessage('', ajaxGenericErrorMsg);
 			} else {
@@ -33,9 +34,9 @@ $(function() {
 		outer.style.width = '200px';
 		outer.style.height = '150px';
 		outer.style.overflow = 'hidden';
-		outer.appendChild (inner);
+		outer.appendChild(inner);
 
-		document.body.appendChild (outer);
+		document.body.appendChild(outer);
 		var w1 = inner.offsetWidth;
 		outer.style.overflow = 'scroll';
 		var w2 = inner.offsetWidth;
@@ -43,15 +44,17 @@ $(function() {
 			w2 = outer.clientWidth;
 		}
 
-		document.body.removeChild (outer);
+		document.body.removeChild(outer);
 
 		return (w1 - w2);
 	}
 
 
 	$(document.body)
-		.on('show.bs.modal', function() {
-			if (this.clientHeight < window.innerHeight) {return;}
+		.on('show.bs.modal', function () {
+			if (this.clientHeight < window.innerHeight) {
+				return;
+			}
 
 			var scrollbarWidth = measureScrollBar();
 			if (scrollbarWidth) {
@@ -68,7 +71,7 @@ $(function() {
 			 */
 			$(this).addClass('modal-open');
 		})
-		.on('hidden.bs.modal', function() {
+		.on('hidden.bs.modal', function () {
 			$(document.body).css('padding-right', 0);
 
 			// is there any other modal open?
@@ -84,14 +87,14 @@ $(function() {
 		});
 
 	$('.fbk-help')
-		.click(function() {
+		.click(function () {
 			var helpModule = $(this).data().helpLink;
-			$.get('/ibpworkbench/controller/help/getUrl/' + helpModule).success(function(helpUrl) {
+			$.get('/ibpworkbench/controller/help/getUrl/' + helpModule).success(function (helpUrl) {
 				if (!helpUrl || !helpUrl.length) {
 					$.when(
 						$.get('/ibpworkbench/controller/help/headerText'),
 						$.get('/ibpworkbench/VAADIN/themes/gcp-default/layouts/help_not_installed.html')
-					).done(function(headerText,helpHtml) {
+					).done(function (headerText, helpHtml) {
 						bootbox.dialog({
 							title: headerText[0],
 							message: helpHtml[0],
@@ -120,7 +123,7 @@ function isStudyNameUnique(studyName, studyId) {
 		data: 'studyId=' + studyId + '&name=' + studyName,
 		cache: false,
 		async: false,
-		success: function(data) {
+		success: function (data) {
 			if (data.isSuccess == 1) {
 				isUnique = true;
 			} else {
@@ -152,32 +155,6 @@ function validateStartEndDateBasic(startDate, endDate) {
 
 }
 
-//TODO: REMOVE NURSERY CODE.
-function doAjaxMainSubmit(pageMessageDivId, successMessage, overrideAction) {
-	'use strict';
-
-	var form = $('form'),
-		action = form.attr('action'),
-		serializedData = form.serialize();
-
-	if (overrideAction) {
-		action = overrideAction;
-	}
-
-	$.ajax({
-		url: action,
-		type: 'POST',
-		data: serializedData,
-		success: function(html) {
-			// Paste the whole html
-			$('.container .row').first().html(html);
-			if (pageMessageDivId) {
-				showSuccessfulMessage(pageMessageDivId, successMessage);
-			}
-		}
-	});
-}
-
 function showMultiTabPage(paginationUrl, pageNum, sectionDiv, sectionContainerId, paginationListIdentifier) {
 	'use strict';
 	$.ajax({
@@ -185,7 +162,7 @@ function showMultiTabPage(paginationUrl, pageNum, sectionDiv, sectionContainerId
 		type: 'GET',
 		data: '',
 		cache: false,
-		success: function(html) {
+		success: function (html) {
 			var paginationDiv = '#' + sectionContainerId + ' #' + sectionDiv;
 			$(paginationDiv + ':eq(0)').html('');
 			$(paginationDiv + ':eq(0)').html(html);
@@ -197,7 +174,7 @@ function triggerFieldMapTableSelection(tableName) {
 
 	var id;
 
-	$('#' + tableName + ' tr.data-row').on('click', function() {
+	$('#' + tableName + ' tr.data-row').on('click', function () {
 		if (tableName == 'studyFieldMapTree') {
 			$(this).toggleClass('trialInstance');
 			$(this).toggleClass('field-map-highlight');
@@ -221,11 +198,10 @@ function createFieldMap() {
 		return;
 	}
 
-	if( ($('.review-trial-page-identifier').length) ) {
+	if (($('.review-trial-page-identifier').length)) {
 		var mode = '.active .review-trial-page-identifier';
 		var active = '.active';
-	}
-	else {
+	} else {
 		var mode = '#createTrialMainForm';
 		var active = '';
 	}
@@ -233,7 +209,6 @@ function createFieldMap() {
 		name = $(active + ' #studyName').val();
 	showFieldMapPopUpCreate(id);
 }
-
 
 
 function $safeId(fieldId) {
@@ -268,17 +243,17 @@ function isInt(value) {
 
 function isFloatNumber(val) {
 	if (!val || (typeof val != 'string' || val.constructor != String)) {
-		return(false);
+		return (false);
 	}
 	var isNumber = !isNaN(Number(val));
 	if (isNumber) {
 		if (val.indexOf('.') != -1) {
-			return(true);
+			return (true);
 		} else {
 			return isInt(val);
 		}
 	} else {
-		return(false);
+		return (false);
 	}
 }
 
@@ -300,7 +275,7 @@ function selectTrialInstance() {
 					// Redirect to step 3
 					var fieldMapInfo = $.parseJSON(data.fieldMapInfo);
 					isFieldMapHasInvalidValues = data.hasInvalidValues == 'true';
-					if (!isFieldMapHasInvalidValues){
+					if (!isFieldMapHasInvalidValues) {
 						var datasetId = data.datasetId;
 						var environmentId = data.environmentId;
 						location.href = '/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/trial/' + datasetId + '/' + environmentId;
@@ -321,7 +296,7 @@ function selectTrialInstanceCreate() {
 		async: false,
 		cache: false,
 		data: '',
-		success: function(data) {
+		success: function (data) {
 			if (data.fieldMapInfo != null && data.fieldMapInfo != '') {
 				// Show popup to select instances to create field map
 				clearStudyTree();
@@ -337,9 +312,9 @@ function createStudyTree(fieldMapInfoList, hasFieldMap) {
 	var hasOneInstance = false;
 	isFieldMapHasInvalidValues = new Map();
 	createHeader(hasFieldMap);
-	$.each(fieldMapInfoList, function(index, fieldMapInfo) {
+	$.each(fieldMapInfoList, function (index, fieldMapInfo) {
 		createRow(getPrefixName('study', fieldMapInfo.fieldbookId), '', fieldMapInfo.fieldbookName, fieldMapInfo.fieldbookId, hasFieldMap, hasOneInstance);
-		$.each(fieldMapInfo.datasets, function(index, value) {
+		$.each(fieldMapInfo.datasets, function (index, value) {
 			hasOneInstance = fieldMapInfoList.length === 1 && fieldMapInfoList[0].datasets.length === 1 && fieldMapInfoList[0].datasets[0].trialInstances.length === 1;
 			// Create study tree up to instance level
 			createRow(getPrefixName('dataset', value.datasetId), getPrefixName('study', fieldMapInfo.fieldbookId), value.datasetName, value.datasetId, hasFieldMap, hasOneInstance);
@@ -355,10 +330,10 @@ function createStudyTree(fieldMapInfoList, hasFieldMap) {
 	// Set bootstrap ui
 	$('.tree').treegrid();
 
-	$('.tr-expander').on('click', function() {
+	$('.tr-expander').on('click', function () {
 		triggerExpanderClick($(this));
 	});
-	$('.treegrid-expander').on('click', function() {
+	$('.treegrid-expander').on('click', function () {
 		triggerExpanderClick($(this).parent().parent());
 
 	});
@@ -392,14 +367,14 @@ function createHeader(hasFieldMap) {
 
 	if (!hasFieldMap) {
 		newRow = newRow + '<th style="width:35%">' + studyName + '</th>' +
-			'<th style="width:15%">' + locationLabel+ '</th>' +
+			'<th style="width:15%">' + locationLabel + '</th>' +
 			'<th style="width:15%">' + entryLabel + '</th>' +
 			'<th style="width:10%">' + repLabel + '</th>' +
 			'<th style="width:20%">' + plotLabel + '</th>';
 		newRow = newRow + '<th style="width:15%">' + fieldmapLabel + '</th>';
 	} else {
 		newRow = newRow + '<th style="width:40%"></th>' +
-			'<th style="width:15%">' + locationLabel+ '</th>' +
+			'<th style="width:15%">' + locationLabel + '</th>' +
 			'<th style="width:20%">' + entryLabel + '</th>' +
 			'<th style="width:20%">' + repLabel + '</th>' +
 			'<th style="width:20%">' + plotLabel + '</th>';
@@ -492,9 +467,10 @@ function createLabelPrinting(tableName) {
 
 	if (idVal !== null) {
 		window.location.href = '/ibpworkbench/controller/jhipster#label-printing' +
-			'?datasetId=' + $('#plotDataset').val() +
+			'?cropName=' + $('#cropName').val() +
+			'&programUUID=' + $('#currentProgramId').val() +
+			'&datasetId=' + $('#plotDataset').val() +
 			'&studyId=' + $('#studyId').val() +
-			'&programId=' + $('#currentProgramId').val() +
 			'&printingLabelType=ObservationDataset';
 
 	} else {
@@ -536,10 +512,10 @@ function showFieldMapPopUpCreate(ids) {
 		url: link + encodeURIComponent(ids),
 		type: 'GET',
 		data: '',
-		success: function(data) {
+		success: function (data) {
 			selectTrialInstanceCreate();
 		},
-		error: function(jqXHR, textStatus, errorThrown) {
+		error: function (jqXHR, textStatus, errorThrown) {
 			console.log('The following error occured: ' + textStatus, errorThrown);
 		}
 	});
@@ -552,7 +528,7 @@ function showFieldMapPopUp(tableName, id) {
 		url: link + id,
 		type: 'GET',
 		data: '',
-		success: function(data) {
+		success: function (data) {
 			if (data.nav == '0') {
 				selectTrialInstance(tableName);
 			} else if (data.nav == '1') {
@@ -600,13 +576,13 @@ function showCreateFieldMap() {
 
 	if (!validateLocationMatch()) {
 		showMessage(msgLocationNotMatched);
-		return ;
+		return;
 	}
 
 	if ($('#studyFieldMapTree .checkInstance:checked').attr('id')) {
 		selectedWithFieldMap = false;
 		fieldmapIds = [];
-		$('#studyFieldMapTree .checkInstance:checked').each(function() {
+		$('#studyFieldMapTree .checkInstance:checked').each(function () {
 			id = this.id;
 			if (id.indexOf('|') > -1) {
 				datasetId = id.split('|')[0];
@@ -639,7 +615,7 @@ function showCreateFieldMap() {
 }
 
 function redirectToFirstPage() {
-	var mode = ($('.review-trial-page-identifier').length) ?  '.active .review-trial-page-identifier' : '#createTrialMainForm' ;
+	var mode = ($('.review-trial-page-identifier').length) ? '.active .review-trial-page-identifier' : '#createTrialMainForm';
 	var studyId = $(mode + ' #studyId').val();
 	location.href = $('#fieldmap-url').attr('href') + '/' + studyId + '/' + encodeURIComponent(fieldmapIds.join(','));
 }
@@ -649,7 +625,7 @@ function setSelectedTrialsAsDraggable() {
 
 	$('#selectedTrials').tableDnD({
 		onDragClass: 'myDragClass',
-		onDrop: function(table, row) {
+		onDrop: function (table, row) {
 			setSelectTrialOrderValues();
 		}
 	});
@@ -660,7 +636,7 @@ function setSelectedTrialsAsDraggable() {
 
 function setSelectTrialOrderValues() {
 	var i = 0;
-	$('#selectedTrials .orderNo').each(function() {
+	$('#selectedTrials .orderNo').each(function () {
 		$(this).text(i + 1);
 		$(this).parent().parent().attr('id', i + 1);
 		i++;
@@ -672,7 +648,7 @@ function styleDynamicTree(treeName) {
 	var count = 0;
 
 	if ($('#' + treeName) != null) {
-		$('#' + treeName + ' tr').each(function() {
+		$('#' + treeName + ' tr').each(function () {
 			count++;
 			var className = '';
 			if (count % 2 == 1) {
@@ -735,10 +711,10 @@ function deleteStudyInReview() {
 	'use strict';
 
 	var idVal = getCurrentStudyIdInTab();
-	doDeleteStudy(idVal, function(data) {
+	doDeleteStudy(idVal, function (data) {
 		$('#deleteStudyModal').modal('hide');
 		if (data.isSuccess === '1') {
-			setTimeout(function() {
+			setTimeout(function () {
 				//simulate close tab
 				$('#' + idVal).trigger('click');
 				//remove it from the tree
@@ -756,11 +732,11 @@ function deleteStudyInReview() {
 function deleteStudyInEdit() {
 	'use strict';
 	var idVal = $('#studyId').val();
-	doDeleteStudy(idVal, function(data) {
+	doDeleteStudy(idVal, function (data) {
 		$('#deleteStudyModal').modal('hide');
 		if (data.isSuccess === '1') {
 			showSuccessfulMessage('', deleteStudySuccessful);
-			setTimeout(function() {
+			setTimeout(function () {
 				//go back to review study page
 				location.href = $('#delete-success-return-url').attr('href');
 			}, 500);
@@ -775,175 +751,19 @@ function deleteStudyInEdit() {
 function subObservationUnitDatasetSelector() {
 	'use strict';
 	var $scope = angular.element('#SubObservationUnitDatasetSelectorModal').scope();
-	$scope.$apply(function(){
+	$scope.$apply(function () {
 		$scope.init();
 	});
 
 }
+
 /* END SUB OBSERVATION UNIT SPECIFIC FUNCTIONS */
-
-/* ADVANCING SPECIFIC FUNCTIONS */
-
-function startAdvance(advanceType) {
-	var $scope = angular.element('#selectEnvironmentModal').scope();
-	$scope.applicationData.advanceType = advanceType;
-	if (advanceType == 'sample') {
-		advanceSample();
-	} else {
-		initSelectEnvironment();
-	}
-}
-
-function initSelectEnvironment() {
-	'use strict';
-	$('#advanceStudyModal').modal('hide');
-	$('#selectEnvironmentModal').modal({ backdrop: 'static', keyboard: true });
-
-	// Add hide listener to selectEnvironmentModal
-	$('#selectEnvironmentModal').one('hidden.bs.modal', function (e) {
-		// When the selectEnvironmentModal is closed, remove the bs.modal data
-		// so that the modal content is refreshed when it is opened again.
-		$(e.target).removeData('bs.modal');
-	});
-
-	var $scope = angular.element('#selectEnvironmentModal').scope();
-	$scope.init();
-	$scope.$apply();
-}
-
-function advanceSample() {
-	'use strict';
-	var idVal = $('#studyId').val();
-
-	// Validate if there is something to advance
-	var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
-
-	$.ajax({
-		url: '/bmsapi/crops/' + cropName + '/programs/' + currentProgramId + '/studies/'+ idVal + '/sampled',
-		type: 'GET',
-		async: false,
-		beforeSend: function (xhr) {
-			xhr.setRequestHeader('X-Auth-Token', xAuthToken);
-		}
-	}).done(function (data) {
-		if (data == false) {
-			showErrorMessage('', advanceSamplesError);
-		} else {
-			initSelectEnvironment();
-		}
-	}).fail(function (data) {
-		if (data.status == 401) {
-			bmsAuth.handleReAuthentication();
-		} else {
-			showErrorMessage('page-rename-message-modal', data.responseJSON.errors[0].message);
-		}
-	});
-
-}
-
-function backAdvanceStudy() {
-	'use strict';
-	$('#advanceStudyModal').modal('hide');
-	$('#selectEnvironmentModal').modal('show');
-}
-
-function createSample() {
-	'use strict';
-	if ($('.import-study-data').data('data-import') === '1') {
-		showErrorMessage('', needSaveImportDataError);
-		return;
-	}
-}
-
-function selectInstanceContinueAdvancing(trialInstances, noOfReplications, selectedLocations, advanceType) {
-	'use strict';
-	var studyId = $('#studyId').val();
-	$('#selectEnvironmentModal').modal('hide');
-	var locationDetailHtml = generateLocationDetailTable(selectedLocations);
-	advanceStudy(studyId, trialInstances, noOfReplications, locationDetailHtml, advanceType);
-}
 
 function openSampleSummary(obsUnitId, plotNumber, programUUID) {
 	'use strict';
 	BMS.Fieldbook.SamplesSummaryDataTable('#samples-summary-table', obsUnitId, plotNumber, programUUID);
-	$('#samplesSummaryModal').modal({ backdrop: 'static', keyboard: true });
+	$('#samplesSummaryModal').modal({backdrop: 'static', keyboard: true});
 	$('#samples-summary-table').wrap('<div style="overflow-x: auto" />');
-}
-
-function generateLocationDetailTable(selectedLocations) {
-	//TODO Why do we generate an html code here in js?
-	//FIXME The caption is not localised
-	var result = "<table class='table table-curved table-condensed'>";
-	result += "<thead><tr><th>" + selectedLocations[0] + "</th></tr></thead>";
-
-	for (var i = 1; i < selectedLocations.length; i++) {
-		result += "<tbody><tr>";
-		result += "<td>" + selectedLocations[i] + "</td>";
-		result += "</tr></tbody>";
-	}
-	result += "</table>";
-	return result;
-}
-
-/* END ADVANCING TRIAL SPECIFIC FUNCTIONS */
-
-/*
- * Section for Advancing Study
- * @param studyId
- * @param locationIds Location will be passed for Advance study
- */
-function advanceStudy(studyId, trialInstances, noOfReplications, locationDetailHtml, advanceType) {
-	'use strict';
-	var count = 0,
-		idVal = studyId;
-
-	if ($('.import-study-data').data('data-import') === '1') {
-		showErrorMessage('', needSaveImportDataError);
-		return;
-	}
-
-	count++;
-	if (count !== 1) {
-		showMessage(advanceStudyError);
-		return;
-	}
-
-	var advanceStudyHref = '/Fieldbook/StudyManager/advance/study';
-	advanceStudyHref = advanceStudyHref + '/' + encodeURIComponent(idVal);
-	advanceStudyHref = advanceStudyHref + '?selectedInstances=' + encodeURIComponent(trialInstances.join(","));
-
-	if (noOfReplications) {
-		advanceStudyHref = advanceStudyHref + '&noOfReplications=' + encodeURIComponent(noOfReplications);
-	}
-
-	if (advanceType) {
-		advanceStudyHref = advanceStudyHref + '&advanceType=' + encodeURIComponent(advanceType);
-	}
-
-
-	if (idVal != null) {
-		//TODO the failure of the ajax request should be processed and error shown
-		$.ajax({
-			url: advanceStudyHref,
-			type: 'GET',
-			aysnc: false,
-			success: function(html) {
-				$('#advance-study-modal-div').html(html);
-				$('#advanceStudyModal')
-					.modal({ backdrop: 'static', keyboard: true });
-
-				$('#advanceStudyModal select').not('.fbk-harvest-year').each(function () {
-					$(this).select2({minimumResultsForSearch: $(this).find('option').length == 0 ? -1 : 20});
-				});
-				$('#advanceStudyModal select.fbk-harvest-year').each(function () {
-					$(this).select2({minimumResultsForSearch: -1});
-				});
-
-				$('#location-details-section').append(locationDetailHtml);
-
-			}
-		});
-	}
 }
 
 function showInvalidInputMessage(message) {
@@ -964,176 +784,6 @@ function showSuccessfulMessage(messageDivId, message) {
 function showAlertMessage(messageDivId, message, duration) {
 	'use strict';
 	createWarningNotification(warningMsgHeader, message, duration);
-}
-
-function initializeHarvestLocationSelect2(locationSuggestions, locationSuggestionsObj) {
-
-	$.each(locationSuggestions, function(index, value) {
-		var locNameDisplay = value.lname;
-		if (value.labbr != null && value.labbr != '') {
-			locNameDisplay  += ' - (' + value.labbr + ')';
-		}
-		locationSuggestionsObj.push({
-			id: value.locid,
-			text: locNameDisplay,
-			abbr: value.labbr
-		});
-	});
-
-	// If combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
-	$('#' + getJquerySafeId('harvestLocationIdAll')).select2({
-		query: function(query) {
-			var data = {results: locationSuggestionsObj}, i, j, s;
-			// Return the array that matches
-			data.results = $.grep(data.results, function(item, index) {
-				return ($.fn.select2.defaults.matcher(query.term, item.text));
-			});
-			query.callback(data);
-		}
-	}).on('change', function() {
-		$('#' + getJquerySafeId('harvestLocationId')).val($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').id);
-		$('#' + getJquerySafeId('harvestLocationName')).val($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').text);
-		$('#' + getJquerySafeId('harvestLocationAbbreviation')).val($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').abbr);
-		if ($('#harvestloc-tooltip')) {
-			$('#harvestloc-tooltip').attr('title', locationTooltipMessage + $('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').abbr);
-			$('.help-tooltip-study-advance').tooltip('destroy');
-			$('.help-tooltip-study-advance').tooltip();
-		}
-	});
-}
-
-function initializeHarvestLocationBreedingFavoritesSelect2(locationSuggestionsBreedingFavorites, locationSuggestionsBreedingFavoritesObj) {
-
-	$.each(locationSuggestionsBreedingFavorites, function(index, value) {
-		locationSuggestionsBreedingFavoritesObj.push({
-			id: value.locid,
-			text: value.lname,
-			abbr: value.labbr
-		});
-	});
-
-	// If combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
-	$('#' + getJquerySafeId('harvestLocationIdBreedingFavorites')).select2({
-		minimumResultsForSearch: locationSuggestionsBreedingFavoritesObj.length == 0 ? -1 : 20,
-		query: function(query) {
-			var data = {results: locationSuggestionsBreedingFavoritesObj}, i, j, s;
-			// Return the array that matches
-			data.results = $.grep(data.results, function(item, index) {
-				return ($.fn.select2.defaults.matcher(query.term, item.text));
-			});
-			query.callback(data);
-		}
-	}).on('change', function() {
-		$('#' + getJquerySafeId('harvestLocationId')).val($('#' + getJquerySafeId('harvestLocationIdBreedingFavorites')).select2('data').id);
-		$('#' + getJquerySafeId('harvestLocationName')).val($('#' + getJquerySafeId('harvestLocationIdBreedingFavorites')).select2('data').text);
-		$('#' + getJquerySafeId('harvestLocationAbbreviation')).val($('#' + getJquerySafeId('harvestLocationIdBreedingFavorites')).select2('data').abbr);
-		if ($('#harvestloc-tooltip')) {
-			$('#harvestloc-tooltip').attr('title', locationTooltipMessage + $('#' + getJquerySafeId('harvestLocationIdBreedingFavorites')).select2('data').abbr);
-			$('.help-tooltip-study-advance').tooltip('destroy');
-			$('.help-tooltip-study-advance').tooltip();
-		}
-	});
-}
-
-function initializeHarvestLocationBreedingSelect2(locationSuggestionsBreeding, locationSuggestionsBreedingObj) {
-
-	$.each(locationSuggestionsBreeding, function(index, value) {
-		locationSuggestionsBreedingObj.push({
-			id: value.locid,
-			text: value.lname,
-			abbr: value.labbr
-		});
-	});
-
-	// If combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
-	$('#' + getJquerySafeId('harvestLocationIdBreeding')).select2({
-		minimumResultsForSearch: locationSuggestionsBreedingObj.length == 0 ? -1 : 20,
-		query: function(query) {
-			var data = {results: locationSuggestionsBreedingObj}, i, j, s;
-			// Return the array that matches
-			data.results = $.grep(data.results, function(item, index) {
-				return ($.fn.select2.defaults.matcher(query.term, item.text));
-			});
-			query.callback(data);
-		}
-	}).on('change', function() {
-		$('#' + getJquerySafeId('harvestLocationId')).val($('#' + getJquerySafeId('harvestLocationIdBreeding')).select2('data').id);
-		$('#' + getJquerySafeId('harvestLocationName')).val($('#' + getJquerySafeId('harvestLocationIdBreeding')).select2('data').text);
-		$('#' + getJquerySafeId('harvestLocationAbbreviation')).val($('#' + getJquerySafeId('harvestLocationIdBreeding')).select2('data').abbr);
-		if ($('#harvestloc-tooltip')) {
-			$('#harvestloc-tooltip').attr('title', locationTooltipMessage + $('#' + getJquerySafeId('harvestLocationIdBreeding')).select2('data').abbr);
-			$('.help-tooltip-study-advance').tooltip('destroy');
-			$('.help-tooltip-study-advance').tooltip();
-		}
-	});
-}
-
-function initializeHarvestLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFavObj) {
-
-	$.each(locationSuggestionsFav, function(index, value) {
-		locationSuggestionsFavObj.push({
-			id: value.locid,
-			text: value.lname,
-			abbr: value.labbr
-		});
-	});
-
-	// If combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
-	$('#' + getJquerySafeId('harvestLocationIdFavorite')).select2({
-		minimumResultsForSearch: locationSuggestionsFavObj.length == 0 ? -1 : 20,
-		query: function(query) {
-			var data = {results: locationSuggestionsFavObj}, i, j, s;
-			// Return the array that matches
-			data.results = $.grep(data.results, function(item, index) {
-				return ($.fn.select2.defaults.matcher(query.term, item.text));
-			});
-			query.callback(data);
-		}
-	}).on('change', function() {
-		$('#' + getJquerySafeId('harvestLocationId')).val($('#' + getJquerySafeId('harvestLocationIdFavorite')).select2('data').id);
-		$('#' + getJquerySafeId('harvestLocationName')).val($('#' + getJquerySafeId('harvestLocationIdFavorite')).select2('data').text);
-		$('#' + getJquerySafeId('harvestLocationAbbreviation')).val($('#' + getJquerySafeId('harvestLocationIdFavorite')).select2('data').abbr);
-		if ($('#harvestloc-tooltip')) {
-			$('#harvestloc-tooltip').attr('title', locationTooltipMessage + $('#' + getJquerySafeId('harvestLocationIdFavorite')).select2('data').abbr);
-			$('.help-tooltip-study-advance').tooltip('destroy');
-			$('.help-tooltip-study-advance').tooltip();
-		}
-	});
-}
-
-function initializeMethodSelect2(methodSuggestions, methodSuggestionsObj, methodId) {
-
-	$.each(methodSuggestions, function(index, value) {
-		methodSuggestionsObj.push({
-			id: value.mid,
-			text: value.mname + ' - ' + value.mcode,
-			tooltip: value.mdesc
-		});
-	});
-
-	// If combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
-	$('#' + getJquerySafeId(methodId)).select2({
-		minimumResultsForSearch: methodSuggestionsObj.length == 0 ? -1 : 20,
-		query: function(query) {
-			var data = {results: methodSuggestionsObj}, i, j, s;
-			// Return the array that matches
-			data.results = $.grep(data.results, function(item, index) {
-				return ($.fn.select2.defaults.matcher(query.term, item.text));
-			});
-			query.callback(data);
-		}
-
-	}).on('change', function() {
-		if ($('#' + getJquerySafeId('advanceBreedingMethodId')).length !== 0) {
-			$('#' + getJquerySafeId('advanceBreedingMethodId')).val($('#' + getJquerySafeId(methodId)).select2('data').id);
-			if ($('#method-tooltip')) {
-				$('#method-tooltip').attr('title', $('#' + getJquerySafeId(methodId)).select2('data').tooltip);
-				$('.help-tooltip-study-advance').tooltip('destroy');
-				$('.help-tooltip-study-advance').tooltip();
-			}
-			$('#' + getJquerySafeId('advanceBreedingMethodId')).trigger('change');
-		}
-	});
 }
 
 function exportGermplasmList() {
@@ -1157,7 +807,7 @@ function exportGermplasmList() {
 function getExportCheckedAdvancedList() {
 	'use strict';
 	var advancedLists = [];
-	$('.export-advance-germplasm-lists-checkbox').each(function() {
+	$('.export-advance-germplasm-lists-checkbox').each(function () {
 		if ($(this).is(':checked')) {
 			advancedLists.push($(this).data('advance-list-id'));
 		}
@@ -1168,7 +818,7 @@ function getExportCheckedAdvancedList() {
 function getExportCheckedInstances() {
 	'use strict';
 	var checkedInstances = [];
-	$('.trial-instance-export').each(function() {
+	$('.trial-instance-export').each(function () {
 		if ($(this).is(':checked')) {
 			checkedInstances.push($(this).data('geolocation-id'));
 		}
@@ -1180,7 +830,7 @@ function doFinalExport(exportParameters) {
 	var xAuthToken = JSON.parse(localStorage['bms.xAuthToken']).token;
 	var xhr = new XMLHttpRequest();
 	var node = $('#studyTree').dynatree('getTree').getActiveNode();
-	xhr.open('GET', '/bmsapi/crops/' + exportParameters.cropName + '/programs/'+node.data.programUUID+'/studies/' + exportParameters.studyId + '/datasets/' + exportParameters.plotData + '/' + exportParameters.fileFormat + '?instanceIds=' + exportParameters.instanceIds + '&collectionOrderId=' + exportParameters.collectionOrderId + '&singleFile=' + exportParameters.singleFile, true);
+	xhr.open('GET', '/bmsapi/crops/' + exportParameters.cropName + '/programs/' + node.data.programUUID + '/studies/' + exportParameters.studyId + '/datasets/' + exportParameters.plotData + '/' + exportParameters.fileFormat + '?instanceIds=' + exportParameters.instanceIds + '&collectionOrderId=' + exportParameters.collectionOrderId + '&singleFile=' + exportParameters.singleFile, true);
 	xhr.responseType = 'blob';
 	xhr.setRequestHeader('Content-Type', 'application/json');
 	xhr.setRequestHeader('X-Auth-Token', xAuthToken);
@@ -1247,7 +897,7 @@ function getMeasurementTableVisibleColumns(addObsUnitId) {
 	for (i = 0; i < headerCount; i++) {
 		var headerId = $('#measurement-table_wrapper .dataTables_scrollHead [data-term-id]:eq(' + i + ')').attr('data-term-id');
 		if ($.isNumeric(headerId)) {
-			if (headerId == '8201'){
+			if (headerId == '8201') {
 				obsUnitIdFound = true;
 			}
 			if (visibleColumns.length == 0) {
@@ -1283,7 +933,7 @@ function doTreeHighlight(treeName, nodeKey) {
 
 	// Then we highlight the nodeKey and its parents
 	elem = nodeKey.split('_');
-	for (count = 0 ; count < elem.length ; count++) {
+	for (count = 0; count < elem.length; count++) {
 		if (key != '') {
 			key = key + '_';
 		}
@@ -1292,118 +942,6 @@ function doTreeHighlight(treeName, nodeKey) {
 	}
 }
 
-function validatePlantsSelected() {
-	var ids = '',
-		isMixed = false,
-		isBulk = false,
-		valid;
-
-	if ($('.bulk-section').is(':visible')) {
-		if ($('input[type=checkbox][name=allPlotsChoice]:checked').val() !== '1') {
-			ids = ids + $('#plotVariateId').val();
-		}
-		isBulk = true;
-	}
-	if ($('.lines-section').is(':visible')) {
-		if ($('input[type=checkbox][name=lineChoice]:checked').val() !== '1') {
-			if (ids !== '') {
-				ids = ids + ',';
-			}
-			ids = ids + $('#lineVariateId').val();
-		}
-		if (isBulk) {
-			isMixed = true;
-		}
-	}
-
-	valid = true;
-	if ($('input[type=checkbox][name=methodChoice]:checked').val() === '1'
-		&& $('#namingConvention').val() !== '1'
-		&& $('#advanceBreedingMethodId').val() === '') {
-		showErrorMessage('page-advance-modal-message', msgMethodError);
-		valid = false;
-	}
-	if(valid){
-		valid = validateBreedingMethod();
-	}
-	if (valid && ids !== '')	{
-		$.ajax({
-			url: '/Fieldbook/StudyManager/advance/study/countPlots/' + ids,
-			type: 'GET',
-			cache: false,
-			async: false,
-			success: function(data) {
-				var choice,
-					lineSameForAll;
-
-				if (isMixed) {
-					if (data == 0) {
-						var param = $('#lineVariateId').select2('data').text + ' and/or ' + $('#plotVariateId').select2('data').text;
-						var newMessage = msgEmptyListErrorTrial.replace(new RegExp(/\{0\}/g), param);
-						showErrorMessage('page-advance-modal-message', newMessage);
-
-						valid = false;
-					}
-				} else if (isBulk) {
-					choice = !$('#plot-variates-section').is(':visible');
-					if (choice == false && data == '0') {
-						var param = $('#plotVariateId').select2('data').text;
-						var newMessage = msgEmptyListErrorTrial.replace(new RegExp(/\{0\}/g), param);
-						showErrorMessage('page-advance-modal-message', newMessage);
-
-						valid = false;
-					}
-				} else {
-					choice = !$('#line-variates-section').is(':visible');
-					lineSameForAll = $('input[type=checkbox][name=lineChoice]:checked').val() == 1;
-					if (lineSameForAll == false && choice == false && data == '0') {
-						var param = $('#lineVariateId').select2('data').text;
-						var newMessage = msgEmptyListErrorTrial.replace(new RegExp(/\{0\}/g), param);
-						showErrorMessage('page-advance-modal-message', newMessage);
-						valid = false;
-					}
-				}
-			},
-			error: function(jqXHR, textStatus, errorThrown) {
-				console.log('The following error occured: ' + textStatus, errorThrown);
-			}
-		});
-	}
-	if (valid && isMixed) {
-		return valid;
-	}
-	return valid;
-}
-
-function callAdvanceStudy() {
-
-	var lines = $('#lineSelected').val();
-	var methdodId = $('#advanceBreedingMethodId').val();
-	var advanceType = angular.element('#mainApp').injector().get('TrialManagerDataService').applicationData.advanceType;
-
-	var repsSectionIsDisplayed = $('#reps-section').length;
-	if(repsSectionIsDisplayed) {
-		var selectedReps = [];
-		$('#replications input:checked').each(function() {
-			selectedReps.push($(this).val());
-		});
-
-		if(selectedReps.length == 0){
-			showErrorMessage('page-advance-modal-message', noReplicationSelectedError);
-			return false;
-		}
-	}
-
-	if (methdodId === '0' || (methdodId === '' && advanceType == 'sample')) {
-		showErrorMessage('page-advance-modal-message', msgMethodError);
-		return false;
-	} else if (lines && !lines.match(/^\s*(\+|-)?\d+\s*$/)) {
-		showErrorMessage('page-advance-modal-message', linesNotWholeNumberError);
-		return false;
-	} else if (validatePlantsSelected()) {
-		SaveAdvanceList.doAdvanceStudy();
-	}
-}
 
 function displaySampleList(id, listName, isPageLoading) {
 	'use script';
@@ -1424,60 +962,6 @@ function displaySampleList(id, listName, isPageLoading) {
 	});
 }
 
-function validateBreedingMethod() {
-	var id = $('#methodVariateId').val(),
-		valid = true;
-
-	if ($('input[type=checkbox][name=methodChoice]:checked').val() !== '1' && id) {
-		$.ajax({
-			url: '/Fieldbook/StudyManager/advance/study/countPlots/' + id,
-			type: 'GET',
-			cache: false,
-			async: false,
-			success: function(data) {
-
-				if (data == 0) {
-					var newMessage = noMethodValueErrorTrial.replace(new RegExp(/\{0\}/g), $('#methodVariateId').select2('data').text);
-					showErrorMessage('page-advance-modal-message', newMessage);
-
-					valid = false;
-				} else {
-					valid = validateBreedingMethodValues(id);
-				}
-
-			},
-			error: function(jqXHR, textStatus, errorThrown) {
-				console.log('The following error occured: ' + textStatus, errorThrown);
-			}
-		});
-	}
-	return valid;
-}
-
-function displaySectionsPerMethodVariateValues() { //TODO advance
-	'use strict';
-	var id = $('#methodVariateId').val();
-	var trialInstances = $('#selectedTrialInstances').val();
-	if (id !== '') {
-		$.ajax({
-			url: '/Fieldbook/StudyManager/advance/study/checkMethodTypeMode/' + id
-				+ '?trialInstances=' + encodeURIComponent(trialInstances),
-			type: 'GET',
-			cache: false,
-			success: function(data) {
-				if (data === 'LINE') {
-					$('.lines-section').css('display', 'block');
-				} else if (data === 'BULK') {
-					$('.bulk-section').css('display', 'block');
-				} else if (data === 'MIXED') {
-					$('.lines-section').css('display', 'block');
-					$('.bulk-section').css('display', 'block');
-				}
-			}
-		});
-	}
-}
-
 function validateBreedingMethodValues(id) {
 	var valid = true;
 	var trialInstances = $('#selectedTrialInstances').val();
@@ -1487,14 +971,14 @@ function validateBreedingMethodValues(id) {
 		type: 'GET',
 		cache: false,
 		async: false,
-		success: function(data) {
+		success: function (data) {
 			if (data.errors) {
 				showErrorMessage('page-advance-modal-message', data.errors);
 				valid = false;
 			}
 
 		},
-		error: function(jqXHR, textStatus, errorThrown) {
+		error: function (jqXHR, textStatus, errorThrown) {
 			console.log('The following error occured: ' + textStatus, errorThrown);
 		}
 	});
@@ -1509,7 +993,7 @@ function showBaselineTraitDetailsModal(id) {
 			url: '/Fieldbook/manageSettings/settings/details/' + id,
 			type: 'GET',
 			cache: false,
-			success: function(html) {
+			success: function (html) {
 				$('.variable-details-section').empty().append(html);
 				if ($('#selectedStdVarId').length != 0) {
 					$('#selectedStdVarId').val(id);
@@ -1547,452 +1031,6 @@ function showBaselineTraitDetailsModal(id, variableTypeId) {
 	}
 }
 
-function getAdvanceBreedingMethodURL() {
-	var url = '/Fieldbook/breedingMethod/getBreedingMethods';
-
-	var advanceType = angular.element('#mainApp').injector().get('TrialManagerDataService').applicationData.advanceType;
-	if (advanceType == 'sample') {
-		return '/Fieldbook/breedingMethod/getNoBulkingBreedingMethods';
-	}
-	return url;
-}
-
-function recreateMethodCombo(possibleFavorite, url) {
-	var selectedMethodAll = $('#methodIdAll').val(),
-		selectedMethodFavorite = $('#methodIdFavorite').val();
-	var createGermplasm = false;
-	var createGermplasmOpened = false;
-
-	if ($('#importStudyDesigConfirmationModal').length !== 0) {
-		createGermplasm = true;
-		if ($('#importStudyDesigConfirmationModal').hasClass('in') || $('#importStudyDesigConfirmationModal').data('open') === '1') {
-			createGermplasmOpened = true;
-		}
-	}
-
-	$.ajax({
-		url: url || '/Fieldbook/breedingMethod/getBreedingMethods',
-		type: 'GET',
-		cache: false,
-		data: '',
-		async: false,
-		success: function(data) {
-			if (data.success == '1') {
-				if (createGermplasmOpened) {
-					refreshImportMethodCombo(data);
-					refreshMethodComboInSettings(data);
-					refreshGermplasMethodCombo(data);
-				} else if (selectedMethodAll != null) {
-
-					//recreate the select2 combos to get updated list of methods
-					recreateMethodComboAfterClose('methodIdAll', data.allMethods);
-					recreateMethodComboAfterClose('methodIdFavorite', data.favoriteMethods);
-
-					recreateMethodComboAfterClose('methodIdDerivativeAndMaintenance', data.allNonGenerativeMethods);
-					recreateMethodComboAfterClose('methodIdDerivativeAndMaintenanceFavorite', data.favoriteNonGenerativeMethods);
-
-					showCorrectMethodCombo();
-					//set previously selected value of method
-					if ($('#showFavoriteMethod').prop('checked')) {
-						setComboValues(methodSuggestionsFavObj, selectedMethodFavorite, 'methodIdFavorite');
-					} else {
-						setComboValues(methodSuggestionsObj, selectedMethodAll, 'methodIdAll');
-					}
-
-					if ($('#advanceStudyModal').length > 0) {
-						refreshMethodComboInSettings(data);
-					}
-				} else {
-					if ($('.hasCreateGermplasm').length === 0 || ($('.hasCreateGermplasm').length > 0 && $('.hasCreateGermplasm').val() === '0')) {
-						refreshMethodComboInSettings(data);
-					}
-					if (createGermplasm) {
-						refreshImportMethodCombo(data);
-						refreshGermplasMethodCombo(data);
-					}
-				}
-				if(possibleFavorite){
-					ValidateValueCheckBoxFavorite(possibleFavorite,data);
-					refreshGermplasMethodCombo(data);
-				}
-			} else {
-				showErrorMessage('page-message', data.errorMessage);
-			}
-		},
-		error: function(jqXHR, textStatus, errorThrown) {
-			console.log('The following error occured: ' + textStatus, errorThrown);
-		}
-	});
-}
-
-function refreshImportMethodCombo(data) {
-	var selectedValue = null;
-	if ($('#importMethodId').select2('data')) {
-		selectedValue = $('#importMethodId').select2('data').id;
-	}
-	if ($('#importFavoriteMethod').is(':checked')) {
-		if ($('#showAllMethodOnlyRadio').is(':checked')) {
-			initializePossibleValuesCombo(data.favoriteMethods, '#importMethodId', false, selectedValue);
-		} else {
-			initializePossibleValuesCombo(data.favoriteGenerativeMethods, '#importMethodId', false, selectedValue);
-		}
-	} else if ($('#showAllMethodOnlyRadio').is(':checked')) {
-		initializePossibleValuesCombo(data.allMethods, '#importMethodId', false, selectedValue);
-	} else {
-		initializePossibleValuesCombo(data.allGenerativeMethods, '#importMethodId', false, selectedValue);
-	}
-}
-
-function refreshGermplasMethodCombo(data) {
-	var selectedValue = null;
-	if ($('#importMethodId').select2('data')) {
-		selectedValue = $('#importMethodId').select2('data').id;
-	}
-	if ($('#importFavoriteMethod').is(':checked')) {
-		if ($('#showDerivateAndMaintenanceMethodImportStudyOnlyRadio').is(':checked')) {
-			initializePossibleValuesCombo(data.favoriteNonGenerativeMethods, '#importMethodId', true, selectedValue);
-		} else {
-			initializePossibleValuesCombo(data.favoriteMethods, '#importMethodId', true, selectedValue);
-		}
-
-	} else {
-		if ($('#showDerivateAndMaintenanceMethodImportStudyOnlyRadio').is(':checked')) {
-			initializePossibleValuesCombo(data.allNonGenerativeMethods, '#importMethodId', true, selectedValue);
-		} else {
-			initializePossibleValuesCombo(data.allMethods, '#importMethodId', true, selectedValue);
-		}
-
-	}
-	replacePossibleJsonValuesImportGermPlasm(data.allNonGenerativeMethods, data.favoriteNonGenerativeMethods, data.allMethods, data.favoriteMethods,
-		'Method');
-}
-
-function refreshImportLocationCombo(data) {
-	var selectedValue = null;
-	if ($('#importLocationId').select2('data')) {
-		selectedValue = $('#importLocationId').select2('data').id;
-	}
-	if ($('#importFavoriteLocation').is(':checked')) {
-		initializePossibleValuesCombo(data.favoriteLocations,
-			'#importLocationId', true, selectedValue);
-	} else {
-		initializePossibleValuesCombo(data.allBreedingLocations,
-			'#importLocationId', true, selectedValue);
-	}
-	replacePossibleJsonValues(data.allBreedingLocations, data.allBreedingFavoritesLocations, data.allLocations, data.favoriteLocations,
-		'Location');
-}
-
-function refreshGermplasLocationCombo(data) {
-	var selectedValue = null;
-	if ($('#importLocationId').select2('data')) {
-		selectedValue = $('#importLocationId').select2('data').id;
-	}
-	if ($('#importFavoriteLocation').is(':checked')) {
-		if ($('#showBreedingLocationImportStudyOnlyRadio').is(':checked')) {
-			initializePossibleValuesCombo(data.allBreedingFavoritesLocations, '#importLocationId', true, selectedValue);
-		} else {
-			initializePossibleValuesCombo(data.favoriteLocations, '#importLocationId', true, selectedValue);
-		}
-
-	} else {
-		if ($('#showBreedingLocationImportStudyOnlyRadio').is(':checked')) {
-			initializePossibleValuesCombo(data.allBreedingLocations, '#importLocationId', true, selectedValue);
-		} else {
-			initializePossibleValuesCombo(data.allLocations, '#importLocationId', true, selectedValue);
-		}
-
-	}
-	replacePossibleJsonValuesImportGermPlasm(data.allBreedingLocations, data.allBreedingFavoritesLocations, data.allLocations, data.favoriteLocations,
-		'Location');
-}
-
-function generateGenericLocationSuggestions(genericLocationJson) {
-	var genericLocationSuggestion = [];
-	$.each(genericLocationJson, function(index, value) {
-		var locNameDisplay = value.lname;
-		if (value.labbr != null && value.labbr != '') {
-			locNameDisplay  += ' - (' + value.labbr + ')';
-		}
-		genericLocationSuggestion.push({
-			'id': value.locid,
-			'text': locNameDisplay
-		});
-	});
-	return genericLocationSuggestion;
-}
-
-function recreateLocationCombo(possibleFavorite) {
-	var selectedLocationAll = $('#harvestLocationIdAll').val();
-	var selectedLocationBreeding = $('#harvestLocationIdBreeding').val();
-	var selectedLocationBreedingFavorites = $('#harvestLocationIdBreedingFavorites').val();
-	var selectedLocationFavorite = $('#harvestLocationIdFavorite').val();
-
-	var advancePopup = false;
-	var fieldmapScreen = false;
-	var createGermplasm = false;
-	var hasCreateGermplasm = false;
-	var createGermplasmOpened = false;
-
-	if ($('#advanceStudyModal').length !== 0 && ($('#advanceStudyModal').data('open') === '1' ||  $('#advanceStudyModal').hasClass('in'))) {
-		advancePopup = true;
-	} else if ($('#enterFieldDetailsForm').length !== 0) {
-		fieldmapScreen = true;
-	}
-
-	if ($('#importStudyDesigConfirmationModal').length !== 0) {
-		createGermplasm = true;
-		if ($('#importStudyDesigConfirmationModal').hasClass('in') || $('#importStudyDesigConfirmationModal').data('open') === '1') {
-			createGermplasmOpened = true;
-		}
-	}
-
-	if ($('.hasCreateGermplasm').length === 0 || ($('.hasCreateGermplasm').length > 0 && $('.hasCreateGermplasm').val() === '0')) {
-		hasCreateGermplasm = true;
-	}
-
-	if (advancePopup || fieldmapScreen || createGermplasm || hasCreateGermplasm || createGermplasmOpened) {
-		$.ajax({
-			url: '/Fieldbook/locations/getLocations',
-			type: 'GET',
-			cache: false,
-			data: '',
-			async: false,
-			success: function(data) {
-				if (data.success == '1') {
-					if (createGermplasmOpened) {
-						refreshImportLocationCombo(data);
-						refreshLocationComboInSettings(data);
-						refreshGermplasLocationCombo(data);
-					} else if (advancePopup === true
-						|| selectedLocationAll != null) {
-						// recreate the select2 combos to get updated list
-						// of locations
-
-						if (data.allBreedingFavoritesLocations && data.allBreedingFavoritesLocations.length > 0) {
-							$('#showFavoriteLocation').prop('checked', true);
-						} else {
-							$('#showFavoriteLocation').prop('checked', false);
-						}
-
-						recreateLocationComboAfterClose('harvestLocationIdAll', data.allLocations);
-						recreateLocationComboAfterClose('harvestLocationIdBreeding', data.allBreedingLocations);
-						recreateLocationComboAfterClose('harvestLocationIdBreedingFavorites', data.allBreedingFavoritesLocations);
-						recreateLocationComboAfterClose('harvestLocationIdFavorite', data.favoriteLocations);
-						showCorrectLocationCombo();
-						// set previously selected value of location
-						if ($('#showFavoriteLocation').prop('checked') && $('#showBreedingLocationOnlyRadio').prop('checked')) {
-							setComboValues(selectedLocationBreedingFavorites_obj, selectedLocationBreedingFavorites, 'harvestLocationIdBreedingFavorites');
-						} else if ($('#showFavoriteLocation').prop('checked')) {
-							setComboValues(locationSuggestionsFav_obj, selectedLocationFavorite, 'harvestLocationIdFavorite');
-						} else if ($('#showAllLocationOnlyRadio').prop('checked')) {
-							setComboValues(locationSuggestions_obj, selectedLocationAll, 'harvestLocationIdAll');
-						} else {
-							setComboValues(locationSuggestionsBreeding_obj, selectedLocationBreeding, 'harvestLocationIdBreeding');
-						}
-						refreshLocationComboInSettings(data);
-
-					} else if (fieldmapScreen === true) {
-						recreateFieldLocationComboAfterClose('fieldLocationIdAll', data.allLocations);
-						//set previously selected value of location
-						showCorrectFieldLocationCombo();
-					} else {
-						if (hasCreateGermplasm) {
-							refreshLocationComboInSettings(data);
-						}
-						if (createGermplasm) {
-							refreshImportLocationCombo(data);
-						}
-
-					}
-					if(possibleFavorite){
-						ValidateValueCheckBoxFavorite(possibleFavorite,data);
-						refreshGermplasLocationCombo(data);
-					}
-				} else {
-					showErrorMessage('page-message', data.errorMessage);
-				}
-
-			}
-		});
-	}
-}
-
-function refreshMethodComboInSettings(data) {
-	//get index of breeding method row
-	var index = getBreedingMethodRowIndex(), selectedVal = null;
-	if (index > -1) {
-		var pleaseChoose = {"mid":0, "mname":"Please Choose", "mdesc":"Please Choose"};
-		data.favoriteNonGenerativeMethods.unshift(pleaseChoose);
-		data.allNonGenerativeMethods.unshift(pleaseChoose);
-
-		if ($('#' + getJquerySafeId('studyLevelVariables' + index + '.value')).select2('data')) {
-			selectedVal = $('#' + getJquerySafeId('studyLevelVariables' + index + '.value')).select2('data').id;
-		}
-
-		//recreate select2 of breeding method
-		initializePossibleValuesCombo([],
-			'#' + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
-
-		var allSelected = $('.filter_selectors_all_' + index).prop("checked");
-
-		//update values of combo
-		if ($('[name="' + getJquerySafeId('studyLevelVariables[' + index + '].favorite') + '"]').is(':checked')) {
-			if (allSelected) {
-				initializePossibleValuesCombo(data.favoriteMethods, '#' +
-					getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
-			} else {
-				initializePossibleValuesCombo(data.favoriteNonGenerativeMethods, '#' +
-					getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
-			}
-		} else {
-			if (allSelected) {
-				initializePossibleValuesCombo(data.allMethods, '#' +
-					getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
-			} else {
-				initializePossibleValuesCombo(data.allNonGenerativeMethods, '#' +
-					getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
-			}
-		}
-
-		replacePossibleJsonValues(data.allNonGenerativeMethods, data.favoriteNonGenerativeMethods, data.allMethods, data.favoriteMethods,
-			index);
-	}
-}
-
-function refreshLocationComboInSettings(data) {
-	var selectedVal = null;
-	var index = getLocationRowIndex();
-	if (index > -1) {
-		var id = '#' + getJquerySafeId('studyLevelVariables' + index + '.value');
-		if ($(id).select2('data')) {
-			selectedVal = $(id).select2('data').id;
-		}
-		initializePossibleValuesCombo([], id, true, selectedVal);
-
-		// update values in combo
-		if ($('#' + getJquerySafeId('studyLevelVariables' + index + '.favorite1')).is(':checked')) {
-			if ($("#allLocations").is(':checked')) {
-				initializePossibleValuesCombo(data.favoriteLocations, id, false, selectedVal);
-			} else {
-				initializePossibleValuesCombo(data.allBreedingFavoritesLocations, id, false, selectedVal);
-			}
-		} else if ($("#allLocations").is(':checked')) {
-			initializePossibleValuesCombo(data.allLocations, id, true, selectedVal);
-		} else {
-			initializePossibleValuesCombo(data.allBreedingLocations, id, true, selectedVal);
-		}
-
-		replacePossibleJsonValues(data.allBreedingLocations, data.allBreedingFavoritesLocations, data.allLocations, data.favoriteLocations,
-			index);
-	}
-}
-
-function recreateLocationComboAfterClose(comboName, data) {
-	if (comboName == 'harvestLocationIdAll') {
-		//clear all locations dropdown
-		locationSuggestions = [];
-		locationSuggestionsObj = [];
-		initializeHarvestLocationSelect2(locationSuggestions, locationSuggestionsObj);
-		//reload the data retrieved
-		locationSuggestions = data;
-		initializeHarvestLocationSelect2(locationSuggestions, locationSuggestionsObj);
-	} else if (comboName == 'harvestLocationIdBreeding') {
-		//clear Breeding locations dropdown
-		locationSuggestionsBreeding = [];
-		locationSuggestionsBreedingObj = [];
-		initializeHarvestLocationBreedingSelect2(locationSuggestionsBreeding, locationSuggestionsBreedingObj);
-		//reload the data retrieved
-		locationSuggestionsBreeding = data;
-		initializeHarvestLocationBreedingSelect2(locationSuggestionsBreeding, locationSuggestionsBreedingObj);
-	} else if (comboName == 'harvestLocationIdBreedingFavorites') {
-		//clear BreedingFavorites locations dropdown
-		locationSuggestionsBreedingFavorites = [];
-		locationSuggestionsBreedingFavoritesObj = [];
-		initializeHarvestLocationBreedingFavoritesSelect2(locationSuggestionsBreedingFavorites, locationSuggestionsBreedingFavoritesObj);
-		//reload the data retrieved
-		locationSuggestionsBreedingFavorites = data;
-		initializeHarvestLocationBreedingFavoritesSelect2(locationSuggestionsBreedingFavorites, locationSuggestionsBreedingFavoritesObj);
-	} else {
-		//clear the favorite locations dropdown
-		locationSuggestionsFav = [];
-		locationSuggestionsFavObj = [];
-		initializeHarvestLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFavObj);
-		//reload the data
-		locationSuggestionsFav = data;
-		initializeHarvestLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFavObj);
-		//	locSug = [];
-	}
-}
-
-function recreateFieldLocationComboAfterClose(comboName, data) {
-	if (comboName == 'fieldLocationIdAll') {
-		locationSuggestions = [];
-		locationSuggestions_obj = [];
-		initializeFieldLocationsSelect2(locationSuggestions, locationSuggestions_obj,comboName);
-		//reload the data retrieved
-		locationSuggestions = data;
-		initializeFieldLocationsSelect2(locationSuggestions, locationSuggestions_obj,comboName);
-	} else if (comboName == 'fieldLocationIdBreeding') {
-		locationSuggestionsBreeding = [];
-		locationSuggestionsBreeding_obj = [];
-		initializeFieldLocationsSelect2(locationSuggestionsBreeding, locationSuggestionsBreeding_obj, comboName);
-		//reload the data retrieved
-		locationSuggestionsBreeding = data;
-		initializeFieldLocationsSelect2(locationSuggestionsBreeding, locationSuggestionsBreeding_obj, comboName);
-	} else if (comboName == 'fieldLocationIdBreedingFavorites') {
-		locationSuggestionsBreedingFav = [];
-		locationSuggestionsBreedingFav_obj = [];
-		initializeFieldLocationsSelect2(locationSuggestionsBreedingFav, locationSuggestionsBreedingFav_obj,comboName);
-		//reload the data retrieved
-		locationSuggestionsBreedingFav = data;
-		initializeFieldLocationsSelect2(locationSuggestionsBreedingFav, locationSuggestionsBreedingFav_obj,comboName);
-	} else if (comboName=="fieldLocationIdFavorite") {
-		locationSuggestionsFav = [];
-		locationSuggestionsFav_obj = [];
-		initializeFieldLocationsSelect2(locationSuggestionsFav, locationSuggestionsFav_obj,comboName);
-		//reload the data retrieved
-		locationSuggestionsFav = data;
-		initializeFieldLocationsSelect2(locationSuggestionsFav, locationSuggestionsFav_obj,comboName);
-	}
-}
-
-function recreateMethodComboAfterClose(comboName, data) {
-	if (comboName == 'methodIdAll') {
-		//clear the all methods dropdown
-		methodSuggestions = [];
-		methodSuggestionsObj = [];
-		initializeMethodSelect2(methodSuggestions, methodSuggestionsObj, comboName);
-		//reload the data
-		methodSuggestions = data;
-		initializeMethodSelect2(methodSuggestions, methodSuggestionsObj, comboName);
-	} else if (comboName == 'methodIdDerivativeAndMaintenance') {
-		//clear the all methods dropdown
-		methodSuggestionsDerivativeAndMaintenance = [];
-		methodSuggestionsDerivativeAndMaintenanceObj = [];
-		initializeMethodSelect2(methodSuggestionsDerivativeAndMaintenance, methodSuggestionsDerivativeAndMaintenanceObj, comboName);
-		//reload the data
-		methodSuggestionsDerivativeAndMaintenance = data;
-		initializeMethodSelect2(methodSuggestionsDerivativeAndMaintenance, methodSuggestionsDerivativeAndMaintenanceObj, comboName);
-	} else if (comboName == 'methodIdDerivativeAndMaintenanceFavorite') {
-		//clear the all methods dropdown
-		methodSuggestionsDerivativeAndMaintenanceFavorite = [];
-		methodSuggestionsDerivativeAndMaintenanceFavoriteObj = [];
-		initializeMethodSelect2(methodSuggestionsDerivativeAndMaintenanceFavorite, methodSuggestionsDerivativeAndMaintenanceFavoriteObj, comboName);
-		//reload the data
-		methodSuggestionsDerivativeAndMaintenanceFavorite = data;
-		initializeMethodSelect2(methodSuggestionsDerivativeAndMaintenanceFavorite, methodSuggestionsDerivativeAndMaintenanceFavoriteObj, comboName);
-	} else {
-		//clear the favorite methods dropdown
-		methodSuggestionsFav = [];
-		methodSuggestionsFavObj = [];
-		initializeMethodSelect2(methodSuggestionsFav, methodSuggestionsFavObj, 'methodIdFavorite');
-		//reload the data
-		methodSuggestionsFav = data;
-		initializeMethodSelect2(methodSuggestionsFav, methodSuggestionsFavObj, 'methodIdFavorite');
-	}
-}
-
 function createFolder() {
 	'use strict';
 
@@ -2002,7 +1040,7 @@ function createFolder() {
 	if (folderName === '') {
 		showErrorMessage('page-add-study-folder-message-modal', folderNameRequiredMessage);
 		return false;
-	} else if (! isValidInput(folderName)) {
+	} else if (!isValidInput(folderName)) {
 		showErrorMessage('page-add-study-folder-message-modal', invalidFolderNameCharacterMessage);
 		return false;
 	} else {
@@ -2023,7 +1061,7 @@ function createFolder() {
 			type: 'POST',
 			data: 'parentFolderId=' + parentFolderId + '&folderName=' + folderName,
 			cache: false,
-			success: function(data) {
+			success: function (data) {
 				var node;
 
 				if (data.isSuccess == 1) {
@@ -2080,7 +1118,7 @@ function deleteFolder(object) {
 		} else if (node.data.programUUID === null) {
 			showErrorMessage('page-study-tree-message-modal', cannotDeleteTemplateError);
 
-		} else if (parseInt(node.data.ownerId) === currentCropUserId  || isSuperAdmin) {
+		} else if (parseInt(node.data.ownerId) === currentCropUserId || isSuperAdmin) {
 
 			$('#delete-heading-modal').text(deleteStudyTitle);
 			deleteConfirmationText = deleteStudyConfirmation;
@@ -2112,7 +1150,7 @@ function submitDeleteFolder() {
 			type: 'POST',
 			data: 'folderId=' + folderId,
 			cache: false,
-			success: function(data) {
+			success: function (data) {
 				var node;
 				if (data.isSuccess === '1') {
 					$('#deleteStudyFolder').modal('hide');
@@ -2128,7 +1166,7 @@ function submitDeleteFolder() {
 			}
 		});
 	} else {
-		doDeleteStudy(folderId, function(data) {
+		doDeleteStudy(folderId, function (data) {
 			var node;
 			$('#deleteStudyFolder').modal('hide');
 			if (data.isSuccess === '1') {
@@ -2160,14 +1198,13 @@ function moveStudy(sourceNode, targetNode) {
 		type: 'POST',
 		data: 'sourceId=' + sourceId + '&targetId=' + targetId,
 		cache: false,
-		success: function(data) {
+		success: function (data) {
 			if (data.isSuccess === '1') {
 				var node = targetNode;
 				sourceNode.remove();
 				doStudyLazyLoad(node);
 				node.focus();
-			}
-			else {
+			} else {
 				showErrorMessage('page-rename-message-modal', data.message);
 			}
 		}
@@ -2200,7 +1237,7 @@ function submitDeleteGermplasmFolder() {
 		type: 'POST',
 		data: 'folderId=' + folderId,
 		cache: false,
-		success: function(data) {
+		success: function (data) {
 			var node;
 			if (data.isSuccess === '1') {
 				$('#deleteGermplasmFolder').modal('hide');
@@ -2229,7 +1266,7 @@ function moveGermplasm(sourceNode, targetNode) {
 		type: 'POST',
 		data: 'sourceId=' + sourceId + '&targetId=' + targetId,
 		cache: false,
-		success: function(data) {
+		success: function (data) {
 			var node = targetNode;
 			sourceNode.remove();
 			doGermplasmLazyLoad(node);
@@ -2276,35 +1313,9 @@ function closeModal(modalId) {
 	$('#' + modalId).modal('hide');
 }
 
-function openGermplasmDetailsPopopWithGidAndDesig(gid, desig) {
-	'use strict';
-	$.ajax({
-		url: '/Fieldbook/ListTreeManager/germplasm/detail/url',
-		type: 'GET',
-		data: '',
-		cache: false,
-		success: function(html) {
-			var germplasmDetailsUrl = html;
-			showGermplasmDetailsPopUp(gid, desig, germplasmDetailsUrl);
-		}
-	});
-}
-
-function showGermplasmDetailsPopUp(gid, desig, germplasmDetailsUrl) {
-	'use strict';
-	var url = '/Fieldbook/ListTreeManager/getPreferredName/' + gid;
-	$.ajax({
-		url: url,
-		type: 'GET',
-		data: '',
-		cache: false,
-		success: function(preferredName) {
-			desig =  preferredName;
-			$('#openGermplasmFrame').attr('src', germplasmDetailsUrl + gid);
-			$('#openGermplasmModal .modal-title').html(headerMsg1 + ' ' + desig + ' (' + headerMsg2 + ' ' + gid + ')');
-			$('#openGermplasmModal').modal({ backdrop: 'static', keyboard: true });
-		}
-	});
+function openGermplasmDetailsPopup(gid, callback) {
+	const germplasmDetailsModalService = angular.element('#mainApp').injector().get('germplasmDetailsModalService');
+	germplasmDetailsModalService.openGermplasmDetailsModal(gid, callback);
 }
 
 function showListTreeToolTip(node, nodeSpan) {
@@ -2313,7 +1324,7 @@ function showListTreeToolTip(node, nodeSpan) {
 		url: '/Fieldbook/ListTreeManager/germplasm/list/header/details/' + node.data.key,
 		type: 'GET',
 		cache: false,
-		success: function(data) {
+		success: function (data) {
 			var listDetails = $('.list-details').clone(),
 				notes;
 
@@ -2334,10 +1345,10 @@ function showListTreeToolTip(node, nodeSpan) {
 				trigger: 'manual',
 				placement: 'right',
 				container: '.modal-popover'
-			}).hover(function() {
+			}).hover(function () {
 				$('.popover').hide();
 				$(this).popover('show');
-			}, function() {
+			}, function () {
 				$(this).popover('hide');
 			});
 			$('.popover').hide();
@@ -2348,7 +1359,7 @@ function showListTreeToolTip(node, nodeSpan) {
 
 function truncateStudyVariableNames(domSelector, charLimit) {
 	'use strict';
-	$(domSelector).each(function() {
+	$(domSelector).each(function () {
 		var htmlString = $(this).html();
 		if ($(this).data('truncate-limit') !== undefined) {
 			charLimit = parseInt($(this).data('truncate-limit'), 10);
@@ -2370,7 +1381,7 @@ function truncateStudyVariableNames(domSelector, charLimit) {
 		}
 
 	});
-	$('.variable-tooltip').each(function() {
+	$('.variable-tooltip').each(function () {
 		$(this).data('toggle', 'tooltip');
 		if ($(this).data('placement') === undefined) {
 			$(this).data('placement', 'right');
@@ -2392,7 +1403,7 @@ function doDeleteStudy(id, callback) {
 		url: '/Fieldbook/StudyManager/deleteStudy/' + id,
 		type: 'POST',
 		cache: false,
-		success: function(data) {
+		success: function (data) {
 			callback(data);
 		}
 	});
@@ -2434,7 +1445,7 @@ function showExportGermplasmListPopup() {
 	});
 	var visibleColumnTermIds = [];
 	$('#imported-germplasm-list th[aria-label!=\'\']').each(
-		function() {
+		function () {
 			var termId = $(this).attr('data-col-name').split('-')[0];
 			if ($.inArray(termId, visibleColumnTermIds) === -1) {
 				visibleColumnTermIds.push(termId);
@@ -2465,7 +1476,7 @@ function openStudyTree(type, selectStudyFunction, isPreSelect) {
 		$('#studyTree').dynatree('destroy');
 		displayStudyListTree('studyTree', type, selectStudyFunction, isPreSelect);
 		changeBrowseStudyButtonBehavior(false);
-	// Reset study filter to show all studies
+		// Reset study filter to show all studies
 	} else {
 		$('#studyTypeFilter').val("All");
 		filterByStudyType();
@@ -2476,7 +1487,7 @@ function openStudyTree(type, selectStudyFunction, isPreSelect) {
 		keyboard: true
 	});
 	$('#studyTreeModal').off('hide.bs.modal');
-	$('#studyTreeModal').on('hide.bs.modal', function() {
+	$('#studyTreeModal').on('hide.bs.modal', function () {
 		TreePersist.saveStudyTreeState(false, '#studyTree');
 	});
 	choosingType = type;
@@ -2495,7 +1506,7 @@ function makeGermplasmListDraggable(isDraggable) {
 	if (isDraggable) {
 		$('.germplasm-list-items tbody  tr').draggable({
 
-			helper: function(/*event, ui*/) {
+			helper: function (/*event, ui*/) {
 				var width = $(this)[0].offsetWidth,
 					selected = $('.germplasm-list-items tr.germplasmSelectedRow'),
 					container;
@@ -2512,11 +1523,11 @@ function makeGermplasmListDraggable(isDraggable) {
 
 			revert: 'invalid',
 
-			start: function(/*event, ui*/) {
+			start: function (/*event, ui*/) {
 				var selected = $('.germplasm-list-items tr.germplasmSelectedRow');
 			},
 
-			stop: function(/*event, ui*/) {
+			stop: function (/*event, ui*/) {
 				var selected = $('.germplasm-list-items tr.germplasmSelectedRow');
 				$(selected).css('opacity', '1');
 			},
@@ -2526,7 +1537,7 @@ function makeGermplasmListDraggable(isDraggable) {
 			appendTo: '#chooseGermplasmAndChecks'
 		});
 
-		$('.germplasm-list-items tbody tr').off('click').on('click', function() {
+		$('.germplasm-list-items tbody tr').off('click').on('click', function () {
 			$(this).toggleClass('germplasmSelectedRow');
 		});
 
@@ -2552,7 +1563,7 @@ function initializeStudyTabs() {
 	'use strict';
 	$('.nav-tabs').tabdrop({position: 'left'});
 	$('.nav-tabs').tabdrop('layout');
-	$('#study-tab-headers .fbk-close-tab').on('click', function() {
+	$('#study-tab-headers .fbk-close-tab').on('click', function () {
 		var studyId = $(this).attr('id');
 		$('li#li-study' + studyId).remove();
 		$('.info#study' + studyId).remove();
@@ -2589,17 +1600,17 @@ function loadDatasetDropdown(optionTag) {
 	}
 	$.ajax({
 		url: '/Fieldbook/StudyManager/reviewStudyDetails/datasets/'
-		+ getCurrentStudyIdInTab(),
+			+ getCurrentStudyIdInTab(),
 		type: 'GET',
 		cache: false,
-		success: function(data) {
+		success: function (data) {
 			var i = 0;
 			for (i = 0; i < data.length; i++) {
 				optionTag.append(new Option(data[i].name, data[i].id));
 			}
 			$('#study' + getCurrentStudyIdInTab() + ' #dataset-selection').val('');
 		},
-		error: function(jqXHR, textStatus, errorThrown) {
+		error: function (jqXHR, textStatus, errorThrown) {
 			console.log('The following error occured: ' + textStatus,
 				errorThrown);
 		}
@@ -2626,7 +1637,7 @@ function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
 		url: '/Fieldbook/StudyManager/reviewStudyDetails/measurements/viewStudyAjax/' + datasetId + '/' + currentStudyId,
 		type: 'GET',
 		cache: false,
-		success: function(html) {
+		success: function (html) {
 			var close = '<i class="glyphicon glyphicon-remove fbk-close-dataset-tab" id="' + datasetId + '"></i>';
 			$('#study' + currentStudyId + ' #measurement-tab-headers').append(
 				'<li class="active" id="dataset-li' + datasetId + '"><a><span class="review-dataset-name">'
@@ -2657,9 +1668,9 @@ function showSelectedTab(selectedTabName) {
 
 function initializeReviewDatasetTabs(datasetId) {
 	'use strict';
-	$('#dataset-li' + datasetId).on('click', function() {
+	$('#dataset-li' + datasetId).on('click', function () {
 		$('#study' + getCurrentStudyIdInTab() + ' #dataset-selection option:selected').prop('selected', false);
-		$('#study' + getCurrentStudyIdInTab() + ' #dataset-selection option').each(function(index) {
+		$('#study' + getCurrentStudyIdInTab() + ' #dataset-selection option').each(function (index) {
 			if ($(this).val() === datasetId) {
 				$(this).prop('selected', true);
 			}
@@ -2667,7 +1678,7 @@ function initializeReviewDatasetTabs(datasetId) {
 		$('#study' + getCurrentStudyIdInTab() + ' #dataset-selection').change();
 	});
 
-	$('#dataset-li' + datasetId + ' .fbk-close-dataset-tab').on('click', function() {
+	$('#dataset-li' + datasetId + ' .fbk-close-dataset-tab').on('click', function () {
 		var datasetId = $(this).attr('id'),
 			showFirst = false;
 		if ($(this).parent().parent().hasClass('active')) {
@@ -2722,7 +1733,7 @@ function exportDesignTemplate() {
 		url: '/Fieldbook/DesignTemplate/export',
 		type: 'GET',
 		cache: false,
-		success: function(result) {
+		success: function (result) {
 			if (result.isSuccess === 1) {
 				$.fileDownload('/Fieldbook/crosses/download/file', {
 					httpMethod: 'POST',
@@ -2742,22 +1753,22 @@ function setSpinnerMaxValue() {
 	}
 }
 
-function ValidateValueCheckBoxFavorite(checkFavorite,data){
+function ValidateValueCheckBoxFavorite(checkFavorite, data) {
 
-	if(checkFavorite === 'showFavoriteLocationInventory'){
-		if(data.allSeedStorageFavoritesLocations.length !== 0){
+	if (checkFavorite === 'showFavoriteLocationInventory') {
+		if (data.allSeedStorageFavoritesLocations.length !== 0) {
 			$('#' + checkFavorite).prop('checked', true);
 		}
 	}
 
-	if(checkFavorite === 'importFavoriteMethod'){
-		if(data.favoriteNonGenerativeMethods.length !== 0){
+	if (checkFavorite === 'importFavoriteMethod') {
+		if (data.favoriteNonGenerativeMethods.length !== 0) {
 			$('#' + checkFavorite).prop('checked', true);
 		}
 	}
 
-	if(checkFavorite === 'importFavoriteLocation'){
-		if(data.allBreedingFavoritesLocations.length !== 0){
+	if (checkFavorite === 'importFavoriteLocation') {
+		if (data.allBreedingFavoritesLocations.length !== 0) {
 			$('#' + checkFavorite).prop('checked', true);
 		}
 	}
@@ -2792,7 +1803,7 @@ function EscapeUtilityConstructor() {
  * // => '1,2,3'
  */
 
-EscapeUtilityConstructor.prototype.toString = function(value) {
+EscapeUtilityConstructor.prototype.toString = function (value) {
 	if (typeof value == 'string') {
 		return value;
 	}
@@ -2806,8 +1817,7 @@ EscapeUtilityConstructor.prototype.toString = function(value) {
  * @param {string} chr The matched character to escape.
  * @returns {string} Returns the escaped character.
  */
-EscapeUtilityConstructor.prototype.escape = function(string)
-{
+EscapeUtilityConstructor.prototype.escape = function (string) {
 	var htmlEscapes = {
 		'&': '&amp;',
 		'<': '&lt;',
@@ -2820,7 +1830,7 @@ EscapeUtilityConstructor.prototype.escape = function(string)
 	string = this.toString(string);
 
 	return (string && this.hasUnescapedHtmlRegEx.test(string))
-		? string.replace(this.unescapedHtmlRegEx, function(chr) {
+		? string.replace(this.unescapedHtmlRegEx, function (chr) {
 			return htmlEscapes[chr];
 		}) : string;
 };
@@ -2837,7 +1847,7 @@ function getDatasetInstances(cropName, currentProgramId, studyId, datasetId) {
 		url: BASE_URL + studyId + '/datasets/' + datasetId + '/instances',
 		type: 'GET',
 		cache: false,
-		beforeSend: function(xhr) {
+		beforeSend: function (xhr) {
 			xhr.setRequestHeader('X-Auth-Token', xAuthToken);
 		},
 		success: function (data) {
@@ -2850,7 +1860,7 @@ function validateLocationMatch() {
 	var prev = '';
 	$('#studyFieldMapTree tr:has(:checkbox:checked) td:nth-child(2)').each(function () {
 		let temp = $(this).text().split('-');
-		let txt =  $(this).text();
+		let txt = $(this).text();
 		if (temp.length > 1) {
 			txt = temp[1];
 		}
@@ -2860,4 +1870,9 @@ function validateLocationMatch() {
 		prev = txt;
 	});
 	return isMatched;
+}
+
+function showAdvanceStudyModal(trialInstances, noOfReplications, locationsSelected, advanceType, values) {
+	'use strict';
+	return angular.element('#mainApp').injector().get('advanceStudyModalService').openAdvanceStudyModal(trialInstances, noOfReplications, locationsSelected, advanceType, values);
 }

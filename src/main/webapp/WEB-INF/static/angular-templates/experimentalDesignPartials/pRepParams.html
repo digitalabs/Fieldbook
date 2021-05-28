@@ -3,14 +3,14 @@
 	<span><input class="form-control" input-type="number" name="replicationPercentage" ng-change="refreshDesignDetailsForPRepDesign()" valid-number="" min-val="0" max-val="100" ng-model="data.replicationPercentage" style="width: 100px" ng-disabled="measurementDetails.hasMeasurement"/></span>
 	<span class="bms-fa-question-circle help-tooltip-study"
 		  tooltip-placement="right" tooltip-append-to-body="true"
-		  uib-tooltip="The % of test entries will be randomized selected."></span>
+		  uib-tooltip="Percentage of test entries to be randomly selected for replication"></span>
 </div>
 <div class="add_top_padding">
 	<label class=" control-label"><strong>Number of replications:</strong></label>
 	<span><input class="form-control" input-type="number" name="replicationsCount" ng-change="refreshDesignDetailsForPRepDesign()" valid-number="" min-val="2" ng-model="data.replicationsCount" style="width: 100px" ng-disabled="measurementDetails.hasMeasurement"/></span>
 	<span class="bms-fa-question-circle help-tooltip-study"
 		  tooltip-placement="right" tooltip-append-to-body="true"
-		  uib-tooltip="This is the number of times each randomized test entry and/or control entry will be replicated."></span>
+		  uib-tooltip="No. of replications for each replicated test entry and each check entry"></span>
 </div>
 <div class="add_top_padding">
 	<label class=" control-label"><strong>Number of blocks:</strong></label>

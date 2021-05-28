@@ -41,7 +41,7 @@
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
 	/*globals convertToSelect2*/
-	/*exported headerMsg1, headerMsg2, options*/
+	/*exported germplasmDetailsTitle, germplasmDetailsGid, options*/
 
 	convertToSelect2 = false;
 	var paginationUrl = '/Fieldbook/StudyManager/reviewStudyDetails/measurements/pageView/';
@@ -66,19 +66,24 @@
 	$( document ).ready(function() {
 		'use strict';
 		$('#div-study-tab-'+getCurrentStudyIdInTab()+' .desig-link').click(function() {
-			var gidValue = $(this).parent().parent().find('.gid-link').text();
+			const gidValue = $(this).parent().parent().find('.gid-link').text();
 			$(this).data('gid', gidValue);
 			$(this).data('desig', $(this).text());
-			openGermplasmDetailsPopop($(this));
+			openGermplasmDetailsModal(gidValue);
+
 		});
 
 		$('#div-study-tab-'+getCurrentStudyIdInTab()+' .gid-link').click(function() {
-			var desigValue = $(this).parent().parent().find('.desig-link').text();
+			const desigValue = $(this).parent().parent().find('.desig-link').text();
+			const gidValue = $(this).text();
 			$(this).data('gid', $(this).text());
 			$(this).data('desig', desigValue);
-			openGermplasmDetailsPopop($(this));
+			openGermplasmDetailsModal(gidValue);
 		});
 	});
-
+	function openGermplasmDetailsModal(gid) {
+		const germplasmDetailsModalService = angular.element('#study-details').injector().get('germplasmDetailsModalService');
+		germplasmDetailsModalService.openGermplasmDetailsModal(gid, null);
+	}
 	//]]>
 </script>

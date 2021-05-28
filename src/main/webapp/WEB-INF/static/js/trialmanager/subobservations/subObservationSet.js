@@ -10,7 +10,7 @@
 	var changingPlotEntryDeRegister = () => {
 	};
 
-	var subObservationModule = angular.module('subObservation', ['visualization']);
+	var subObservationModule = angular.module('subObservation', ['visualization', 'germplasmDetailsModule']);
 	var TRIAL_INSTANCE = 8170,
 		GID = 8240,
 		GROUPGID = 8330,
@@ -22,10 +22,11 @@
 	var hiddenColumns = [OBS_UNIT_ID, TRIAL_INSTANCE];
 
 	subObservationModule.controller('SubObservationSetCtrl', ['$scope', '$rootScope', 'TrialManagerDataService', '$stateParams',
-		'DTOptionsBuilder', 'DTColumnBuilder', '$http', '$q', '$compile', 'studyInstanceService', 'datasetService', 'derivedVariableService', '$timeout', '$uibModal',
-		'visualizationModalService', 'studyContext',
+		'DTOptionsBuilder', 'DTColumnBuilder', '$http', '$q', '$compile', 'studyInstanceService', 'datasetService',
+		'derivedVariableService', 'fileService', '$timeout', '$uibModal', 'visualizationModalService', 'studyContext', 'germplasmDetailsModalService',
 		function ($scope, $rootScope, TrialManagerDataService, $stateParams, DTOptionsBuilder, DTColumnBuilder, $http, $q, $compile,
-				  studyInstanceService, datasetService, derivedVariableService, $timeout, $uibModal, visualizationModalService, studyContext
+				  studyInstanceService, datasetService, derivedVariableService, fileService, $timeout, $uibModal, visualizationModalService,
+				  studyContext, germplasmDetailsModalService
 		) {
 
 			// used also in tests - to call $rootScope.$apply()
@@ -991,6 +992,14 @@
 				}
 			}
 
+			function getFileKey(rowData, columnData, fileName) {
+				return 'programuuid-' + studyContext.programId
+					+ '/studyid-' + studyContext.studyId
+					+ '/obsunituuid-' + rowData.variables['OBS_UNIT_ID'].value
+					+ '/termid-' + columnData.termId
+					+ '/' + fileName;
+			}
+
 			/* WARNING Complexity up ahead.
 			 * The following logic is probably one the most complex in the BMS system
 			 * The previous version was even more complex, spanning several files and thousand of lines.
@@ -1036,12 +1045,20 @@
 							change: function () {
 								updateInline();
 							},
+							cancel: function () {
+								cancelUpdateInline();
+							},
 							// FIXME altenative to blur bug https://github.com/angular-ui/ui-select/issues/499
 							onOpenClose: function (isOpen) {
 								if (!isOpen) updateInline();
 							},
 							newInlineValue: function (newValue) {
 								return {name: newValue};
+							},
+							showFile: function () {
+								const fileKey = getFileKey(rowData, columnData, this.value);
+								fileService.showFile(fileKey, this.value);
+								return false;
 							}
 						};
 
@@ -1119,7 +1136,32 @@
 								return $q.resolve(cellData);
 							} // doAjaxUpdate
 
-							var promise = doAjaxUpdate();
+							function doFileUploadIfNeeded() {
+								const file = $inlineScope.observation.file;
+								if (columnData.dataTypeCode === 'F' && file) {
+									let validateFile;
+									if ($inlineScope.observation.value) {
+										var confirmModal = $scope.openConfirmModal("A file already exists. Overwrite?");
+										validateFile = confirmModal.result;
+									} else {
+										validateFile = $q.resolve(true);
+									}
+									return validateFile.then((doContinue) => {
+										if (!doContinue) {
+											return $q.reject();
+										}
+										const key = getFileKey(rowData, columnData, file.name);
+										return fileService.upload(file, key).then((response) => {
+											$inlineScope.observation.value = file.name;
+										});
+									});
+								}
+								return $q.resolve();
+							} // doFileUploadIfNeeded
+
+							var promise = doFileUploadIfNeeded().then(function (fileName) {
+								return doAjaxUpdate();
+							});
 
 							promise.then(function (data) {
 								var valueChanged = false;
@@ -1167,7 +1209,13 @@
 
 								// Restore handler
 								addClickHandler();
+								adjustColumns();
 							}, function (response) {
+								if (!response) {
+									// no ajax, local reject / cancel (e.g overwrite file? -> no)
+									// keeps inline editor open
+									return;
+								}
 								if (response.errors) {
 									showErrorMessage('', response.errors[0].message);
 								} else {
@@ -1176,6 +1224,16 @@
 							});
 
 						} // updateInline
+
+						function cancelUpdateInline() {
+							$inlineScope.$destroy();
+							editor.remove();
+							dtCell.data(cellData);
+							processCell(cell, cellData, rowData, columnData);
+							// Restore handler
+							addClickHandler();
+							adjustColumns();
+						}
 
 						if (columnData.dataTypeCode === 'D') {
 							$(cell).one('click', 'input', function () {
@@ -1210,7 +1268,7 @@
 							 * This also avoids temporary click handler on body
 							 * FIXME is there a better way?
 							 */
-							$(cell).find('a.ui-select-match, input').click().focus();
+							$(cell).find('a.ui-select-match, input:not([type="file"])').click().focus();
 						}, 100);
 					});
 				} // clickHandler
@@ -1455,10 +1513,13 @@
 						columnsDef.push({
 							targets: columns.length - 1,
 							orderable: false,
-							render: function (data, type, full, meta) {
-								return '<a class="gid-link" href="javascript: void(0)" ' +
-									'onclick="openGermplasmDetailsPopopWithGidAndDesig(\'' +
-									full.gid + '\',\'' + full.designation + '\')">' + EscapeHTML.escape(data.value) + '</a>';
+							createdCell: function (td, data, full) {
+								$(td).html(
+									$compile(
+										'<a class="gid-link" href="javascript: void(0)" ng-click="openGermplasmDetailsModal(\'' +
+										full.gid + '\')">' + EscapeHTML.escape(data.value) + '</a>'
+									)($scope)
+								);
 							}
 						});
 					} else if (columnData.termId === STOCK_ID) {
@@ -1545,6 +1606,10 @@
 					columns: columns,
 					columnsDef: columnsDef
 				};
+			}
+
+			$scope.openGermplasmDetailsModal = function (gid) {
+				germplasmDetailsModalService.openGermplasmDetailsModal(gid, null);
 			}
 
 			function renderCategoricalValue(value, columnData) {
@@ -1709,7 +1774,6 @@
 						$scope.observation.value = $scope.valuecontainer.observationValue;
 						$scope.observation.onOpenClose(isOpen);
 					}
-
 				}
 			};
 		})

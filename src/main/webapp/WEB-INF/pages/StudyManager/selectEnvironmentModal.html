@@ -1,0 +1,41 @@
+<div class="modal-body" xmlns:th="http://www.thymeleaf.org">
+	<div class="row form-group">
+		<div class="col-xs-11 col-md-11">
+			<label ng-show="applicationData.advanceType != 'sample'" class="modal-title fbk-modal-title"
+				   id="heading-modal" th:text="#{study.studydetails.action.advance.study}">Advance study</label>
+			<label ng-show="applicationData.advanceType == 'sample'" class="modal-title fbk-modal-title"
+				   id="heading-modal" th:text="#{study.studydetails.action.advance.sample}">Advance sampled
+				plants</label>
+		</div>
+		<div class="col-xs-1 col-md-1">
+			<button id="closeAdvanceTrialModal" type="button" class="close  pull-right glyphicon glyphicon-remove"
+					data-dismiss="modal" aria-hidden="true" ng-click="close()"/>
+		</div>
+	</div>
+
+	<div class="row form-group">
+		<div id="page-advance-modal-message"></div>
+	</div>
+
+	<div class="row form-group">
+		<div class="col-xs-12 col-md-12">
+			<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
+		</div>
+	</div>
+	<br/>
+	<div id="instance-selection">
+		<instances-table instances="instances" selected-instances="selectedInstances" instance-id-property="instanceNumber" is-empty-selection="isEmptySelection"></instances-table>
+	</div>
+</div> <!-- Modal Body -->
+<div class="modal-footer">
+	<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true"
+			th:text="#{common.form.cancel.text}" ng-click="close()">
+		Cancel
+	</button>
+	<button type="button" class="btn btn-primary" ng-disabled="isEmptySelection"
+			aria-hidden="true" ng-click="selectInstanceContinue()" th:text="#{common.form.continue.text}">
+		Continue
+	</button>
+</div>
+
+

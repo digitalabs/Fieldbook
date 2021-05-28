@@ -9,7 +9,7 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 	var manageTrialApp = angular.module('manageTrialApp', ['designImportApp', 'leafnode-utils', 'fieldbook-utils', 'subObservation',
 		'ui.router', 'ui.bootstrap', 'ngLodash', 'ngResource', 'ngStorage', 'datatables', 'datatables.buttons', 'datatables.colreorder',
 		'ngSanitize', 'ui.select', 'ngMessages', 'blockUI', 'datasets-api', 'auth', 'bmsAuth', 'studyState',
-		'export-study', 'import-study', 'create-sample', 'derived-variable', 'importObservationsApp', 'germplasm-study-source']);
+		'export-study', 'import-study', 'create-sample', 'derived-variable', 'importObservationsApp', 'germplasm-study-source', 'germplasmDetailsModule', 'pascalprecht.translate']);
 
 	manageTrialApp.config(['$httpProvider', function ($httpProvider) {
 		$httpProvider.interceptors.push('authInterceptor');
@@ -28,6 +28,37 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 	 It is used by ng-bind-html ***/
 	manageTrialApp.config(function ($sceProvider) {
 		$sceProvider.enabled(false);
+	});
+
+	manageTrialApp.config(function ($translateProvider) {
+		$translateProvider.useSanitizeValueStrategy('sanitize');
+		$translateProvider.translations('en', {
+			'study.studydetails.action.advance.sample': 'Advance sampled plants from plots',
+			'study.studydetails.action.advance.study': 'Advance study',
+			'advancing.study.mandatory.fields': 'indicates a mandatory field',
+			'advancing.study.method': 'METHODS',
+			'advancing.study.breeding.method.the.same': 'Breeding Method is the same for each advance',
+			'study.advance.sample.breeding.method.label': 'Breeding method',
+			'advancing.study.manage.method': 'Manage Methods',
+			'advancing.study.method.variate': 'Choose a variate that defines the breeding method for each advance',
+			'advancing.study.lines': 'LINES',
+			'advancing.study.line.the.same': 'Same number of lines is selected for each plot',
+			'advancing.study.number.of.samples.plot': 'Lines Selected per Plot',
+			'advancing.study.lines.variate': 'Choose a variate that defines the number of lines selected from each plot',
+			'advancing.study.bulks': 'BULKS',
+			'advancing.study.all.plots.selected': 'All plots are selected',
+			'advancing.study.bulks.variate': 'Choose a variate that defines which plots were selected',
+			'study.advance.plants.label': 'PLANTS',
+			'study.advance.plants.all.radio': 'All plants are selected',
+			'advancing.study.reps': 'REPS',
+			'advancing.study.select.all': 'Select All',
+			'advancing.study.harvest.information': 'HARVEST DETAILS',
+			'advancing.study.harvest.date': 'Harvest Date:',
+			'advancing.study.location.information': 'LOCATION DETAILS',
+			'common.form.back.text': 'Back',
+			'common.form.finish.text': 'Finish'
+		});
+		$translateProvider.preferredLanguage('en');
 	});
 
 	// routing configuration
@@ -164,6 +195,13 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 		};
 	});
 
+	//Create a filter for trust url
+	manageTrialApp.filter('trustAsResourceUrl', ['$sce', function($sce) {
+		return function(val) {
+			return $sce.trustAsResourceUrl(val);
+		};
+	}]);
+
 	// do not switch tab if we have newly imported measurements
 	function isTabChangeDisabled() {
 		return $('.import-study-data').data('data-import') === '1';
@@ -205,9 +243,10 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 		'$timeout', '_', '$localStorage', '$state', '$window', '$location', 'HasAnyAuthorityService', 'derivedVariableService', 'exportStudyModalService',
 		'importStudyModalService', 'createSampleModalService', 'derivedVariableModalService', '$uibModal', '$q', 'datasetService', 'InventoryService',
 		'studyContext', 'PERMISSIONS', 'LABEL_PRINTING_TYPE', 'HAS_LISTS_OR_SUB_OBS', 'HAS_GENERATED_DESIGN', 'germplasmStudySourceService', 'studyEntryService', 'HAS_MEANS_DATASET',
+		'advanceStudyModalService',
 		function ($scope, $rootScope, studyStateService, TrialManagerDataService, $http, $timeout, _, $localStorage, $state, $window, $location, HasAnyAuthorityService,
 				  derivedVariableService, exportStudyModalService, importStudyModalService, createSampleModalService, derivedVariableModalService, $uibModal, $q, datasetService, InventoryService,
-				  studyContext, PERMISSIONS, LABEL_PRINTING_TYPE, HAS_LISTS_OR_SUB_OBS, HAS_GENERATED_DESIGN, germplasmStudySourceService, studyEntryService, HAS_MEANS_DATASET) {
+				  studyContext, PERMISSIONS, LABEL_PRINTING_TYPE, HAS_LISTS_OR_SUB_OBS, HAS_GENERATED_DESIGN, germplasmStudySourceService, studyEntryService, HAS_MEANS_DATASET, advanceStudyModalService) {
 
 			$scope.germplasmDetailsHasChanges = false;
 			$window.addEventListener("message", (event) => {
@@ -215,6 +254,18 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 					// If any germplasm info is changed in germplasm details popup (basic-details, name, attribute, pedigree)
 					// set the germplasmDetailsHasChanges flag to true
 					$scope.germplasmDetailsHasChanges = true;
+
+					// Reload Germplasm Details Modal
+					const germplasmDetailsModalService = angular.element('#mainApp').injector().get('germplasmDetailsModalService');
+					if (germplasmDetailsModalService.modal) {
+						germplasmDetailsModalService.updateGermplasmDetailsModal();
+					}
+
+					if ($scope.tabSelected == $scope.crossesAndSelectionsTab.state) {
+						// Reload Crosses and Selection if selected
+						$rootScope.navigateToTab('germplasmStudySource', {reload: true});
+					}
+
 				}
 			}, false);
 
@@ -261,8 +312,8 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 
 			if ($scope.isOpenStudy()) {
 				$scope.trialTabs.push({
-						name: 'Germplasm & Checks',
-						state: 'germplasm'
+					name: 'Germplasm & Checks',
+					state: 'germplasm'
 
 				});
 				$scope.trialTabs.push({
@@ -287,15 +338,17 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 				studyStateService.updateGeneratedDesign(HAS_GENERATED_DESIGN);
 				studyStateService.updateHasMeansDataset(HAS_MEANS_DATASET);
 
-				if(HAS_GENERATED_DESIGN) {
+				if (HAS_GENERATED_DESIGN) {
 					studyEntryService.getStudyEntriesMetadata().then(function (metadata) {
-						if(metadata.hasUnassignedEntries) {
+						if (metadata.hasUnassignedEntries) {
 							showAlertMessage('', $.fieldbookMessages.studyEntryUnassignedWarning);
 						}
 					});
-				};
+				}
+				;
 
-			};
+			}
+			;
 
 			inventoryChangedDeRegister();
 			inventoryChangedDeRegister = $rootScope.$on("inventoryChanged", function () {
@@ -821,6 +874,7 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 				var modalInstance = $uibModal.open({
 					animation: true,
 					templateUrl: '/Fieldbook/static/angular-templates/confirmModal.html',
+					windowClass: 'force-zindex', // make sure that the modal is always in front of all modals
 					controller: function ($scope, $uibModalInstance) {
 						$scope.text = message;
 						$scope.confirmButtonLabel = confirmButtonLabel || okLabel;
@@ -873,15 +927,17 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 						scope.forkPrintLabelFlows = function () {
 							if (studyContext.measurementDatasetId === scope.selected.datasetId) {
 								window.location.href = '/ibpworkbench/controller/jhipster#label-printing' +
-									'?datasetId=' + scope.selected.datasetId +
+									'?cropName=' + studyContext.cropName +
+									'&programUUID=' + studyContext.programId +
+									'&datasetId=' + scope.selected.datasetId +
 									'&studyId=' + studyContext.studyId +
-									'&programId=' + studyContext.programId +
 									'&printingLabelType=' + LABEL_PRINTING_TYPE.OBSERVATION_DATASET;
 							} else {
 								window.location.href = '/ibpworkbench/controller/jhipster#label-printing' +
-									'?datasetId=' + scope.selected.datasetId +
+									'?cropName=' + studyContext.cropName +
+									'&programUUID=' + studyContext.programId +
+									'&datasetId=' + scope.selected.datasetId +
 									'&studyId=' + studyContext.studyId +
-									'&programId=' + studyContext.programId +
 									'&printingLabelType=' + LABEL_PRINTING_TYPE.SUBOBSERVATION_DATASET;
 							}
 						};
@@ -956,7 +1012,7 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 				});
 			}
 
-			$rootScope.openInventoryDetailsModal = function(gid) {
+			$rootScope.openInventoryDetailsModal = function (gid) {
 
 				$uibModal.open({
 					templateUrl: '/Fieldbook/static/js/trialmanager/inventory/details/inventory-details-modal.html',
@@ -978,11 +1034,35 @@ showAlertMessage,showMeasurementsPreview,createErrorNotification,errorMsgHeader,
 				derivedVariableModalService.openDatasetOptionModal();
 			}
 
+			$scope.startAdvance = function (advanceType) {
+				advanceStudyModalService.startAdvance(advanceType);
+			}
+
 			$scope.init = function () {
 				derivedVariableService.displayExecuteCalculateVariableMenu();
 			}
 
 			$scope.init();
+
+		}]);
+
+	manageTrialApp.factory('studyService', ['$http', '$q', 'studyContext', 'serviceUtilities',
+		function ($http, $q, studyContext, serviceUtilities) {
+
+			var BASE_URL = '/bmsapi/crops/' + studyContext.cropName;
+
+			var failureHandler = serviceUtilities.restFailureHandler;
+
+			var studyService = {};
+
+			studyService.studyHasSamples = function () {
+				var request = $http.get(BASE_URL + '/programs/' + studyContext.programId + '/studies/' + studyContext.studyId + '/sampled');
+				return request.then(((response) => {
+					return response;
+				}), failureHandler);
+			};
+
+			return studyService;
 
 		}]);
 

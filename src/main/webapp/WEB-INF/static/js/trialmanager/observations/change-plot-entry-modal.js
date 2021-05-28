@@ -14,8 +14,8 @@
 		UNITS = -5;
 
 	module.controller('ChangePlotEntryModalCtrl', ['$scope', '$rootScope', 'studyContext', '$uibModalInstance', 'DTOptionsBuilder', 'DTColumnBuilder',
-		'$timeout', '$q', '$compile', 'ChangePlotEntryService',
-		function ($scope, $rootScope, studyContext, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, $timeout, $q, $compile, ChangePlotEntryService) {
+		'$timeout', '$q', '$compile', 'ChangePlotEntryService', 'germplasmDetailsModalService',
+		function ($scope, $rootScope, studyContext, $uibModalInstance, DTOptionsBuilder, DTColumnBuilder, $timeout, $q, $compile, ChangePlotEntryService, germplasmDetailsModalService) {
 
 			var initResolve;
 			$scope.initPromise = new Promise(function (resolve) {
@@ -275,10 +275,10 @@
 						columnsDef.push({
 							targets: columns.length - 1,
 							orderable: false,
-							render: function (data, type, full, meta) {
-								return '<a class="gid-link" href="javascript: void(0)" ' +
-									'onclick="openGermplasmDetailsPopopWithGidAndDesig(\'' +
-									full.gid + '\',\'' + full.designation + '\')">' + EscapeHTML.escape(data.value) + '</a>';
+							createdCell: function (td, data, full) {
+								 $(td).html($compile('<a class="gid-link" href="javascript: void(0)" ' +
+									'ng-click="openGermplasmDetailsModal(\'' +
+									full.gid + '\')">' + EscapeHTML.escape(data.value) + '</a>')($scope));
 							}
 						});
 					} else if (columnData.termId === LOTS) {
@@ -462,6 +462,10 @@
 
 			function resetRadioButtonStatus() {
 				$scope.selected = {entryId: ''};
+			}
+
+			$scope.openGermplasmDetailsModal = function (gid) {
+				germplasmDetailsModalService.openGermplasmDetailsModal(gid, null);
 			}
 
 		}

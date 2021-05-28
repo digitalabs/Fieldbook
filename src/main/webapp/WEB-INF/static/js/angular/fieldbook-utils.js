@@ -499,6 +499,21 @@
 			};
 		})
 
+		.directive('fileUpload', function () {
+			return {
+				scope: {
+					fileUpload: '='
+				},
+				link: function (scope, el, attrs) {
+					el.bind('change', function (event) {
+						var file = event.target.files[0];
+						scope.fileUpload = file ? file : undefined;
+						scope.$apply();
+					});
+				}
+			};
+		})
+
 		// filters
 		.filter('range', function() {
 			return function(input, total) {

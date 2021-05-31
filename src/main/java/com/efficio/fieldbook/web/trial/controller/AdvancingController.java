@@ -14,7 +14,6 @@ package com.efficio.fieldbook.web.trial.controller;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.util.FieldbookUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.ChoiceKeyVal;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.TableHeader;
@@ -24,7 +23,6 @@ import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.trial.bean.AdvanceType;
 import com.efficio.fieldbook.web.trial.bean.AdvancingStudy;
 import com.efficio.fieldbook.web.trial.form.AdvancingStudyForm;
-import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -38,7 +36,6 @@ import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.ruleengine.generator.SeedSourceGenerator;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.constant.ColumnLabels;
-import org.generationcp.middleware.domain.dms.DatasetDTO;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -68,7 +65,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -80,12 +76,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -533,6 +526,9 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 			final String uniqueId = req.getParameter(AdvancingController.UNIQUE_ID);
 			form.setUniqueId(Long.valueOf(uniqueId));
 
+			// Update plant selected of the advancing sources based on deleted entries
+			this.updateRemovedSelectedPlant(uniqueId, entries);
+
 			final List<Map<String, Object>> dataTableDataList = this.setupAdvanceReviewDataList(importedGermplasmList);
 			// remove the entry numbers
 
@@ -744,6 +740,25 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/selectEnvironmentModal", method = RequestMethod.GET)
 	public String selectEnvironmentModal(final Model model) {
 		return super.showAjaxPage(model, "StudyManager/selectEnvironmentModal");
+	}
+
+	public void updateRemovedSelectedPlant(final String uniqueId, final String[] deletedEntries) {
+		final List<AdvancingSource> sources = this.getPaginationListSelection().getAdvanceDetails(uniqueId).getAdvancingSourceItems();
+		if (!CollectionUtils.isEmpty(sources)) {
+			int index = 1;
+			for (final AdvancingSource source : sources) {
+				int startPlantSelected = source.getPlantsSelected() == null ? 0 : source.getPlantsSelected();
+				for (int i=1; i <= startPlantSelected; i ++) {
+					int newPlantSelected = source.getPlantsSelected() == null ? 0 : source.getPlantsSelected();
+					if (Arrays.asList(deletedEntries).contains(String.valueOf(index))) {
+						if (newPlantSelected - 1 >= 0) {
+							source.setPlantsSelected(newPlantSelected - 1);
+						}
+					}
+					index++;
+				}
+			}
+		}
 	}
 
 }

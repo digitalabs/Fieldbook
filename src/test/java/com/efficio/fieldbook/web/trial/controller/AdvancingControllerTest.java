@@ -475,6 +475,11 @@ public class AdvancingControllerTest {
         final AdvancingStudyForm form = new AdvancingStudyForm();
         final Model model = new ExtendedModelMap();
 
+		final AdvancingSourceList list = this.getAdvancingSourceList(importedGermplasmList);
+		form.setUniqueId(1L);
+		form.setAdvancingSourceItems(list.getRows());
+		Mockito.when(this.advancingController.getPaginationListSelection().getAdvanceDetails(ArgumentMatchers.anyString())).thenReturn(form);
+
         final String templateUrl = this.advancingController.deleteAdvanceStudyEntries(form, model,this.request);
 
         Assert.assertEquals("StudyManager/saveAdvanceStudy",templateUrl);

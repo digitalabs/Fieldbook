@@ -746,11 +746,12 @@ public class AdvancingController extends AbstractBaseFieldbookController {
 		final List<AdvancingSource> sources = this.getPaginationListSelection().getAdvanceDetails(uniqueId).getAdvancingSourceItems();
 		if (!CollectionUtils.isEmpty(sources)) {
 			int index = 1;
+			final List<String> deletedEntriesList = Arrays.asList(deletedEntries);
 			for (final AdvancingSource source : sources) {
 				int startPlantSelected = source.getPlantsSelected() == null ? 0 : source.getPlantsSelected();
 				for (int i=1; i <= startPlantSelected; i ++) {
 					int newPlantSelected = source.getPlantsSelected() == null ? 0 : source.getPlantsSelected();
-					if (Arrays.asList(deletedEntries).contains(String.valueOf(index))) {
+					if (deletedEntriesList.contains(String.valueOf(index))) {
 						if (newPlantSelected - 1 >= 0) {
 							source.setPlantsSelected(newPlantSelected - 1);
 						}

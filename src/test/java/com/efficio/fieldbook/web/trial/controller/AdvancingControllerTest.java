@@ -2,7 +2,6 @@
 package com.efficio.fieldbook.web.trial.controller;
 
 import com.efficio.fieldbook.util.FieldbookException;
-import com.efficio.fieldbook.web.common.bean.ChoiceKeyVal;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.bean.TableHeader;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
@@ -22,8 +21,6 @@ import org.generationcp.commons.pojo.AdvancingSourceList;
 import org.generationcp.commons.ruleengine.RuleException;
 import org.generationcp.commons.ruleengine.generator.SeedSourceGenerator;
 import org.generationcp.commons.spring.util.ContextUtil;
-import org.generationcp.middleware.data.initializer.WorkbookTestDataInitializer;
-import org.generationcp.middleware.domain.dms.DatasetDTO;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -37,18 +34,14 @@ import org.generationcp.middleware.domain.ontology.Property;
 import org.generationcp.middleware.domain.ontology.Scale;
 import org.generationcp.middleware.domain.ontology.Variable;
 import org.generationcp.middleware.domain.ontology.VariableType;
-import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.MethodType;
 import org.generationcp.middleware.pojos.Name;
-import org.generationcp.middleware.pojos.workbench.CropType;
-import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.generationcp.middleware.service.api.study.StudyInstanceService;
@@ -68,7 +61,6 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -354,9 +346,20 @@ public class AdvancingControllerTest {
 			germplasm.setEntryNumber(i);
 			importedGermplasms.add(germplasm);
 		}
+		final AdvancingSourceList list = this.getAdvancingSourceList(importedGermplasms);
+		final AdvancingStudyForm advancingStudyForm = new AdvancingStudyForm();
+		advancingStudyForm.setUniqueId(1L);
+		advancingStudyForm.setAdvancingSourceItems(list.getRows());
+		Mockito.when(this.advancingController.getPaginationListSelection().getAdvanceDetails(ArgumentMatchers.anyString())).thenReturn(advancingStudyForm);
+
 		final String[] entries = {"1", "2", "3"};
 		importedGermplasms = this.advancingController.deleteImportedGermplasmEntries(importedGermplasms, entries);
+		this.advancingController.updateRemovedSelectedPlant("1", entries);
+		final List<AdvancingSource> sources = this.advancingController.getPaginationListSelection().getAdvanceDetails("1").getAdvancingSourceItems();
 		Assert.assertEquals("Should have a total of 7 germplasms remaining", 7, importedGermplasms.size());
+		Assert.assertEquals(0, sources.get(0).getPlantsSelected().intValue());
+		Assert.assertEquals(1, sources.get(1).getPlantsSelected().intValue());
+
 	}
 
 	private List<ImportedGermplasm> generateGermplasm() {
@@ -471,6 +474,11 @@ public class AdvancingControllerTest {
 
         final AdvancingStudyForm form = new AdvancingStudyForm();
         final Model model = new ExtendedModelMap();
+
+		final AdvancingSourceList list = this.getAdvancingSourceList(importedGermplasmList);
+		form.setUniqueId(1L);
+		form.setAdvancingSourceItems(list.getRows());
+		Mockito.when(this.advancingController.getPaginationListSelection().getAdvanceDetails(ArgumentMatchers.anyString())).thenReturn(form);
 
         final String templateUrl = this.advancingController.deleteAdvanceStudyEntries(form, model,this.request);
 
@@ -800,5 +808,52 @@ public class AdvancingControllerTest {
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(workbook);
 		Mockito.when(workbook.getTrialObservationByTrialInstanceNo(1)).thenReturn(row);
 
+	}
+
+	private AdvancingSourceList getAdvancingSourceList(final List<ImportedGermplasm> germplasmList) {
+
+		final AdvancingSourceList rows = new AdvancingSourceList();
+		rows.setRows(new ArrayList<>());
+		final int size = (germplasmList.size() / 2) % 1 == 0 ? germplasmList.size() / 2 : 1;
+
+		for (int i = 0; i < size; i++) {
+			// Set up Advancing sources
+			final AdvancingSource advancingSource = new AdvancingSource();
+			advancingSource.setNames(new ArrayList<>());
+			advancingSource.setStudyId(1);
+			advancingSource.setGermplasm(germplasmList.get(i));
+
+			// Names
+			final Name sourceGermplasmName = new Name(133);
+			sourceGermplasmName.setGermplasmId(133);
+			sourceGermplasmName.setTypeId(6);
+			sourceGermplasmName.setNstat(1);
+			sourceGermplasmName.setNval("BARRA DE ORO DULCE");
+			sourceGermplasmName.setLocationId(9);
+			sourceGermplasmName.setNdate(19860501);
+			sourceGermplasmName.setReferenceId(1);
+			advancingSource.setStudyId(1);
+			advancingSource.getNames().add(sourceGermplasmName);
+
+			final Method breedingMethod =
+					new Method(40, "DER", "G", "SLF", "Self and Bulk", "Selfing a Single Plant or population and bulk seed", 0, -1, 1, 0,
+							TermId.NON_BULKING_BREEDING_METHOD_CLASS.getId(), 1, 0, 19980708, "");
+			breedingMethod.setSnametype(5);
+			breedingMethod.setSeparator("-");
+			breedingMethod.setPrefix("B");
+			breedingMethod.setCount("");
+
+			advancingSource.setBreedingMethod(breedingMethod);
+			advancingSource.setPlantsSelected(2);
+			advancingSource.setPlotNumber("2");
+			advancingSource.setBulk(false);
+			advancingSource.setCheck(false);
+			advancingSource.setStudyName("Test One");
+			advancingSource.setSeason("201412");
+			advancingSource.setCurrentMaxSequence(0);
+			advancingSource.setTrialInstanceNumber("1");
+			rows.getRows().add(advancingSource);
+		}
+		return rows;
 	}
 }

@@ -826,7 +826,7 @@ public class AdvancingControllerTest {
 
 			// Names
 			final Name sourceGermplasmName = new Name(133);
-			sourceGermplasmName.setGermplasmId(133);
+			sourceGermplasmName.setGermplasm(new Germplasm(133));
 			sourceGermplasmName.setTypeId(6);
 			sourceGermplasmName.setNstat(1);
 			sourceGermplasmName.setNval("BARRA DE ORO DULCE");

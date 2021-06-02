@@ -20,7 +20,6 @@ import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.commons.constant.AppConstants;
-import org.generationcp.commons.service.FileService;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -30,13 +29,11 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TermSummary;
 import org.generationcp.middleware.domain.ontology.DataType;
 import org.generationcp.middleware.domain.ontology.Variable;
-import org.generationcp.middleware.domain.ontology.VariableType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.manager.ontology.api.OntologyVariableDataManager;
@@ -50,13 +47,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -69,12 +61,6 @@ import java.util.StringTokenizer;
 public class FieldbookServiceImpl implements FieldbookService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(FieldbookServiceImpl.class);
-
-	/**
-	 * The file service.
-	 */
-	@Resource
-	private FileService fileService;
 
 	@Autowired
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
@@ -102,143 +88,6 @@ public class FieldbookServiceImpl implements FieldbookService {
 		final PossibleValuesCache possibleValuesCache) {
 		this.fieldbookMiddlewareService = fieldbookMiddlewareService;
 		this.possibleValuesCache = possibleValuesCache;
-	}
-
-	static boolean inHideVariableFields(final Integer stdVarId, final String variableList) {
-		final StringTokenizer token = new StringTokenizer(variableList, ",");
-		boolean inList = false;
-		while (token.hasMoreTokens()) {
-			if (stdVarId.equals(Integer.parseInt(token.nextToken()))) {
-				inList = true;
-				break;
-			}
-		}
-		return inList;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * com.efficio.fieldbook.service.api.FieldbookService#storeUserWorkbook(java
-	 * .io.InputStream)
-	 */
-	@Override
-	public String storeUserWorkbook(final InputStream in) throws IOException {
-		return this.getFileService().saveTemporaryFile(in);
-	}
-
-	/**
-	 * Gets the file service.
-	 *
-	 * @return the file service
-	 */
-	public FileService getFileService() {
-		return this.fileService;
-	}
-
-	@Override
-	public List<StandardVariableReference> filterStandardVariablesForSetting(
-		final int mode,
-		final Collection<SettingDetail> selectedList) {
-
-		List<StandardVariableReference> result = new ArrayList<>();
-
-		final Set<Integer> selectedIds = new HashSet<>();
-		if (selectedList != null && !selectedList.isEmpty()) {
-			for (final SettingDetail settingDetail : selectedList) {
-				selectedIds.add(settingDetail.getVariable().getCvTermId());
-			}
-		}
-
-		final List<Integer> storedInIds = this.getStoredInIdsByMode(mode);
-		final List<Integer> propertyIds = this.getPropertyIdsByMode(mode);
-
-		final List<StandardVariableReference> dbList = this.fieldbookMiddlewareService.filterStandardVariablesByMode(
-			storedInIds, propertyIds,
-			mode == VariableType.TRAIT.getId() || mode == VariableType.ENVIRONMENT_CONDITION.getId());
-
-		if (dbList != null && !dbList.isEmpty()) {
-
-			for (final StandardVariableReference ref : dbList) {
-				if (!selectedIds.contains(ref.getId())) {
-
-					if (mode == VariableType.STUDY_DETAIL.getId()) {
-						if (FieldbookServiceImpl.inHideVariableFields(
-							ref.getId(),
-							AppConstants.FILTER_STUDY_FIELDS.getString())
-							|| ref.getId() == TermId.DATASET_NAME.getId()
-							|| ref.getId() == TermId.DATASET_TITLE.getId()
-							|| FieldbookServiceImpl.inHideVariableFields(
-							ref.getId(),
-							AppConstants.HIDE_ID_VARIABLES.getString())) {
-							continue;
-						}
-
-					} else if (mode == VariableType.SELECTION_METHOD.getId()) {
-						if (FieldbookServiceImpl.inHideVariableFields(
-							ref.getId(),
-							AppConstants.HIDE_ID_VARIABLES.getString())) {
-							continue;
-						}
-					} else if (mode == VariableType.ENVIRONMENT_DETAIL.getId()) {
-						if (FieldbookServiceImpl.inHideVariableFields(
-							ref.getId(),
-							AppConstants.HIDE_STUDY_VARIABLES.getString())) {
-							continue;
-						}
-					} else {
-						if (FieldbookServiceImpl.inHideVariableFields(
-							ref.getId(),
-							AppConstants.HIDE_PLOT_FIELDS.getString())) {
-							continue;
-						}
-					}
-
-					result.add(ref);
-				}
-			}
-		}
-		result = this.fieldbookMiddlewareService.filterStandardVariablesByIsAIds(
-			result,
-			FieldbookUtil.getFilterForMeansAndStatisticalVars());
-		Collections.sort(result);
-
-		return result;
-	}
-
-	private List<Integer> getStoredInIdsByMode(final int mode) {
-		final List<Integer> list = new ArrayList<>();
-		if (mode == VariableType.STUDY_DETAIL.getId()) {
-			list.addAll(PhenotypicType.STUDY.getTypeStorages());
-		} else if (mode == VariableType.TRAIT.getId() || mode == VariableType.SELECTION_METHOD.getId()
-			|| mode == VariableType.ENVIRONMENT_CONDITION.getId()) {
-			list.addAll(PhenotypicType.VARIATE.getTypeStorages());
-		} else if (mode == VariableType.ENVIRONMENT_DETAIL.getId()) {
-			list.addAll(PhenotypicType.TRIAL_ENVIRONMENT.getTypeStorages());
-		} else if (mode == VariableType.TREATMENT_FACTOR.getId()) {
-			list.addAll(PhenotypicType.TRIAL_DESIGN.getTypeStorages());
-		} else if (mode == VariableType.GERMPLASM_DESCRIPTOR.getId()) {
-			list.addAll(PhenotypicType.GERMPLASM.getTypeStorages());
-		}
-		return list;
-	}
-
-	private List<Integer> getPropertyIdsByMode(final int mode) {
-		final List<Integer> list = new ArrayList<>();
-
-		if (mode == VariableType.SELECTION_METHOD.getId() || mode == VariableType.TRAIT.getId()
-			|| mode == VariableType.ENVIRONMENT_CONDITION.getId()) {
-
-			final StringTokenizer token = new StringTokenizer(
-				AppConstants.SELECTION_VARIATES_PROPERTIES.getString(),
-				",");
-
-			while (token.hasMoreTokens()) {
-				list.add(Integer.valueOf(token.nextToken()));
-			}
-		}
-		return list;
 	}
 
 	@Override
@@ -425,19 +274,6 @@ public class FieldbookServiceImpl implements FieldbookService {
 		return locNameDisplay;
 	}
 
-	@Override
-	public List<ValueReference> getAllPossibleValuesByPSMR(
-		final String property, final String scale,
-		final String method, final PhenotypicType phenotypeType) {
-		List<ValueReference> list = new ArrayList<>();
-		final Integer standardVariableId = this.fieldbookMiddlewareService
-			.getStandardVariableIdByPropertyScaleMethodRole(property, scale, method, phenotypeType);
-		if (standardVariableId != null) {
-			list = this.getAllPossibleValues(standardVariableId);
-		}
-		return list;
-	}
-
 	private List<ValueReference> convertPersonsToValueReferences(final List<Person> persons) {
 		final List<ValueReference> list = new ArrayList<>();
 		if (persons != null && !persons.isEmpty()) {
@@ -530,11 +366,6 @@ public class FieldbookServiceImpl implements FieldbookService {
 			return location.getLname();
 		}
 		return null;
-	}
-
-	@Override
-	public Term getTermById(final int termId) {
-		return this.ontologyService.getTermById(termId);
 	}
 
 	@Override
@@ -1105,11 +936,6 @@ public class FieldbookServiceImpl implements FieldbookService {
 
 	protected void setUserService(final UserService userService) {
 		this.userService = userService;
-	}
-
-	@Override
-	public StandardVariable getStandardVariable(final Integer termId) {
-		return this.getOntologyService().getStandardVariable(termId, this.contextUtil.getCurrentProgramUUID());
 	}
 
 }

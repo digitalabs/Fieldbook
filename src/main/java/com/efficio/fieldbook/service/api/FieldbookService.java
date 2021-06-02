@@ -39,25 +39,6 @@ import java.util.Map;
 public interface FieldbookService {
 
 	/**
-	 * Takes in an input stream representing the Excel file to be read, and returns the temporary file name used to store it in the system.
-	 *
-	 * @param in the in
-	 * @return the string
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
-	String storeUserWorkbook(InputStream in) throws IOException;
-
-
-	/**
-	 * Filters the variables based on the current setting mode and excludes the selected ones.
-	 *
-	 * @param mode the mode
-	 * @param selectedList the selected list
-	 * @return the list
-	 */
-	List<StandardVariableReference> filterStandardVariablesForSetting(int mode, Collection<SettingDetail> selectedList);
-
-	/**
 	 * Get all possible values.
 	 *
 	 * @param id the id
@@ -77,17 +58,6 @@ public interface FieldbookService {
 	public List<ValueReference> getAllPossibleValuesFavorite(final int id, final String programUUID, Boolean filtered);
 
 	/**
-	 * Gets the all possible values by psmr.
-	 *
-	 * @param property the property
-	 * @param scale the scale
-	 * @param method the method
-	 * @param phenotypeType the phenotype type
-	 * @return the all possible values by psmr
-	 */
-	List<ValueReference> getAllPossibleValuesByPSMR(String property, String scale, String method, PhenotypicType phenotypeType);
-
-	/**
 	 * Gets the value.
 	 *
 	 * @param id the id
@@ -96,14 +66,6 @@ public interface FieldbookService {
 	 * @return the value
 	 */
 	String getValue(int id, String valueOrId, boolean isCategorical);
-
-	/**
-	 * Gets the term by id.
-	 *
-	 * @param termId the term id
-	 * @return the term by id
-	 */
-	Term getTermById(int termId);
 
 	/**
 	 * Gets the all breeding methods.
@@ -216,7 +178,5 @@ public interface FieldbookService {
 	 * @param observations
 	 */
 	void addMeasurementVariableToMeasurementRows(MeasurementVariable measurementVariable, List<MeasurementRow> observations);
-
-	StandardVariable getStandardVariable(Integer termId);
 
 }

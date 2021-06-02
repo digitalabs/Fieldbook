@@ -66,6 +66,7 @@ import java.util.Random;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
@@ -291,7 +292,7 @@ public class CrossingServiceImplTest {
 		assertEquals(this.getExpectedName(CrossingServiceImplTest.NEXT_NUMBER), cross1.getDesig());
 		assertEquals((Integer) 1, cross1.getEntryNumber());
 		assertEquals("1", cross1.getEntryCode());
-		assertNull(cross1.getNames().get(0).getGermplasmId());
+		assertNull(cross1.getNames().get(0).getGermplasm().getGid());
 		assertEquals((Integer) 0, cross1.getNames().get(0).getLocationId());
 		assertEquals(CrossingServiceImplTest.USER_ID, cross1.getNames().get(0).getCreatedBy());
 
@@ -301,7 +302,7 @@ public class CrossingServiceImplTest {
 		assertEquals(this.getExpectedName(NEXT_NUMBER + 1), cross2.getDesig());
 		assertEquals((Integer) 2, cross2.getEntryNumber());
 		assertEquals("2", cross2.getEntryCode());
-		assertNull(cross2.getNames().get(0).getGermplasmId());
+		assertNull(cross2.getNames().get(0).getGermplasm().getGid());
 		assertEquals((Integer) 0, cross2.getNames().get(0).getLocationId());
 		assertEquals(CrossingServiceImplTest.USER_ID, cross2.getNames().get(0).getCreatedBy());
 
@@ -447,7 +448,7 @@ public class CrossingServiceImplTest {
 		assertSame(germplasm1, progenitorList1.get(0).getGermplasm());
 		assertEquals(TEST_MALE_GID_3, progenitorList1.get(0).getProgenitorGid());
 
-		Assert.assertNull(name1.getGermplasmId());
+		Assert.assertNull(name1.getGermplasm().getGid());
 		assertEquals(99, name1.getLocationId().intValue());
 		assertEquals(20150101, name1.getNdate().intValue());
 		Assert.assertNull(name1.getNid());
@@ -480,7 +481,7 @@ public class CrossingServiceImplTest {
 		assertEquals(CrossingServiceImplTest.USER_ID, germplasm2.getCreatedBy());
 		assertTrue(progenitorList2.isEmpty());
 
-		Assert.assertNull(name2.getGermplasmId());
+		Assert.assertNull(name2.getGermplasm().getGid());
 		assertEquals(99, name2.getLocationId().intValue());
 		assertEquals(20150101, name2.getNdate().intValue());
 		Assert.assertNull(name2.getNid());
@@ -859,7 +860,8 @@ public class CrossingServiceImplTest {
 		for (final ImportedCross cross : this.importedCrossesList.getImportedCrosses()) {
 			final Integer gid = gidsIterator.next();
 			final Name name = namesIterator.next();
-			assertEquals(gid, name.getGermplasmId());
+			assertNotNull(name.getGermplasm());
+			assertEquals(gid, name.getGermplasm().getGid());
 			assertEquals(USER_ID, name.getCreatedBy());
 			assertEquals(CrossingServiceImpl.PEDIGREE_NAME_TYPE, name.getTypeId());
 			assertEquals(cross.getFemaleDesignation() + CrossingServiceImpl.DEFAULT_SEPARATOR + cross.getMaleDesignationsAsString(), name.getNval());

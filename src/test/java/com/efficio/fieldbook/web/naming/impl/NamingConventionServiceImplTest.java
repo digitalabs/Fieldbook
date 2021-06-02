@@ -28,7 +28,11 @@ import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.*;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
 import java.util.ArrayList;
@@ -113,7 +117,7 @@ public class NamingConventionServiceImplTest {
 		Assert.assertEquals(ruleGeneratedName, resultIG.getDesig());
 		final Name resultName = resultIG.getNames().get(0);
 		Assert.assertNull(resultName.getNid());
-		Assert.assertNull(resultName.getGermplasmId());
+		Assert.assertNull(resultName.getGermplasm());
 		Assert.assertEquals(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID(), resultName.getTypeId().intValue());
 		Assert.assertEquals(new Integer(1), resultName.getNstat());
 		Assert.assertEquals(ruleGeneratedName, resultName.getNval());

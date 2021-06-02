@@ -173,21 +173,6 @@ public class FieldbookServiceTest {
 	}
 
 	@Test
-	public void testHideExpDesignVariableInManagementSettings() {
-		final String expDesignVars = "8135,8131,8132,8133,8134,8136,8137,8138,8139,8142";
-		final StringTokenizer tokenizer = new StringTokenizer(expDesignVars, ",");
-		boolean allIsHidden = true;
-		while (tokenizer.hasMoreTokens()) {
-			if (!FieldbookServiceImpl.inHideVariableFields(Integer.parseInt(tokenizer.nextToken()),
-					AppConstants.FILTER_STUDY_FIELDS.getString())) {
-				allIsHidden = false;
-				break;
-			}
-		}
-		Assert.assertTrue("Exp Design Variables should all be captured as hidden", allIsHidden);
-	}
-
-	@Test
 	public void testSaveStudyColumnOrderingIfStudyIdIsNull() throws MiddlewareException {
 		final FieldbookServiceImpl fieldbookService = new FieldbookServiceImpl();
 		final FieldbookService api = Mockito.mock(FieldbookService.class);

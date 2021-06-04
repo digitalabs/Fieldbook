@@ -989,29 +989,6 @@ function showBaselineTraitDetailsModal(id) {
 	'use strict';
 
 	if (id !== '') {
-		$.ajax({
-			url: '/Fieldbook/manageSettings/settings/details/' + id,
-			type: 'GET',
-			cache: false,
-			success: function (html) {
-				$('.variable-details-section').empty().append(html);
-				if ($('#selectedStdVarId').length != 0) {
-					$('#selectedStdVarId').val(id);
-				}
-				$('#variableDetailsModal').modal('toggle');
-				if ($('#variableDetailsModal')) {
-					var variableName = $('#ontology-tabs').data('selectedvariablename');
-					$('#variableDetailsModal .modal-title').html(variableDetailsHeader + ' ' + variableName);
-				}
-			}
-		});
-	}
-}
-
-function showBaselineTraitDetailsModal(id, variableTypeId) {
-	'use strict';
-
-	if (id !== '') {
 
 		const crop = $('#cropName').val() ? $('#cropName').val() : cropName;
 		const programUUID = $('#currentProgramId').val() ? $('#currentProgramId').val() : currentProgramId;
@@ -1655,21 +1632,6 @@ function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
 			initializeReviewDatasetTabs(datasetId);
 		}
 	});
-}
-
-function showSelectedTab(selectedTabName) {
-	'use strict';
-	$('#ontology-tab-headers').show();
-	var tabs = $('#ontology-tabs').children();
-	for (var i = 0; i < tabs.length; i++) {
-		if (tabs[i].id === selectedTabName) {
-			$('#' + tabs[i].id + '-li').addClass('active');
-			$('#' + tabs[i].id).show();
-		} else {
-			$('#' + tabs[i].id + '-li').removeClass('active');
-			$('#' + tabs[i].id).hide();
-		}
-	}
 }
 
 function initializeReviewDatasetTabs(datasetId) {

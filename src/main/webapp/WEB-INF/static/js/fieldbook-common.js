@@ -1012,22 +1012,28 @@ function showBaselineTraitDetailsModal(id, variableTypeId) {
 	'use strict';
 
 	if (id !== '') {
-		$.ajax({
-			url: '/Fieldbook/manageSettings/settings/details/' + variableTypeId + '/' + id,
-			type: 'GET',
-			cache: false,
-			success: function (html) {
-				$('.variable-details-section').empty().append(html);
-				if ($('#selectedStdVarId').length != 0) {
-					$('#selectedStdVarId').val(id);
-				}
-				$('#variableDetailsModal').modal('toggle');
-				if ($('#variableDetailsModal')) {
-					var variableName = $('#ontology-tabs').data('selectedvariablename');
-					$('#variableDetailsModal .modal-title').html(variableDetailsHeader + ' ' + variableName);
-				}
-			}
-		});
+
+		const crop = $('#cropName').val() ? $('#cropName').val() : cropName;
+		const programUUID = $('#currentProgramId').val() ? $('#currentProgramId').val() : currentProgramId;
+		const url = '/ibpworkbench/controller/jhipster#/variable-details?restartApplication' +
+			'&cropName=' + crop +
+			'&programUUID=' + programUUID +
+			'&variableId=' + id + '&modal';
+
+
+		$('.variable-details-section').html('');
+		$('<iframe>', {
+			src: url,
+			id:  'myFrame',
+			frameborder: 0,
+			width: '100%',
+			height: 520
+		}).appendTo('.variable-details-section');
+		$('#variableDetailsModal').modal('toggle');
+
+		window.closeModal = function() {
+			$('#variableDetailsModal').modal('hide');
+		}
 	}
 }
 

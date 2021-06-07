@@ -136,7 +136,7 @@
                         <tr th:each="selectionVariateDetail, rowStat : *{selectionVariateDetails}">
                             <td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
                                 <a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
-								*{selectionVariateDetails[__${rowStat.index}__].variable.cvTermId} + '\', 1807);'"
+								*{selectionVariateDetails[__${rowStat.index}__].variable.cvTermId} + '\');'"
                                    th:text="${selectionVariateDetail.variable.name}"></a>
                             </td>
                             <td width="55%" th:class="${rowStat.even}? 'even' : 'odd'"
@@ -180,7 +180,7 @@
                     <tr th:each="germplasmDescriptor, rowStat : *{germplasmDescriptors}">
                         <td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
                             <a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
-                            *{germplasmDescriptors[__${rowStat.index}__].variable.cvTermId} + '\', 1804);'"
+                            *{germplasmDescriptors[__${rowStat.index}__].variable.cvTermId} + '\');'"
                                th:text="${germplasmDescriptor.variable.name}"></a>
                         </td>
                         <td width="55%" th:class="${rowStat.even}? 'even' : 'odd'"
@@ -222,7 +222,7 @@
                     <tr th:each="treatmentFactor, rowStat : *{treatmentFactorDetails}">
                         <td th:class="${rowStat.even}? 'even' : 'odd'">
                             <a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
-                            *{treatmentFactorDetails[__${rowStat.index}__].levelId} + '\', 1809);'"
+                            *{treatmentFactorDetails[__${rowStat.index}__].levelId} + '\');'"
                                th:text="${treatmentFactor.levelName}"></a>
                         </td>
                         <td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${treatmentFactor.levelValue}"></td>
@@ -272,7 +272,7 @@
                         <tr th:each="environmentManagementDetail, rowStat : *{environmentManagementDetails}">
                             <td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
                                 <a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
-                                *{environmentManagementDetails[__${rowStat.index}__].variable.cvTermId} + '\', 1806);'"
+                                *{environmentManagementDetails[__${rowStat.index}__].variable.cvTermId} + '\');'"
                                    th:text="${environmentManagementDetail.variable.name}"></a>
                             </td>
                             <td width="55%" th:class="${rowStat.even}? 'even' : 'odd'"
@@ -311,7 +311,7 @@
                     <tr th:each="studyConditionDetail, rowStat : *{studyConditionDetails}">
                         <td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
                             <a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
-                            *{studyConditionDetails[__${rowStat.index}__].variable.cvTermId} + '\', 1802);'"
+                            *{studyConditionDetails[__${rowStat.index}__].variable.cvTermId} + '\');'"
                                th:text="${studyConditionDetail.variable.name}"></a>
                         </td>
                         <td width="55%" th:class="${rowStat.even}? 'even' : 'odd'"
@@ -504,7 +504,7 @@
                             <td>
                                 <strong th:text="#{review.study.treatment.factor}"></strong>
                                 <a th:if="*{factorsMap[8230] ne null}" th:text="*{factorsMap[8230].variable.name}"
-                                   onclick="showBaselineTraitDetailsModal(8230,1809)" href="javascript:void(0);"></a>
+                                   onclick="showBaselineTraitDetailsModal(8230)" href="javascript:void(0);"></a>
                             </td>
                         </tr>
                         <!-- Display REP_NO(8210) in Replicate Factor and pass Experimental design's type id(1810) which will display Details, valid values and usage in popup -->
@@ -512,14 +512,14 @@
                             <td>
                                 <strong th:text="#{review.study.replicate.factor}"></strong>
                                 <a th:if="*{factorsMap[8210] ne null}" href="javascript:void(0);"
-                                   onclick="showBaselineTraitDetailsModal(8210,1810)" th:text="*{factorsMap[8210].variable.name}"></a>
+                                   onclick="showBaselineTraitDetailsModal(8210)" th:text="*{factorsMap[8210].variable.name}"></a>
                             </td>
                         </tr>
                         <!-- Display BLOCK_NO(8220) in Block Factor and pass Experimental design's type id(1810) which will display Details, valid values and usage in popup -->
                         <tr th:if="*{factorsMap[8220] ne null}">
                             <td>
                                 <strong th:text="#{review.study.block.factor}"></strong>
-                                <a onclick="showBaselineTraitDetailsModal(8220,1810)" href="javascript:void(0);"
+                                <a onclick="showBaselineTraitDetailsModal(8220)" href="javascript:void(0);"
                                    th:if="*{factorsMap[8220] ne null}" th:text="*{factorsMap[8220].variable.name}"></a>
                             </td>
                         </tr>
@@ -527,7 +527,7 @@
                         <tr th:if="*{factorsMap[8200] ne null}">
                             <td>
                                 <strong th:text="#{review.study.plot.factor}"></strong>
-                                <a onclick="showBaselineTraitDetailsModal(8200,1810)" href="javascript:void(0);"
+                                <a onclick="showBaselineTraitDetailsModal(8200)" href="javascript:void(0);"
                                    th:if="*{factorsMap[8200] ne null}" th:text="*{factorsMap[8200].variable.name}"></a>
                             </td>
                         </tr>
@@ -535,7 +535,7 @@
                         <tr th:if="*{factorsMap[8581] ne null}">
                             <td>
                                 <strong th:text="#{review.study.row.factor}"></strong>
-                                <a onclick="showBaselineTraitDetailsModal(8581,1810)" href="javascript:void(0);"
+                                <a onclick="showBaselineTraitDetailsModal(8581)" href="javascript:void(0);"
                                    th:if="*{factorsMap[8581] ne null}" th:text="*{factorsMap[8581].variable.name}"></a>
                             </td>
                         </tr>
@@ -543,7 +543,7 @@
                         <tr th:if="*{factorsMap[8582] ne null}">
                             <td>
                                 <strong th:text="#{review.study.col.factor}"></strong>
-                                <a onclick="showBaselineTraitDetailsModal(8582,1810)" href="javascript:void(0);"
+                                <a onclick="showBaselineTraitDetailsModal(8582)" href="javascript:void(0);"
                                    th:if="*{factorsMap[8582] ne null}" th:text="*{factorsMap[8582].variable.name}"></a>
                             </td>
                         </tr>
@@ -580,7 +580,7 @@
                         <tr th:each="variateDetail, rowStat : *{variateDetails}">
                             <td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
                                 <a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
-                                        *{variateDetails[__${rowStat.index}__].variable.cvTermId} + '\', 1808);'"
+                                        *{variateDetails[__${rowStat.index}__].variable.cvTermId} + '\');'"
                                    th:text="${variateDetail.variable.name}"></a>
                             </td>
                             <td width="55%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${variateDetail.variable.description}"></td>

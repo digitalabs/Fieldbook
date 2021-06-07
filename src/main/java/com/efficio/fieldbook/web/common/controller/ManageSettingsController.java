@@ -63,8 +63,6 @@ public class ManageSettingsController extends SettingsController {
 
 	public static final String URL = "/manageSettings";
 
-	public static final String DETAILS_TEMPLATE = "/OntologyBrowser/detailTab";
-
 	/**
 	 * The Constant LOG.
 	 */
@@ -184,33 +182,6 @@ public class ManageSettingsController extends SettingsController {
 		}
 
 		return propertyTreeList;
-	}
-
-	/**
-	 * Gets the ontology details.
-	 *
-	 * @param variableTypeId
-	 * @param variableId
-	 * @param model
-	 * @param variableDetails
-	 * @return detailTab.html
-	 */
-	@RequestMapping(value = "/settings/details/{variableTypeId}/{variableId}", method = RequestMethod.GET)
-	public String getOntologyDetails(@PathVariable final int variableTypeId, @PathVariable final int variableId, final Model model,
-			@ModelAttribute("variableDetails") final OntologyDetailsForm variableDetails) {
-		try {
-			final Variable ontologyVariable =
-					this.ontologyVariableDataManager.getVariable(this.contextUtil.getCurrentProgramUUID(), variableId, true);
-			if (!Objects.equals(ontologyVariable, null)) {
-				variableDetails.setVariable(ontologyVariable);
-				variableDetails.setCurrentVariableType(VariableType.getById(variableTypeId));
-
-			}
-
-		} catch (final MiddlewareException e) {
-			ManageSettingsController.LOG.error(e.getMessage(), e);
-		}
-		return super.showAjaxPage(model, ManageSettingsController.DETAILS_TEMPLATE);
 	}
 
 	private List<Integer> filterOutVariablesByVariableType(final Set<VariableType> selectedVariableTypes) {

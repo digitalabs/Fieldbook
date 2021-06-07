@@ -250,14 +250,13 @@
 		}]).directive('showDetailsModal', function() {
 			return {
 				scope: {
-					showDetailsModal: '=',
-					variableType: '@'
+					showDetailsModal: '='
 				},
 
 				link: function(scope, elem) {
 					elem.css({ cursor: 'pointer' });
 					elem.on('click', function() {
-						showBaselineTraitDetailsModal(scope.showDetailsModal, scope.variableType);
+						showBaselineTraitDetailsModal(scope.showDetailsModal);
 					});
 				}
 			};

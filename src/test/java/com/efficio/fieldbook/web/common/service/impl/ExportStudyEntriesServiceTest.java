@@ -6,7 +6,6 @@ import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import org.generationcp.commons.exceptions.GermplasmListExporterException;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
-import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.commons.pojo.ExportColumnHeader;
 import org.generationcp.commons.pojo.ExportRow;
 import org.generationcp.commons.service.GermplasmExportService;
@@ -33,11 +32,19 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.*;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 public class ExportStudyEntriesServiceTest {
@@ -102,9 +109,6 @@ public class ExportStudyEntriesServiceTest {
 	private OntologyVariableDataManager ontologyVariableDataManager;
 
 	@Mock
-	private ImportedGermplasmList importedGermplasmList;
-
-	@Mock
 	private StudyEntryService studyEntryService;
 
 	@Mock
@@ -146,7 +150,6 @@ public class ExportStudyEntriesServiceTest {
 			.thenReturn(this.createStandardVariable(TermId.ENTRY_TYPE.getId(), ExportStudyEntriesServiceTest.CHECK));
 		Mockito.when(this.userSelection.getWorkbook()).thenReturn(this.workbook);
 		Mockito.when(this.workbook.getStudyDetails()).thenReturn(this.studyDetails);
-		Mockito.when(this.importedGermplasmList.getImportedGermplasms()).thenReturn(importedGermplasms);
 		Mockito.doReturn(this.getPlotLevelList()).when(this.userSelection).getPlotsLevelList();
 		Mockito.doReturn(this.getGermplasmList()).when(this.fieldbookMiddlewareService)
 			.getGermplasmListById(ExportStudyEntriesServiceTest.LIST_ID);

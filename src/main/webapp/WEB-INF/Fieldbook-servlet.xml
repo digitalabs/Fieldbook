@@ -482,10 +482,6 @@
 		<aop:scoped-proxy />
 	</bean>
 
-	<bean id="germplasmExportedWorkbook" class="org.generationcp.commons.parsing.GermplasmExportedWorkbook" scope="request">
-		<aop:scoped-proxy />
-	</bean>
-
 	<!-- Including all beans used for generating Code Sheet when exporting Germplasm List excel file -->
 	<context:component-scan base-package="org.generationcp.commons.workbook.generator" />
 

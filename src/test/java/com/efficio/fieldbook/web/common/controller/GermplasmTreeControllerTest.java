@@ -81,7 +81,7 @@ public class GermplasmTreeControllerTest {
 	private static final String LIST_DESCRIPTION = "LIST DESCRIPTION";
 	private static final String LIST_DATE = "2015-01-30";
 	private static final String LIST_NAME = "LIST 1";
-	private static final Integer SAVED_GERMPLASM_ID = 1;
+	private static final Integer SAVED_GERMPLASM_ID = 12345;
 	private static final String ERROR_MESSAGE = "middeware exception message";
 	private static final Integer TEST_USER_ID = 101;
 	private static final String TEST_USER_NAME = "Test User";
@@ -139,7 +139,7 @@ public class GermplasmTreeControllerTest {
 		Mockito.doReturn(this.createImportedCrossesList()).when(this.userSelection).getImportedCrossesList();
 		Mockito.doReturn(workbook).when(this.userSelection).getWorkbook();
 		Mockito.doReturn(GermplasmTreeControllerTest.SAVED_GERMPLASM_ID).when(this.fieldbookMiddlewareService)
-				.saveGermplasmList(ArgumentMatchers.<List<Pair<Germplasm, GermplasmListData>>>any(), ArgumentMatchers.any(GermplasmList.class), ArgumentMatchers.eq(false));
+				.saveGermplasmList(ArgumentMatchers.any(), ArgumentMatchers.<List<Pair<Germplasm, GermplasmListData>>>any(), ArgumentMatchers.any(GermplasmList.class), ArgumentMatchers.eq(false));
 
 		final Table<Integer, Integer, Integer> observationUnitIdsTable = HashBasedTable.create();
 		observationUnitIdsTable.put(1, 1, 100);
@@ -237,7 +237,7 @@ public class GermplasmTreeControllerTest {
 		final Map<String, Object> result = this.controller.savePost(form, Mockito.mock(Model.class));
 
 		Assert.assertEquals("isSuccess Value should be 1", 1, result.get("isSuccess"));
-		Assert.assertEquals("germplasmListId should be 1", 1, result.get("germplasmListId"));
+		Assert.assertEquals("germplasmListId should be " + SAVED_GERMPLASM_ID, SAVED_GERMPLASM_ID, result.get("germplasmListId"));
 		Assert.assertEquals("Unique ID should be LIST IDENTIFIER", form.getListIdentifier(), result.get("uniqueId"));
 		Assert.assertEquals("List Name should be LIST 1", form.getListName(), result.get("listName"));
 		Assert.assertEquals("isNamesChanged should be 0", 0, result.get("isNamesChanged"));

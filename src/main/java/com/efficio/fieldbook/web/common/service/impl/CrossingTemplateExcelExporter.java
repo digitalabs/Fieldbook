@@ -13,7 +13,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.commons.constant.AppConstants;
 import org.generationcp.commons.parsing.ExcelCellStyleBuilder;
 import org.generationcp.commons.parsing.ExcelWorkbookRow;
-import org.generationcp.commons.parsing.GermplasmExportedWorkbook;
 import org.generationcp.commons.pojo.FileExportInfo;
 import org.generationcp.commons.service.FileService;
 import org.generationcp.commons.spring.util.ContextUtil;
@@ -56,6 +55,16 @@ public class CrossingTemplateExcelExporter {
 	public static final String EXPORT_FILE_NAME_FORMAT = "CrossingTemplate-%s";
 	public static final String FIELDMAP_COLUMN = "FIELDMAP COLUMN";
 	public static final String FIELDMAP_RANGE = "FIELDMAP RANGE";
+
+	public static final String USER = "USER";
+	public static final String CONDITION = "CONDITION";
+	public static final String VARIATE = "VARIATE";
+	public static final String BREEDING_METHOD = "BREEDING METHOD";
+
+	public static final String LIST_NAME = "LIST NAME";
+	public static final String LIST_DESCRIPTION = "LIST DESCRIPTION";
+	public static final String LIST_DATE = "LIST DATE";
+
 
 	@Resource
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
@@ -226,8 +235,8 @@ public class CrossingTemplateExcelExporter {
 
 		for (final WorkbenchUser user : allProgramMembers) {
 			final Row row = codesSheet.createRow(++startingRow);
-			row.createCell(0).setCellValue(GermplasmExportedWorkbook.CONDITION);
-			row.createCell(1).setCellValue(GermplasmExportedWorkbook.USER);
+			row.createCell(0).setCellValue(CrossingTemplateExcelExporter.CONDITION);
+			row.createCell(1).setCellValue(CrossingTemplateExcelExporter.USER);
 			row.getCell(0).setCellStyle(userCellStyle);
 			row.getCell(1).setCellStyle(userCellStyle);
 
@@ -245,8 +254,8 @@ public class CrossingTemplateExcelExporter {
 
 		for (final Method method : methods) {
 			final Row row = codesSheet.createRow(++startingRow);
-			row.createCell(0).setCellValue(GermplasmExportedWorkbook.VARIATE);
-			row.createCell(1).setCellValue(GermplasmExportedWorkbook.BREEDING_METHOD);
+			row.createCell(0).setCellValue(CrossingTemplateExcelExporter.VARIATE);
+			row.createCell(1).setCellValue(CrossingTemplateExcelExporter.BREEDING_METHOD);
 
 			row.getCell(0).setCellStyle(methodCellStyle);
 			row.getCell(1).setCellStyle(methodCellStyle);
@@ -268,10 +277,10 @@ public class CrossingTemplateExcelExporter {
 		descriptionSheet.setDefaultRowHeight((short)360); //0.25 inch = 360.0181426466 twips
 
 		new ExcelWorkbookRow((HSSFRow) descriptionSheet.createRow(actualRow)).writeListDetailsRow(descriptionSheet,
-				GermplasmExportedWorkbook.LIST_NAME, "", "Enter a list name here, or add it when saving in the BMS", labelStyle, textStyle);
+				CrossingTemplateExcelExporter.LIST_NAME, "", "Enter a list name here, or add it when saving in the BMS", labelStyle, textStyle);
 
 		new ExcelWorkbookRow((HSSFRow) descriptionSheet.createRow(++actualRow)).writeListDetailsRow(descriptionSheet,
-				GermplasmExportedWorkbook.LIST_DESCRIPTION, "", "Enter a list description here, or add it when saving in the BMS",
+				CrossingTemplateExcelExporter.LIST_DESCRIPTION, "", "Enter a list description here, or add it when saving in the BMS",
 				labelStyle, textStyle);
 
 		final Date todaysDate = new Date();
@@ -279,7 +288,7 @@ public class CrossingTemplateExcelExporter {
 		final String todaysDateText = dateFormat.format(todaysDate);
 
 		new ExcelWorkbookRow((HSSFRow) descriptionSheet.createRow(++actualRow)).writeListDetailsRow(descriptionSheet,
-				GermplasmExportedWorkbook.LIST_DATE, Long.parseLong(todaysDateText),
+				CrossingTemplateExcelExporter.LIST_DATE, Long.parseLong(todaysDateText),
 				"Accepted formats: YYYYMMDD or YYYYMM or YYYY or blank", labelStyle, textStyle);
 
 		final String currentExportingUserName = this.fieldbookMiddlewareService.getOwnerListName(currentUserId);

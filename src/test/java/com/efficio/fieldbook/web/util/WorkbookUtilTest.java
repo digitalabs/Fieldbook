@@ -1,18 +1,16 @@
 
 package com.efficio.fieldbook.web.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
+import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
 import com.efficio.fieldbook.web.trial.bean.ExpDesignParameterUi;
 import com.efficio.fieldbook.web.trial.bean.Instance;
+import com.google.common.base.Optional;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.generationcp.commons.data.initializer.ImportedGermplasmTestDataInitializer;
 import org.generationcp.commons.parsing.pojo.ImportedGermplasm;
-import org.generationcp.commons.parsing.pojo.ImportedGermplasmList;
 import org.generationcp.middleware.data.initializer.MeasurementRowTestDataInitializer;
 import org.generationcp.middleware.data.initializer.MeasurementVariableTestDataInitializer;
 import org.generationcp.middleware.data.initializer.StandardVariableTestDataInitializer;
@@ -30,6 +28,7 @@ import org.generationcp.middleware.domain.ontology.FormulaVariable;
 import org.generationcp.middleware.domain.study.StudyTypeDto;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.OntologyService;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
@@ -38,13 +37,11 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.web.util.HtmlUtils;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.utils.test.WorkbookDataUtil;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.data.initializer.DesignImportTestDataInitializer;
-import com.google.common.base.Optional;
-
-import org.junit.Assert;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class WorkbookUtilTest {
 

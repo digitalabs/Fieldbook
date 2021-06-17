@@ -322,7 +322,7 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			germplasmList.setUserId(importedCrossesList.getUserId());
 
 			final Integer germplasmListId = this.fieldbookMiddlewareService
-					.saveGermplasmList(listDataItems, germplasmList, crossSetting.isApplyNewGroupToPreviousCrosses());
+					.saveGermplasmList(this.contextUtil.getProjectInContext().getCropType().getCropName(), listDataItems, germplasmList, crossSetting.isApplyNewGroupToPreviousCrosses());
 
 			return new GermplasmListResult().withGermplasmListId(germplasmListId).withIsTrimmed(isTrimmed).withNamesChanged(false);
 		} else {

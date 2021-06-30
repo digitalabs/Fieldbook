@@ -21,6 +21,7 @@ import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.CrossingUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.commons.util.StringUtil;
+import org.generationcp.middleware.api.germplasm.GermplasmService;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.ontology.VariableType;
@@ -124,6 +125,9 @@ public class CrossingServiceImpl implements CrossingService {
 
 	@Resource
 	private StudyInstanceService studyInstanceService;
+
+	@Resource
+	private GermplasmService germplasmService;
 
 
 	@Override
@@ -312,7 +316,7 @@ public class CrossingServiceImpl implements CrossingService {
 		final List<Attribute> attributeList = new ArrayList<>();
 		final Iterator<Integer> germplasmIdIterator = savedGermplasmIds.iterator();
 		final Integer today = Integer.valueOf(DateUtil.getCurrentDateAsStringValue());
-		final Integer plotCodeFldNo = this.germplasmDataManager.getPlotCodeField().getFldno();
+		final Integer plotCodeVariableId = this.germplasmService.getPlotCodeField().getId();
 		for (final ImportedCross cross : importedCrossesList.getImportedCrosses()) {
 
 			// this will do the merging and using the gid and cross from the
@@ -330,7 +334,7 @@ public class CrossingServiceImpl implements CrossingService {
 			final Attribute plotCodeAttribute = new Attribute();
 			plotCodeAttribute.setAdate(today);
 			plotCodeAttribute.setGermplasmId(newGid);
-			plotCodeAttribute.setTypeId(plotCodeFldNo);
+			plotCodeAttribute.setTypeId(plotCodeVariableId);
 			plotCodeAttribute.setAval(cross.getSource());
 
 			attributeList.add(plotCodeAttribute);

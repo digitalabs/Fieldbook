@@ -993,6 +993,7 @@
 			}
 
 			function getFileKey(rowData, columnData, fileName) {
+				// TODO get from server
 				return 'programuuid-' + studyContext.programId
 					+ '/studyid-' + studyContext.studyId
 					+ '/obsunituuid-' + rowData.variables['OBS_UNIT_ID'].value

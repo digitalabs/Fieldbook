@@ -29,18 +29,21 @@ import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.spring.util.ContextUtil;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.middleware.ContextHolder;
+import org.generationcp.middleware.api.germplasm.GermplasmService;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.CvId;
+import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.pojos.Attribute;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.Name;
-import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.workbench.CropType;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -126,7 +129,13 @@ public class GermplasmTreeControllerTest {
 	private DatasetService datasetService;
 
 	@Mock
+	private GermplasmService germplasmService;
+
+	@Mock
 	private GermplasmStudySourceService germplasmStudySourceService;
+
+	@Mock
+	private OntologyDataManager ontologyDataManager;
 
 	@InjectMocks
 	private GermplasmTreeController controller;
@@ -154,16 +163,29 @@ public class GermplasmTreeControllerTest {
 
 		}
 
-		Mockito.when(this.germplasmDataManager.getPlotCodeField())
-				.thenReturn(new UserDefinedField(GermplasmTreeControllerTest.PLOT_CODE_FIELD_NO));
-		Mockito.when(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS", "PASSPORT", "PLOT_NUMBER"))
-				.thenReturn(new UserDefinedField(GermplasmTreeControllerTest.PLOT_FIELD_NO));
-		Mockito.when(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS", "PASSPORT", "REP_NUMBER"))
-				.thenReturn(new UserDefinedField(GermplasmTreeControllerTest.REP_FIELD_NO));
-		Mockito.when(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS", "PASSPORT", "INSTANCE_NUMBER"))
-				.thenReturn(new UserDefinedField(GermplasmTreeControllerTest.TRIAL_INSTANCE_FIELD_NO));
-		Mockito.when(this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS", "PASSPORT", "PLANT_NUMBER"))
-				.thenReturn(new UserDefinedField(GermplasmTreeControllerTest.PLANT_NUMBER));
+		final Term plotCodeVariable = new Term();
+		plotCodeVariable.setId(PLOT_CODE_FIELD_NO);
+		final Term repFieldNoVariable = new Term();
+		repFieldNoVariable.setId(REP_FIELD_NO);
+		final Term trialInstanceVariable = new Term();
+		trialInstanceVariable.setId(TRIAL_INSTANCE_FIELD_NO);
+		final Term plotFieldNoVariableId = new Term();
+		plotFieldNoVariableId.setId(PLOT_FIELD_NO);
+		final Term plantNumberVariableId = new Term();
+		plantNumberVariableId.setId(PLANT_NUMBER);
+
+		Mockito.when(this.germplasmService.getPlotCodeField())
+			.thenReturn(plotCodeVariable);
+
+		Mockito.when(this.ontologyDataManager.findTermByName(Mockito.eq("REP_NUMBER_AP_text"), Mockito.eq(CvId.VARIABLES.getId())))
+			.thenReturn(repFieldNoVariable);
+		Mockito.when(this.ontologyDataManager.findTermByName(Mockito.eq("INSTANCE_NUMBER_AP_text"), Mockito.eq(CvId.VARIABLES.getId())))
+			.thenReturn(trialInstanceVariable);
+		Mockito.when(this.ontologyDataManager.findTermByName(Mockito.eq("PLANT_NUMBER_AP_text"), Mockito.eq(CvId.VARIABLES.getId())))
+			.thenReturn(plantNumberVariableId);
+		Mockito.when(this.ontologyDataManager.findTermByName(Mockito.eq("PLOT_NUMBER_AP_text"), Mockito.eq(CvId.VARIABLES.getId())))
+			.thenReturn(plotFieldNoVariableId);
+
 		Mockito.when(this.contextUtil.getCurrentWorkbenchUserId()).thenReturn(GermplasmTreeControllerTest.TEST_USER_ID);
 		Mockito.when(this.contextUtil.getCurrentProgramUUID()).thenReturn(GermplasmTreeControllerTest.TEST_PROGRAM_UUID);
 		final Project project = new Project();
@@ -405,11 +427,6 @@ public class GermplasmTreeControllerTest {
 
 		this.controller.populateGermplasmListDataFromAdvanced(new GermplasmList(), advancingForm, germplasmNames, listDataItems, germplasmAttributes);
 
-		// Called 3x - for REP, TRIAL_INSTANCE and PLOT FieldNos - and not
-		// inside germplasm list loop
-		Mockito.verify(this.germplasmDataManager, Mockito.times(4))
-				.getUserDefinedFieldByTableTypeAndCode(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
-
 		// Check Attribute Objects created. Additional attributes are created
 		// for studies only
 		final List<ImportedGermplasm> inputGermplasmList = advancingForm.getGermplasmList();
@@ -486,11 +503,6 @@ public class GermplasmTreeControllerTest {
 		final AdvancingStudyForm advancingForm = this.createAdvancingStudyForm(false);
 
 		this.controller.populateGermplasmListDataFromAdvanced(new GermplasmList(), advancingForm, germplasmNames, listDataItems, germplasmAttributes);
-
-		// Called 3x - for REP, TRIAL_INSTANCE and PLOT FieldNos - and not
-		// inside germplasm list loop
-		Mockito.verify(this.germplasmDataManager, Mockito.times(4))
-				.getUserDefinedFieldByTableTypeAndCode(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
 
 		// Check Attribute Objects created. Additional attributes are created
 		// for studies only

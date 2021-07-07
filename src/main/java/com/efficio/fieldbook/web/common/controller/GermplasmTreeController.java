@@ -43,14 +43,24 @@ import org.generationcp.commons.settings.CrossSetting;
 import org.generationcp.commons.util.DateUtil;
 import org.generationcp.commons.util.TreeViewUtil;
 import org.generationcp.commons.workbook.generator.RowColumnType;
+import org.generationcp.middleware.api.germplasm.GermplasmService;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.CvId;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
-import org.generationcp.middleware.pojos.*;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
+import org.generationcp.middleware.pojos.Attribute;
+import org.generationcp.middleware.pojos.Germplasm;
+import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.GermplasmListData;
+import org.generationcp.middleware.pojos.GermplasmStudySourceType;
+import org.generationcp.middleware.pojos.ListMetadata;
+import org.generationcp.middleware.pojos.Name;
+import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.dataset.DatasetService;
 import org.generationcp.middleware.service.api.study.germplasm.source.GermplasmStudySourceInput;
@@ -62,14 +72,27 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -131,6 +154,9 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 	@Resource
 	private DatasetService datasetService;
 
+	@Resource
+	private GermplasmService germplasmService;
+
 
 	static final String NAME_NOT_UNIQUE = "Name not unique";
 	private static final String HAS_CHILDREN = "Folder has children";
@@ -153,6 +179,9 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 
 	@Resource
 	private GermplasmDataManager germplasmDataManager;
+
+	@Resource
+	private OntologyDataManager ontologyDataManager;
 
 	/**
 	 * Load initial germplasm tree.
@@ -595,11 +624,11 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		// Common name fields
 		final Integer nRef = 0;
 
-		final Integer plotCodeFldNo = this.germplasmDataManager.getPlotCodeField().getFldno();
-		final Integer plotFldNo = this.getPassportAttributeForCode("PLOT_NUMBER");
-		final Integer trialInstanceFldNo = this.getPassportAttributeForCode("INSTANCE_NUMBER");
-		final Integer repFldNo = this.getPassportAttributeForCode("REP_NUMBER");
-		final Integer plantNumberFldNo = this.getPassportAttributeForCode("PLANT_NUMBER");
+		final Integer plotCodeVariableId = this.germplasmService.getPlotCodeField().getId();
+		final Integer plotNumberVariableId = this.getVariableId("PLOT_NUMBER_AP_text");
+		final Integer trialInstanceVariableId = this.getVariableId("INSTANCE_NUMBER_AP_text");
+		final Integer repNumberVariableId = this.getVariableId("REP_NUMBER_AP_text");
+		final Integer plantNumberVariableId = this.getVariableId("PLANT_NUMBER_AP_text");
 
 
 		final List<ImportedGermplasm> advanceItems = form.getGermplasmList();
@@ -665,30 +694,30 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 			// format strings configured in crossing.properties) to the
 			// originAttribute gid will be set when saving once gid is known
 			final Attribute originAttribute =
-				this.createAttributeObject(importedGermplasm.getSource(), plotCodeFldNo, locationId, gDate);
+				this.createAttributeObject(importedGermplasm.getSource(), plotCodeVariableId, locationId, gDate);
 			attributesPerGermplasm.add(originAttribute);
 
 			final String plotNumberString = importedGermplasm.getPlotNumber();
 			final Attribute plotNumberAttribute =
-				this.createAttributeObject(plotNumberString, plotFldNo, locationId, gDate);
+				this.createAttributeObject(plotNumberString, plotNumberVariableId, locationId, gDate);
 			attributesPerGermplasm.add(plotNumberAttribute);
 
 			// Adding Instance number and replication number as
 			// attributes of germplasm for trial advancing
 			final String replicationNumber = importedGermplasm.getReplicationNumber();
 			if (StringUtils.isNotBlank(replicationNumber)) {
-				final Attribute repNoAttribute = this.createAttributeObject(replicationNumber, repFldNo, locationId, gDate);
+				final Attribute repNoAttribute = this.createAttributeObject(replicationNumber, repNumberVariableId, locationId, gDate);
 				attributesPerGermplasm.add(repNoAttribute);
 			}
 
 			final Attribute instanceNoAttribute =
-				this.createAttributeObject(importedGermplasm.getTrialInstanceNumber(), trialInstanceFldNo, locationId,
+				this.createAttributeObject(importedGermplasm.getTrialInstanceNumber(), trialInstanceVariableId, locationId,
 					gDate);
 			attributesPerGermplasm.add(instanceNoAttribute);
 
 			if (importedGermplasm.getPlantNumber() != null) {
 				final Attribute plantNoAttribute =
-					this.createAttributeObject(importedGermplasm.getPlantNumber(), plantNumberFldNo, locationId, gDate);
+					this.createAttributeObject(importedGermplasm.getPlantNumber(), plantNumberVariableId, locationId, gDate);
 				attributesPerGermplasm.add(plantNoAttribute);
 			}
 
@@ -700,8 +729,9 @@ public class GermplasmTreeController extends AbstractBaseFieldbookController {
 		return !previewedNamesList.equals(finalNamesList);
 	}
 
-	private Integer getPassportAttributeForCode(final String code) {
-		return this.germplasmDataManager.getUserDefinedFieldByTableTypeAndCode("ATRIBUTS", "PASSPORT", code).getFldno();
+	private Integer getVariableId(final String name) {
+		//FIXME Handle NPE, as of now we are hardcoding that the required variables cant be edited, so it should never get NPE
+		return this.ontologyDataManager.findTermByName(name, CvId.VARIABLES.getId()).getId();
 	}
 
 	private Attribute createAttributeObject(final String attributeValue, final Integer typeId,

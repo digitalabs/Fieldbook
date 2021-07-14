@@ -389,10 +389,7 @@
 						request = addFilters({});
 					} else {
 						request.filter = {};
-						request.filter['gidList'] = [];
-						angular.forEach($scope.selectedItems, function (value, key) {
-							request.filter.gidList.push(key);
-						});
+						request.filter['gidList'] = Object.keys($scope.selectedItems)
 					}
 
 					germplasmStudySourceService.saveSearchRequest(request).then((searchDto) => {

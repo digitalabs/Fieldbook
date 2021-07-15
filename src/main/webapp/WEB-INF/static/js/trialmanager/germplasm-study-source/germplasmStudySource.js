@@ -241,9 +241,11 @@
 
 				$scope.filterHelper = {
 					filterByColumn(filter) {
+						$scope.resetSelectedItems();
 						table().ajax.reload();
 					},
 					resetFilterByColumn(filter) {
+						$scope.resetSelectedItems();
 						filter.value = null;
 						if (filter.reset) {
 							filter.reset();
@@ -335,6 +337,17 @@
 				$scope.totalItems = 0;
 				$scope.selectedItems = {};
 				$scope.isAllPagesSelected = false;
+
+				$scope.resetSelectedItems = function () {
+					if ($scope.isAllPagesSelected) {
+						$scope.isAllPagesSelected = !$scope.isAllPagesSelected;
+						table().columns(0).visible(true);
+
+					} else {
+						var pageItemIds = getPageItemIds();
+						pageItemIds.forEach((item) => delete $scope.selectedItems[item]);
+					}
+				}
 
 				$scope.isPageSelected = function () {
 					var pageItemIds = getPageItemIds();

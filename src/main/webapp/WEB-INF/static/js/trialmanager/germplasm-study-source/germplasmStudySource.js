@@ -412,7 +412,8 @@
 				}
 
 				function validateSelection(){
-					if (!$scope.size($scope.selectedItems) && !$scope.isAllPagesSelected) {
+					var pageItemIds = getPageItemIds();
+					if (!$scope.size(pageItemIds) || !$scope.size($scope.selectedItems) && !$scope.isAllPagesSelected) {
 						showErrorMessage('', $.fieldbookMessages.crossesAndSelectionsNoGermplasmError);
 						return false;
 					}

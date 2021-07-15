@@ -1152,9 +1152,10 @@
 											return $q.reject();
 										}
 										const key = getFileKey(rowData, columnData, file.name);
-										return fileService.upload(file, key).then((response) => {
-											$inlineScope.observation.value = file.name;
-										});
+										return fileService.upload(file, key, rowData.variables['OBS_UNIT_ID'].value)
+											.then((response) => {
+												$inlineScope.observation.value = file.name;
+											});
 									});
 								}
 								return $q.resolve();

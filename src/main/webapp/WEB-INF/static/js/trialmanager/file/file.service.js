@@ -7,14 +7,14 @@
 		'fileDownloadHelper',
 		function ($http, $q, studyContext, serviceUtilities, $uibModal, fileDownloadHelper) {
 
-			var BASE_URL = '/bmsapi/files/';
+			var BASE_URL = '/bmsapi/crops/' + studyContext.cropName + '/files/';
 
 			var successHandler = serviceUtilities.restSuccessHandler,
 				failureHandler = serviceUtilities.restFailureHandler;
 
 			var fileService = {};
 
-			fileService.upload = function (file, key) {
+			fileService.upload = function (file, key, observationUnitId) {
 				var request = $http({
 					method: 'POST',
 					url: BASE_URL,
@@ -22,8 +22,9 @@
 						'Content-Type': undefined
 					},
 					data: {
-						file: file,
-						key: key
+						file,
+						key,
+						observationUnitId
 					},
 					transformRequest: function (data, headersGetter) {
 						var formData = new FormData();
@@ -39,7 +40,7 @@
 
 			fileService.showFile = function (fileKey, fileName) {
 				if (!fileName.match(/\.(gif|jpe?g|tiff?|png|webp|bmp)$/i)) {
-					$http.get('/bmsapi/files/' + fileKey, {responseType: 'blob'}).then((response) => {
+					$http.get(BASE_URL + fileKey, {responseType: 'blob'}).then((response) => {
 						fileDownloadHelper.save(response.data, fileName);
 					}, (response) => {
 						showErrorMessage('', "Something went wrong (possibly file storage configuration not available)");
@@ -51,7 +52,10 @@
 						' style="width:100%; height: 560px; border: 0" />',
 					size: 'lg',
 					controller: function ($scope, $uibModalInstance) {
-						$scope.url = '/ibpworkbench/controller/jhipster#file-manager/' + encodeURIComponent(fileKey) + '?fileName=' + fileName;
+						$scope.url = '/ibpworkbench/controller/jhipster#file-manager/' + encodeURIComponent(fileKey)
+							+ '?cropName=' + studyContext.cropName
+							+ '&programUUID=' + studyContext.programId
+							+ '&fileName=' + fileName;
 
 						window.closeModal = function() {
 							$uibModalInstance.close();

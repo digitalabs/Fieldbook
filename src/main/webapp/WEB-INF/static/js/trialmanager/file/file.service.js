@@ -14,7 +14,7 @@
 
 			var fileService = {};
 
-			fileService.upload = function (file, key, observationUnitId) {
+			fileService.upload = function (file, path, observationUnitId) {
 				var request = $http({
 					method: 'POST',
 					url: BASE_URL,
@@ -23,7 +23,7 @@
 					},
 					data: {
 						file,
-						key,
+						path,
 						observationUnitId
 					},
 					transformRequest: function (data, headersGetter) {
@@ -38,9 +38,9 @@
 				return request.then(successHandler, failureHandler);
 			};
 
-			fileService.showFile = function (fileKey, fileName) {
+			fileService.showFile = function (path, fileName) {
 				if (!fileName.match(/\.(gif|jpe?g|tiff?|png|webp|bmp)$/i)) {
-					$http.get(BASE_URL + fileKey, {responseType: 'blob'}).then((response) => {
+					$http.get(BASE_URL + path, {responseType: 'blob'}).then((response) => {
 						fileDownloadHelper.save(response.data, fileName);
 					}, (response) => {
 						showErrorMessage('', "Something went wrong (possibly file storage configuration not available)");
@@ -52,7 +52,7 @@
 						' style="width:100%; height: 560px; border: 0" />',
 					size: 'lg',
 					controller: function ($scope, $uibModalInstance) {
-						$scope.url = '/ibpworkbench/controller/jhipster#file-manager/' + encodeURIComponent(fileKey)
+						$scope.url = '/ibpworkbench/controller/jhipster#file-manager/' + encodeURIComponent(path)
 							+ '?cropName=' + studyContext.cropName
 							+ '&programUUID=' + studyContext.programId
 							+ '&fileName=' + fileName;
@@ -63,6 +63,17 @@
 					},
 				});
 			};
+
+			fileService.getFilePath = function (observationUnitId, termId, fileName) {
+				return $http.get('/bmsapi/crops/' + studyContext.cropName + '/filepath', {
+					params: {
+						observationUnitId,
+						termId,
+						fileName
+					}
+				}).then(successHandler, failureHandler)
+					.then((map) => map["path"]);
+			}
 
 			return fileService;
 		}]);

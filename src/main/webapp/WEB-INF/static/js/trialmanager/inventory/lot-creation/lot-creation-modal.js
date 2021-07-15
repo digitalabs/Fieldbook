@@ -11,7 +11,7 @@
 				'&programUUID=' + studyContext.programId +
 				'&searchRequestId=' + searchResultDbId +
 				'&studyId=' + studyContext.studyId +
-				'&searchType=MANAGE_STUDY';
+				'&searchOrigin=MANAGE_STUDY';
 			
 			$scope.cancel = function () {
 				$uibModalInstance.close(null);

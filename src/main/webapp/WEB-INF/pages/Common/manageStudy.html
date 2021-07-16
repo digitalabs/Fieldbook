@@ -3,6 +3,8 @@
 		<h1><span th:text="#{study.managestudies.header}">Manage Study</span> <a class="bms-fa-question-circle fbk-help" data-help-link="MANAGE_STUDIES"></a></h1>
 	</div>
 </div>
+<input type="hidden" id="programUUID" th:value="${programUUID}"/>
+<input type="hidden" id="cropName" th:value="${cropName}"/>
 <input type="hidden" id="preloadSummaryId" th:value="${preloadSummaryId}"/>
 <input type="hidden" id="preloadSummaryName" th:value="${preloadSummaryName}"/>
 <div class="move-left col-xs-12 col-md-12">

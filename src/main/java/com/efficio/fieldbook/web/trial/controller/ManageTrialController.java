@@ -45,6 +45,8 @@ public class ManageTrialController extends AbstractBaseFieldbookController {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String show(@ModelAttribute("manageTrialForm") ManageTrialForm form, Model model, HttpServletRequest request) {
+		model.addAttribute("programUUID", request.getParameter("programUUID") != null ? request.getParameter("programUUID") : "");
+		model.addAttribute("cropName", request.getParameter("cropName") != null ? request.getParameter("cropName") : "");
 		model.addAttribute("preloadSummaryId", request.getParameter("summaryId") != null ? request.getParameter("summaryId") : "");
 		model.addAttribute("preloadSummaryName", request.getParameter("summaryName") != null ? request.getParameter("summaryName") : "");
 		model.addAttribute("studyTypes", this.studyDataManager.getAllVisibleStudyTypes());

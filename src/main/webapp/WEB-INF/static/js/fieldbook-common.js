@@ -1372,7 +1372,10 @@ function doDeleteStudy(id, crop, program, callback) {
 		beforeSend: function(xhr) {
 			xhr.setRequestHeader('X-Auth-Token', xAuthToken);
 		},
-		error: function(jqxhr, textStatus, error) {
+		success: function (data) {
+			callback();
+		},
+		error: function (jqxhr, textStatus, error) {
 			if (jqxhr.status == 401) {
 				bmsAuth.handleReAuthentication();
 			}

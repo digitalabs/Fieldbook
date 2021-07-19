@@ -711,38 +711,31 @@ function deleteStudyInReview() {
 	'use strict';
 
 	var idVal = getCurrentStudyIdInTab();
+	$('#deleteStudyModal').modal('hide');
+
 	doDeleteStudy(idVal, function (data) {
-		$('#deleteStudyModal').modal('hide');
-		if (data.isSuccess === '1') {
-			setTimeout(function () {
-				//simulate close tab
-				$('#' + idVal).trigger('click');
-				//remove it from the tree
-				if ($('#studyTree').dynatree('getTree').getNodeByKey(idVal)) {
-					$('#studyTree').dynatree('getTree').getNodeByKey(idVal).remove();
-				}
-				showSuccessfulMessage('', deleteStudySuccessful);
-			}, 500);
-		} else {
-			showErrorMessage('', data.message);
-		}
+		setTimeout(function () {
+			//simulate close tab
+			$('#' + idVal).trigger('click');
+			//remove it from the tree
+			if ($('#studyTree').dynatree('getTree').getNodeByKey(idVal)) {
+				$('#studyTree').dynatree('getTree').getNodeByKey(idVal).remove();
+			}
+			showSuccessfulMessage('', deleteStudySuccessful);
+		}, 500);
 	});
 }
 
 function deleteStudyInEdit() {
 	'use strict';
 	var idVal = $('#studyId').val();
+	$('#deleteStudyModal').modal('hide');
 	doDeleteStudy(idVal, function (data) {
-		$('#deleteStudyModal').modal('hide');
-		if (data.isSuccess === '1') {
-			showSuccessfulMessage('', deleteStudySuccessful);
-			setTimeout(function () {
-				//go back to review study page
-				location.href = $('#delete-success-return-url').attr('href');
-			}, 500);
-		} else {
-			showErrorMessage('', data.message);
-		}
+		showSuccessfulMessage('', deleteStudySuccessful);
+		setTimeout(function () {
+			//go back to review study page
+			location.href = $('#delete-success-return-url').attr('href');
+		}, 500);
 	});
 }
 
@@ -1098,16 +1091,10 @@ function deleteFolder(object) {
 					}
 				}
 			});
-		} else if (node.data.programUUID === null) {
-			showErrorMessage('page-study-tree-message-modal', cannotDeleteTemplateError);
-
-		} else if (parseInt(node.data.ownerId) === currentCropUserId || isSuperAdmin) {
-
+		} else {
 			$('#delete-heading-modal').text(deleteStudyTitle);
 			deleteConfirmationText = deleteStudyConfirmation;
 			showDeleteStudyFolderDiv(deleteConfirmationText);
-		} else {
-			showErrorMessage('page-study-tree-message-modal', cannotDeleteStudyError.replace('{0}', node.data.owner));
 		}
 	}
 }
@@ -1149,19 +1136,15 @@ function submitDeleteFolder() {
 			}
 		});
 	} else {
+		$('#deleteStudyFolder').modal('hide');
 		doDeleteStudy(folderId, function (data) {
 			var node;
-			$('#deleteStudyFolder').modal('hide');
-			if (data.isSuccess === '1') {
-				node = $('#studyTree').dynatree('getTree').getActiveNode();
-				if (node != null) {
-					node.remove();
-				}
-				changeBrowseStudyButtonBehavior(false);
-				showSuccessfulMessage('', deleteStudySuccessful);
-			} else {
-				showErrorMessage('', data.message);
+			node = $('#studyTree').dynatree('getTree').getActiveNode();
+			if (node != null) {
+				node.remove();
 			}
+			changeBrowseStudyButtonBehavior(false);
+			showSuccessfulMessage('', deleteStudySuccessful);
 		});
 	}
 }
@@ -1382,12 +1365,22 @@ function isValidInput(input) {
 
 function doDeleteStudy(id, callback) {
 	'use strict';
+	var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 	$.ajax({
-		url: '/Fieldbook/StudyManager/deleteStudy/' + id,
-		type: 'POST',
-		cache: false,
+		url: '/bmsapi/crops/' + cropName + '/programs/' + currentProgramId + '/studies/' + id,
+		type: 'DELETE',
+		beforeSend: function(xhr) {
+			xhr.setRequestHeader('X-Auth-Token', xAuthToken);
+		},
 		success: function (data) {
-			callback(data);
+			callback();
+		},
+		error: function (jqxhr, textStatus, error) {
+			if (jqxhr.status == 401) {
+				bmsAuth.handleReAuthentication();
+			}
+			showErrorMessage('', jqxhr.responseJSON.errors[0].message);
+
 		}
 	});
 }

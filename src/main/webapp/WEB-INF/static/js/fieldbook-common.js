@@ -713,7 +713,7 @@ function deleteStudyInReview() {
 	var idVal = getCurrentStudyIdInTab();
 	$('#deleteStudyModal').modal('hide');
 
-	doDeleteStudy(idVal, $("#cropName").val(), $("#programUUID").val(), function (data) {
+	doDeleteStudy(idVal, function (data) {
 		setTimeout(function () {
 			//simulate close tab
 			$('#' + idVal).trigger('click');
@@ -730,7 +730,7 @@ function deleteStudyInEdit() {
 	'use strict';
 	var idVal = $('#studyId').val();
 	$('#deleteStudyModal').modal('hide');
-	doDeleteStudy(idVal, cropName, currentProgramId, function (data) {
+	doDeleteStudy(idVal, function (data) {
 		showSuccessfulMessage('', deleteStudySuccessful);
 		setTimeout(function () {
 			//go back to review study page
@@ -1137,7 +1137,7 @@ function submitDeleteFolder() {
 		});
 	} else {
 		$('#deleteStudyFolder').modal('hide');
-		doDeleteStudy(folderId, $("#cropName").val(), $("#programUUID").val(),function (data) {
+		doDeleteStudy(folderId, function (data) {
 			var node;
 			node = $('#studyTree').dynatree('getTree').getActiveNode();
 			if (node != null) {
@@ -1363,11 +1363,11 @@ function isValidInput(input) {
 	return !invalidInput;
 }
 
-function doDeleteStudy(id, crop, program, callback) {
+function doDeleteStudy(id, callback) {
 	'use strict';
 	var xAuthToken = JSON.parse(localStorage["bms.xAuthToken"]).token;
 	$.ajax({
-		url: '/bmsapi/crops/' + crop + '/programs/' + program + '/studies/' + id,
+		url: '/bmsapi/crops/' + cropName + '/programs/' + currentProgramId + '/studies/' + id,
 		type: 'DELETE',
 		beforeSend: function(xhr) {
 			xhr.setRequestHeader('X-Auth-Token', xAuthToken);

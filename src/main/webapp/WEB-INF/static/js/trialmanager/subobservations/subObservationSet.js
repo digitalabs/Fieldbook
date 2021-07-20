@@ -992,12 +992,8 @@
 				}
 			}
 
-			function getFileKey(rowData, columnData, fileName) {
-				return 'programuuid-' + studyContext.programId
-					+ '/studyid-' + studyContext.studyId
-					+ '/obsunituuid-' + rowData.variables['OBS_UNIT_ID'].value
-					+ '/termid-' + columnData.termId
-					+ '/' + fileName;
+			function getFilePath(rowData, columnData, fileName) {
+				return fileService.getFilePath(rowData.variables['OBS_UNIT_ID'].value, columnData.termId, fileName);
 			}
 
 			/* WARNING Complexity up ahead.
@@ -1056,8 +1052,8 @@
 								return {name: newValue};
 							},
 							showFile: function () {
-								const fileKey = getFileKey(rowData, columnData, this.value);
-								fileService.showFile(fileKey, this.value);
+								const path = getFilePath(rowData, columnData, this.value)
+									.then((path) => fileService.showFile(path, this.value));
 								return false;
 							}
 						};
@@ -1150,9 +1146,11 @@
 										if (!doContinue) {
 											return $q.reject();
 										}
-										const key = getFileKey(rowData, columnData, file.name);
-										return fileService.upload(file, key).then((response) => {
-											$inlineScope.observation.value = file.name;
+										return getFilePath(rowData, columnData, file.name).then((path) => {
+											return fileService.upload(file, path, rowData.variables['OBS_UNIT_ID'].value)
+												.then((response) => {
+													$inlineScope.observation.value = file.name;
+												});
 										});
 									});
 								}
